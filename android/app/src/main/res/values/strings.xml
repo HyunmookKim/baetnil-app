@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">뱃일</string>
+    <string name="title_activity_main">뱃일</string>
+    <string name="package_name">kr.baetnil.app</string>
+    <string name="custom_url_scheme">kr.baetnil.app</string>
+    <string name="capacitor_background_geolocation_notification_channel_name">항해 기록</string>
+</resources>

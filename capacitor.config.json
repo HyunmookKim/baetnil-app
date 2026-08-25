@@ -1,0 +1,19 @@
+{
+  "appId": "kr.baetnil.app",
+  "appName": "뱃일",
+  "webDir": "www",
+  "android": {
+    "useLegacyBridge": true
+  },
+  "ios": {
+    "contentInset": "always"
+  },
+  "plugins": {
+    "FirebaseAuthentication": {
+      "skipNativeAuth": true,
+      "providers": [
+        "google.com"
+      ]
+    }
+  }
+}

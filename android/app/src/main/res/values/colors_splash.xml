@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 아이콘 그림의 하늘색. 시작 화면 바탕이 된다. -->
+    <color name="splashBg">#122B46</color>
+</resources>
