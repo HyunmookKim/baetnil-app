@@ -2,6 +2,7 @@
   "appId": "kr.baetnil.app",
   "appName": "뱃일",
   "webDir": "www",
+  "appendUserAgent": "baetnil/4.93 (+https://baetnil.com)",
   "android": {
     "useLegacyBridge": true
   },
