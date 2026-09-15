@@ -148,6 +148,8 @@ jobs:
             -authenticationKeyIssuerID "$ISSUER" \
             DEVELOPMENT_TEAM="$TEAM" \
             CODE_SIGN_STYLE=Automatic \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="" \
             CODE_SIGN_ENTITLEMENTS='App/App.entitlements' \
             MARKETING_VERSION='${{ inputs.marketing_version }}' \
             CURRENT_PROJECT_VERSION=${{ github.run_number }}
