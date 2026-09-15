@@ -1,18 +1,13 @@
 # 뱃일 — 아이폰 앱을 만들어 App Store Connect(테스트플라이트)로 올린다.
 #
 #   맥이 없으므로 깃허브의 맥 기계를 빌려 쓴다.
-#   서명서·프로파일은 손으로 만들지 않는다 — -allowProvisioningUpdates 로 애플이 만들어 준다.
+#   기기를 하나도 등록하지 않았으므로 「개발용」 프로파일은 만들 수 없다.
+#   그래서 처음부터 배포용(App Store) 인증서와 프로파일을 애플에 만들어 받아서 쓴다.
 #
-#   필요한 비밀값 다섯 (저장소 Settings → Secrets → Actions)
-#     ASC_KEY_ID            App Store Connect API 키 ID (열 글자)
-#     ASC_ISSUER_ID         Issuer ID
-#     ASC_KEY_P8            AuthKey_XXXXXXXXXX.p8 파일 내용 전체
-#     APPLE_TEAM_ID         KM7T983F29
-#     GOOGLE_SERVICE_PLIST  GoogleService-Info.plist 내용 (그냥 XML 이거나 base64)
+#   비밀값        ASC_KEY_P8 · ASC_ISSUER_ID · APPLE_TEAM_ID · GOOGLE_SERVICE_PLIST
+#   저장소 변수   ASC_KEY_ID_PLAIN (키 ID 열 글자)
 #
-#   ★ 빌드 번호(CFBundleVersion)는 올릴 때마다 커져야 한다.
-#     같은 번호를 두 번 올리면 테스트플라이트가 말없이 거부한다.
-#     그래서 깃허브가 세어 주는 실행 번호를 쓴다.
+#   ★ 빌드 번호는 올릴 때마다 커져야 한다. 같은 번호를 두 번 올리면 조용히 거부당한다.
 
 name: iOS 앱 만들어 올리기
 
@@ -32,6 +27,9 @@ jobs:
   build:
     runs-on: macos-latest
     timeout-minutes: 60
+
+    env:
+      BUNDLE_ID: kr.baetnil.app
 
     steps:
       - name: 소스 받기
@@ -72,6 +70,79 @@ jobs:
           pod repo update --silent || true
           pod install
 
+      - name: 애플 열쇠 놓기
+        env:
+          S_P8: ${{ secrets.ASC_KEY_P8 }}
+          S_ID: ${{ secrets.ASC_KEY_ID }}
+          V_ID: ${{ vars.ASC_KEY_ID_PLAIN }}
+        run: |
+          set -e
+          mkdir -p ~/private_keys
+          clean () { tr -d '\r' < "$1" | sed $'1s/^\xEF\xBB\xBF//' | sed -e '/./,$!d'; }
+          printf '%s' "$S_P8" > /tmp/a.raw ; clean /tmp/a.raw > /tmp/a
+          printf '%s' "$S_ID" > /tmp/b.raw ; clean /tmp/b.raw > /tmp/b
+          if grep -q 'BEGIN PRIVATE KEY' /tmp/a; then PEM=/tmp/a; OTHER=/tmp/b
+          elif grep -q 'BEGIN PRIVATE KEY' /tmp/b; then PEM=/tmp/b; OTHER=/tmp/a
+          else echo '::error::.p8 파일 내용이 어느 비밀값에도 없습니다.'; exit 1; fi
+          KEY_ID=$(printf '%s' "$V_ID" | tr -d '[:space:]')
+          [ -n "$KEY_ID" ] || KEY_ID=$(tr -d '[:space:]' < "$OTHER")
+          printf '%s' "$KEY_ID" | grep -Eq '^[A-Z0-9]{10}$' \
+            || { echo "::error::키 ID 가 열 글자짜리가 아닙니다 (${#KEY_ID})."; exit 1; }
+          DEST=~/private_keys/AuthKey_${KEY_ID}.p8
+          BODY=$(sed -e 's/-----BEGIN PRIVATE KEY-----//g' -e 's/-----END PRIVATE KEY-----//g' "$PEM" | tr -d '[:space:]')
+          { echo '-----BEGIN PRIVATE KEY-----'; printf '%s' "$BODY" | fold -w 64; echo; echo '-----END PRIVATE KEY-----'; } > "$DEST"
+          chmod 600 "$DEST"
+          openssl pkey -in "$DEST" -noout 2>/dev/null \
+            || { echo '::error::.p8 열쇠를 읽지 못했습니다.'; exit 1; }
+          echo "ASC_KEY_ID_OK=${KEY_ID}" >> "$GITHUB_ENV"
+          echo "ASC_KEY_PATH=${DEST}"    >> "$GITHUB_ENV"
+          echo "열쇠 확인 완료 · 키 ID ${KEY_ID}"
+
+      - name: 배포용 인증서·프로파일 받아 오기
+        env:
+          ISSUER: ${{ secrets.ASC_ISSUER_ID }}
+          TEAM: ${{ secrets.APPLE_TEAM_ID }}
+          FASTLANE_SKIP_UPDATE_CHECK: '1'
+          FASTLANE_HIDE_CHANGELOG: '1'
+          FASTLANE_DISABLE_COLORS: '1'
+        run: |
+          set -e
+          ruby -rjson -e 'puts JSON.pretty_generate({"key_id"=>ENV["ASC_KEY_ID_OK"],"issuer_id"=>ENV["ISSUER"],"key"=>File.read(ENV["ASC_KEY_PATH"]),"in_house"=>false})' > /tmp/asc_key.json
+
+          KC="$RUNNER_TEMP/build.keychain-db"
+          security create-keychain -p ci "$KC"
+          security set-keychain-settings -lut 21600 "$KC"
+          security unlock-keychain -p ci "$KC"
+          security list-keychains -d user -s "$KC" $(security list-keychains -d user | tr -d '"')
+          security default-keychain -s "$KC"
+          echo "KEYCHAIN=$KC" >> "$GITHUB_ENV"
+
+          mkdir -p "$RUNNER_TEMP/certs" "$RUNNER_TEMP/profiles"
+          fastlane run cert \
+            development:false \
+            api_key_path:/tmp/asc_key.json \
+            team_id:"$TEAM" \
+            keychain_path:"$KC" \
+            keychain_password:ci \
+            output_path:"$RUNNER_TEMP/certs"
+
+          fastlane run sigh \
+            development:false \
+            adhoc:false \
+            app_identifier:"$BUNDLE_ID" \
+            api_key_path:/tmp/asc_key.json \
+            team_id:"$TEAM" \
+            output_path:"$RUNNER_TEMP/profiles" \
+            filename:baetnil.mobileprovision
+
+          PP="$RUNNER_TEMP/profiles/baetnil.mobileprovision"
+          NAME=$(security cms -D -i "$PP" | plutil -extract Name raw -)
+          UUID=$(security cms -D -i "$PP" | plutil -extract UUID raw -)
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp "$PP" ~/Library/MobileDevice/Provisioning\ Profiles/"$UUID".mobileprovision
+          echo "PROFILE_NAME=$NAME" >> "$GITHUB_ENV"
+          echo "프로파일 준비 완료 · $NAME"
+
       - name: App 타겟 서명 설정 (팟에는 손대지 않는다)
         working-directory: ios/App
         env:
@@ -84,93 +155,27 @@ jobs:
           app  = proj.targets.find { |t| t.name == 'App' }
           raise 'App 타겟을 못 찾음' unless app
           app.build_configurations.each do |c|
-            c.build_settings['CODE_SIGN_ENTITLEMENTS'] = 'App/App.entitlements'
-            c.build_settings['CODE_SIGN_STYLE']        = 'Automatic'
-            c.build_settings['DEVELOPMENT_TEAM']       = ENV['TEAM']
-            c.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'kr.baetnil.app'
-            if c.name == 'Release'
-              c.build_settings['CODE_SIGN_IDENTITY'] = 'Apple Distribution'
-              c.build_settings.delete('PROVISIONING_PROFILE_SPECIFIER')
-            end
+            c.build_settings['CODE_SIGN_ENTITLEMENTS']    = 'App/App.entitlements'
+            c.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = ENV['BUNDLE_ID']
+            c.build_settings['DEVELOPMENT_TEAM']          = ENV['TEAM']
+            c.build_settings['CODE_SIGN_STYLE']           = 'Manual'
+            c.build_settings['CODE_SIGN_IDENTITY']        = 'Apple Distribution'
+            c.build_settings['PROVISIONING_PROFILE_SPECIFIER'] = ENV['PROFILE_NAME']
           end
           proj.save
-          puts 'App 타겟 서명 설정 완료'
+          puts "App 타겟 서명 설정 완료 · #{ENV['PROFILE_NAME']}"
           RUBY
-
-      - name: 애플 열쇠 놓기
-        env:
-          S_P8: ${{ secrets.ASC_KEY_P8 }}
-          S_ID: ${{ secrets.ASC_KEY_ID }}
-          V_ID: ${{ vars.ASC_KEY_ID_PLAIN }}
-        run: |
-          set -e
-          mkdir -p ~/private_keys
-          clean () { tr -d '\r' < "$1" | sed $'1s/^\xEF\xBB\xBF//' | sed -e '/./,$!d'; }
-          printf '%s' "$S_P8" > /tmp/a.raw ; clean /tmp/a.raw > /tmp/a
-          printf '%s' "$S_ID" > /tmp/b.raw ; clean /tmp/b.raw > /tmp/b
-          # 두 칸이 바뀌어 들어가도 알아서 가려낸다 — PEM 쪽이 열쇠, 열 글자짜리가 키 ID
-          if grep -q 'BEGIN PRIVATE KEY' /tmp/a; then PEM=/tmp/a; OTHER=/tmp/b
-          elif grep -q 'BEGIN PRIVATE KEY' /tmp/b; then PEM=/tmp/b; OTHER=/tmp/a
-          else
-            echo "::error::ASC_KEY_P8 · ASC_KEY_ID 어느 쪽에도 .p8 파일 내용이 없습니다."
-            echo "ASC_KEY_P8 = $(wc -c < /tmp/a) 바이트 / ASC_KEY_ID = $(wc -c < /tmp/b) 바이트"
-            exit 1
-          fi
-          # 키 ID 는 저장소 변수(ASC_KEY_ID_PLAIN)를 먼저 쓴다 — 비밀값 칸이 뒤바뀌어도 안 흔들린다
-          KEY_ID=$(printf '%s' "$V_ID" | tr -d '[:space:]')
-          [ -n "$KEY_ID" ] || KEY_ID=$(tr -d '[:space:]' < "$OTHER")
-          if ! printf '%s' "$KEY_ID" | grep -Eq '^[A-Z0-9]{10}$'; then
-            echo "::error::키 ID 가 열 글자짜리가 아닙니다 (받은 길이 ${#KEY_ID})."
-            exit 1
-          fi
-          DEST=~/private_keys/AuthKey_${KEY_ID}.p8
-          # PEM 을 다시 짜 맞춘다 — 한 줄로 붙여 넣었거나 줄바꿈이 뭉개졌어도 살아난다
-          BODY=$(sed -e 's/-----BEGIN PRIVATE KEY-----//g' -e 's/-----END PRIVATE KEY-----//g' "$PEM" | tr -d '[:space:]')
-          {
-            echo '-----BEGIN PRIVATE KEY-----'
-            printf '%s' "$BODY" | fold -w 64
-            echo
-            echo '-----END PRIVATE KEY-----'
-          } > "$DEST"
-          chmod 600 "$DEST"
-          if ! openssl pkey -in "$DEST" -noout 2>/dev/null; then
-            echo "::error::.p8 열쇠를 읽지 못했습니다."
-            body_of () { sed -e 's/-----BEGIN PRIVATE KEY-----//g' -e 's/-----END PRIVATE KEY-----//g' "$1" | tr -d '[:space:]' | wc -c | tr -d ' '; }
-            echo "ASC_KEY_P8  : $(wc -c < /tmp/a | tr -d ' ') 바이트 · BEGIN $(grep -c 'BEGIN PRIVATE KEY' /tmp/a || true) · END $(grep -c 'END PRIVATE KEY' /tmp/a || true) · 알맹이 $(body_of /tmp/a) 글자"
-            echo "ASC_KEY_ID  : $(wc -c < /tmp/b | tr -d ' ') 바이트 · BEGIN $(grep -c 'BEGIN PRIVATE KEY' /tmp/b || true) · END $(grep -c 'END PRIVATE KEY' /tmp/b || true) · 알맹이 $(body_of /tmp/b) 글자"
-            echo "정상이면 알맹이가 184 글자쯤 됩니다."
-            # 다른 쪽 값으로도 한 번 더 해 본다
-            for CAND in /tmp/a /tmp/b; do
-              B=$(sed -e 's/-----BEGIN PRIVATE KEY-----//g' -e 's/-----END PRIVATE KEY-----//g' "$CAND" | tr -d '[:space:]')
-              { echo '-----BEGIN PRIVATE KEY-----'; printf '%s' "$B" | fold -w 64; echo; echo '-----END PRIVATE KEY-----'; } > /tmp/try.p8
-              if openssl pkey -in /tmp/try.p8 -noout 2>/dev/null; then
-                echo "→ $CAND 쪽이 올바른 열쇠였습니다. 그걸로 갑니다."
-                cp /tmp/try.p8 "$DEST"; chmod 600 "$DEST"
-                break
-              fi
-            done
-            openssl pkey -in "$DEST" -noout 2>/dev/null || exit 1
-          fi
-          echo "ASC_KEY_ID_OK=${KEY_ID}"   >> "$GITHUB_ENV"
-          echo "ASC_KEY_PATH=${DEST}"      >> "$GITHUB_ENV"
-          echo "열쇠 확인 완료 · 키 ID ${KEY_ID} · $(wc -l < "$DEST") 줄"
 
       - name: 보관본 만들기 (archive)
         working-directory: ios/App
-        env:
-          ISSUER: ${{ secrets.ASC_ISSUER_ID }}
-          TEAM: ${{ secrets.APPLE_TEAM_ID }}
         run: |
+          security unlock-keychain -p ci "$KEYCHAIN"
           xcodebuild archive \
             -workspace App.xcworkspace \
             -scheme App \
             -configuration Release \
             -destination 'generic/platform=iOS' \
             -archivePath "$RUNNER_TEMP/App.xcarchive" \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath "$ASC_KEY_PATH" \
-            -authenticationKeyID "$ASC_KEY_ID_OK" \
-            -authenticationKeyIssuerID "$ISSUER" \
             MARKETING_VERSION='${{ inputs.marketing_version }}' \
             CURRENT_PROJECT_VERSION=${{ github.run_number }}
 
@@ -178,6 +183,7 @@ jobs:
         env:
           TEAM: ${{ secrets.APPLE_TEAM_ID }}
         run: |
+          DEST=$( [ "${{ inputs.upload }}" = "true" ] && echo upload || echo export )
           cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -185,9 +191,12 @@ jobs:
           <dict>
             <key>method</key><string>app-store-connect</string>
             <key>teamID</key><string>${TEAM}</string>
-            <key>destination</key><string>$( [ "${{ inputs.upload }}" = "true" ] && echo upload || echo export )</string>
+            <key>destination</key><string>${DEST}</string>
             <key>uploadSymbols</key><true/>
-            <key>signingStyle</key><string>automatic</string>
+            <key>signingStyle</key><string>manual</string>
+            <key>signingCertificate</key><string>Apple Distribution</string>
+            <key>provisioningProfiles</key>
+            <dict><key>${BUNDLE_ID}</key><string>${PROFILE_NAME}</string></dict>
             <key>generateAppStoreInformation</key><true/>
           </dict>
           </plist>
@@ -198,11 +207,11 @@ jobs:
         env:
           ISSUER: ${{ secrets.ASC_ISSUER_ID }}
         run: |
+          security unlock-keychain -p ci "$KEYCHAIN"
           xcodebuild -exportArchive \
             -archivePath "$RUNNER_TEMP/App.xcarchive" \
             -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
             -exportPath "$RUNNER_TEMP/out" \
-            -allowProvisioningUpdates \
             -authenticationKeyPath "$ASC_KEY_PATH" \
             -authenticationKeyID "$ASC_KEY_ID_OK" \
             -authenticationKeyIssuerID "$ISSUER"
@@ -212,11 +221,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ios-out
-          path: |
-            ${{ runner.temp }}/out
+          path: ${{ runner.temp }}/out
           if-no-files-found: ignore
           retention-days: 7
 
       - name: 열쇠 지우기
         if: always()
-        run: rm -rf ~/private_keys
+        run: |
+          rm -rf ~/private_keys /tmp/asc_key.json
+          security delete-keychain "$KEYCHAIN" 2>/dev/null || true
