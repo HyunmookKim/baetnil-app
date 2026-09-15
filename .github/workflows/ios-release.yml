@@ -1,0 +1,159 @@
+# 뱃일 — 아이폰 앱을 만들어 App Store Connect(테스트플라이트)로 올린다.
+#
+#   맥이 없으므로 깃허브의 맥 기계를 빌려 쓴다.
+#   서명서·프로파일은 손으로 만들지 않는다 — -allowProvisioningUpdates 로 애플이 만들어 준다.
+#
+#   필요한 비밀값 다섯 (저장소 Settings → Secrets → Actions)
+#     ASC_KEY_ID            App Store Connect API 키 ID (열 글자)
+#     ASC_ISSUER_ID         Issuer ID
+#     ASC_KEY_P8            AuthKey_XXXXXXXXXX.p8 파일 내용 전체
+#     APPLE_TEAM_ID         KM7T983F29
+#     GOOGLE_SERVICE_PLIST  GoogleService-Info.plist 내용 (그냥 XML 이거나 base64)
+#
+#   ★ 빌드 번호(CFBundleVersion)는 올릴 때마다 커져야 한다.
+#     같은 번호를 두 번 올리면 테스트플라이트가 말없이 거부한다.
+#     그래서 깃허브가 세어 주는 실행 번호를 쓴다.
+
+name: iOS 앱 만들어 올리기
+
+on:
+  workflow_dispatch:
+    inputs:
+      marketing_version:
+        description: '앱 판 번호 (예 4.138)'
+        required: true
+        default: '4.138'
+      upload:
+        description: '애플에 올릴까요? (아니요 = 만들어지는지만 확인)'
+        type: boolean
+        default: true
+
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: 소스 받기
+        uses: actions/checkout@v4
+
+      - name: Xcode 고르기
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: node 준비
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: npm 설치
+        run: npm ci || npm install
+
+      - name: 파이어베이스 설정 파일 놓기
+        env:
+          PLIST: ${{ secrets.GOOGLE_SERVICE_PLIST }}
+        run: |
+          set -e
+          printf '%s' "$PLIST" > /tmp/gs.raw
+          if head -c 5 /tmp/gs.raw | grep -q '<?xml'; then
+            cp /tmp/gs.raw ios/App/App/GoogleService-Info.plist
+          else
+            base64 --decode -i /tmp/gs.raw -o ios/App/App/GoogleService-Info.plist
+          fi
+          plutil -lint ios/App/App/GoogleService-Info.plist
+
+      - name: cap sync ios
+        run: npx cap sync ios
+
+      - name: pod install
+        working-directory: ios/App
+        run: |
+          pod repo update --silent || true
+          pod install
+
+      - name: 애플 열쇠 놓기
+        env:
+          P8: ${{ secrets.ASC_KEY_P8 }}
+          KEY_ID: ${{ secrets.ASC_KEY_ID }}
+        run: |
+          set -e
+          mkdir -p ~/private_keys
+          printf '%s' "$P8" > ~/private_keys/AuthKey_${KEY_ID}.p8
+          chmod 600 ~/private_keys/AuthKey_${KEY_ID}.p8
+          head -1 ~/private_keys/AuthKey_${KEY_ID}.p8 | grep -q 'BEGIN PRIVATE KEY' \
+            || { echo '::error::ASC_KEY_P8 이 .p8 파일 내용이 아닙니다'; exit 1; }
+
+      - name: 보관본 만들기 (archive)
+        working-directory: ios/App
+        env:
+          KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ISSUER: ${{ secrets.ASC_ISSUER_ID }}
+          TEAM: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          set -o pipefail
+          xcodebuild archive \
+            -workspace App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath ~/private_keys/AuthKey_${KEY_ID}.p8 \
+            -authenticationKeyID "$KEY_ID" \
+            -authenticationKeyIssuerID "$ISSUER" \
+            DEVELOPMENT_TEAM="$TEAM" \
+            CODE_SIGN_STYLE=Automatic \
+            CODE_SIGN_ENTITLEMENTS='App/App.entitlements' \
+            MARKETING_VERSION='${{ inputs.marketing_version }}' \
+            CURRENT_PROJECT_VERSION=${{ github.run_number }} \
+            | xcpretty || exit ${PIPESTATUS[0]}
+
+      - name: 내보내기 설정 만들기
+        env:
+          TEAM: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>teamID</key><string>${TEAM}</string>
+            <key>destination</key><string>$( [ "${{ inputs.upload }}" = "true" ] && echo upload || echo export )</string>
+            <key>uploadSymbols</key><true/>
+            <key>signingStyle</key><string>automatic</string>
+            <key>generateAppStoreInformation</key><true/>
+          </dict>
+          </plist>
+          PLIST
+          plutil -lint "$RUNNER_TEMP/ExportOptions.plist"
+
+      - name: 내보내기 · 애플로 올리기
+        env:
+          KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ISSUER: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          set -o pipefail
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
+            -exportPath "$RUNNER_TEMP/out" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath ~/private_keys/AuthKey_${KEY_ID}.p8 \
+            -authenticationKeyID "$KEY_ID" \
+            -authenticationKeyIssuerID "$ISSUER"
+
+      - name: 만든 파일 남겨 두기
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-out
+          path: |
+            ${{ runner.temp }}/out
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: 열쇠 지우기
+        if: always()
+        run: rm -rf ~/private_keys
