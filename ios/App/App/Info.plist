@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
+	<string>ko</string>
 	<key>CFBundleDisplayName</key>
-        <string>뱃일</string>
+	<string>뱃일</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -45,6 +45,8 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+
+	<!-- 위치 -->
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>항해 중 현재 위치의 바람·파고·물때와 해상 특보를 보여 드리기 위해 사용합니다.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
@@ -53,5 +55,17 @@
 	<array>
 		<string>location</string>
 	</array>
+
+	<!-- 사진 · 카메라 : 물품·정비·도면·정박지 사진 -->
+	<key>NSCameraUsageDescription</key>
+	<string>물품·정비 기록·정박지에 사진을 찍어 붙이기 위해 카메라를 사용합니다.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>물품·정비 기록·도면·정박지에 사진을 붙이기 위해 사진을 고릅니다.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>항적 지도나 기록 화면을 사진으로 저장할 때 사용합니다.</string>
+
+	<!-- 암호화 : 표준 HTTPS 만 씁니다 -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>
