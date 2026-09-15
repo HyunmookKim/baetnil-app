@@ -70,6 +70,12 @@ jobs:
           pod repo update --silent || true
           pod install
 
+      - name: 인증서 보관함 (한 번 만든 배포 인증서를 다시 쓴다)
+        uses: actions/cache@v4
+        with:
+          path: certs
+          key: ios-dist-cert-v1
+
       - name: 애플 열쇠 놓기
         env:
           S_P8: ${{ secrets.ASC_KEY_P8 }}
@@ -129,14 +135,14 @@ jobs:
           security default-keychain -s "$KC"
           echo "KEYCHAIN=$KC" >> "$GITHUB_ENV"
 
-          mkdir -p "$RUNNER_TEMP/certs" "$RUNNER_TEMP/profiles"
+          mkdir -p certs "$RUNNER_TEMP/profiles"
           fastlane run cert \
             development:false \
             api_key_path:/tmp/asc_key.json \
             team_id:"$TEAM" \
             keychain_path:"$KC" \
             keychain_password:ci \
-            output_path:"$RUNNER_TEMP/certs"
+            output_path:certs
 
           fastlane run sigh \
             development:false \
