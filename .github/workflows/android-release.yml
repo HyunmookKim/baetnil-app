@@ -1,0 +1,165 @@
+# 뱃일 — 안드로이드 앱(AAB)을 만들어 구글 플레이로 올린다.
+#
+# 아이폰 쪽(ios-release.yml)과 같은 생각으로 짰다. 사장님 컴퓨터가 없어도,
+# 안드로이드 스튜디오를 켜지 않아도, 깃허브에서 판 번호만 넣으면 끝난다.
+#
+# ★ 판 번호는 여기서 안 받는다.
+#   android/app/build.gradle 이 **앱 파일 안의 APP_VER 를 직접 읽어서**
+#   versionName 과 versionCode(큰*1000 + 작은)를 만든다. 두 곳에 적으면 반드시 갈라진다.
+#   5.0 → versionName "5.0" · versionCode 5000
+#
+# ★ 구글은 versionCode 가 **늘 커지기만** 할 것을 요구한다. 한 번 올린 번호는 다시 못 쓴다.
+#   (지금까지 올라간 가장 큰 번호: 4138)
+#
+# ★ 아이폰에서 겪은 사고를 되풀이하지 않기 위해,
+#   짓기 전에 **www/index.html 의 APP_VER 를 찍어 보고** 없으면 멈춘다.
+#
+# 비밀값(Settings → Secrets and variables → Actions):
+#   ANDROID_KEYSTORE_B64        서명 열쇠(.jks)를 base64 로 바꾼 글자
+#   ANDROID_KEYSTORE_PASSWORD   열쇠집 비밀번호
+#   ANDROID_KEY_ALIAS           열쇠 이름
+#   ANDROID_KEY_PASSWORD        열쇠 비밀번호
+#   GOOGLE_SERVICES_JSON        android/app/google-services.json 알맹이 (저장소에 안 올리는 파일)
+#   PLAY_SERVICE_ACCOUNT_JSON   구글 플레이에 올릴 권한을 가진 서비스 계정 JSON
+#
+# ★ 열쇠를 잃어버리면 같은 앱을 영영 못 올린다. 원본은 사장님 컴퓨터에 그대로 두십시오.
+
+name: 안드로이드 앱 만들어 올리기
+
+on:
+  workflow_dispatch:
+    inputs:
+      track:
+        description: '어느 줄에 올릴까요?'
+        type: choice
+        options: [internal, alpha, beta, production]
+        default: internal
+      upload:
+        description: '구글에 올릴까요? (아니요 = 만들어지는지만 확인)'
+        type: boolean
+        default: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    env:
+      PKG: kr.baetnil.app
+
+    steps:
+      - name: 소스 받기
+        uses: actions/checkout@v4
+
+      - name: 자바 21 준비
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: node 준비
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: npm 설치
+        run: npm ci || npm install
+
+      - name: ★ 앱 판 번호 확인 (아이폰에서 겪은 사고를 막는 자리)
+        run: |
+          set -e
+          F=www/index.html
+          [ -f "$F" ] || { echo "::error::www/index.html 이 없습니다."; exit 1; }
+          VER=$(grep -o "const APP_VER = '[^']*'" "$F" | head -1 | sed "s/.*'\(.*\)'/\1/")
+          [ -n "$VER" ] || { echo "::error::www/index.html 에서 APP_VER 를 못 찾았습니다."; exit 1; }
+          BIG=${VER%%.*}; SMALL=${VER#*.}; SMALL=${SMALL%%.*}
+          CODE=$(( BIG * 1000 + SMALL ))
+          echo "앱 판 번호: $VER · versionCode: $CODE"
+          echo "## 뱃일 $VER (versionCode $CODE)" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$CODE" -le 4138 ]; then
+            echo "::error::versionCode 가 $CODE 입니다. 이미 올라간 4138 보다 커야 합니다."
+            exit 1
+          fi
+
+      - name: 파이어베이스 설정 파일 놓기
+        env:
+          GS: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          set -e
+          [ -n "$GS" ] || { echo "::error::비밀값 GOOGLE_SERVICES_JSON 이 비어 있습니다."; exit 1; }
+          printf '%s' "$GS" > /tmp/gs.raw
+          if head -c 1 /tmp/gs.raw | grep -q '{'; then
+            cp /tmp/gs.raw android/app/google-services.json
+          else
+            base64 --decode /tmp/gs.raw > android/app/google-services.json
+          fi
+          node -e "JSON.parse(require('fs').readFileSync('android/app/google-services.json','utf8'));console.log('google-services.json 읽힙니다')"
+
+      - name: cap sync android
+        run: npx cap sync android
+
+      - name: 서명 열쇠 놓기
+        env:
+          KS:   ${{ secrets.ANDROID_KEYSTORE_B64 }}
+          KSPW: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEYPW: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          set -e
+          for n in KS KSPW ALIAS KEYPW; do
+            [ -n "${!n}" ] || { echo "::error::서명 비밀값이 비어 있습니다 ($n)."; exit 1; }
+          done
+          printf '%s' "$KS" | tr -d '[:space:]' | base64 --decode > "$RUNNER_TEMP/baetnil.jks"
+          # 열쇠가 온전한지 먼저 본다 — 깨진 채로 gradle 까지 가면 무슨 말인지 알 수 없는 오류가 난다
+          keytool -list -keystore "$RUNNER_TEMP/baetnil.jks" -storepass "$KSPW" >/dev/null \
+            || { echo "::error::열쇠집을 열지 못했습니다. ANDROID_KEYSTORE_B64 또는 비밀번호를 확인해 주십시오."; exit 1; }
+          # build.gradle 은 android/keystore.properties 를 읽는다 (rootProject = android/)
+          {
+            echo "storeFile=$RUNNER_TEMP/baetnil.jks"
+            echo "storePassword=$KSPW"
+            echo "keyAlias=$ALIAS"
+            echo "keyPassword=$KEYPW"
+          } > android/keystore.properties
+          echo "열쇠 준비 완료"
+
+      - name: AAB 짓기
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon bundleRelease
+
+      - name: 서명이 붙었는지 확인
+        run: |
+          set -e
+          AAB=$(ls android/app/build/outputs/bundle/release/*.aab | head -1)
+          echo "만든 파일: $AAB ($(du -h "$AAB" | cut -f1))"
+          unzip -l "$AAB" | grep -q 'META-INF/.*\.RSA\|META-INF/.*\.EC\|META-INF/MANIFEST.MF' \
+            || { echo "::error::서명이 안 붙었습니다."; exit 1; }
+          echo "AAB_PATH=$AAB" >> "$GITHUB_ENV"
+
+      - name: 만든 파일 남겨 두기
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: baetnil-aab
+          path: android/app/build/outputs/bundle/release/*.aab
+          if-no-files-found: ignore
+          retention-days: 14
+
+      # ★ 프로덕션(정식 출시)으로 올릴 때는 **초안(draft)** 으로 둔다.
+      #   실제로 사람들에게 나가는 단추는 사장님이 플레이 콘솔에서 누르신다.
+      - name: 구글 플레이에 올리기
+        if: ${{ inputs.upload }}
+        uses: r0adkll/upload-google-play@v1.1.3
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: kr.baetnil.app
+          releaseFiles: ${{ env.AAB_PATH }}
+          track: ${{ inputs.track }}
+          status: ${{ inputs.track == 'production' && 'draft' || 'completed' }}
+
+      - name: 열쇠 지우기
+        if: always()
+        run: |
+          rm -f android/keystore.properties "$RUNNER_TEMP/baetnil.jks" /tmp/gs.raw
+          rm -f android/app/google-services.json
