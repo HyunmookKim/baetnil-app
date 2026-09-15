@@ -140,7 +140,6 @@ jobs:
 
           fastlane run sigh \
             development:false \
-            adhoc:false \
             app_identifier:"$BUNDLE_ID" \
             api_key_path:/tmp/asc_key.json \
             team_id:"$TEAM" \
