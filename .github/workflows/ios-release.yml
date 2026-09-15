@@ -76,6 +76,7 @@ jobs:
         env:
           S_P8: ${{ secrets.ASC_KEY_P8 }}
           S_ID: ${{ secrets.ASC_KEY_ID }}
+          V_ID: ${{ vars.ASC_KEY_ID_PLAIN }}
         run: |
           set -e
           mkdir -p ~/private_keys
@@ -90,7 +91,9 @@ jobs:
             echo "ASC_KEY_P8 = $(wc -c < /tmp/a) 바이트 / ASC_KEY_ID = $(wc -c < /tmp/b) 바이트"
             exit 1
           fi
-          KEY_ID=$(tr -d '[:space:]' < "$OTHER")
+          # 키 ID 는 저장소 변수(ASC_KEY_ID_PLAIN)를 먼저 쓴다 — 비밀값 칸이 뒤바뀌어도 안 흔들린다
+          KEY_ID=$(printf '%s' "$V_ID" | tr -d '[:space:]')
+          [ -n "$KEY_ID" ] || KEY_ID=$(tr -d '[:space:]' < "$OTHER")
           if ! printf '%s' "$KEY_ID" | grep -Eq '^[A-Z0-9]{10}$'; then
             echo "::error::키 ID 가 열 글자짜리가 아닙니다 (받은 길이 ${#KEY_ID})."
             exit 1
