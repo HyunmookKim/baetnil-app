@@ -78,25 +78,37 @@ jobs:
         run: |
           set -e
           mkdir -p ~/private_keys
-          clean () { tr -d '\r' < "$1" | sed $'1s/^\xEF\xBB\xBF//' | sed -e '/./,$!d'; }
+          clean () { tr -d '\r' < "$1" | sed $'1s/^\xEF\xBB\xBF//'; }
           printf '%s' "$S_P8" > /tmp/a.raw ; clean /tmp/a.raw > /tmp/a
           printf '%s' "$S_ID" > /tmp/b.raw ; clean /tmp/b.raw > /tmp/b
-          if grep -q 'BEGIN PRIVATE KEY' /tmp/a; then PEM=/tmp/a; OTHER=/tmp/b
-          elif grep -q 'BEGIN PRIVATE KEY' /tmp/b; then PEM=/tmp/b; OTHER=/tmp/a
-          else echo '::error::.p8 파일 내용이 어느 비밀값에도 없습니다.'; exit 1; fi
+
           KEY_ID=$(printf '%s' "$V_ID" | tr -d '[:space:]')
-          [ -n "$KEY_ID" ] || KEY_ID=$(tr -d '[:space:]' < "$OTHER")
           printf '%s' "$KEY_ID" | grep -Eq '^[A-Z0-9]{10}$' \
-            || { echo "::error::키 ID 가 열 글자짜리가 아닙니다 (${#KEY_ID})."; exit 1; }
+            || { echo "::error::저장소 변수 ASC_KEY_ID_PLAIN 이 열 글자짜리 키 ID 가 아닙니다."; exit 1; }
           DEST=~/private_keys/AuthKey_${KEY_ID}.p8
-          BODY=$(sed -e 's/-----BEGIN PRIVATE KEY-----//g' -e 's/-----END PRIVATE KEY-----//g' "$PEM" | tr -d '[:space:]')
-          { echo '-----BEGIN PRIVATE KEY-----'; printf '%s' "$BODY" | fold -w 64; echo; echo '-----END PRIVATE KEY-----'; } > "$DEST"
-          chmod 600 "$DEST"
-          openssl pkey -in "$DEST" -noout 2>/dev/null \
-            || { echo '::error::.p8 열쇠를 읽지 못했습니다.'; exit 1; }
+
+          # 두 비밀값 중 실제로 열리는 열쇠를 골라 쓴다 (칸이 뒤바뀌어 있어도 된다)
+          OK=0
+          for CAND in /tmp/a /tmp/b; do
+            BODY=$(sed -e 's/-----BEGIN PRIVATE KEY-----//g' -e 's/-----END PRIVATE KEY-----//g' "$CAND" | tr -d '[:space:]')
+            [ ${#BODY} -gt 100 ] || continue
+            { echo '-----BEGIN PRIVATE KEY-----'; printf '%s' "$BODY" | fold -w 64; echo; echo '-----END PRIVATE KEY-----'; } > /tmp/try.p8
+            if openssl pkey -in /tmp/try.p8 -noout 2>/dev/null; then
+              cp /tmp/try.p8 "$DEST"; chmod 600 "$DEST"; OK=1
+              echo "열쇠를 찾았습니다 ($([ "$CAND" = /tmp/a ] && echo ASC_KEY_P8 || echo ASC_KEY_ID) 쪽)"
+              break
+            fi
+          done
+          if [ "$OK" != "1" ]; then
+            echo "::error::어느 비밀값에서도 온전한 .p8 열쇠를 찾지 못했습니다."
+            for C in /tmp/a /tmp/b; do
+              B=$(sed -e 's/-----BEGIN PRIVATE KEY-----//g' -e 's/-----END PRIVATE KEY-----//g' "$C" | tr -d '[:space:]')
+              echo "$C : $(wc -c < "$C" | tr -d ' ') 바이트 · 알맹이 ${#B} 글자 (정상은 184 안팎)"
+            done
+            exit 1
+          fi
           echo "ASC_KEY_ID_OK=${KEY_ID}" >> "$GITHUB_ENV"
           echo "ASC_KEY_PATH=${DEST}"    >> "$GITHUB_ENV"
-          echo "열쇠 확인 완료 · 키 ID ${KEY_ID}"
 
       - name: 배포용 인증서·프로파일 받아 오기
         env:
