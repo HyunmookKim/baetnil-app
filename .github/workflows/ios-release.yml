@@ -79,10 +79,25 @@ jobs:
         run: |
           set -e
           mkdir -p ~/private_keys
-          printf '%s' "$P8" > ~/private_keys/AuthKey_${KEY_ID}.p8
-          chmod 600 ~/private_keys/AuthKey_${KEY_ID}.p8
-          head -1 ~/private_keys/AuthKey_${KEY_ID}.p8 | grep -q 'BEGIN PRIVATE KEY' \
-            || { echo '::error::ASC_KEY_P8 이 .p8 파일 내용이 아닙니다'; exit 1; }
+          DEST=~/private_keys/AuthKey_${KEY_ID}.p8
+          printf '%s' "$P8" > /tmp/p8.raw
+          # 윈도우 줄바꿈(CR)·BOM·앞뒤 빈 줄을 털어 낸다
+          tr -d '\r' < /tmp/p8.raw | sed $'1s/^\xEF\xBB\xBF//' | sed -e '/./,$!d' > /tmp/p8.clean
+          if grep -q 'BEGIN PRIVATE KEY' /tmp/p8.clean; then
+            cp /tmp/p8.clean "$DEST"
+          else
+            # base64 로 붙여 넣은 경우도 받아 준다
+            tr -d '[:space:]' < /tmp/p8.clean > /tmp/p8.b64
+            base64 --decode -i /tmp/p8.b64 -o "$DEST" 2>/dev/null || true
+          fi
+          chmod 600 "$DEST" 2>/dev/null || true
+          if ! grep -q 'BEGIN PRIVATE KEY' "$DEST" 2>/dev/null; then
+            echo "::error::ASC_KEY_P8 이 .p8 파일 내용이 아닙니다."
+            echo "받은 값: $(wc -c < /tmp/p8.clean) 바이트 · $(wc -l < /tmp/p8.clean) 줄 · BEGIN 있음? $(grep -c 'BEGIN' /tmp/p8.clean || true)"
+            echo "AuthKey_XXXXXXXXXX.p8 파일을 메모장으로 열어 -----BEGIN PRIVATE KEY----- 부터 -----END PRIVATE KEY----- 까지 전부 붙여 넣으십시오."
+            exit 1
+          fi
+          echo "열쇠 확인 완료 ($(wc -l < "$DEST") 줄)"
 
       - name: 보관본 만들기 (archive)
         working-directory: ios/App
