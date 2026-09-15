@@ -64,6 +64,18 @@
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>항적 지도나 기록 화면을 사진으로 저장할 때 사용합니다.</string>
 
+	<!-- 달력 : 출항 예정을 폰 달력에 넣어 드리는 기능 -->
+	<key>NSCalendarsUsageDescription</key>
+	<string>출항 예정을 폰 달력에 넣어 드리기 위해 달력을 씁니다.</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>출항 예정을 폰 달력에 넣고 읽기 위해 달력을 씁니다.</string>
+	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
+	<string>출항 예정을 폰 달력에 넣어 드리기 위해 달력을 씁니다.</string>
+	<key>NSRemindersUsageDescription</key>
+	<string>정비 때를 미리 알려 드리기 위해 미리 알림을 씁니다.</string>
+	<key>NSRemindersFullAccessUsageDescription</key>
+	<string>정비 때를 미리 알려 드리기 위해 미리 알림을 씁니다.</string>
+
 	<!-- 암호화 : 표준 HTTPS 만 씁니다 -->
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
