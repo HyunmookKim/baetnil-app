@@ -46,4 +46,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)
     }
 
+
+    // ★★★ 알림(푸시) — 이 두 줄이 없으면 아이폰에서 알림이 영영 안 온다.
+    //
+    //   애플은 알림 열쇠(기기 토큰)를 「나중에」 AppDelegate 로 건네준다.
+    //   Capacitor 의 알림 부품은 그걸 직접 못 받고, AppDelegate 가
+    //   NotificationCenter 로 넘겨 주기를 기다린다.
+    //   넘겨 주는 줄이 없으면 부품은 아무 말 없이 계속 기다리기만 하고,
+    //   앱 화면에는 「알림을 켜지 못했습니다」 로만 뜨게 된다.
+    //   ── 2026-09-15 확인. 그동안 이 줄이 통째로 빠져 있었다.
+    func application(_ application: UIApplication,
+                     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        NotificationCenter.default.post(name: .capacitorDidRegisterForRemoteNotifications,
+                                        object: deviceToken)
+    }
+
+    func application(_ application: UIApplication,
+                     didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        NotificationCenter.default.post(name: .capacitorDidFailToRegisterForRemoteNotifications,
+                                        object: error)
+    }
+
 }
