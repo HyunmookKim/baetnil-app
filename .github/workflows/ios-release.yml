@@ -108,8 +108,24 @@ jobs:
             echo '-----END PRIVATE KEY-----'
           } > "$DEST"
           chmod 600 "$DEST"
-          openssl pkey -in "$DEST" -noout 2>/dev/null \
-            || { echo '::error::.p8 열쇠를 읽지 못했습니다. 파일 내용이 온전하지 않습니다.'; exit 1; }
+          if ! openssl pkey -in "$DEST" -noout 2>/dev/null; then
+            echo "::error::.p8 열쇠를 읽지 못했습니다."
+            body_of () { sed -e 's/-----BEGIN PRIVATE KEY-----//g' -e 's/-----END PRIVATE KEY-----//g' "$1" | tr -d '[:space:]' | wc -c | tr -d ' '; }
+            echo "ASC_KEY_P8  : $(wc -c < /tmp/a | tr -d ' ') 바이트 · BEGIN $(grep -c 'BEGIN PRIVATE KEY' /tmp/a || true) · END $(grep -c 'END PRIVATE KEY' /tmp/a || true) · 알맹이 $(body_of /tmp/a) 글자"
+            echo "ASC_KEY_ID  : $(wc -c < /tmp/b | tr -d ' ') 바이트 · BEGIN $(grep -c 'BEGIN PRIVATE KEY' /tmp/b || true) · END $(grep -c 'END PRIVATE KEY' /tmp/b || true) · 알맹이 $(body_of /tmp/b) 글자"
+            echo "정상이면 알맹이가 184 글자쯤 됩니다."
+            # 다른 쪽 값으로도 한 번 더 해 본다
+            for CAND in /tmp/a /tmp/b; do
+              B=$(sed -e 's/-----BEGIN PRIVATE KEY-----//g' -e 's/-----END PRIVATE KEY-----//g' "$CAND" | tr -d '[:space:]')
+              { echo '-----BEGIN PRIVATE KEY-----'; printf '%s' "$B" | fold -w 64; echo; echo '-----END PRIVATE KEY-----'; } > /tmp/try.p8
+              if openssl pkey -in /tmp/try.p8 -noout 2>/dev/null; then
+                echo "→ $CAND 쪽이 올바른 열쇠였습니다. 그걸로 갑니다."
+                cp /tmp/try.p8 "$DEST"; chmod 600 "$DEST"
+                break
+              fi
+            done
+            openssl pkey -in "$DEST" -noout 2>/dev/null || exit 1
+          fi
           echo "ASC_KEY_ID_OK=${KEY_ID}"   >> "$GITHUB_ENV"
           echo "ASC_KEY_PATH=${DEST}"      >> "$GITHUB_ENV"
           echo "열쇠 확인 완료 · 키 ID ${KEY_ID} · $(wc -l < "$DEST") 줄"
