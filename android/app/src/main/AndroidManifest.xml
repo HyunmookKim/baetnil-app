@@ -41,11 +41,27 @@
     <!-- 항적 자동 기록 (위치정보법 신고 대상 기능) -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!-- ★ 화면이 꺼져 있어도 위치를 받으려면 이것이 있어야 한다 (안드로이드 10+) -->
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <!-- ★★★ 4.130 — ACCESS_BACKGROUND_LOCATION 을 뺐다 (사장님 승인, 2026-09-11)
+         전에 「화면이 꺼져 있어도 위치를 받으려면 이것이 있어야 한다」 고 적고 넣었는데 **틀렸다.**
+         안드로이드 공식 문서(Foreground service types)가 이렇게 적고 있다 —
+           · location 유형 전경 서비스에 필요한 것은 ACCESS_COARSE/FINE_LOCATION 중 하나뿐이다.
+           · ACCESS_BACKGROUND_LOCATION 은 **앱이 이미 백그라운드에 있을 때 그 서비스를 시작**하려는
+             경우에만 필요하다.
+         뱃일은 사람이 앱 안에서 [항적 기록 시작] 을 누를 때만 시작한다 — 늘 앱이 화면에 있다.
+         게다가 항적 부품(@capacitor-community/background-geolocation)은 이 권한을
+         **런타임에 요청조차 안 한다**(@Permission 에 COARSE·FINE 둘뿐). 받은 적이 없는 권한이었다.
+         ★ 그런데 구글은 명세에 이 이름이 있다는 것만으로 백그라운드 위치 확장 심사(1~3주)와
+           시연 영상을 요구한다. 쓰지도 않는 권한 때문에 출시가 3주 늦어질 까닭이 없다.
+         ★ 화면을 꺼도 기록되게 하는 것은 이 권한이 아니라 아래 WAKE_LOCK 과 전경 서비스다. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!-- ★ 안드로이드 14+ 는 위치용 전경 서비스를 따로 선언해야 한다 -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
     <!-- ★ 상시 알림을 띄우려면 필요하다 (안드로이드 13+) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- ★★★ 4.125 — 항해 기록 동안 CPU 를 깨워 둔다.
+         부품(background-geolocation)은 웨이크락을 안 잡고, 받은 자리를 쌓아 두지도 않는다.
+         곧바로 웹뷰의 자바스크립트로 넘긴다. 화면을 끄면 그 자바스크립트가 얼어서
+         서비스는 살아 있는데도 자리가 그대로 버려진다 — 사장님 항적이 비었던 그것이다.
+         달리기 기록 앱들이 다 하는 그대로, 기록하는 동안만 CPU 를 깨워 둔다. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 </manifest>
