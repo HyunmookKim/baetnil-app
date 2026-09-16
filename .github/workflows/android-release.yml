@@ -120,6 +120,9 @@ jobs:
             echo "keyAlias=$ALIAS"
             echo "keyPassword=$KEYPW"
           } > android/keystore.properties
+          # 비밀번호는 지우고, gradle 이 볼 자리만 찍어 본다
+          sed 's/Password=.*/Password=(가림)/' android/keystore.properties
+          ls -l "$RUNNER_TEMP/baetnil.jks"
           echo "열쇠 준비 완료"
 
       - name: AAB 짓기
@@ -133,7 +136,12 @@ jobs:
           set -e
           AAB=$(ls android/app/build/outputs/bundle/release/*.aab | head -1)
           echo "만든 파일: $AAB ($(du -h "$AAB" | cut -f1))"
-          unzip -l "$AAB" | grep -q 'META-INF/.*\.RSA\|META-INF/.*\.EC\|META-INF/MANIFEST.MF' \
+          echo "── AAB 안의 META-INF ──"
+          unzip -l "$AAB" | grep -i 'META-INF' || echo "(META-INF 항목이 하나도 없습니다)"
+          echo "── jarsigner 가 한 말 ──"
+          jarsigner -verify "$AAB" > /tmp/verify.txt 2>&1 || true
+          head -20 /tmp/verify.txt
+          grep -q 'jar verified' /tmp/verify.txt \
             || { echo "::error::서명이 안 붙었습니다."; exit 1; }
           echo "AAB_PATH=$AAB" >> "$GITHUB_ENV"
 
