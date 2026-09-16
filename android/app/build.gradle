@@ -1,5 +1,44 @@
 apply plugin: 'com.android.application'
 
+// ══════════════════════════════════════════════════════════════════════
+// ★★★ 4.130 — 스토어에 낼 파일에 서명하기 (2026-09-11)
+//
+//   구글 플레이는 서명 안 된 파일을 안 받습니다. 서명에 쓰는 열쇠(키스토어)는
+//   **잃어버리면 앱을 영영 업데이트할 수 없습니다.** 그래서 규칙을 셋 둡니다.
+//
+//   ① 열쇠 파일과 비밀번호는 **이 파일에 안 적습니다.**
+//      바로 옆의 keystore.properties 에서 읽습니다. 그 파일은 git 에 안 올라갑니다.
+//   ② keystore.properties 가 없으면 **서명 없이 그냥 짓습니다.**
+//      다른 컴퓨터에서도, 사장님이 열쇠를 안 만드셨어도 빌드가 멈추지 않습니다.
+//   ③ 열쇠 파일은 프로젝트 **밖**에 둡니다 (C:\baetnil\keys\).
+//      실수로 깃허브에 올라갈 자리에 두지 않습니다.
+// ══════════════════════════════════════════════════════════════════════
+def 열쇠집 = rootProject.file('keystore.properties')
+def 열쇠 = new Properties()
+if (열쇠집.exists()) { 열쇠집.withInputStream { 열쇠.load(it) } }
+def 서명가능 = 열쇠집.exists() && 열쇠['storeFile'] && file(열쇠['storeFile'].toString()).exists()
+
+// ── 앱 안의 APP_VER 를 읽는다 (판 번호를 두 곳에 적지 않는다)
+def 앱판 = {
+    def f = file("${projectDir}/src/main/assets/public/index.html")
+    if (!f.exists()) return "0.0"
+    def v = "0.0"
+    f.withReader("UTF-8") { r ->
+        String line
+        while ((line = r.readLine()) != null) {
+            def m = line =~ /const APP_VER = '([^']+)'/
+            if (m.find()) { v = m.group(1); return }
+        }
+    }
+    return v
+}
+def 앱판코드 = {
+    def p = 앱판().split("\\.")
+    def 큰 = (p.length > 0) ? (p[0] as Integer) : 0
+    def 작은 = (p.length > 1) ? (p[1] as Integer) : 0
+    return 큰 * 1000 + 작은
+}
+
 android {
     namespace "kr.baetnil.app"
     compileSdk rootProject.ext.compileSdkVersion
@@ -7,8 +46,12 @@ android {
         applicationId "kr.baetnil.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        // ★★★ 4.130 — 판 번호를 **앱 안의 APP_VER 에서 그대로 읽는다.**
+        //   두 곳에 적으면 반드시 갈라진다. 그리고 구글은 versionCode 가
+        //   **늘 커지기만** 할 것을 요구한다 — 한 번 올린 번호는 다시 못 쓴다.
+        //   4.130 → versionName "4.130" · versionCode 4130 (4*1000 + 130)
+        versionCode 앱판코드()
+        versionName 앱판()
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -16,10 +59,22 @@ android {
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            if (서명가능) {
+                storeFile     file(열쇠['storeFile'].toString())
+                storePassword 열쇠['storePassword'].toString()
+                keyAlias      열쇠['keyAlias'].toString()
+                keyPassword   열쇠['keyPassword'].toString()
+            }
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // ★ 열쇠가 있을 때만 붙인다. 없으면 서명 없이 지어진다(스토어에는 못 낸다).
+            if (서명가능) { signingConfig signingConfigs.release }
         }
     }
 }
@@ -51,4 +106,46 @@ try {
     }
 } catch(Exception e) {
     logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+}
+
+
+// ══════════════════════════════════════════════════════════════════════
+// ★ 지은 파일(APK)을 늘 같은 자리에 내놓는다 — 사장님 요청, 2026-09-11
+//   「빌드 누르면 파일이 저장되는 위치를 바꿀 수 없냐」
+//
+//   안드로이드 스튜디오에는 그 칸이 없다. 자리를 정하는 것은 Gradle 이다.
+//   Build ▸ Generate APKs 도, ▶ 도, gradlew assembleDebug 도 결국 같은 일을
+//   부르므로 여기 한 곳만 두면 **어느 길로 지어도 같은 자리**에 떨어진다.
+//
+//   ★ 자리를 바꾸시려면 바로 아래 APK_OUT 줄 하나만 고치시면 됩니다.
+//   ★ 그 자리가 없는 컴퓨터에서는 조용히 건너뜁니다 — 빌드는 그대로 됩니다.
+//   ★ 본디 자리(app/build/outputs/apk/debug)에도 그대로 남습니다. 옮기는 게 아니라 복사입니다.
+// ══════════════════════════════════════════════════════════════════════
+ext.APK_OUT = 'G:/내 드라이브/뱃일'
+
+tasks.matching { it.name == 'assembleDebug' || it.name == 'assembleRelease' }.configureEach {
+    doLast {
+        def outDir = new File(project.APK_OUT.toString())
+        def drive = outDir.toPath().getRoot()
+        if (drive != null && !drive.toFile().exists()) {
+            logger.lifecycle("[뱃일] " + outDir + " 를 못 찾아 복사를 건너뜁니다.")
+            return
+        }
+        // 판 번호는 앱 안의 APP_VER 를 그대로 읽는다 — 두 곳에 적으면 언젠가 갈라진다
+        def ver = "unknown"
+        def html = file("src/main/assets/public/index.html")
+        if (html.exists()) {
+            def m = (html.getText("UTF-8") =~ /const APP_VER = '([^']+)'/)
+            if (m.find()) { ver = m.group(1) }
+        }
+        def kind = (name == "assembleDebug") ? "debug" : "release"
+        def fromDir = new File(project.layout.buildDirectory.get().asFile, "outputs/apk/" + kind)
+        def apk = fromDir.listFiles()?.find { it.name.endsWith(".apk") }
+        if (apk == null) { return }
+        outDir.mkdirs()
+        def dst = new File(outDir, "baetnil-" + ver + ".apk")
+        java.nio.file.Files.copy(apk.toPath(), dst.toPath(),
+            java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+        logger.lifecycle("[뱃일] " + dst + " 에 넣었습니다.")
+    }
 }
