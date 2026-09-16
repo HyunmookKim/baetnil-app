@@ -48,6 +48,21 @@ jobs:
       - name: npm 설치
         run: npm ci || npm install
 
+      - name: ★ 앱 판 번호 확인 (4.131 사고를 되풀이하지 않는 자리)
+        run: |
+          set -e
+          F=www/index.html
+          [ -f "$F" ] || { echo "::error::www/index.html 이 없습니다."; exit 1; }
+          VER=$(grep -o "const APP_VER = '[^']*'" "$F" | head -1 | sed "s/.*'\(.*\)'/\1/")
+          [ -n "$VER" ] || { echo "::error::www/index.html 에서 APP_VER 를 못 찾았습니다."; exit 1; }
+          WANT='${{ inputs.marketing_version }}'
+          echo "깃허브 www 속 앱 판 번호: $VER · 넣으신 판 번호: $WANT"
+          echo "## 뱃일 $VER (빌드 ${{ github.run_number }})" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$VER" != "$WANT" ]; then
+            echo "::error::www 속은 $VER 인데 $WANT 로 내려 하십니다. 겉 번호만 새것이고 속은 옛것이 됩니다."
+            exit 1
+          fi
+
       - name: 파이어베이스 설정 파일 놓기
         env:
           PLIST: ${{ secrets.GOOGLE_SERVICE_PLIST }}
