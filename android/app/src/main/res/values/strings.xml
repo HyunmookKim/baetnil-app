@@ -1,8 +1,13 @@
 <?xml version='1.0' encoding='utf-8'?>
+<!-- ★ 여기는 「어느 나라 폰이든」 쓰는 기본값이다.
+     4.113 까지 이 자리에 한국어 「뱃일」 이 있어서, 일본·러시아 폰의 아이콘 밑과
+     설정 › 앱 목록에 한글이 그대로 찍혔다. 일본 사람은 그 글자를 읽지 못한다.
+     기본은 어디서나 읽히는 Baetnil 로 두고, 한국어 폰만 values-ko 가 뱃일로 덮는다. -->
 <resources>
-    <string name="app_name">뱃일</string>
-    <string name="title_activity_main">뱃일</string>
+    <string name="app_name">Baetnil</string>
+    <string name="title_activity_main">Baetnil</string>
     <string name="package_name">kr.baetnil.app</string>
     <string name="custom_url_scheme">kr.baetnil.app</string>
-    <string name="capacitor_background_geolocation_notification_channel_name">항해 기록</string>
+    <!-- ★ 이 이름은 폰의 「설정 › 알림」 화면에 그대로 나온다. 나라말이라야 한다. -->
+    <string name="capacitor_background_geolocation_notification_channel_name">Voyage recording</string>
 </resources>
