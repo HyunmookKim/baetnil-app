@@ -93,7 +93,7 @@ jobs:
           else
             base64 --decode /tmp/gs.raw > android/app/google-services.json
           fi
-          node -e "JSON.parse(require('fs').readFileSync('android/app/google-services.json','utf8'));console.log('google-services.json 읽힙니다')"
+          node -e "const d=JSON.parse(require('fs').readFileSync('android/app/google-services.json','utf8'));const h=d.client.flatMap(c=>(c.oauth_client||[]).filter(o=>o.client_type===1).map(o=>o.android_info.certificate_hash));console.log('google-services.json 읽힙니다 — 등록된 열쇠 지문 '+h.length+'개');h.sort().forEach(x=>console.log('  '+x));"
 
       - name: cap sync android
         run: npx cap sync android
