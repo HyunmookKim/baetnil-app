@@ -24,6 +24,18 @@
 
         </activity>
 
+        <!-- ★★★ 5.3 — 항적 점을 자바 쪽에 쌓아 두는 전경 서비스.
+             까닭은 BaetnilTrackService.java 머리말에 적어 두었다 (사장님 백업을 세어 본 것).
+             ★ location 유형이라고 밝혀야 안드로이드 14+ 가 위치를 준다.
+             ★ 사람이 앱 안에서 [기록 시작] 을 눌러야만 켜진다 —
+               그래서 ACCESS_BACKGROUND_LOCATION 이 필요 없다(구글 별도 심사도 없다). -->
+        <service
+            android:name=".BaetnilTrackService"
+            android:enabled="true"
+            android:exported="false"
+            android:stopWithTask="false"
+            android:foregroundServiceType="location" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
