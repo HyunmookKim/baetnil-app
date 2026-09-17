@@ -16749,6 +16749,82 @@ async function trkOpenBattery(){
   const W = wakeP(); if(!W) return false;
   try{ await W.openBattery(); return true; }catch(_){ return false; }
 }
+// ══════════════════════════════════════════════════════════════════
+// ★★★ 5.3 — 점을 **자바 쪽에 쌓아 두고** 앱이 깨면 가져온다
+//
+//   ★ 왜 — 사장님 백업의 점 190개를 하나씩 세어 보고 (2026-09-17)
+//     8/28  137점 / 150분 = 32초에 한 점   ← 그날은 화면을 켜 두고 계셨다
+//     9/14   21점 /  85분 = 시간당 15개
+//     9/15    7점 / 123분 = 시간당  3개 · 한 번은 **70분** 동안 한 점도 없음
+//     9/17    7점 /  41분 = 시간당 10개
+//     살아남은 점의 정확도는 절반이 5m 안이다 — **우리 거르개가 버린 것이 아니다.**
+//     그리고 14분 빈 뒤 다음 점이 **20초** 만에 들어온다. 위성은 잡혀 있었고
+//     **앱이 자고 있었다**는 자국이다.
+//
+//   ★ 뱃일은 캐퍼시터 앱이다 — 겉은 자바, 화면은 웹뷰다.
+//     위치 부품은 받은 자리를 쌓아 두지 않고 **곧바로 웹뷰의 자바스크립트로 넘긴다.**
+//     화면을 끄면 안드로이드가 그 웹뷰를 얼린다. 자바는 살아 있고 GPS 도 도는데
+//     넘겨받을 쪽이 자고 있어서 그 점들이 그대로 버려진다.
+//     4.125 의 웨이크락으로 반쯤 막았지만, 웹뷰는 웨이크락과 따로 얼 수 있다.
+//
+//   ★ 그래서 자바 쪽(BaetnilTrackService)이 **웹뷰를 거치지 않고** 파일에 쌓는다.
+//     여기서는 깨어날 때마다 가져와서, **여태 쓰던 그 문(trkPush)** 에 그대로 넣는다.
+//     거르개·떨림고르개·30m 문이 다 그대로 걸린다 — 새 길을 만들지 않는다.
+//   ★ 부품도 그대로 둔다. 깨어 있는 동안은 그쪽이 곧바로 그려 주는 편이 낫다.
+//     같은 자리가 두 번 들어와도 30m 문에서 걸러지므로 겹치지 않는다.
+// ══════════════════════════════════════════════════════════════════
+function trkP(){
+  try{ return (window.Capacitor && window.Capacitor.Plugins
+               && window.Capacitor.Plugins.BaetnilTrack) || null; }catch(e){ return null; }
+}
+async function trkBufStart(){
+  const P = trkP(); if(!P) return false;
+  try{
+    const r = await P.start({ title: t('뱃일 — 항해 기록 중'),
+                              text:  t('항적을 기록하고 있습니다. 입항을 기록하면 멈춥니다.') });
+    return !!(r && r.started);
+  }catch(_){ return false; }
+}
+async function trkBufStop(){
+  const P = trkP(); if(!P) return;
+  try{ await P.stop(); }catch(_){}
+}
+// ★ 가져오면서 비운다. 두 번 가져가 같은 점이 두 번 담기지 않는다.
+let trkDraining = false;
+async function trkBufDrain(){
+  const P = trkP();
+  if(!P || !trkNow || trkDraining) return 0;
+  trkDraining = true;
+  let n = 0;
+  try{
+    const r = await P.drain();
+    const arr = (r && r.pts) || [];
+    if(arr.length){
+      arr.sort((a, b) => (Number(a.t) || 0) - (Number(b.t) || 0));
+      // ★ 이미 담아 둔 마지막 점보다 앞선 것은 버린다 —
+      //   깨어 있는 동안 부품이 담은 것과 시간이 겹치기 때문이다.
+      const last  = trkNow.pts[trkNow.pts.length - 1];
+      const lastT = last ? (Date.parse(last.t) || 0) : 0;
+      for(let i = 0; i < arr.length; i++){
+        const q = arr[i];
+        if(!q || !isFinite(q.la) || !isFinite(q.lo) || !isFinite(q.t)) continue;
+        if(Number(q.t) <= lastT) continue;
+        const ok = trkPush({
+          latitude:  Number(q.la),
+          longitude: Number(q.lo),
+          accuracy:  (q.ac == null ? null : Number(q.ac)),
+          speed:     (q.sp == null ? null : Number(q.sp)),
+          bearing:   (q.br == null ? null : Number(q.br)),
+          time:      new Date(Number(q.t)).toISOString(),
+          simulated: q.mk === 1
+        });
+        if(ok) n++;
+      }
+    }
+  }catch(_){}
+  trkDraining = false;
+  return n;
+}
 // ★ 앱이 죽어도 기록 중이던 것이 남아야 한다. 배 위에서 앱이 한 번 꺼지면
 //   그 항해 항적을 통째로 잃는다.
 function trkKeep(){
@@ -16874,6 +16950,10 @@ function trkWatchStart(){
   if(trkWatchTimer) return;
   trkWatchTimer = setInterval(() => {
     if(!trkNow){ trkWatchStop(); return; }
+    // ★★★ 5.3 — 자바 쪽에 쌓인 점을 가져온다.
+    //   웹뷰가 얼어 있는 동안은 이 타이머도 안 돈다. 안드로이드가 잠깐 녹여 줄 때마다
+    //   여기가 돌면서 그동안 쌓인 것을 통째로 담는다.
+    try{ trkBufDrain(); }catch(_){}
     try{ const el = document.getElementById('trkcnt'); if(el) trkLive(); }catch(_){}
   }, 60000);
 }
@@ -17141,6 +17221,10 @@ async function trkAttach(){
       //   (받은 뒤 TRK_DIST 문에서 다시 걸러지므로 저장량은 늘지 않는다)
       distanceFilter: TRK_ASK
     }, (pos, err) => { if(err) trkErr(err); else trkPush(pos); });
+    // ★★★ 5.3 — 자바 쪽 쌓아 두기도 같이 켠다. 웹뷰가 얼어도 점은 파일에 쌓인다.
+    //   ★ 먼저 한 번 비워 온다 — 앱이 죽어 있던 동안 쌓인 것이 있다.
+    try{ await trkBufStart(); }catch(_){}
+    try{ await trkBufDrain(); }catch(_){}
     trkKeep();
     return true;
   }catch(e){ return false; }
@@ -17367,6 +17451,10 @@ async function trkStopSay(){
 }
 
 async function trkStop(){
+  // ★★★ 5.3 — **비우는 것이 먼저다.** trkNow 를 null 로 만든 뒤에 가져오면
+  //   trkBufDrain 이 담을 곳을 잃어 마지막 몇 분이 통째로 사라진다.
+  try{ await trkBufDrain(); }catch(_){}
+  try{ await trkBufStop(); }catch(_){}
   const cur = trkNow;
   // ★★★ 4.125 — 놓는 것을 잊으면 배터리를 항해가 끝난 뒤에도 계속 먹는다.
   //   켜는 자리는 하나(trkStart), 놓는 자리도 하나(여기)다.
@@ -24747,7 +24835,7 @@ function lkAdd(rect, zone, label){
 // 도형은 그림일 뿐이고, 물품은 수납칸에만 들어간다.
 // 앱 버전. 여기 한 곳만 고치면 화면 표시가 따라온다.
 // sw.js 의 캐시 이름(baetnil-x.y)과 같아야 한다 — 검사에서 확인한다.
-const APP_VER = '5.2';
+const APP_VER = '5.3';
 // 수납칸 모양. 좌표(x,y,w,h)는 그대로 두고 겉모습만 바꾼다 —
 // 옛 칸은 shape 가 없으므로 저절로 네모가 된다.
 const LK_SHAPES = [
@@ -46873,6 +46961,9 @@ function appHidden(){
   }catch(_){}
 }
 function appVisible(){
+  // ★★★ 5.3 — 얼었다 깬 그 순간에 쌓인 점을 곧바로 가져온다.
+  //   1분 타이머를 기다리면 그 사이에 사람이 입항을 눌러 버릴 수 있다.
+  try{ trkBufDrain(); }catch(_){}
   try{ trkBgShow(); }catch(_){}
   try{
     if(cloud && Date.now() - lastPullAt > PULL_AGAIN_MS) cloudPull().catch(()=>{});
