@@ -125,27 +125,40 @@ ext.APK_OUT = 'G:/내 드라이브/뱃일'
 
 tasks.matching { it.name == 'assembleDebug' || it.name == 'assembleRelease' }.configureEach {
     doLast {
-        def outDir = new File(project.APK_OUT.toString())
-        def drive = outDir.toPath().getRoot()
-        if (drive != null && !drive.toFile().exists()) {
-            logger.lifecycle("[뱃일] " + outDir + " 를 못 찾아 복사를 건너뜁니다.")
+        // ★ 이 복사는 사장님 PC 에서만 하는 덤이다 — 5.3 에서 고침
+        //   깃허브는 리눅스라 G: 라는 드라이브가 아예 없다. 예전에 막아 두려고
+        //   둔 toPath().getRoot() 는 리눅스에서 null 이라 헛돌았고, 그 바람에
+        //   다 지어 놓은 APK 를 복사하다 빌드 전체가 죽었다.
+        if (!System.getProperty("os.name").toLowerCase().contains("windows")) {
+            logger.lifecycle("[뱃일] 윈도우가 아니라 APK 복사를 건너뜁니다.")
             return
         }
-        // 판 번호는 앱 안의 APP_VER 를 그대로 읽는다 — 두 곳에 적으면 언젠가 갈라진다
-        def ver = "unknown"
-        def html = file("src/main/assets/public/index.html")
-        if (html.exists()) {
-            def m = (html.getText("UTF-8") =~ /const APP_VER = '([^']+)'/)
-            if (m.find()) { ver = m.group(1) }
+        try {
+            def outDir = new File(project.APK_OUT.toString())
+            def drive = outDir.toPath().getRoot()
+            if (drive != null && !drive.toFile().exists()) {
+                logger.lifecycle("[뱃일] " + outDir + " 를 못 찾아 복사를 건너뜁니다.")
+                return
+            }
+            // 판 번호는 앱 안의 APP_VER 를 그대로 읽는다 — 두 곳에 적으면 언젠가 갈라진다
+            def ver = "unknown"
+            def html = file("src/main/assets/public/index.html")
+            if (html.exists()) {
+                def m = (html.getText("UTF-8") =~ /const APP_VER = '([^']+)'/)
+                if (m.find()) { ver = m.group(1) }
+            }
+            def kind = (name == "assembleDebug") ? "debug" : "release"
+            def fromDir = new File(project.layout.buildDirectory.get().asFile, "outputs/apk/" + kind)
+            def apk = fromDir.listFiles()?.find { it.name.endsWith(".apk") }
+            if (apk == null) { return }
+            outDir.mkdirs()
+            def dst = new File(outDir, "baetnil-" + ver + ".apk")
+            java.nio.file.Files.copy(apk.toPath(), dst.toPath(),
+                java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+            logger.lifecycle("[뱃일] " + dst + " 에 넣었습니다.")
+        } catch (Exception e) {
+            // 복사는 덤이다 — 실패해도 빌드를 죽이지 않는다
+            logger.lifecycle("[뱃일] APK 복사를 못 했습니다(빌드는 그대로 됩니다): " + e.getMessage())
         }
-        def kind = (name == "assembleDebug") ? "debug" : "release"
-        def fromDir = new File(project.layout.buildDirectory.get().asFile, "outputs/apk/" + kind)
-        def apk = fromDir.listFiles()?.find { it.name.endsWith(".apk") }
-        if (apk == null) { return }
-        outDir.mkdirs()
-        def dst = new File(outDir, "baetnil-" + ver + ".apk")
-        java.nio.file.Files.copy(apk.toPath(), dst.toPath(),
-            java.nio.file.StandardCopyOption.REPLACE_EXISTING)
-        logger.lifecycle("[뱃일] " + dst + " 에 넣었습니다.")
     }
 }
