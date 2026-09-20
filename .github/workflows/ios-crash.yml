@@ -164,10 +164,19 @@ jobs:
             fs.writeFileSync(path.join(OUT, 이름 + '.txt'), 머리 + 알맹이 + '\n');
 
             // 어느 줄에서 죽었는지 한 줄 요약
-            const 첫줄 = String(알맹이).split('\n')
-              .find(l => /Exception Type|Termination|Thread 0 Crashed|reason:/i.test(l)) || '';
+            const 줄들 = String(알맹이).split('\n');
+            const 첫줄 = 줄들.find(l => /Exception Type|Termination|Thread 0 Crashed|reason:/i.test(l)) || '';
             요약.push(`${번호}  ${a.createdDate || '?'}  ${a.deviceModel || '?'}/${a.osVersion || '?'}  ${첫줄.trim().slice(0,120)}`);
-            console.log(`  ✓ ${이름}`);
+
+            // ★ 꾸러미를 안 열고도 여기서 바로 읽히게, 중요한 대목을 찍어 둔다.
+            const 중요 = 줄들.filter(l => /Exception Type|Exception Subtype|Termination Reason|Termination Description|abort\(\)|Application Specific Information|\*\*\* Terminating|reason:|Triggered by Thread/i.test(l));
+            const 시작 = 줄들.findIndex(l => /^Thread \d+ Crashed/.test(l));
+            console.log(`\n──── ${이름} ────`);
+            중요.slice(0, 12).forEach(l => console.log('   ' + l.trim().slice(0, 220)));
+            if (시작 >= 0) {
+              console.log('   ── 죽은 갈래의 맨 위 12줄 ──');
+              줄들.slice(시작, 시작 + 13).forEach(l => console.log('   ' + l.slice(0, 220)));
+            }
           }
 
           fs.writeFileSync(path.join(OUT,'00-읽을거리.txt'),
