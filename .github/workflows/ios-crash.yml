@@ -148,8 +148,8 @@ jobs:
             } else {
               fs.writeFileSync(path.join(OUT, 이름 + '.json'), JSON.stringify(log.json, null, 2));
               const la = (log.json && log.json.data && log.json.data.attributes) || {};
-              // 애플이 글을 바로 주기도 하고, 내려받을 주소를 주기도 한다 — 둘 다 받아 둔다.
-              const 글 = la.crashLog || la.log || la.text || la.content || '';
+              // 애플은 logText 라는 칸에 글을 통째로 준다 (2026-09-20 확인). 주소로 줄 때도 대비해 둔다.
+              const 글 = la.logText || la.crashLog || la.log || la.text || la.content || '';
               const 주소 = la.url || la.downloadUrl || la.crashLogUrl || '';
               if (글) {
                 알맹이 = String(글);
