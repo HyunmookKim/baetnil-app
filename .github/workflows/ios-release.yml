@@ -266,6 +266,15 @@ jobs:
             -authenticationKeyID "$ASC_KEY_ID_OK" \
             -authenticationKeyIssuerID "$ISSUER"
 
+      - name: 해독표(dSYM) 남겨 두기 — 충돌보고서를 사람 말로 읽기 위한 것
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dSYMs-${{ inputs.marketing_version }}-${{ github.run_number }}
+          path: ${{ runner.temp }}/App.xcarchive/dSYMs
+          if-no-files-found: warn
+          retention-days: 90
+
       - name: 만든 파일 남겨 두기
         if: always()
         uses: actions/upload-artifact@v4
