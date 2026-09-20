@@ -15571,6 +15571,8 @@ let me = null;              // {uid, email, name} 또는 null
 // ★ 로그아웃할 때 「누가 나였는지」 를 알아야 남의 배를 가릴 수 있다 (4.132)
 let lastUid = null;
 window.__onAuth = async u => {
+  // ★ 5.5 — 누구인지 정해졌다. 이 전에는 권유 카드를 그리지 않는다(위 authSeen 참조).
+  const 방금정해짐 = authSeenNow();
   me = u;
   // ★★★ 5.0 — 다른 것을 읽기 **전에** 옮긴다. 늦으면 앞사람 칸을 한 번 읽고 만다.
   try{ if(u) pMigrate(); }catch(_){}
@@ -15585,7 +15587,9 @@ window.__onAuth = async u => {
           try{ setSync('오프라인 · 로컬'); }catch(_){}
           try{ dropGuestBoats(lastUid); }catch(_){}
           try{ pWipeDevice(); }catch(_){}     // ★ 5.0 — 개인 칸도 같이 내린다
-          lastUid = null; }
+          lastUid = null;
+          // ★ 5.5 — 로그인 안 한 것이 **정해진** 순간이다. 이제 그려야 한다.
+          if(방금정해짐){ try{ renderCurrent(); }catch(_){} } }
   if(u) lastUid = u.uid;
   // ★ 로그인해야 「누구에게 보낼지」가 정해진다. 로그인한 그때 이 폰을 등록한다.
   //   알림을 이미 켜 둔 사람만 한다 — 허락을 새로 묻지 않는다.
@@ -15688,6 +15692,30 @@ function applyAccount(){
 //   옛 칸은 로그인한 그 순간 **한 번만 옮겨 오고 지웁니다**(pMigrate).
 //   안 지우면 다음 사람이 또 그것을 물려받습니다 — 그것이 이 버그의 모양입니다.
 // ══════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════
+// ★★★ 5.5 — 「그만 보기」 한 권유 카드가 켤 때마다 잠깐 떴다 사라지던 것
+//   (사장님 지적, 2026-09-20)
+//
+//   ★ 까닭 — 개인 칸은 pKey() 가 **계정 번호를 붙여** 담는다(bt_start_<uid>).
+//     앱을 켜면 파이어베이스가 「누구인지」를 알려 주기까지 1~2초 걸린다.
+//     그 사이 me 가 없으니 pGet('bt_start') 는 접미사 없는 칸을 읽고 **null** 을 본다.
+//     그래서 「아직 안 껐다」 로 보고 카드를 그린다. 잠시 뒤 계정이 정해지면
+//     그제야 'hide' 를 읽고 지운다 — 그것이 깜빡임이다.
+//
+//   ★ 고치는 법 — **누구인지 정해지기 전에는 권유 카드를 아예 안 그린다.**
+//     지웠다가 그리는 대신 늦게 그린다. 이미 끄신 분께는 끝내 안 나온다.
+//   ★ 파이어베이스가 아예 안 뜨는 기기(웹이 막힌 곳)에서 영영 안 나오면 안 되므로,
+//     5초가 지나면 정해진 것으로 치고 그린다.
+// ══════════════════════════════════════════════════════════════════════
+let authSeen = false;
+function authReady(){ return authSeen; }
+function authSeenNow(){
+  if(authSeen) return false;
+  authSeen = true;
+  return true;               // 「방금 처음 정해졌다」
+}
+setTimeout(()=>{ if(authSeenNow()){ try{ renderCurrent(); }catch(_){} } }, 5000);
+
 const PERSONAL_KEYS = ['bt_likes','bt_hidden','bt_hideby','bt_hidenm','bt_agree',
                        'bt_loclog','bt_start','bt_cvdone','bt_startmark','bt_startend',
                        'bt_crewmark','bt_cvoff','bt_market_ok','bt_talkreg','bt_seriesreq'];
@@ -24919,7 +24947,7 @@ function lkAdd(rect, zone, label){
 // 도형은 그림일 뿐이고, 물품은 수납칸에만 들어간다.
 // 앱 버전. 여기 한 곳만 고치면 화면 표시가 따라온다.
 // sw.js 의 캐시 이름(baetnil-x.y)과 같아야 한다 — 검사에서 확인한다.
-const APP_VER = '5.4';
+const APP_VER = '5.5';
 // 수납칸 모양. 좌표(x,y,w,h)는 그대로 두고 겉모습만 바꾼다 —
 // 옛 칸은 shape 가 없으므로 저절로 네모가 된다.
 const LK_SHAPES = [
@@ -28765,6 +28793,8 @@ function crewState(){
   return { 날씨:자리, 타기, n: [자리, 타기].filter(Boolean).length };
 }
 function crewCard(){
+  // ★ 5.5 — 누구인지 정해지기 전에는 안 그린다 (켤 때마다 깜빡이던 것)
+  if(!authReady()) return '';
   let 숨김 = false;
   숨김 = pGet('bt_start') === 'hide';
   if(숨김) return '';
@@ -28802,6 +28832,8 @@ function crewCard(){
         esc(t('그만 보기'))}</button></div></div>`;
 }
 function startCard(){
+  // ★ 5.5 — 누구인지 정해지기 전에는 안 그린다 (켤 때마다 깜빡이던 것)
+  if(!authReady()) return '';
   let 숨김 = false;
   숨김 = pGet('bt_start') === 'hide';
   if(숨김) return '';
@@ -28865,6 +28897,8 @@ function cvOfferSkip(){
   try{ renderHome(); }catch(_){}
 }
 function cvOfferCard(){
+  // ★ 5.5 — 누구인지 정해지기 전에는 안 그린다 (켤 때마다 깜빡이던 것)
+  if(!authReady()) return '';
   if(pGet('bt_cvoff') === 'hide') return '';
   if(pGet('bt_cvdone') === '1') return '';   // 이미 뽑아 보셨다
   if(!curBoat()) return '';
