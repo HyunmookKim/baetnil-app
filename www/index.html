@@ -5563,6 +5563,8 @@ const I18N = {
     '기록 중':'Recording',
     '{n}점':'{n} [[point|points]]',
     '{n}분째 위치가 안 들어옵니다':'no position for {n} [[minute|minutes]]',
+    '화면 끈 동안 {n}점':'{n} [[point|points]] while the screen was off',
+    '뒤쪽 기록이 꺼져 있습니다':'background recording is off',
     '알림이 떠 있는 동안 기록됩니다. 알림을 지우면 기록도 멈춥니다.':'Recording continues while the notification is shown. Dismissing it stops the recording.',
     '입항을 기록하면 저절로 멈추고 저장됩니다.':'It stops and saves by itself when you log your arrival.',
   
@@ -9018,6 +9020,8 @@ const I18N = {
     '기록 중':'Идёт запись',
     '{n}점':'точек: {n}',
     '{n}분째 위치가 안 들어옵니다':'координаты не поступают {n} [[минуту|минуты|минут]]',
+    '화면 끈 동안 {n}점':'{n} [[точка|точки|точек]] при выключенном экране',
+    '뒤쪽 기록이 꺼져 있습니다':'фоновая запись выключена',
     '알림이 떠 있는 동안 기록됩니다. 알림을 지우면 기록도 멈춥니다.':'Запись идёт, пока висит уведомление. Если его убрать, запись остановится.',
     '입항을 기록하면 저절로 멈추고 저장됩니다.':'Запись остановится и сохранится сама, когда вы отметите приход.',
   
@@ -12393,6 +12397,8 @@ const I18N = {
     '기록 중':'記録中',
     '{n}점':'{n}点',
     '{n}분째 위치가 안 들어옵니다':'{n}分間位置が届いていません',
+    '화면 끈 동안 {n}점':'画面を消している間に{n}点',
+    '뒤쪽 기록이 꺼져 있습니다':'バックグラウンド記録が止まっています',
     '알림이 떠 있는 동안 기록됩니다. 알림을 지우면 기록도 멈춥니다.':'通知が表示されている間、記録されます。通知を消すと記録も止まります。',
     '입항을 기록하면 저절로 멈추고 저장됩니다.':'入港を記録すると自動で停止し、保存されます。',
     '웹에서는 항적을 기록하지 않습니다. 앱으로 여셔야 합니다.':'ウェブでは航跡を記録しません。アプリで開いてください。',
@@ -16789,7 +16795,33 @@ async function trkBufStop(){
   const P = trkP(); if(!P) return;
   try{ await P.stop(); }catch(_){}
 }
-// ★ 가져오면서 비운다. 두 번 가져가 같은 점이 두 번 담기지 않는다.
+// ══════════════════════════════════════════════════════════════════
+// ★★★ 5.4 — 쌓인 점을 **시간순으로 끼워 넣는다** (2026-09-20, 사장님 제노아 시험 항해)
+//
+//   ★ 5.3 이 왜 하나도 안 고쳐졌나 — 여기가 틀렸다. 제 잘못이다.
+//     5.3 은 이렇게 적혀 있었다 —
+//         const lastT = 지금까지 담은 마지막 점의 시각;
+//         if (쌓인점.시각 <= lastT) continue;
+//     앱이 깨어나는 순간 위치 부품이 「지금 여기」 점을 **먼저** 하나 밀어 넣는다.
+//     그러면 lastT 가 현재 시각이 되고, 자바에 쌓여 있던 **지나간 점이 전부**
+//     이 줄에서 버려진다. 쌓인 것은 모두 과거 시각이기 때문이다.
+//     9/20 제노아 시험 항해가 그대로 이 모양이다 — 170분에 12점, 앱을 켤 때마다 딱 한 점.
+//     16:04 부터 16:46 까지 42분이 통째로 비었는데, 그 42분은 파일에 잘 쌓여 있었고
+//     여기서 다 쓸려 나갔다.
+//
+//   ★ 두 번째 잘못 — 지나간 점을 **목록 뒤에 붙였다.**
+//     trkPush 는 「앞 점에서 50m 움직였나」와 「이 배가 낼 수 없는 속도인가」를
+//     **바로 앞 점**과 견준다. 과거 점을 뒤에 붙이면 그 두 문이 시간을 거슬러 걸려
+//     통과해도 버려진다. 쌓인 점은 **끼워 넣어야** 한다.
+//
+//   ★ 그래서 여기서는 trkPush 를 쓰지 않는다. 거르개(지어낸 자리·기지국 자리·흐린 점)는
+//     같은 기준으로 여기서 직접 걸고, 이미 담은 점과 합쳐 **시각으로 세운 뒤**
+//     50m 문과 속도 문을 처음부터 다시 건다. 결과는 「처음부터 시간순으로 받았다면
+//     나왔을 그 목록」이다.
+//   ★ 떨림 고르개(칼만)는 여기서 안 쓴다 — 시간을 거슬러 먹이면 그쪽이 망가진다.
+//
+//   ★ 자바가 준 수와 담은 수를 항해에 남긴다. 이게 없어서 9/17 에도 에둘러 증명해야 했다.
+// ══════════════════════════════════════════════════════════════════
 let trkDraining = false;
 async function trkBufDrain(){
   const P = trkP();
@@ -16799,31 +16831,76 @@ async function trkBufDrain(){
   try{
     const r = await P.drain();
     const arr = (r && r.pts) || [];
+    trkNow.bufGot = (Number(trkNow.bufGot) || 0) + arr.length;
     if(arr.length){
-      arr.sort((a, b) => (Number(a.t) || 0) - (Number(b.t) || 0));
-      // ★ 이미 담아 둔 마지막 점보다 앞선 것은 버린다 —
-      //   깨어 있는 동안 부품이 담은 것과 시간이 겹치기 때문이다.
-      const last  = trkNow.pts[trkNow.pts.length - 1];
-      const lastT = last ? (Date.parse(last.t) || 0) : 0;
+      // ① 자바가 준 것을 앱이 쓰는 모양으로 바꾸면서, trkPush 와 **같은** 거르개를 건다
+      const cand = [];
       for(let i = 0; i < arr.length; i++){
         const q = arr[i];
         if(!q || !isFinite(q.la) || !isFinite(q.lo) || !isFinite(q.t)) continue;
-        if(Number(q.t) <= lastT) continue;
-        const ok = trkPush({
-          latitude:  Number(q.la),
-          longitude: Number(q.lo),
-          accuracy:  (q.ac == null ? null : Number(q.ac)),
-          speed:     (q.sp == null ? null : Number(q.sp)),
-          bearing:   (q.br == null ? null : Number(q.br)),
-          time:      new Date(Number(q.t)).toISOString(),
-          simulated: q.mk === 1
-        });
-        if(ok) n++;
+        if(q.mk === 1){ trkNow.mock = (Number(trkNow.mock) || 0) + 1; continue; }
+        const ac      = (q.ac == null ? NaN : Number(q.ac));
+        const hasMove = (q.sp != null) || (q.br != null);
+        const blurry  = !isFinite(ac) || ac > TRK_GPS_ACC;
+        if(!hasMove && blurry){ trkNow.net = (Number(trkNow.net) || 0) + 1; continue; }
+        if(isFinite(ac) && ac > TRK_ACC){ trkNow.blur = (Number(trkNow.blur) || 0) + 1; continue; }
+        const p = { la: +Number(q.la).toFixed(5), lo: +Number(q.lo).toFixed(5),
+                    t: new Date(Number(q.t)).toISOString() };
+        if(isFinite(ac)) p.ac = Math.round(ac);
+        cand.push(p);
+      }
+      if(cand.length){
+        const before = (trkNow.pts || []).length;
+        // ② 이미 담은 점과 합쳐 시각으로 세운다
+        const all = (trkNow.pts || []).concat(cand)
+          .filter(p => p && isFinite(p.la) && isFinite(p.lo) && p.t)
+          .sort((x, y) => (Date.parse(x.t) || 0) - (Date.parse(y.t) || 0));
+        // ③ 같은 시각은 하나만 남기고, 50m 문과 속도 문을 처음부터 다시 건다
+        const out = [];
+        let prevT = -1;
+        for(let i = 0; i < all.length; i++){
+          const p  = all[i];
+          const tt = Date.parse(p.t) || 0;
+          if(tt === prevT) continue;
+          const L = out[out.length - 1];
+          if(L && hav(L.la, L.lo, p.la, p.lo) * 1000 < TRK_DIST * 0.6) continue;
+          if(L && trkTooFast(L, p)) continue;
+          out.push(p); prevT = tt;
+        }
+        trkNow.pts = (out.length > TRK_MAX) ? trkSimplify(out, TRK_TOL) : out;
+        n = Math.max(0, trkNow.pts.length - before);
+        trkNow.bufAdd = (Number(trkNow.bufAdd) || 0) + n;
+        trkBufMark();
+        trkKeep();
+        try{ trkFlush(); }catch(_){}
+        try{ trkLive(); }catch(_){}
       }
     }
   }catch(_){}
   trkDraining = false;
   return n;
+}
+// ★ 자바 쪽이 몇 점을 주었고 그중 몇 점을 담았는지 항해에 남긴다.
+//   백업 한 번이면 「자바가 안 준 것」과 「내가 버린 것」이 갈린다.
+function trkBufMark(){
+  try{
+    if(!trkNow) return;
+    const it = (typeof voyage !== 'undefined' ? voyage : [])
+                 .find(v => String(v.id) === String(trkNow.vid));
+    if(!it) return;
+    it.trkSvc = { got: Number(trkNow.bufGot) || 0, add: Number(trkNow.bufAdd) || 0 };
+    saveMR();
+  }catch(_){}
+}
+// ★ 자바 쪽이 지금 돌고 있나 · 몇 바이트 쌓였나. 배 위에서 바로 보이게 한다.
+async function trkBufStat(){
+  const P = trkP(); if(!P || !trkNow) return null;
+  try{
+    const r = await P.status();
+    trkNow.bufRun   = !!(r && r.running);
+    trkNow.bufBytes = Number(r && r.bytes) || 0;
+    return r;
+  }catch(_){ return null; }
 }
 // ★ 앱이 죽어도 기록 중이던 것이 남아야 한다. 배 위에서 앱이 한 번 꺼지면
 //   그 항해 항적을 통째로 잃는다.
@@ -16954,6 +17031,7 @@ function trkWatchStart(){
     //   웹뷰가 얼어 있는 동안은 이 타이머도 안 돈다. 안드로이드가 잠깐 녹여 줄 때마다
     //   여기가 돌면서 그동안 쌓인 것을 통째로 담는다.
     try{ trkBufDrain(); }catch(_){}
+    try{ trkBufStat(); }catch(_){}
     try{ const el = document.getElementById('trkcnt'); if(el) trkLive(); }catch(_){}
   }, 60000);
 }
@@ -17127,7 +17205,13 @@ function trkQuietFor(){
 }
 function trkCountText(){
   if(!trkNow) return '';
-  const 글 = tsub('{n}점', { n: String((trkNow.pts || []).length) });
+  let 글 = tsub('{n}점', { n: String((trkNow.pts || []).length) });
+  // ★★★ 5.4 — 화면을 끈 동안 뒤에서 받아 온 점을 따로 적는다.
+  //   이게 0 으로 머물러 있으면 뒤쪽 기록이 일을 안 하고 있는 것이다.
+  //   배 위에서 그 자리에서 알 수 있어야 한다 — 내려서 백업을 뜯어 봐야 아는 것은 늦다.
+  const 뒤 = Number(trkNow.bufAdd) || 0;
+  if(뒤 > 0) 글 += ' · ' + tsub('화면 끈 동안 {n}점', { n: String(뒤) });
+  if(trkNow.bufRun === false) 글 += ' · ' + t('뒤쪽 기록이 꺼져 있습니다');
   const 조용 = trkQuietFor();
   if(조용 < TRK_QUIET_S) return 글;
   // ★ 몇 분째인지 적는다. 「안 들어옵니다」 만으로는 언제부터인지 몰라 판단을 못 한다.
@@ -24835,7 +24919,7 @@ function lkAdd(rect, zone, label){
 // 도형은 그림일 뿐이고, 물품은 수납칸에만 들어간다.
 // 앱 버전. 여기 한 곳만 고치면 화면 표시가 따라온다.
 // sw.js 의 캐시 이름(baetnil-x.y)과 같아야 한다 — 검사에서 확인한다.
-const APP_VER = '5.3';
+const APP_VER = '5.4';
 // 수납칸 모양. 좌표(x,y,w,h)는 그대로 두고 겉모습만 바꾼다 —
 // 옛 칸은 shape 가 없으므로 저절로 네모가 된다.
 const LK_SHAPES = [
@@ -46964,6 +47048,7 @@ function appVisible(){
   // ★★★ 5.3 — 얼었다 깬 그 순간에 쌓인 점을 곧바로 가져온다.
   //   1분 타이머를 기다리면 그 사이에 사람이 입항을 눌러 버릴 수 있다.
   try{ trkBufDrain(); }catch(_){}
+  try{ trkBufStat(); }catch(_){}
   try{ trkBgShow(); }catch(_){}
   try{
     if(cloud && Date.now() - lastPullAt > PULL_AGAIN_MS) cloudPull().catch(()=>{});
