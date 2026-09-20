@@ -211,6 +211,24 @@ jobs:
             MARKETING_VERSION='${{ inputs.marketing_version }}' \
             CURRENT_PROJECT_VERSION=${{ github.run_number }}
 
+      - name: ★ 앱 알맹이에 GoogleService-Info.plist 가 들어갔는지 확인
+        run: |
+          set -e
+          # ★ 2026-09-20 — 이 확인이 없어서 아이폰에서 켜자마자 죽었다(빌드 18).
+          #   파일을 ios/App/App/ 에 써 두기만 하고 Xcode 프로젝트에 넣지 않으면
+          #   앱 알맹이에는 안 들어간다. 그러면 파이어베이스가 시작하다 앱을 죽인다.
+          #   ★ 반드시 「올리기」 앞에서 본다. 애플로 바로 올리는 방식일 때는
+          #     ipa 파일이 남지 않으므로, 보관본(.xcarchive) 안의 앱을 본다.
+          APP=$(ls -d "$RUNNER_TEMP/App.xcarchive/Products/Applications"/*.app | head -1)
+          echo "앱 알맹이: $APP"
+          if [ ! -f "$APP/GoogleService-Info.plist" ]; then
+            echo "::error::앱 알맹이에 GoogleService-Info.plist 가 없습니다. 이대로 내면 아이폰에서 켜자마자 죽습니다."
+            ls -la "$APP" | head -40
+            exit 1
+          fi
+          plutil -lint "$APP/GoogleService-Info.plist"
+          echo "GoogleService-Info.plist 들어 있습니다."
+
       - name: 내보내기 설정 만들기
         env:
           TEAM: ${{ secrets.APPLE_TEAM_ID }}
@@ -247,25 +265,6 @@ jobs:
             -authenticationKeyPath "$ASC_KEY_PATH" \
             -authenticationKeyID "$ASC_KEY_ID_OK" \
             -authenticationKeyIssuerID "$ISSUER"
-
-      - name: ★ 앱 알맹이에 GoogleService-Info.plist 가 들어갔는지 확인
-        run: |
-          set -e
-          # ★ 2026-09-20 — 이 확인이 없어서 아이폰에서 켜자마자 죽었다.
-          #   파일을 ios/App/App/ 에 써 두기만 하고 Xcode 프로젝트에 넣지 않으면
-          #   앱 알맹이에는 안 들어간다. 그러면 파이어베이스가 시작하다 앱을 죽인다.
-          IPA=$(ls "$RUNNER_TEMP/out"/*.ipa | head -1)
-          echo "만든 파일: $IPA"
-          rm -rf "$RUNNER_TEMP/ipacheck"; mkdir -p "$RUNNER_TEMP/ipacheck"
-          unzip -q "$IPA" -d "$RUNNER_TEMP/ipacheck"
-          APP=$(ls -d "$RUNNER_TEMP/ipacheck/Payload"/*.app | head -1)
-          if [ ! -f "$APP/GoogleService-Info.plist" ]; then
-            echo "::error::앱 알맹이에 GoogleService-Info.plist 가 없습니다. 이대로 내면 아이폰에서 켜자마자 죽습니다."
-            ls -la "$APP" | head -40
-            exit 1
-          fi
-          plutil -lint "$APP/GoogleService-Info.plist"
-          echo "GoogleService-Info.plist 들어 있습니다."
 
       - name: 만든 파일 남겨 두기
         if: always()
