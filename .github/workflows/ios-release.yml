@@ -85,6 +85,48 @@ jobs:
           pod repo update --silent || true
           pod install
 
+      - name: ★ 시뮬레이터에서 켜 보기 — 오류가 나면 애플에 안 올린다
+        working-directory: ios/App
+        run: |
+          set -e -o pipefail
+          # ★ 5.7 — 아이폰이 없어 빌드를 올리기 전에 한 번도 켜 보지 못했다.
+          #   애플이 만든 아이폰 시뮬레이터에서 실제로 켜고, 앱이 남기는 자국을 읽는다.
+          #   [baetnil-boot] 붙었습니다  ← 이것이 나와야 하고
+          #   [baetnil-err] · Script error ← 이것이 하나라도 나오면 멈춘다.
+          xcodebuild build \
+            -workspace App.xcworkspace -scheme App -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/sim" CODE_SIGNING_ALLOWED=NO | tail -25
+          APP="$RUNNER_TEMP/sim/Build/Products/Debug-iphonesimulator/App.app"
+          [ -d "$APP" ] || { echo "::error::시뮬레이터용 앱이 안 만들어졌습니다."; exit 1; }
+          DEV=$(xcrun simctl list devices available -j | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; c=[x['udid'] for k,v in sorted(d.items()) if 'iOS' in k for x in v if x['name'].startswith('iPhone')]; print(c[-1])")
+          echo "시뮬레이터: $DEV"
+          xcrun simctl boot "$DEV" || true
+          xcrun simctl bootstatus "$DEV" -b
+          xcrun simctl install "$DEV" "$APP"
+          LOG="$RUNNER_TEMP/sim.log"; : > "$LOG"
+          xcrun simctl launch --terminate-running-process --stdout="$LOG" --stderr="$LOG" "$DEV" "$BUNDLE_ID"
+          sleep 45
+          mkdir -p "$RUNNER_TEMP/simshot"
+          xcrun simctl io "$DEV" screenshot "$RUNNER_TEMP/simshot/1-first.png"
+          cp "$LOG" "$RUNNER_TEMP/simshot/app-log.txt"
+          echo "----- 앱이 남긴 자국 -----"; grep -a "baetnil-\|Script error\|\[error\]" "$LOG" | head -80 || true
+          FAIL=0
+          grep -aq "\[baetnil-boot\] 붙었습니다" "$LOG" || { echo "::error::앱이 파이어베이스에 붙는 데까지 가지 못했습니다."; FAIL=1; }
+          if grep -aE "\[baetnil-err\]|Script error" "$LOG"; then echo "::error::시뮬레이터에서 오류가 났습니다. 올리지 않습니다."; FAIL=1; fi
+          echo "## 시뮬레이터 확인: $([ $FAIL = 0 ] && echo 통과 || echo 실패)" >> "$GITHUB_STEP_SUMMARY"
+          xcrun simctl shutdown "$DEV" || true
+          exit $FAIL
+
+      - name: 시뮬레이터 화면·자국 남겨 두기
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simulator-${{ inputs.marketing_version }}-${{ github.run_number }}
+          path: ${{ runner.temp }}/simshot
+          if-no-files-found: ignore
+          retention-days: 30
+
       - name: 인증서 보관함 (한 번 만든 배포 인증서를 다시 쓴다)
         uses: actions/cache@v4
         with:
