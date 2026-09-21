@@ -104,13 +104,23 @@ jobs:
           xcrun simctl boot "$DEV" || true
           xcrun simctl bootstatus "$DEV" -b
           xcrun simctl install "$DEV" "$APP"
-          LOG="$RUNNER_TEMP/sim.log"; : > "$LOG"
-          xcrun simctl launch --terminate-running-process --stdout="$LOG" --stderr="$LOG" "$DEV" "$BUNDLE_ID"
-          sleep 45
           mkdir -p "$RUNNER_TEMP/simshot"
+          LOG="$RUNNER_TEMP/sim.log"; : > "$LOG"
+          OSLOG="$RUNNER_TEMP/simshot/oslog.txt"
+          # ★ 앱의 console.log 는 캐퍼시터가 표준 출력으로 찍는다. 파일로 받으면 버퍼에 갇혀
+          #   안 나오므로(빌드 22 에서 겪음) NSUnbufferedIO 를 켜고, 시스템 기록도 함께 받는다.
+          xcrun simctl spawn "$DEV" log stream --style compact --level debug \
+            --predicate 'process == "App"' > "$OSLOG" 2>&1 &
+          LOGPID=$!
+          SIMCTL_CHILD_NSUnbufferedIO=YES \
+            xcrun simctl launch --terminate-running-process --stdout="$LOG" --stderr="$LOG" "$DEV" "$BUNDLE_ID"
+          sleep 50
           xcrun simctl io "$DEV" screenshot "$RUNNER_TEMP/simshot/1-first.png"
+          kill $LOGPID 2>/dev/null || true
+          cat "$OSLOG" >> "$LOG"
           cp "$LOG" "$RUNNER_TEMP/simshot/app-log.txt"
-          echo "----- 앱이 남긴 자국 -----"; grep -a "baetnil-\|Script error\|\[error\]" "$LOG" | head -80 || true
+          echo "----- 앱이 남긴 자국 -----"; grep -a "baetnil-\|Script error\|\[error\]\|⚡️" "$LOG" | head -120 || true
+          echo "----- 표준 출력 끝부분 -----"; head -c 20000 "$LOG" | tail -40 || true
           FAIL=0
           grep -aq "\[baetnil-boot\] 붙었습니다" "$LOG" || { echo "::error::앱이 파이어베이스에 붙는 데까지 가지 못했습니다."; FAIL=1; }
           if grep -aE "\[baetnil-err\]|Script error" "$LOG"; then echo "::error::시뮬레이터에서 오류가 났습니다. 올리지 않습니다."; FAIL=1; fi
