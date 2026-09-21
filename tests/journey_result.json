@@ -1,0 +1,268 @@
+{
+ "결과": [
+  {
+   "단계": "앱이 열린다",
+   "결말": "지남",
+   "메모": "배 등록하기 ▸ / 오프라인 · 로컬 / 편집 중 / 뱃일 / 처음 오셨습니다. 두 가지만 골라 주세요. / 언어 · Language / 日本語 / 선택 / 한국어 / 선택됨 / English / 선택 / Русск"
+  },
+  {
+   "단계": "첫 화면에 이게 무슨 앱인지 나온다",
+   "결말": "지남",
+   "메모": "배 등록하기 ▸ / 오프라인 · 로컬 / 편집 중 / 뱃일 / 처음 오셨습니다. 두 가지만 골라 주세요. / 언어 · Language / 日本語 / 선택 / 한국어 / 선택됨 / English / 선택 / Русский / 선택 / 어느 국가의 바다에서 타십니까 / 대한민국 / 선택됨 …"
+  },
+  {
+   "단계": "처음 오면 말·나라부터 고르게 한다",
+   "결말": "지남",
+   "메모": "배 등록하기 ▸ / 오프라인 · 로컬 / 편집 중 / 뱃일 / 처음 오셨습니다. 두 가지만 골라 주세요. / 언어 · Language / 日本語 / 선택 / 한국어 / 선택됨 / English / 선택 / Русский / 선택 / 어느 국가의 바다에"
+  },
+  {
+   "단계": "나라를 고를 수 있다",
+   "결말": "지남",
+   "메모": "배 등록하기 ▸ / 오프라인 · 로컬 / 편집 중 / 뱃일 / 처음 오셨습니다. 두 가지만 골라 주세요. / 언어 · Language / 日本語 / 선택 / 한국어 / 선택됨 / English / 선택 / Русский / 선택 / 어느 국가의 바다에서 타십니까 / 대한민국 / 선택됨 …"
+  },
+  {
+   "단계": "★★★ [시작하기] 로 첫 설정을 마친다",
+   "결말": "지남",
+   "메모": "배 등록하기 ▸ / 오프라인 · 로컬 / 편집 중 / 오늘 / 달력 / 날씨 · 물때 / 뉴스 / 체크리스트 / 어느 쪽이십니까 / 배가 있습니다 / 타기만 합니다 / 아무것도 저장하지 않습니다. 언제든 바꿔 보실 수 있습니다. / 배 한 척의 기록을"
+  },
+  {
+   "단계": "로그인 없이 시작할 수 있다",
+   "결말": "지남",
+   "메모": ""
+  },
+  {
+   "단계": "배 등록으로 가는 길이 있다",
+   "결말": "지남",
+   "메모": "배 등록하기 ▸ / 오프라인 · 로컬 / 편집 중 / 배 등록 / ← 오늘 / 이 앱은 배 한 척을 기준으로 기록을 관리합니다. / 먼저 배를 등록해 주세요. 입력한 내용은 언제든 수정할 수 있습니다. / 이름 / 종류 / 세일링 요트 / 모터보트·요트 / 낚시·유어선 / 기타 / 홈포…"
+  },
+  {
+   "단계": "배 정보를 적을 수 있다",
+   "결말": "지남",
+   "메모": ""
+  },
+  {
+   "단계": "배가 등록된다",
+   "결말": "지남",
+   "메모": ""
+  },
+  {
+   "단계": "맨 윗줄에 배 이름이 뜬다",
+   "결말": "지남",
+   "메모": "테스트호 · 여수 원형마리나 ▾"
+  },
+  {
+   "단계": "도면 고르는 길이 보인다",
+   "결말": "지남",
+   "메모": "테스트호 · 여수 원형마리나 ▾ / 받아오는 중… / 편집 중 / 적재표 / 정비 / 장비 / 항해일지 / 문서 / 목록 / 가나다순 ▾ / 선택 / 칸 그리기 / 이 배의 평면도가 아직 없습니다. / 기본 도면에서 선택 / 도면 사진 올리기 / 공개 도면에서 선택 / + / − / 오…"
+  },
+  {
+   "단계": "선종에 맞는 기본 도면이 있다",
+   "결말": "지남",
+   "메모": "테스트호 · 여수 원형마리나 ▾ / 받아오는 중… / 편집 중 / 적재표 / 정비 / 장비 / 항해일지 / 문서 / 목록 / 가나다순 ▾ / 선택 / 칸 그리기 / ▲ 선수 / 선미 ▼ / 좌현 / 우현 / ── 2층 (갑판) ── / + / − / 칸 누르기 · 청록으로 찬 칸=물건 …"
+  },
+  {
+   "단계": "고른 도면이 화면에 그려진다",
+   "결말": "지남",
+   "메모": ""
+  },
+  {
+   "단계": "수납칸을 만들 수 있다",
+   "결말": "지남",
+   "메모": "ok:싱크대 아래"
+  },
+  {
+   "단계": "물품을 넣을 수 있다",
+   "결말": "지남",
+   "메모": "ok:1개"
+  },
+  {
+   "단계": "물품 사진을 넣을 수 있다",
+   "결말": "지남",
+   "메모": "ok:900×600 · 5KB"
+  },
+  {
+   "단계": "정기점검이 기본으로 깔려 있다",
+   "결말": "지남",
+   "메모": "16개"
+  },
+  {
+   "단계": "항해일지를 시작할 수 있다",
+   "결말": "지남",
+   "메모": "테스트호 · 여수 원형마리나 ▾ / 받아오는 중… / 편집 중 / 항해일지 / 삭제 / 저장 후 닫기 / 목록 / 제목 / 0/60 / 공개 / 공개 / 일부 공개 / 비공개 / 배 쪽 공개설정에서 「항해일지」이(가) 꺼져 있어 아직 안 올라갑니다. / 항해일지 공개 켜기 / 남의 배 …"
+  },
+  {
+   "단계": "항해 기록이 실제로 만들어진다",
+   "결말": "지남",
+   "메모": "1건"
+  },
+  {
+   "단계": "출항 전 점검이 열린다",
+   "결말": "지남",
+   "메모": "테스트호 · 여수 원형마리나 ▾ / 받아오는 중… / 편집 중 / 오늘 / 달력 / 날씨 · 물때 / 뉴스 / 체크리스트 / 출항 전10 / 입항 후8 / 정박 중 점검6 / + 목록 / 0 / 10 / 날마다 초기화 / 목록 수정 / 초기화 / 기상"
+  },
+  {
+   "단계": "도면에 찍은 핀으로 그림을 만든다",
+   "결말": "지남",
+   "메모": "ok:3KB"
+  },
+  {
+   "단계": "커뮤니티가 로그인 없이도 열린다",
+   "결말": "지남",
+   "메모": "테스트호 · 여수 원형마리나 ▾ / 받아오는 중… / 편집 중 / 게시판 / 정박지 / 중고 장터 / 배 둘러보기 / 전체 / 질문 / 정비 / 항해기 / 장비 / 잡담 / 같이 타기 / 전 지역 / 경기·인천 / 충남 / 전북 / 전남 / 경남 / 부산 / 울산 / 경북 / 강원 / …"
+  },
+  {
+   "단계": "글판 화면이 실제로 그려진다",
+   "결말": "지남",
+   "메모": "테스트호 · 여수 원형마리나 ▾ / 받아오는 중… / 편집 중 / 게시판 / 정박지 / 중고 장터 / 배 둘러보기 / 전체 / 질문 / 정비 / 항해기 / 장비 / 잡담 / 같이 타기 / 전 지역 / 경기·인천 / 충남 / 전북 / 전남 / 경남 / 부산 / 울산 / 경북 / 강원 / …"
+  },
+  {
+   "단계": "글을 쓰려 하면 로그인으로 데려간다",
+   "결말": "지남",
+   "메모": "{\"열림\":true,\"말\":\"로그인해야 글을 쓸 수 있습니다\"}"
+  },
+  {
+   "단계": "뉴스를 못 받아도 까닭을 말한다",
+   "결말": "지남",
+   "메모": "테스트호 · 여수 원형마리나 ▾ / 받아오는 중… / 편집 중 / 오늘 / 달력 / 날씨 · 물때 / 뉴스 / 체크리스트 / 새로고침 / 대한민국 소식 / 세계 소식 / 연재 / 관심 분야 선택 / 아직 수집된 소식이 없습니다. / 이 언어로 소식을 "
+  },
+  {
+   "단계": "오늘 화면이 그려진다",
+   "결말": "지남",
+   "메모": "테스트호 · 여수 원형마리나 ▾ / 받아오는 중… / 편집 중 / 오늘 / 달력 / 날씨 · 물때 / 뉴스 / 체크리스트 / 새로고침 / 대한민국 소식 / 세계 소식 / 연재 / 관심 분야 선택 / 아직 수집된 소식이 없습니다. / 이 언어로 소식을 내는 곳이 아직 적습니다. 「세계 소"
+  },
+  {
+   "단계": "백업 파일이 만들어진다",
+   "결말": "지남",
+   "메모": "ok:app,date,boat,boats,items,trash,maint,repair,voyage,fuel,runs,contacts,vdocs,checkt,mrtrash,lockers,shapes,posts,reviews | 물품 1"
+  },
+  {
+   "단계": "백업을 도로 넣으면 그대로 돌아온다",
+   "결말": "지남",
+   "메모": "{\"원래\":{\"물품\":1,\"칸\":1,\"정비\":16,\"도면\":true},\"되살림\":{\"물품\":1,\"칸\":1,\"정비\":16,\"도면\":true},\"알림\":\"복원 완료: 1개 물품\"}"
+  },
+  {
+   "단계": "인터넷이 없어도 적재표가 보인다",
+   "결말": "지남",
+   "메모": "{\"물품\":1,\"칸\":1,\"도면\":true,\"글\":\"테스트호 · 여수 원형마리나 ▾\\n받아오는 중…\\n편집 중\\n적재표\\n정비\\n장비\\n항해일지\\n문서\\n목록\\n가나다순 ▾\\n선택\\n칸 그리기\\n▲ 선수\\n선미 ▼\\n좌현\\n우현\\n── 2층 (갑판) ──\\n싱크대 아래 (1)\\n+\\n−…"
+  },
+  {
+   "단계": "홈 화면 안내가 엉뚱하게 뜨지 않는다",
+   "결말": "지남",
+   "메모": "{\"보임\":false,\"아이폰\":false,\"글\":\"\"}"
+  },
+  {
+   "단계": "서랍에 길이 다 있다",
+   "결말": "지남",
+   "메모": "로그인 · 계류장 · 설정 · 고객센터 · 건의하기 · 홈 화면에 추가 · 앱 업데이트"
+  },
+  {
+   "단계": "아래 탭으로 내 배에 간다",
+   "결말": "지남",
+   "메모": "오늘 · 내 배 · 남의 배 · 커뮤니티"
+  },
+  {
+   "단계": "설정에서 약관까지 닿는다",
+   "결말": "지남",
+   "메모": "알림 · 언어 · Language · 국가 · 클라우드에 올리기 · 클라우드에서 가져오기 · 파일로 저장 · 파일에서 불러오기 · 휴지통 · 이 기기에 저장한 사진 · 차단한 사람 · 약관 · 개인정보"
+  },
+  {
+   "단계": "설정에서 파일 저장·불러오기에 닿는다",
+   "결말": "지남",
+   "메모": "알림 · 언어 · Language · 국가 · 클라우드에 올리기 · 클라우드에서 가져오기 · 파일로 저장 · 파일에서 불러오기 · 휴지통 · 이 기기에 저장한 사진 · 차단한 사람 · 약관 · 개인정보"
+  },
+  {
+   "단계": "앱이 터지지 않았다",
+   "결말": "지남",
+   "메모": ""
+  },
+  {
+   "단계": "콘솔에 빨간 글이 없다",
+   "결말": "지남",
+   "메모": "(파이어베이스 못 받은 것만 있음 — 이 컨테이너 사정)"
+  }
+ ],
+ "터짐": [],
+ "콘솔": [
+  "Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "[2026-09-21T06:11:53.039Z]  @firebase/firestore: Firestore (10.12.2): Could not reach Cloud Firestore backend. Connection failed 1 times. Most recent error: FirebaseError: [code=unavailable]: The oper",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "[2026-09-21T06:11:56.546Z]  @firebase/firestore: Firestore (10.12.2): Could not reach Cloud Firestore backend. Connection failed 1 times. Most recent error: FirebaseError: [code=unavailable]: The oper",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: the server responded with a status of 504 ()",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Not allowed to load local resource: blob:%EA%B0%80%EC%A7%9C",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
+  "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
+  "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
+  "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
+  "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
+  "Failed to load resource: net::ERR_INTERNET_DISCONNECTED",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+ ]
+}
