@@ -1,0 +1,1113 @@
+{
+ "홈·오늘": {
+  "small": [
+   {
+    "t": "오늘",
+    "h": 39,
+    "w": 37,
+    "x": 20,
+    "y": 48,
+    "s": "button.hsub.on < div.hsubs < div#hNav"
+   },
+   {
+    "t": "뉴스",
+    "h": 39,
+    "w": 37,
+    "x": 146,
+    "y": 48,
+    "s": "button.hsub < div.hsubs < div#hNav"
+   },
+   {
+    "t": "메뉴",
+    "h": 40,
+    "w": 44,
+    "x": 326,
+    "y": 5,
+    "s": "button#menuBtn.tab.iconb < div.btns < div.hrow"
+   },
+   {
+    "t": "편집 중",
+    "h": 40,
+    "w": 64,
+    "x": 257,
+    "y": 5,
+    "s": "button#lockBtn.tab.unlocked < div.btns < div.hrow"
+   },
+   {
+    "t": "정비 탭",
+    "h": 40,
+    "w": 69,
+    "x": 289,
+    "y": 461,
+    "s": "button.minib.blu < div.hct < div.hcard"
+   },
+   {
+    "t": "날씨 · 물때",
+    "h": 39,
+    "w": 73,
+    "x": 65,
+    "y": 48,
+    "s": "button.hsub < div.hsubs < div#hNav"
+   },
+   {
+    "t": "체크리스트",
+    "h": 39,
+    "w": 75,
+    "x": 192,
+    "y": 48,
+    "s": "button.hsub < div.hsubs < div#hNav"
+   },
+   {
+    "t": "점검하기",
+    "h": 40,
+    "w": 78,
+    "x": 280,
+    "y": 306,
+    "s": "button.minib.blu < div.hct < div.hcard"
+   },
+   {
+    "t": "항해일지",
+    "h": 40,
+    "w": 78,
+    "x": 280,
+    "y": 608,
+    "s": "button.minib.blu < div.hct < div.hcard"
+   },
+   {
+    "t": "날씨 · 물때",
+    "h": 40,
+    "w": 89,
+    "x": 269,
+    "y": 116,
+    "s": "button.minib.blu < div.hct < div.hcard"
+   },
+   {
+    "t": "지금 있는 곳 날씨 보기",
+    "h": 40,
+    "w": 326,
+    "x": 32,
+    "y": 211,
+    "s": "button.mrbtn < div.mrrow < div.hcard"
+   }
+  ],
+  "wide": []
+ },
+ "홈·점검": {
+  "small": [
+   {
+    "t": "✎",
+    "h": 40,
+    "w": 36,
+    "x": 187,
+    "y": 179,
+    "s": "button.ckdel.edt < div.ckman < div.statrow"
+   },
+   {
+    "t": "↻",
+    "h": 40,
+    "w": 36,
+    "x": 225,
+    "y": 179,
+    "s": "button.ckdel.edt < div.ckman < div.statrow"
+   },
+   {
+    "t": "✕",
+    "h": 40,
+    "w": 36,
+    "x": 263,
+    "y": 179,
+    "s": "button.ckdel.edt < div.ckman < div.statrow"
+   },
+   {
+    "t": "👤",
+    "h": 40,
+    "w": 36,
+    "x": 175,
+    "y": 263,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "⇥",
+    "h": 40,
+    "w": 36,
+    "x": 223,
+    "y": 263,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "✎",
+    "h": 40,
+    "w": 36,
+    "x": 271,
+    "y": 263,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "✕",
+    "h": 40,
+    "w": 36,
+    "x": 319,
+    "y": 263,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "👤",
+    "h": 40,
+    "w": 36,
+    "x": 175,
+    "y": 339,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "⇥",
+    "h": 40,
+    "w": 36,
+    "x": 223,
+    "y": 339,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "✎",
+    "h": 40,
+    "w": 36,
+    "x": 271,
+    "y": 339,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "✕",
+    "h": 40,
+    "w": 36,
+    "x": 319,
+    "y": 339,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "👤",
+    "h": 40,
+    "w": 36,
+    "x": 175,
+    "y": 415,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "⇥",
+    "h": 40,
+    "w": 36,
+    "x": 223,
+    "y": 415,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "✎",
+    "h": 40,
+    "w": 36,
+    "x": 271,
+    "y": 415,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "✕",
+    "h": 40,
+    "w": 36,
+    "x": 319,
+    "y": 415,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "👤",
+    "h": 40,
+    "w": 36,
+    "x": 175,
+    "y": 491,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "⇥",
+    "h": 40,
+    "w": 36,
+    "x": 223,
+    "y": 491,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "✎",
+    "h": 40,
+    "w": 36,
+    "x": 271,
+    "y": 491,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "✕",
+    "h": 40,
+    "w": 36,
+    "x": 319,
+    "y": 491,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "👤",
+    "h": 40,
+    "w": 36,
+    "x": 175,
+    "y": 567,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "⇥",
+    "h": 40,
+    "w": 36,
+    "x": 223,
+    "y": 567,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "✎",
+    "h": 40,
+    "w": 36,
+    "x": 271,
+    "y": 567,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "✕",
+    "h": 40,
+    "w": 36,
+    "x": 319,
+    "y": 567,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "👤",
+    "h": 40,
+    "w": 36,
+    "x": 175,
+    "y": 643,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "⇥",
+    "h": 40,
+    "w": 36,
+    "x": 223,
+    "y": 643,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "✎",
+    "h": 40,
+    "w": 36,
+    "x": 271,
+    "y": 643,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "✕",
+    "h": 40,
+    "w": 36,
+    "x": 319,
+    "y": 643,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "👤",
+    "h": 40,
+    "w": 36,
+    "x": 175,
+    "y": 719,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "⇥",
+    "h": 40,
+    "w": 36,
+    "x": 223,
+    "y": 719,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "✎",
+    "h": 40,
+    "w": 36,
+    "x": 271,
+    "y": 719,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "✕",
+    "h": 40,
+    "w": 36,
+    "x": 319,
+    "y": 719,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "👤",
+    "h": 40,
+    "w": 36,
+    "x": 175,
+    "y": 795,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "⇥",
+    "h": 40,
+    "w": 36,
+    "x": 223,
+    "y": 795,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "✎",
+    "h": 40,
+    "w": 36,
+    "x": 271,
+    "y": 795,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "✕",
+    "h": 40,
+    "w": 36,
+    "x": 319,
+    "y": 795,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "👤",
+    "h": 40,
+    "w": 36,
+    "x": 175,
+    "y": 871,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "⇥",
+    "h": 40,
+    "w": 36,
+    "x": 223,
+    "y": 871,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "✎",
+    "h": 40,
+    "w": 36,
+    "x": 271,
+    "y": 871,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "✕",
+    "h": 40,
+    "w": 36,
+    "x": 319,
+    "y": 871,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "👤",
+    "h": 40,
+    "w": 36,
+    "x": 175,
+    "y": 947,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "⇥",
+    "h": 40,
+    "w": 36,
+    "x": 223,
+    "y": 947,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "✎",
+    "h": 40,
+    "w": 36,
+    "x": 271,
+    "y": 947,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "✕",
+    "h": 40,
+    "w": 36,
+    "x": 319,
+    "y": 947,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "👤",
+    "h": 40,
+    "w": 36,
+    "x": 184,
+    "y": 1099,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "⇥",
+    "h": 40,
+    "w": 36,
+    "x": 232,
+    "y": 1099,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "✎",
+    "h": 40,
+    "w": 36,
+    "x": 280,
+    "y": 1099,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "✕",
+    "h": 40,
+    "w": 36,
+    "x": 328,
+    "y": 1099,
+    "s": "button.ckdel.edt < div.ckrow < div#checkList"
+   },
+   {
+    "t": "오늘",
+    "h": 39,
+    "w": 37,
+    "x": 20,
+    "y": 48,
+    "s": "button.hsub < div.hsubs < div#hNav"
+   },
+   {
+    "t": "뉴스",
+    "h": 39,
+    "w": 37,
+    "x": 146,
+    "y": 48,
+    "s": "button.hsub < div.hsubs < div#hNav"
+   },
+   {
+    "t": "메뉴",
+    "h": 40,
+    "w": 44,
+    "x": 326,
+    "y": 5,
+    "s": "button#menuBtn.tab.iconb < div.btns < div.hrow"
+   },
+   {
+    "t": "편집 중",
+    "h": 40,
+    "w": 64,
+    "x": 257,
+    "y": 5,
+    "s": "button#lockBtn.tab.unlocked < div.btns < div.hrow"
+   },
+   {
+    "t": "+ 목록",
+    "h": 40,
+    "w": 64,
+    "x": 318,
+    "y": 99,
+    "s": "button.ckchip.add < div.ckchips < div#checkList"
+   },
+   {
+    "t": "초기화",
+    "h": 40,
+    "w": 69,
+    "x": 301,
+    "y": 179,
+    "s": "button.mrbtn < div.ckman < div.statrow"
+   },
+   {
+    "t": "날씨 · 물때",
+    "h": 39,
+    "w": 73,
+    "x": 65,
+    "y": 48,
+    "s": "button.hsub < div.hsubs < div#hNav"
+   },
+   {
+    "t": "체크리스트",
+    "h": 39,
+    "w": 75,
+    "x": 192,
+    "y": 48,
+    "s": "button.hsub.on < div.hsubs < div#hNav"
+   },
+   {
+    "t": "바로가기",
+    "h": 40,
+    "w": 74,
+    "x": 98,
+    "y": 1099,
+    "s": "a.mrbtn.cklink < div.ckrow < div#checkList"
+   },
+   {
+    "t": "입항 후8",
+    "h": 40,
+    "w": 81,
+    "x": 111,
+    "y": 99,
+    "s": "button.ckchip < div.ckchips < div#checkList"
+   },
+   {
+    "t": "출항 전11",
+    "h": 40,
+    "w": 87,
+    "x": 16,
+    "y": 99,
+    "s": "button.ckchip.on < div.ckchips < div#checkList"
+   },
+   {
+    "t": "+ 항목 추가",
+    "h": 40,
+    "w": 96,
+    "x": 18,
+    "y": 1241,
+    "s": "button.tab.edt < div < div#checkList"
+   },
+   {
+    "t": "정박 중 점검6",
+    "h": 40,
+    "w": 110,
+    "x": 201,
+    "y": 99,
+    "s": "button.ckchip < div.ckchips < div#checkList"
+   }
+  ],
+  "wide": [
+   {
+    "id": "ckchips",
+    "sw": 398,
+    "cw": 390
+   }
+  ]
+ },
+ "배·정기점검": {
+  "small": [
+   {
+    "t": "정비",
+    "h": 39,
+    "w": 37,
+    "x": 78,
+    "y": 48,
+    "s": "button.hsub.on < div.hsubs < div#hNav"
+   },
+   {
+    "t": "장비",
+    "h": 39,
+    "w": 37,
+    "x": 123,
+    "y": 48,
+    "s": "button.hsub < div.hsubs < div#hNav"
+   },
+   {
+    "t": "문서",
+    "h": 39,
+    "w": 37,
+    "x": 239,
+    "y": 48,
+    "s": "button.hsub < div.hsubs < div#hNav"
+   },
+   {
+    "t": "메뉴",
+    "h": 40,
+    "w": 44,
+    "x": 326,
+    "y": 5,
+    "s": "button#menuBtn.tab.iconb < div.btns < div.hrow"
+   },
+   {
+    "t": "수리",
+    "h": 40,
+    "w": 46,
+    "x": 85,
+    "y": 95,
+    "s": "button.tchip < div.tfilt < div#mntBar1"
+   },
+   {
+    "t": "연료",
+    "h": 40,
+    "w": 46,
+    "x": 137,
+    "y": 95,
+    "s": "button.tchip < div.tfilt < div#mntBar1"
+   },
+   {
+    "t": "적재표",
+    "h": 39,
+    "w": 50,
+    "x": 20,
+    "y": 48,
+    "s": "button.hsub < div.hsubs < div#hNav"
+   },
+   {
+    "t": "항해일지",
+    "h": 39,
+    "w": 63,
+    "x": 169,
+    "y": 48,
+    "s": "button.hsub < div.hsubs < div#hNav"
+   },
+   {
+    "t": "편집 중",
+    "h": 40,
+    "w": 64,
+    "x": 257,
+    "y": 5,
+    "s": "button#lockBtn.tab.unlocked < div.btns < div.hrow"
+   },
+   {
+    "t": "정비수첩",
+    "h": 40,
+    "w": 67,
+    "x": 12,
+    "y": 95,
+    "s": "button.tchip.on < div.tfilt < div#mntBar1"
+   },
+   {
+    "t": "+ 정비수첩",
+    "h": 40,
+    "w": 92,
+    "x": 286,
+    "y": 95,
+    "s": "button.tab.edt < div.tfilt < div#mntBar1"
+   },
+   {
+    "t": "첫 정비수첩 쓰기",
+    "h": 40,
+    "w": 127,
+    "x": 131,
+    "y": 314,
+    "s": "button.mrbtn < div.emptybox < div#mlogList"
+   }
+  ],
+  "wide": []
+ },
+ "배·물품(도면)": {
+  "small": [
+   {
+    "t": "정비",
+    "h": 39,
+    "w": 37,
+    "x": 78,
+    "y": 48,
+    "s": "button.hsub < div.hsubs < div#hNav"
+   },
+   {
+    "t": "장비",
+    "h": 39,
+    "w": 37,
+    "x": 123,
+    "y": 48,
+    "s": "button.hsub < div.hsubs < div#hNav"
+   },
+   {
+    "t": "문서",
+    "h": 39,
+    "w": 37,
+    "x": 239,
+    "y": 48,
+    "s": "button.hsub < div.hsubs < div#hNav"
+   },
+   {
+    "t": "선",
+    "h": 40,
+    "w": 43,
+    "x": 523,
+    "y": 101,
+    "s": "button#lkt_line.tab.lkt < span#lkTools < div#stowTools"
+   },
+   {
+    "t": "메뉴",
+    "h": 40,
+    "w": 44,
+    "x": 326,
+    "y": 5,
+    "s": "button#menuBtn.tab.iconb < div.btns < div.hrow"
+   },
+   {
+    "t": "+",
+    "h": 42,
+    "w": 42,
+    "x": 338,
+    "y": 219,
+    "s": "button < div.mapzoom < div#mapWrap"
+   },
+   {
+    "t": "−",
+    "h": 42,
+    "w": 42,
+    "x": 338,
+    "y": 266,
+    "s": "button < div.mapzoom < div#mapWrap"
+   },
+   {
+    "t": "↶",
+    "h": 40,
+    "w": 45,
+    "x": 353,
+    "y": 99,
+    "s": "button#undoBtn.tab.lkt < span#lkTools < div#stowTools"
+   },
+   {
+    "t": "↷",
+    "h": 40,
+    "w": 45,
+    "x": 401,
+    "y": 99,
+    "s": "button#redoBtn.tab.lkt < span#lkTools < div#stowTools"
+   },
+   {
+    "t": "적재표",
+    "h": 39,
+    "w": 50,
+    "x": 20,
+    "y": 48,
+    "s": "button.hsub.on < div.hsubs < div#hNav"
+   },
+   {
+    "t": "네모",
+    "h": 40,
+    "w": 56,
+    "x": 569,
+    "y": 101,
+    "s": "button#lkt_rect.tab.lkt < span#lkTools < div#stowTools"
+   },
+   {
+    "t": "세모",
+    "h": 40,
+    "w": 56,
+    "x": 629,
+    "y": 101,
+    "s": "button#lkt_tri.tab.lkt < span#lkTools < div#stowTools"
+   },
+   {
+    "t": "목록",
+    "h": 42,
+    "w": 56,
+    "x": 20,
+    "y": 99,
+    "s": "button#tabToggle.tab < div#stowTools < header"
+   },
+   {
+    "t": "항해일지",
+    "h": 39,
+    "w": 63,
+    "x": 169,
+    "y": 48,
+    "s": "button.hsub < div.hsubs < div#hNav"
+   },
+   {
+    "t": "편집 중",
+    "h": 40,
+    "w": 64,
+    "x": 257,
+    "y": 5,
+    "s": "button#lockBtn.tab.unlocked < div.btns < div.hrow"
+   },
+   {
+    "t": "수납칸",
+    "h": 40,
+    "w": 69,
+    "x": 450,
+    "y": 101,
+    "s": "button#lkt_locker.tab.lkt < span#lkTools < div#stowTools"
+   },
+   {
+    "t": "휴지통",
+    "h": 42,
+    "w": 69,
+    "x": 276,
+    "y": 99,
+    "s": "button#trashTab.tab < div#stowTools < header"
+   },
+   {
+    "t": "도형 🔓",
+    "h": 40,
+    "w": 75,
+    "x": 789,
+    "y": 101,
+    "s": "button#dgLockBtn.tab.lkt < span#lkTools < div#stowTools"
+   },
+   {
+    "t": "수납칸 🔓",
+    "h": 40,
+    "w": 88,
+    "x": 692,
+    "y": 101,
+    "s": "button#lkLockBtn.tab.lkt < span#lkTools < div#stowTools"
+   },
+   {
+    "t": "그리기 끝",
+    "h": 42,
+    "w": 85,
+    "x": 183,
+    "y": 99,
+    "s": "button#lkEditTab.tab.on < div#stowTools < header"
+   },
+   {
+    "t": "도면 고르기",
+    "h": 40,
+    "w": 94,
+    "x": 210,
+    "y": 489,
+    "s": "button.minib.blu < div#fpNoLine < div#hint"
+   },
+   {
+    "t": "가나다순 ▾",
+    "h": 42,
+    "w": 91,
+    "x": 84,
+    "y": 99,
+    "s": "button#sortTab.tab < div#stowTools < header"
+   }
+  ],
+  "wide": [
+   {
+    "id": "stowTools",
+    "sw": 884,
+    "cw": 390
+   },
+   {
+    "id": "bx_L1",
+    "sw": 111,
+    "cw": 105
+   }
+  ]
+ },
+ "배·기록": {
+  "small": [
+   {
+    "t": "정비",
+    "h": 39,
+    "w": 37,
+    "x": 78,
+    "y": 48,
+    "s": "button.hsub < div.hsubs < div#hNav"
+   },
+   {
+    "t": "장비",
+    "h": 39,
+    "w": 37,
+    "x": 123,
+    "y": 48,
+    "s": "button.hsub < div.hsubs < div#hNav"
+   },
+   {
+    "t": "문서",
+    "h": 39,
+    "w": 37,
+    "x": 239,
+    "y": 48,
+    "s": "button.hsub < div.hsubs < div#hNav"
+   },
+   {
+    "t": "선",
+    "h": 40,
+    "w": 43,
+    "x": 523,
+    "y": 101,
+    "s": "button#lkt_line.tab.lkt < span#lkTools < div#stowTools"
+   },
+   {
+    "t": "메뉴",
+    "h": 40,
+    "w": 44,
+    "x": 326,
+    "y": 5,
+    "s": "button#menuBtn.tab.iconb < div.btns < div.hrow"
+   },
+   {
+    "t": "+",
+    "h": 42,
+    "w": 42,
+    "x": 338,
+    "y": 219,
+    "s": "button < div.mapzoom < div#mapWrap"
+   },
+   {
+    "t": "−",
+    "h": 42,
+    "w": 42,
+    "x": 338,
+    "y": 266,
+    "s": "button < div.mapzoom < div#mapWrap"
+   },
+   {
+    "t": "↶",
+    "h": 40,
+    "w": 45,
+    "x": 353,
+    "y": 99,
+    "s": "button#undoBtn.tab.lkt < span#lkTools < div#stowTools"
+   },
+   {
+    "t": "↷",
+    "h": 40,
+    "w": 45,
+    "x": 401,
+    "y": 99,
+    "s": "button#redoBtn.tab.lkt < span#lkTools < div#stowTools"
+   },
+   {
+    "t": "적재표",
+    "h": 39,
+    "w": 50,
+    "x": 20,
+    "y": 48,
+    "s": "button.hsub.on < div.hsubs < div#hNav"
+   },
+   {
+    "t": "네모",
+    "h": 40,
+    "w": 56,
+    "x": 569,
+    "y": 101,
+    "s": "button#lkt_rect.tab.lkt < span#lkTools < div#stowTools"
+   },
+   {
+    "t": "세모",
+    "h": 40,
+    "w": 56,
+    "x": 629,
+    "y": 101,
+    "s": "button#lkt_tri.tab.lkt < span#lkTools < div#stowTools"
+   },
+   {
+    "t": "목록",
+    "h": 42,
+    "w": 56,
+    "x": 20,
+    "y": 99,
+    "s": "button#tabToggle.tab < div#stowTools < header"
+   },
+   {
+    "t": "항해일지",
+    "h": 39,
+    "w": 63,
+    "x": 169,
+    "y": 48,
+    "s": "button.hsub < div.hsubs < div#hNav"
+   },
+   {
+    "t": "편집 중",
+    "h": 40,
+    "w": 64,
+    "x": 257,
+    "y": 5,
+    "s": "button#lockBtn.tab.unlocked < div.btns < div.hrow"
+   },
+   {
+    "t": "수납칸",
+    "h": 40,
+    "w": 69,
+    "x": 450,
+    "y": 101,
+    "s": "button#lkt_locker.tab.lkt < span#lkTools < div#stowTools"
+   },
+   {
+    "t": "휴지통",
+    "h": 42,
+    "w": 69,
+    "x": 276,
+    "y": 99,
+    "s": "button#trashTab.tab < div#stowTools < header"
+   },
+   {
+    "t": "도형 🔓",
+    "h": 40,
+    "w": 75,
+    "x": 789,
+    "y": 101,
+    "s": "button#dgLockBtn.tab.lkt < span#lkTools < div#stowTools"
+   },
+   {
+    "t": "수납칸 🔓",
+    "h": 40,
+    "w": 88,
+    "x": 692,
+    "y": 101,
+    "s": "button#lkLockBtn.tab.lkt < span#lkTools < div#stowTools"
+   },
+   {
+    "t": "그리기 끝",
+    "h": 42,
+    "w": 85,
+    "x": 183,
+    "y": 99,
+    "s": "button#lkEditTab.tab.on < div#stowTools < header"
+   },
+   {
+    "t": "도면 고르기",
+    "h": 40,
+    "w": 94,
+    "x": 210,
+    "y": 489,
+    "s": "button.minib.blu < div#fpNoLine < div#hint"
+   },
+   {
+    "t": "가나다순 ▾",
+    "h": 42,
+    "w": 91,
+    "x": 84,
+    "y": 99,
+    "s": "button#sortTab.tab < div#stowTools < header"
+   }
+  ],
+  "wide": [
+   {
+    "id": "stowTools",
+    "sw": 884,
+    "cw": 390
+   },
+   {
+    "id": "bx_L1",
+    "sw": 111,
+    "cw": 105
+   }
+  ]
+ },
+ "항해일지": {
+  "small": [
+   {
+    "t": "메뉴",
+    "h": 40,
+    "w": 44,
+    "x": 326,
+    "y": 5,
+    "s": "button#menuBtn.tab.iconb < div.btns < div.hrow"
+   },
+   {
+    "t": "편집 중",
+    "h": 40,
+    "w": 64,
+    "x": 257,
+    "y": 5,
+    "s": "button#lockBtn.tab.unlocked < div.btns < div.hrow"
+   }
+  ],
+  "wide": []
+ },
+ "커뮤니티": {
+  "small": [
+   {
+    "t": "메뉴",
+    "h": 40,
+    "w": 44,
+    "x": 326,
+    "y": 5,
+    "s": "button#menuBtn.tab.iconb < div.btns < div.hrow"
+   },
+   {
+    "t": "편집 중",
+    "h": 40,
+    "w": 64,
+    "x": 257,
+    "y": 5,
+    "s": "button#lockBtn.tab.unlocked < div.btns < div.hrow"
+   }
+  ],
+  "wide": []
+ }
+}
