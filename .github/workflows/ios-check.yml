@@ -28,6 +28,21 @@ jobs:
       - name: npm install
         run: npm ci || npm install
 
+      - name: 파이어베이스 설정 파일 놓기 (없으면 컴파일만 보는 빈 틀)
+        env:
+          PLIST: ${{ secrets.GOOGLE_SERVICE_PLIST }}
+        run: |
+          # ★ 5.7 — 이 파일이 Xcode 프로젝트에 들어간 뒤로(빌드 19) 여기서 늘 「파일이 없다」 로 멈췄다.
+          #   올리는 일감(ios-release)과 같은 비밀값을 쓰고, 비밀값이 없으면 컴파일만 되게 빈 틀을 둔다.
+          F=ios/App/App/GoogleService-Info.plist
+          if [ -n "$PLIST" ]; then
+            printf '%s' "$PLIST" > /tmp/gs.raw
+            if head -c 5 /tmp/gs.raw | grep -q '<?xml'; then cp /tmp/gs.raw "$F"; else base64 --decode -i /tmp/gs.raw -o "$F"; fi
+          else
+            printf '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n<plist version="1.0"><dict/></plist>\n' > "$F"
+          fi
+          plutil -lint "$F"
+
       - name: cap sync ios
         run: npx cap sync ios
 
