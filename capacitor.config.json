@@ -7,8 +7,7 @@
     "useLegacyBridge": true
   },
   "ios": {
-    "contentInset": "always",
-    "scheme": "https"
+    "contentInset": "always"
   },
   "plugins": {
     "FirebaseAuthentication": {
