@@ -16,5 +16,7 @@ const vc = src.slice(src.indexOf('function verCmp('), src.indexOf('function verB
 const verCmp = new Function(vc + '\nreturn verCmp;')();
 T('verCmp: 5.10 > 5.9', verCmp('5.10', '5.9') > 0);
 T('verCmp: 5.10 < 6.0', verCmp('5.10', '6.0') < 0);
+// 계정이 바뀌면 받아 둔 목록을 버린다 (7회째 검사: B 로 바꿔 들어오자 글판 0개)
+T('로그인한 사람이 바뀌면 listDrop() 을 부른다', /lastAuthUid !== nowUid\)\{\s*\n\s*try\{ if\(typeof window\.__listDrop === 'function'\) window\.__listDrop\(\);/.test(src));
 console.log(`\n${pass} 통과 · ${fail} 실패`);
 process.exit(fail ? 1 : 0);
