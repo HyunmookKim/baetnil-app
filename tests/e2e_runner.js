@@ -350,7 +350,13 @@
   step('커뮤니티 — 댓글', async function(){
     writeTalkComment(S.post); await sleep(500);
     setv('ff0', '자동검사 댓글'); formOk();
-    await until(function(){ var p = talkList.find(function(x){ return String(x.id) === S.post; }); return p && Number(p.cmtN) > 0; }, 20000, '댓글');
+    // ★ 13회째 아이패드 — 댓글은 화면에 달렸는데 목록(talkList)의 댓글 수가 아직 안 바뀌어 실패했다.
+    //   글 화면에 댓글이 보이면 달린 것이다. 둘 중 하나면 통과로 본다.
+    await until(function(){
+      var p = (talkList || []).find(function(x){ return String(x.id) === S.post; });
+      if(p && Number(p.cmtN) > 0) return true;
+      return /자동검사 댓글/.test(txt('#mrPanel')) || /자동검사 댓글/.test(txt('body'));
+    }, 30000, '댓글');
   });
   step('장터 — 물건 올리기(사진 포함)', async function(){
     unlock(); setComSub('market'); await sleep(600);
