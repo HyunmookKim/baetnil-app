@@ -37,7 +37,7 @@ function run(ctx){
   const fn = new Function('ctx', `
     const { isNative, t, fauth, GoogleAuthProvider, signInWithCredential,
             signInWithPopup, signInWithRedirect, window } = ctx;
-    // ★ 6.0 — 네이티브 로그인은 nativeAuthWait 로 감싼다(대답 없이 멈추지 않게). 검사에서는 그대로 넘긴다.
+    // ★ 5.10 — 네이티브 로그인은 nativeAuthWait 로 감싼다(대답 없이 멈추지 않게). 검사에서는 그대로 넘긴다.
     const nativeAuthWait = (p) => p;
     return async function google(){ ${body} };
   `)(ctx);

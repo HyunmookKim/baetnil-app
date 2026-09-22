@@ -57,7 +57,7 @@ for(const [n, [la, lo]] of Object.entries(P)){
   T('★ 하코다테는 여전히 관측소 물때다', !!H && !H.model && H.safe === true);
 }
 
-// ── ★★★ 6.0 — 먼 관(官) 관측소가 이기지 않는다 (시뮬레이터 검사에서 드러남)
+// ── ★★★ 5.10 — 먼 관(官) 관측소가 이기지 않는다 (시뮬레이터 검사에서 드러남)
 T('★★★ 관 물때표에도 거리 한도가 있다', /function tideOfficialNear\(sp\)\{ return !!\(sp && sp\.dist != null && sp\.dist <= HC_NEAR_KM\); \}/.test(src));
 T('★★★ 날씨 화면 물때가 그 한도를 본다', /function allTidePts\(\)\{\s*const sp = nearestTideSpot\(\); if\(!sp \|\| !tideOfficialNear\(sp\)\) return null;/.test(src));
 T('★★★ 수심 환산도 그 한도를 본다', /const sp = nearestTideSpotAt\(lat, lon\);\s*if\(sp && tideOfficialNear\(sp\)\)\{/.test(src));
