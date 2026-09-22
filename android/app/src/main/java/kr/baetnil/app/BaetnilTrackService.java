@@ -141,11 +141,11 @@ public class BaetnilTrackService extends Service implements LocationListener {
         try {
             lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             if (lm == null) return;
-            // ★ 배에서는 GPS 가 답이다. 기지국·와이파이 자리는 몇 km 씩 틀린다.
-            //   그래도 예비로 하나 더 걸어 둔다 — 앱 쪽에서 정확도로 다시 거른다.
+            // ★ 5.10 — GPS 로 잡은 위치만 받는다.
+            //   예전에는 예비로 기지국·와이파이 위치(NETWORK_PROVIDER)도 받았는데,
+            //   그 위치는 수백 m~수 km 씩 틀려서 항적에 이상한 위치가 섞이는 원인이었다.
+            //   OsmAnd 도 항적이 흔들리면 위치 공급원을 GPS(Android API)로 바꾸라고 안내한다.
             try { lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, ASK_MS, 0f, this); }
-            catch (Exception ignored) {}
-            try { lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, ASK_MS, 0f, this); }
             catch (Exception ignored) {}
         } catch (Exception ignored) {}
     }
