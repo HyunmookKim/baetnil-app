@@ -72,6 +72,8 @@ jobs:
           [ -f "$F" ] || { echo "::error::www/index.html 이 없습니다."; exit 1; }
           VER=$(grep -o "const APP_VER = '[^']*'" "$F" | head -1 | sed "s/.*'\(.*\)'/\1/")
           [ -n "$VER" ] || { echo "::error::www/index.html 에서 APP_VER 를 못 찾았습니다."; exit 1; }
+          # ★ 5.10 — 판 번호 앞자리는 사장님만 바꾼다 (2026-09-22 에 제가 혼자 6.0 으로 붙였던 사고)
+          case "$VER" in 5.*) ;; *) echo "::error::판 번호가 $VER 입니다. 앞자리 5 를 바꾸는 것은 사장님이 정하실 일입니다."; exit 1;; esac
           BIG=${VER%%.*}; SMALL=${VER#*.}; SMALL=${SMALL%%.*}
           CODE=$(( BIG * 1000 + SMALL ))
           echo "앱 판 번호: $VER · versionCode: $CODE"
