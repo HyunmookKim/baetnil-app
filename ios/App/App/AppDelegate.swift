@@ -1,5 +1,6 @@
 import UIKit
 import Capacitor
+import FirebaseAuth
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -36,6 +37,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         // Called when the app was launched with a url. Feel free to add additional processing here,
         // but if you want the App API to support tracking app url opens, make sure to keep this call
+        // ★ 6.0 — 파이어베이스 로그인이 돌려보낸 주소는 파이어베이스가 먼저 받는다
+        //   (@capacitor-firebase/messaging 문서: authentication 과 같이 쓸 때 넣으라는 줄)
+        if Auth.auth().canHandle(url) {
+            return true
+        }
         return ApplicationDelegateProxy.shared.application(app, open: url, options: options)
     }
 
@@ -65,6 +71,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      didFailToRegisterForRemoteNotificationsWithError error: Error) {
         NotificationCenter.default.post(name: .capacitorDidFailToRegisterForRemoteNotifications,
                                         object: error)
+    }
+
+    // ★ 6.0 — 앱이 뒤에 있을 때 들어온 알림을 파이어베이스 알림 부품에 넘긴다
+    //   (@capacitor-firebase/messaging 문서에 있는 세 번째 줄 — 빠져 있었다)
+    func application(_ application: UIApplication,
+                     didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        NotificationCenter.default.post(name: Notification.Name.init("didReceiveRemoteNotification"),
+                                        object: completionHandler, userInfo: userInfo)
     }
 
 }
