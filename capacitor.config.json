@@ -2,7 +2,7 @@
   "appId": "kr.baetnil.app",
   "appName": "뱃일",
   "webDir": "www",
-  "appendUserAgent": "baetnil/4.93 (+https://baetnil.com)",
+  "appendUserAgent": "baetnil-app (+https://baetnil.com)",
   "android": {
     "useLegacyBridge": true
   },
@@ -13,7 +13,8 @@
     "FirebaseAuthentication": {
       "skipNativeAuth": true,
       "providers": [
-        "google.com"
+        "google.com",
+        "apple.com"
       ]
     }
   }
