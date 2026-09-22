@@ -2,7 +2,7 @@
 #
 #   ★ 애플에 아무것도 올리지 않는다. 검사만 한다.
 #   ★ tests/e2e_runner.js 를 시뮬레이터용 빌드에만 끼워 넣는다. 애플로 가는 빌드(ios-release.yml)에는 안 들어간다.
-#   아이폰 큰 화면: 전체 단계 · 아이폰 SE · 아이패드: 화면만 훑는 단계
+#   아이폰 큰 화면 · 작은 아이폰 · 아이패드: 모두 전체 단계 (5.10 — 사장님 지시)
 #   결과: 단계마다 통과/실패, 화면 사진, 앱 기록 → 「simulator-e2e-…」 묶음
 
 name: 아이폰 전체 기능 시뮬레이터 검사
@@ -22,7 +22,7 @@ permissions:
 jobs:
   e2e:
     runs-on: macos-latest
-    timeout-minutes: 90
+    timeout-minutes: 150
     env:
       BUNDLE_ID: kr.baetnil.app
     steps:
@@ -119,13 +119,13 @@ jobs:
       - name: 아이폰(큰 화면) — 전체 단계
         run: bash tests/e2e_sim_run.sh "iPhone 17 Pro Max|iPhone 16 Pro Max|iPhone 16 Plus|iPhone Pro" full "$RUNNER_TEMP/out/iphone"
 
-      - name: 작은 아이폰 — 화면 훑기
+      - name: 작은 아이폰 — 전체 단계
         if: ${{ always() && inputs.devices == 'all' }}
-        run: bash tests/e2e_sim_run.sh "iPhone SE|iPhone 16e|iPhone 17" quick "$RUNNER_TEMP/out/iphone-small"
+        run: bash tests/e2e_sim_run.sh "iPhone SE|iPhone 16e|iPhone 17" full "$RUNNER_TEMP/out/iphone-small"
 
-      - name: 아이패드 — 화면 훑기
+      - name: 아이패드 — 전체 단계
         if: ${{ always() && inputs.devices == 'all' }}
-        run: bash tests/e2e_sim_run.sh "iPad Pro|iPad Air|iPad" quick "$RUNNER_TEMP/out/ipad"
+        run: bash tests/e2e_sim_run.sh "iPad Pro|iPad Air|iPad" full "$RUNNER_TEMP/out/ipad"
 
       - name: 결과를 e2e-results 가지에 올리기 (Claude 가 git 으로 받아 화면 사진을 본다)
         if: always()
