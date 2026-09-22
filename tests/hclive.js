@@ -45,7 +45,7 @@ const rows = api.hcAll();
 T('관측소를 풀었다 — ' + (rows ? rows.length : 0) + '곳', !!rows && rows.length > 1000);
 T('관측소마다 위도·경도·기준면·분조가 다 있다',
   rows.every(r => isFinite(r.lat) && isFinite(r.lon) && r.cons.length >= 4 && r.name));
-T('기준면(해도 기준면 위 높이로 바꿀 값)을 아는 곳이 거의 전부다',
+T('기준면(기본수준면 위 높이로 바꿀 값)을 아는 곳이 거의 전부다',
   rows.filter(r => r.off != null).length > rows.length * 0.99);
 T('위도·경도가 상식 안에 있다',
   rows.every(r => r.lat >= -90 && r.lat <= 90 && r.lon >= -180 && r.lon <= 180));

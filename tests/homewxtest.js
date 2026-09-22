@@ -108,7 +108,7 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + n); } else { fail+
   let out = null, err = '';
   if(w){
     try{
-      const fn = new Function('wxData', "const t = x => x;\n" + w + '\n return wxWhenText;')(
+      const fn = new Function('wxData', "const t = x => x;\n" + (grab(js, 'weekDay') || '') + '\n' + w + '\n return wxWhenText;')(
         { w:{ hourly:{ time:['2026-08-11T00:00','2026-08-11T21:00'] } } });
       out = [fn(1), fn(-1), fn(9)];
     }catch(e){ err = e.message; }

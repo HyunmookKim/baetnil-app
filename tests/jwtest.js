@@ -23,7 +23,7 @@ function grab(s, name){
   return s.slice(i, j);
 }
 
-const NAMES = ['inRing','seaAt','seaMine','jwMineZones','jwKeyOf','jwSeaName','jwLine','jwAlertBox'];
+const NAMES = ['inRing','seaAt','seaMine','jwMineZones','jwKeyOf','jwSeaName','jwLine','jwAlertBox', 'seaHere'];
 const bodies = NAMES.map(n => { const b = grab(src, n); T('함수가 있다 — ' + n, !!b); return b || ''; });
 const note = (src.match(/const JMA_KIND = \{[\s\S]*?\n\};/) || [''])[0];
 T('気象庁 경보 표가 있다', !!note);
@@ -60,6 +60,7 @@ T('★★★ 気象庁 예보구 48곳을 다 담았다', (seatbl.match(/^  '/gm
 
 const make = new Function('ctx', `
   let seaJP = ctx.seaJP, jwCache = ctx.jwCache;
+  let wxCur = ctx.wxCur || null;   // 5.10 — 날씨 지점 해역
   const curBoat = ctx.curBoat, boatOutsideKR = ctx.boatOutsideKR;
   const t = x => x;
   const tsub = (s, o) => String(s).replace(/\\{(\\w+)\\}/g, (m, k) => o[k]);

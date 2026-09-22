@@ -45,7 +45,8 @@ for(const [n, [la, lo]] of Object.entries(P)){
   T(`${n} — 물때가 나온다`, !!H && H.pts.length >= 10);
   if(!H) continue;
   T(`${n} — ★ 모형 점이라고 표가 붙는다`, H.model === true);
-  T(`${n} — ★★★ safe 가 거짓이다 (다리·수심에 안 쓴다)`, H.safe === false);
+  // ★ 5.10 — 사장님 지시로 모형 점도 15km 안이면 다리·수심에 쓴다. 대신 0.3m 여유를 더 둔다.
+  T(`${n} — ★★★ 15km 안 모형 점은 다리·수심에 쓰되 여유 0.3m 를 더 둔다`, H.safe === (H.spot.dist <= 15) && H.pad === 0.3);
   T(`${n} — 가장 가까운 점이 15km 안이다 (${H.spot.dist.toFixed(1)}km)`, H.spot.dist < 15);
   const lo2 = Math.min(...H.pts.map(p => p.v)), hi2 = Math.max(...H.pts.map(p => p.v));
   T(`${n} — 높이가 최저천문조위(0) 위, 최고조위 아래다 (${lo2.toFixed(2)}~${hi2.toFixed(2)}m)`,

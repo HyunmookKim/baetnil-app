@@ -51,7 +51,8 @@ const 준비 = async (pg, port) => {
     const 떴나 = await pg.evaluate(() => /위치정보 이용에 동의하셔야/.test(document.body.innerText||''));
     T('★ 날씨를 열면 위치정보 동의를 묻는다', 떴나);
     await pg.evaluate(라벨 => { const x=[...document.querySelectorAll('button')]
-      .filter(b=>b.offsetParent!==null && b.innerText.trim()===라벨)[0]; if(x) x.click(); }, 누를것);
+      .filter(b=>b.offsetParent!==null && b.innerText.trim()===라벨).pop(); if(x) x.click(); }, 누를것);
+    // ★ 5.10 — 날씨 칸 뒤에도 같은 이름의 「동의하기」 단추가 있다(동의 전 안내). 창 안의 것(맨 뒤)을 누른다.
     await pg.waitForTimeout(2500);
     const r = await pg.evaluate(() => { const L=document.getElementById('weatherList');
       return { 글: L?(L.innerText||'').replace(/\s+/g,' ').trim():'',

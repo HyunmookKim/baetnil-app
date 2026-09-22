@@ -45,20 +45,20 @@ T('거리 한도를 한곳에서만 정한다',
   T('★★★ 수심 환산에 어림(omTidePts)은 못 끼어든다', !/omTidePts|\.est/.test(ta));
   T('★★★ 다리 셈도 safe 가 아니면 안 한다', /TA\.hc && !TA\.safe/.test(src));
   T('★★★ safe 는 거리와 기준면 두 가지를 다 본다',
-    /safe: near\.dist <= HC_SAFE_KM && near\.row\.dok === true/.test(src));
+    /: \(near\.dist <= HC_SAFE_KM && near\.row\.dok === true\)/.test(src) && /near\.dist <= HC_MODEL_SAFE_KM && near\.row\.hat != null/.test(src));
   T('★ 다리 기준값(HAT)은 그 관측소 것을 쓴다', /TA\.hc && TA\.safe && TA\.hat != null/.test(src));
 }
 
 // ── 사실대로 말한다
-T('★ 어느 관측소에서 몇 km 인지 화면에 적는다', /조위 관측소\(\{km\}km\)의 조화상수로 셈한 물때입니다/.test(src));
-T('★ 아래 경고줄에도 적는다', /조위 관측소\(\{km\}km\)의 <b>조화상수<\/b>로 셈한 것입니다/.test(src));
+T('★ 어느 관측소에서 몇 km 인지 화면에 적는다', /조위관측소\(\{km\}km\)의 조화상수로 셈한 물때입니다/.test(src));
+T('★ 아래 경고줄에도 적는다', /조위관측소\(\{km\}km\)의 <b>조화상수<\/b>로 셈한 것입니다/.test(src));
 T('★★★ 자료 출처를 화면에 적는다 (CC BY 4.0 조건)',
   /Neaps tide database/.test(src) && /CC BY 4\.0/.test(src) && /openwatersio\/tide-database/.test(src));
 T('★★★ 「30분쯤 어긋난다」는 말이 없다', !/30분쯤/.test(src));
 
 // ── 세 나라말
-['{spot} 조위 관측소({km}km)의 조화상수로 셈한 물때입니다.',
- '가장 가까운 조위 관측소가 {km}km 떨어져 있어 다리 통과를 계산하지 않습니다.',
+['{spot} 조위관측소({km}km)의 조화상수로 셈한 물때입니다.',
+ '가장 가까운 조위관측소가 {km}km 떨어져 있어 다리 통과를 계산하지 않습니다.',
  '조위 조화상수'].forEach(w => {
   const n = (src.match(new RegExp("'" + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + "':", 'g')) || []).length;
   T(`'${w.slice(0,22)}…' 세 나라말에 다 있다 — ${n}`, n === 3);
