@@ -58,7 +58,7 @@ if(PUSH && HAV && ACC){
     let 말 = [];
     const tsub = (m,o)=>String(m).replace(/\\{(\\w+)\\}/g,(a,k)=>(o&&o[k]!=null)?o[k]:a);
     const tell = m => { 말.push(String(m)); return Promise.resolve(); };
-    let trkNow = { vid:'v1', pts: [], saved: 0 };
+    let trkNow = { vid:'v1', from:new Date(Date.now()-600000).toISOString(), pts: [], saved: 0 };   // 켠 지 10분 — 첫 점 문(5.12)은 이미 지났다
     function trkKeep(){} function trkFlush(){} function trkLive(){}
     ${grab('trkSimplify') || ''}
     ${require('./trkspd_pre.js')(src)}${grab('trkTooFast') || ''}
