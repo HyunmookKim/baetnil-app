@@ -17636,6 +17636,11 @@ async function trkStop(){
     const it = (typeof voyage !== 'undefined' ? voyage : []).find(v => String(v.id) === String(cur.vid));
     if(it){
       it.trk = pts;
+      // ★ 6.0 — 9/17 에 약속하고 안 했던 것: 받은 점·버린 점 수를 항해에 남긴다.
+      //   백업 하나로 「GPS 가 안 준 것」 과 「앱이 걸러 버린 것」 이 갈린다.
+      it.trkStat = { got: Number(cur.got) || 0, kept: (cur.pts || []).length,
+                     drop: Number(cur.drop) || 0, mock: Number(cur.mock) || 0,
+                     saved: pts.length };
       try{ saveMR(); }catch(e){}
       try{ schedulePush(); }catch(e){}
       try{ renderVoyage(); }catch(e){}
@@ -23305,7 +23310,8 @@ const BOAT_SPEC = {
 // 없는 값을 어림잡아 넣으면 잘못된 안심을 준다.
 function krCurrentKt(ts){
   if(!ts || !krCache) return null;
-  const sp = (typeof nearestTideSpot === 'function') ? nearestTideSpot() : null;
+  let sp = (typeof nearestTideSpot === 'function') ? nearestTideSpot() : null;
+  if(sp && typeof tideOfficialNear === 'function' && !tideOfficialNear(sp)) return null;   // ★ 6.0 — 먼 관측소 조류는 안 쓴다
   const rows = (sp && sp.cur) ? sp.cur : (krCache.cur || null);
   if(!Array.isArray(rows) || !rows.length) return null;
   // { d:'2026-08-11', t:'13:00', v:2.4 } 형태를 찾는다
@@ -45958,6 +45964,7 @@ function tideAllSpots(){
 function tideFromLine(){
   try{
     const sp = nearestTideSpot();
+    if(!tideOfficialNear(sp)) return '';        // ★ 6.0 — 먼 관측소 물때를 안 쓰면 그 출처도 안 적는다
     const from = tideSpotFrom(sp);
     if(!sp || !from) return '';
     // 한국 자료는 이미 위 문장에 「국립해양조사원」 이 들어 있다 — 두 번 적지 않는다
@@ -46474,8 +46481,13 @@ function omTidePts(){
     return ex;
   }catch(_){ return null; }
 }
+// ★★★ 6.0 — 관(官) 물때표에도 거리 한도를 둔다 (아이폰 시뮬레이터 검사에서 드러남)
+//   여태 「관 물때표가 언제나 이긴다」 에 거리 한도가 없었다. 그래서 블라디보스토크에서도
+//   수백 km 떨어진 한국·일본 관측소의 물때가 그 자리 물때처럼 떴다. 조화상수·EOT20 점은
+//   한 번도 쓰이지 않았다. 조화상수와 같은 한도(HC_NEAR_KM)를 넘으면 관 물때표를 쓰지 않는다.
+function tideOfficialNear(sp){ return !!(sp && sp.dist != null && sp.dist <= HC_NEAR_KM); }
 function allTidePts(){
-  const sp = nearestTideSpot(); if(!sp) return null;
+  const sp = nearestTideSpot(); if(!sp || !tideOfficialNear(sp)) return null;
   const pts = tidePtsOf(sp);
   if(pts.length>=2) return { pts, spot:sp };
   return null;
@@ -46499,7 +46511,7 @@ function allTidePts(){
 //   사람이 넣을 것은 '잰 값' 하나뿐이다.
 function tideAtPlace(lat, lon, ts){
   const sp = nearestTideSpotAt(lat, lon);
-  if(sp){
+  if(sp && tideOfficialNear(sp)){
     const pts = tidePtsOf(sp);
     if(pts.length >= 2){
       const v = tideAt(ts, pts);
