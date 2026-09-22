@@ -172,8 +172,15 @@
     unlock();
     // 로그인 뒤 앱이 계정 화면을 늦게 다시 열 수 있다(8회째) — 배 등록 칸이 보일 때까지 다시 연다
     await sleep(1500);
-    await until(function(){ if(!$('#nbName')) openBoatSetup(); return !!$('#nbName'); }, 15000, '배 등록 화면');
+    // ★ 11회째 아이패드 — 배 등록 칸이 한 번 보인 뒤에 계정 화면이 늦게 다시 덮었다.
+    //   그래서 칸이 2초 동안 그대로 있을 때까지 다시 연다. 값을 넣기 직전에도 한 번 더 본다.
+    var steady = 0;
+    await until(function(){
+      if(!$('#nbName')){ steady = 0; openBoatSetup(); return false; }
+      return ++steady >= 8;   // 0.25초마다 보니 8번 = 2초
+    }, 30000, '배 등록 화면');
     await sleep(500); await shot('07-boat-setup');
+    if(!$('#nbName')){ openBoatSetup(); await until(function(){ return !!$('#nbName'); }, 10000, '배 등록 화면(다시)'); }
     setv('nbName', '자동검사배');
     try{ mapS.pick = { lat:34.7404, lon:127.7449 }; }catch(_){}
     createBoat();
