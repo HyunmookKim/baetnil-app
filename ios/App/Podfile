@@ -19,6 +19,10 @@ end
 target 'App' do
   capacitor_pods
   # Add your Pods here
+  # ★ 6.0 — 구글 로그인 부품. 이 줄이 없으면 부품이 Lite 로만 들어가
+  #   signInWithGoogle 이 아무 일도 안 하고 대답도 안 한다(5.7 까지 아이폰 구글 로그인이 멈춘 까닭).
+  #   cap sync 는 capacitor_pods 안만 다시 쓰므로 여기 둔 줄은 남는다.
+  pod 'CapacitorFirebaseAuthentication/Google', :path => '../../node_modules/@capacitor-firebase/authentication'
 end
 
 post_install do |installer|

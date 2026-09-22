@@ -1,0 +1,50 @@
+{
+ "ko": {
+  "NSLocationWhenInUseUsageDescription": "항해 중 현재 위치의 바람·파고·물때와 해상 특보를 보여 드리기 위해 사용합니다.",
+  "NSLocationAlwaysAndWhenInUseUsageDescription": "출항부터 입항까지 항적을 자동으로 기록하기 위해, 화면이 꺼져 있는 동안에도 위치를 사용합니다. 입항을 기록하면 멈춥니다.",
+  "NSCameraUsageDescription": "물품·정비 기록·정박지에 사진을 찍어 붙이기 위해 카메라를 사용합니다.",
+  "NSPhotoLibraryUsageDescription": "물품·정비 기록·도면·정박지에 사진을 붙이기 위해 사진을 고릅니다.",
+  "NSPhotoLibraryAddUsageDescription": "항적 지도나 기록 화면을 사진으로 저장할 때 사용합니다.",
+  "NSCalendarsUsageDescription": "출항 예정을 폰 달력에 넣어 드리기 위해 달력을 사용합니다.",
+  "NSCalendarsFullAccessUsageDescription": "출항 예정을 폰 달력에 넣고 읽기 위해 달력을 사용합니다.",
+  "NSCalendarsWriteOnlyAccessUsageDescription": "출항 예정을 폰 달력에 넣어 드리기 위해 달력을 사용합니다.",
+  "NSRemindersUsageDescription": "정비 때를 미리 알려 드리기 위해 미리 알림을 사용합니다.",
+  "NSRemindersFullAccessUsageDescription": "정비 때를 미리 알려 드리기 위해 미리 알림을 사용합니다."
+ },
+ "en": {
+  "NSLocationWhenInUseUsageDescription": "Used to show wind, waves, tides and marine warnings for your current position while under way.",
+  "NSLocationAlwaysAndWhenInUseUsageDescription": "Used to record your track automatically from departure to arrival, including while the screen is off. Recording stops when you log your arrival.",
+  "NSCameraUsageDescription": "Used to take photos and attach them to items, maintenance records and anchorages.",
+  "NSPhotoLibraryUsageDescription": "Used to choose photos to attach to items, maintenance records, plans and anchorages.",
+  "NSPhotoLibraryAddUsageDescription": "Used when you save a track map or a record screen as a photo.",
+  "NSCalendarsUsageDescription": "Used to add planned departures to your phone calendar.",
+  "NSCalendarsFullAccessUsageDescription": "Used to add planned departures to your phone calendar and read them back.",
+  "NSCalendarsWriteOnlyAccessUsageDescription": "Used to add planned departures to your phone calendar.",
+  "NSRemindersUsageDescription": "Used to remind you when maintenance is due.",
+  "NSRemindersFullAccessUsageDescription": "Used to remind you when maintenance is due."
+ },
+ "ja": {
+  "NSLocationWhenInUseUsageDescription": "航海中に現在地の風・波・潮汐と海上警報を表示するために使用します。",
+  "NSLocationAlwaysAndWhenInUseUsageDescription": "出港から入港まで航跡を自動で記録するため、画面が消えている間も位置情報を使用します。入港を記録すると停止します。",
+  "NSCameraUsageDescription": "積載品・整備記録・停泊地に写真を撮って添付するためにカメラを使用します。",
+  "NSPhotoLibraryUsageDescription": "積載品・整備記録・図面・停泊地に添付する写真を選ぶために使用します。",
+  "NSPhotoLibraryAddUsageDescription": "航跡地図や記録画面を写真として保存するときに使用します。",
+  "NSCalendarsUsageDescription": "出港予定を端末のカレンダーに追加するために使用します。",
+  "NSCalendarsFullAccessUsageDescription": "出港予定を端末のカレンダーに追加し、読み込むために使用します。",
+  "NSCalendarsWriteOnlyAccessUsageDescription": "出港予定を端末のカレンダーに追加するために使用します。",
+  "NSRemindersUsageDescription": "整備の時期をお知らせするためにリマインダーを使用します。",
+  "NSRemindersFullAccessUsageDescription": "整備の時期をお知らせするためにリマインダーを使用します。"
+ },
+ "ru": {
+  "NSLocationWhenInUseUsageDescription": "Используется, чтобы показывать ветер, волнение, приливы и морские предупреждения для вашего текущего места в походе.",
+  "NSLocationAlwaysAndWhenInUseUsageDescription": "Используется для автоматической записи трека от выхода до прихода, в том числе при выключенном экране. Запись останавливается, когда вы отмечаете приход.",
+  "NSCameraUsageDescription": "Используется, чтобы фотографировать и прикреплять снимки к вещам, записям об обслуживании и стоянкам.",
+  "NSPhotoLibraryUsageDescription": "Используется для выбора фотографий к вещам, записям об обслуживании, схемам и стоянкам.",
+  "NSPhotoLibraryAddUsageDescription": "Используется, когда вы сохраняете карту трека или экран записи как фото.",
+  "NSCalendarsUsageDescription": "Используется, чтобы добавлять запланированные выходы в календарь телефона.",
+  "NSCalendarsFullAccessUsageDescription": "Используется, чтобы добавлять запланированные выходы в календарь телефона и читать их.",
+  "NSCalendarsWriteOnlyAccessUsageDescription": "Используется, чтобы добавлять запланированные выходы в календарь телефона.",
+  "NSRemindersUsageDescription": "Используется, чтобы напоминать о сроках обслуживания.",
+  "NSRemindersFullAccessUsageDescription": "Используется, чтобы напоминать о сроках обслуживания."
+ }
+}
