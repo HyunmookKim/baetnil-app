@@ -45,7 +45,7 @@ T('★★ 입항하면 튄 점을 알아서 걷어낸다 (사람이 누르지 �
 {
   const env = `
     const TRK_ACC=60, TRK_GPS_ACC=30, TRK_DIST=50, TRK_LOST=5, TRK_MAX=9999, TRK_TOL=1, TRK_FLUSH=9999, TRK_MAXKT=20, TRK_STILL_MS=0.3;
-    let trkNow = { vid:'v', pts:[], id:null };
+    let trkNow = { vid:'v', from:new Date(Date.now()-600000).toISOString(), pts:[], id:null };   // 켠 지 10분 — 첫 점 문(5.12)은 이미 지났다
     const hav=(a,b,c,d)=>{const R=6371,r=x=>x*Math.PI/180,dLa=r(c-a),dLo=r(d-b);
       const q=Math.sin(dLa/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(dLo/2)**2;return 2*R*Math.asin(Math.sqrt(q));};
     ${require('./trkspd_pre.js')(src)}${grab(src,'trkTooFast')}

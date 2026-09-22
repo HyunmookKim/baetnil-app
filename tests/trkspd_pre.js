@@ -5,6 +5,8 @@ module.exports = function(src){
   const g = name => { const i = src.indexOf('function ' + name + '('); if(i < 0) return '';
     let d = 0, j = src.indexOf('{', i); for(; j < src.length; j++){ if(src[j] === '{') d++; else if(src[j] === '}'){ d--; if(!d) break; } }
     return src.slice(i, j + 1); };
+  // ★ 5.12 — trkPush 가 「첫 점은 GPS 가 잡힌 뒤에」 문을 쓰므로 그것도 같이 붙인다
   return `const TRK_SPD_X=${c('TRK_SPD_X')}, TRK_SPD_PAD=${c('TRK_SPD_PAD')}, TRK_SPD_GAP=${c('TRK_SPD_GAP')}, TRK_SPD_WIN=${c('TRK_SPD_WIN')};\n` +
-         g('trkSpd') + '\n' + g('trkOldMaxKt') + '\n';
+         `const TRK_FIRST_ACC=${c('TRK_FIRST_ACC')}, TRK_FIRST_WAIT=${c('TRK_FIRST_WAIT')};\n` +
+         g('trkSpd') + '\n' + g('trkOldMaxKt') + '\n' + g('trkFirstWait') + '\n';
 };
