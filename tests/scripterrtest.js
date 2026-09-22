@@ -50,7 +50,7 @@ const T=(n,c,x)=>{ if(c){pass++;console.log('통과: '+n);} else {fail++;console
   const body = await p.evaluate(()=>errBody('Script error.'));
   T('★★★ 보낼 내용에 어디까지 갔는지가 있다', /붙는 데까지 — 불러옴: firebase-auth/.test(body), body);
   T('★★ 로그인 여부가 들어간다', /로그인 안 함/.test(body), body);
-  T('★ 판 번호가 들어간다', /앱 5\.\d+/.test(body), body);
+  T('★ 판 번호가 들어간다', /앱 \d+\.\d+/.test(body), body);
   T('★ 못 읽는 오류라는 설명이 들어간다', /브라우저가 내용을 안 알려/.test(body), body);
 
   // ③ 보통 오류는 그대로 보인다

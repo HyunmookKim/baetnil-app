@@ -35,7 +35,7 @@ T('앱에서는 네이티브로 간다', /if\(isNative\(\)\)\{/.test(ap));
 T('부품에게 애플 로그인을 시킨다', /fa\.signInWithApple\(\{ skipNativeAuth: true/.test(ap));
 T('★ rawNonce 를 같이 넘긴다 (안 넘기면 애플이 거절한다)', /rawNonce: c\.nonce/.test(ap));
 T('★ 애플이 처음 한 번만 주는 이름을 받아 둔다', /updateProfile\(fauth\.currentUser/.test(ap));
-T('updateProfile 을 들여온다', /updateProfile(?:, initializeAuth, indexedDBLocalPersistence)? \} =/.test(src));
+T('updateProfile 을 들여온다', /updateProfile(?:, initializeAuth, indexedDBLocalPersistence)?(?:, sendPasswordResetEmail)? \} =/.test(src));
 T('안 되면 조용히 웹 방식으로 내려간다', /const ap = new OAuthProvider\('apple\.com'\);/.test(ap));
 T('사람이 그만둔 것은 고장으로 안 친다', /cancel\|1001/.test(ap));
 

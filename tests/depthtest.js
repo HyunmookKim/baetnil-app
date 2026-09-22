@@ -146,10 +146,13 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + n); } else { fail+
     // ★ 5.2 — tideAtPlace 는 관 물때표가 없을 때 조화상수(hcTidePts)로 내려간다.
     //   여기서는 관 물때표가 이기는지 보는 자리라, 조화상수는 빈손 노릇만 하게 둔다.
     const fn = new Function('tideCache', 'tidePackSpots', 'SPOT_PACKS', 'hcTidePts',
+      // ★ 6.0 — 관 물때표 거리 한도(tideOfficialNear, HC_NEAR_KM)도 같이 넣는다
+      'const HC_NEAR_KM = 150;\n' + grab(js, 'tideOfficialNear') + '\n' +
       hav+'\n'+tas+'\n'+nsa+'\n'+tpo+'\n'+thl+'\n'+ta+'\n'+f+'\n return tideAtPlace;')(cache, {}, [], () => null);
     const mk = h => { const d=new Date('2026-08-12T00:00:00+09:00'); d.setHours(h,0,0,0); return d.getTime(); };
     out = { 만조: fn(34.70, 127.80, mk(10)), 간조: fn(34.70, 127.80, mk(4)),
-            중간: fn(34.70, 127.80, mk(7)), 밖: fn(34.70, 127.80, mk(23)) };
+            중간: fn(34.70, 127.80, mk(7)), 밖: fn(34.70, 127.80, mk(23)),
+            먼곳: fn(43.11, 131.88, mk(10)) };
   }catch(e){ err = e.message; }
   T('핀 자리 조위를 실제로 돌렸다' + (err ? ' — ' + err : ''), !!out);
   if(out){
@@ -161,6 +164,11 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + n); } else { fail+
     T('어느 관측소인지 알려 준다 — ' + (out.만조 && out.만조.spot.name), out.만조 && out.만조.spot.name === '여수');
     // ★ 자료 기간 밖이면 지어내지 말고 빈손이어야 한다
     T('자료가 없는 시각은 지어내지 않는다', out.밖 === null);
+    // ★ 6.0 — 150km 넘게 떨어진 관측소 물때를 그 자리 것처럼 쓰지 않는다 (블라디보스토크에서 여수가 떴던 것)
+    try{
+      const far = out.먼곳;
+      T('★★★ 먼 관측소(여수 → 블라디보스토크 약 1000km) 물때를 안 쓴다', far === null, JSON.stringify(far && far.spot && far.spot.name));
+    }catch(e){ T('★★★ 먼 관측소 물때를 안 쓴다 — ' + e.message, false); }
   } else fail += 5;
 }
 

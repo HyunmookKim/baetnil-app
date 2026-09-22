@@ -97,7 +97,7 @@ function grab(s, name){
   T('★★★ 출발은 시각·자리·날씨를 한 번에 넣는다',
     /it\.timeOut = /.test(dn) && /posHere\('wxOut'/.test(dn) && /wxCapture\('wxOut'/.test(dn), dn);
   T('★★★ 출발을 찍으면 항적도 켠다 (그때부터 길을 남기는 것이 맞다)',
-    /trkStart\(/.test(dn), dn);
+    /trkStart(?:Say)?\(/.test(dn), dn);
 }
 
 // ══ 4. 지도 이름표가 겹쳐 찍히지 않는다 ════════════════════════════

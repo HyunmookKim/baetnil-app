@@ -22,7 +22,7 @@
     try{
       var u = navigator.userAgent || '';
       if(/iPad/.test(u) || (/Macintosh/.test(u) && (navigator.maxTouchPoints || 0) > 1)) return 'quick';
-      if(Math.min(screen.width, screen.height) < 380) return 'quick';
+      if(Math.min(screen.width, screen.height) <= 400) return 'quick';   // 아이폰 16e·17(390~402)은 작은 쪽
     }catch(_){}
     return 'full';
   })();
