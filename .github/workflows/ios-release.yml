@@ -290,6 +290,12 @@ jobs:
           fi
           plutil -lint "$APP/GoogleService-Info.plist"
           echo "GoogleService-Info.plist 들어 있습니다."
+          # ★ 6.0 — 애플 로그인·알림 권한이 서명에 실제로 들어갔는지 본다 (없으면 애플 로그인이 error 1000 으로 끝난다)
+          codesign -d --entitlements - "$APP" > /tmp/ent.txt 2>&1 || true
+          cat /tmp/ent.txt | head -40
+          grep -q "com.apple.developer.applesignin" /tmp/ent.txt || { echo "::error::서명에 애플 로그인 권한(applesignin)이 없습니다."; exit 1; }
+          grep -q "aps-environment" /tmp/ent.txt || { echo "::error::서명에 알림 권한(aps-environment)이 없습니다."; exit 1; }
+          echo "애플 로그인·알림 권한이 서명에 들어 있습니다."
 
       - name: 내보내기 설정 만들기
         env:
