@@ -18,7 +18,8 @@
   'use strict';
   var TAG = '[baetnil-e2e] ';
   // full · quick — 아이패드와 작은 아이폰(SE)은 계정을 만들지 않고 화면만 훑는다
-  var MODE = (function(){
+  // ★ 5.10 — 사장님: 작은 아이폰·아이패드도 기능 전체를 누른다. 모든 기기 full.
+  var MODE_OLD = (function(){
     try{
       var u = navigator.userAgent || '';
       if(/iPad/.test(u) || (/Macintosh/.test(u) && (navigator.maxTouchPoints || 0) > 1)) return 'quick';
@@ -26,6 +27,7 @@
     }catch(_){}
     return 'full';
   })();
+  var MODE = 'full';
   var KEY = 'e2e_state';
   function load(){ try{ return JSON.parse(localStorage.getItem(KEY) || 'null'); }catch(_){ return null; } }
   function keep(s){ try{ localStorage.setItem(KEY, JSON.stringify(s)); }catch(_){} }
@@ -249,6 +251,17 @@
     log('BG 30'); await sleep(45000);
     await until(function(){ return trkNow && trkNow.pts && trkNow.pts.length > before + 2; }, 30000,
       '뒤에 있던 동안 점 (전 ' + before + ', 지금 ' + ((trkNow&&trkNow.pts)?trkNow.pts.length:0) + ')');
+  });
+  // 5.10 — 거짓 위치 거르기: 시뮬레이터 위치는 iOS 가 「소프트웨어가 만든 위치」 로 표시한다.
+  //   그 표시를 그대로 두면 앱이 그 점을 버려야 한다(mock 수가 늘고 점은 안 는다).
+  step('항해 — 거짓 위치는 버리는가', async function(){
+    var m0 = Number(trkNow.mock) || 0, p0 = trkNow.pts.length;
+    window.__e2eKeepMock = true;
+    try{ await until(function(){ return (Number(trkNow.mock) || 0) >= m0 + 3; }, 30000, '거짓 위치 버림 (버린 수 ' + ((Number(trkNow.mock)||0) - m0) + ')'); }
+    finally{ window.__e2eKeepMock = false; }
+    var grew = trkNow.pts.length - p0;
+    log('INFO 거짓 위치 버린 수 ' + ((Number(trkNow.mock)||0) - m0) + ' · 그동안 늘어난 점 ' + grew);
+    if(grew > 1) throw new Error('거짓 위치인데 점이 ' + grew + '개 늘었음');
   });
   step('항해 — 입항하면 항적이 멈추고 남는가', async function(){
     openMR('voyage', S.voy); await sleep(400);
@@ -507,7 +520,17 @@
   try{
     if(typeof trkPush === 'function'){
       var _tp = trkPush;
-      window.trkPush = function(pos){ try{ if(pos) pos.simulated = false; }catch(_){} return _tp.apply(this, arguments); };
+      window.trkPush = function(pos){ try{ if(pos && !window.__e2eKeepMock) pos.simulated = false; }catch(_){} return _tp.apply(this, arguments); };
+    }
+  }catch(_){}
+  // 화면이 꺼진 동안 쌓인 점(BaetnilTrack.drain)에도 거짓 위치 표시("mk":1)가 붙는다 — 검사에서만 뗀다
+  try{
+    var BT = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.BaetnilTrack;
+    if(BT && typeof BT.drain === 'function'){
+      var _dr = BT.drain.bind(BT);
+      BT.drain = function(){ return _dr.apply(null, arguments).then(function(r){
+        try{ if(!window.__e2eKeepMock && r && r.pts) r.pts.forEach(function(q){ if(q) delete q.mk; }); }catch(_){}
+        return r; }); };
     }
   }catch(_){}
 
