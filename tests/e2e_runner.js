@@ -145,7 +145,9 @@
   });
   step('로그인 화면 — 단추가 다 있는가', async function(){
     await signOut();
-    openAccount(); await sleep(600); await shot('03-login');
+    // 앱이 막 켜졌을 때 첫 화면(환영)이 늦게 떠서 로그인 화면을 덮을 수 있다(5회째 아이패드) — 로그인 칸이 보일 때까지 다시 연다
+    await until(function(){ if(!$('#acEm')) openAccount(); return !!$('#acEm'); }, 15000, '로그인 화면');
+    await sleep(600); await shot('03-login');
     if(!$('.lgbtn.lg-a')) throw new Error('애플 단추 없음');
     if(!$('.lgbtn.lg-g')) throw new Error('구글 단추 없음');
     if(!$('#acEm') || !$('#acPw')) throw new Error('이메일 칸 없음');
@@ -327,12 +329,15 @@
     if(!Array.isArray(out) || !out.length) throw new Error('resizePhotos 가 사진을 안 돌려줌');
   });
   step('정박지 올리기', async function(){
-    unlock(); setComSub('spots'); await sleep(600);
-    writeSpot(); await sleep(600);
-    spotPickCtx.draft = spotPickCtx.draft || {};
-    spotPickCtx.draft.lat = 34.73; spotPickCtx.draft.lon = 127.74;
-    try{ spotForm(); }catch(_){}
-    await sleep(500);
+    // 장터 글이 열린 채면 글쓰기 화면이 안 뜰 때가 있다(5회째) — 닫고 들어가서, 이름 칸이 보일 때까지 기다린다
+    unlock(); try{ closeBoat(); }catch(_){} switchTab('community'); setComSub('spots'); await sleep(800);
+    await until(function(){
+      if($('#spName')) return true;
+      try{ writeSpot(); }catch(_){}
+      try{ spotPickCtx.draft = spotPickCtx.draft || {}; spotPickCtx.draft.lat = 34.73; spotPickCtx.draft.lon = 127.74; spotForm(); }catch(_){}
+      return !!$('#spName');
+    }, 15000, '정박지 이름 칸');
+    await sleep(300);
     setv('spName', '[자동검사] 정박지 ' + S.run);
     await spotSave();
     await sleep(2000); await shot('25-spot');
