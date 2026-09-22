@@ -135,6 +135,9 @@ public class BaetnilTrack: CAPPlugin, CAPBridgedPlugin, CLLocationManagerDelegat
             if l.horizontalAccuracy >= 0 { s += ",\"ac\":\(l.horizontalAccuracy)" }
             if l.speed >= 0 { s += ",\"sp\":\(l.speed)" }
             if l.course >= 0 { s += ",\"br\":\(l.course)" }
+            // ★ 5.10 — 거짓 위치 표시. 안드로이드(isMock → "mk":1)와 같게 맞춘다.
+            //   이것이 없으면 화면이 꺼진 동안 쌓인 점은 거짓 위치 앱이 만든 것이어도 그대로 항적이 됐다.
+            if #available(iOS 15.0, *), let si = l.sourceInformation, si.isSimulatedBySoftware { s += ",\"mk\":1" }
             s += ",\"pv\":\"ios\"}\n"
             buf += s
         }
