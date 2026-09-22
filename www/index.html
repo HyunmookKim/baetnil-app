@@ -17720,15 +17720,40 @@ async function geoGet(why, ok, err, opts){
     if(typeof err === 'function') err({ code:1, message:'not allowed' });
     return;
   }
-  navigator.geolocation.getCurrentPosition(
-    p=>{
-      // ★ 실제로 받았을 때만 남긴다. 권한을 거절했으면 수집한 것이 없다.
-      try{ lgAdd('수집', why); }catch(e){}
-      if(typeof ok === 'function') ok(p);
-    },
-    e=>{ if(typeof err === 'function') err(e); },
-    opts
-  );
+  const got = p=>{
+    // ★ 실제로 받았을 때만 남긴다. 권한을 거절했으면 수집한 것이 없다.
+    try{ lgAdd('수집', why); }catch(e){}
+    if(typeof ok === 'function') ok(p);
+  };
+  // ★★★ 6.0 — 아이폰에서는 웹뷰의 위치를 쓰지 않는다.
+  //   웹뷰로 읽으면 아이폰은 앱 권한과 따로 「"localhost" would like to use your current location」 창을 또 띄운다.
+  //   (2026-09-22 시뮬레이터 검사 2회째 — 사진마다 그 창이 떠 있었고, 떠 있는 동안 애플 로그인 창도 못 떴다.)
+  //   그래서 아이폰에서는 앱 안의 부품(BaetnilTrack.once)이 코어로케이션으로 직접 한 번 읽는다.
+  //   받은 것은 웹과 같은 모양(coords·timestamp)으로 바꿔 넘긴다 — 부르는 쪽은 아무것도 안 바뀐다.
+  const IOSP = geoIosPlugin();
+  if(IOSP){
+    const o = opts || {};
+    IOSP.once({ high: !!o.enableHighAccuracy, timeout: +o.timeout || 15000, maxAge: +o.maximumAge || 0 })
+      .then(r=>got({
+        coords: { latitude: +r.lat, longitude: +r.lon, accuracy: (r.acc != null ? +r.acc : null),
+                  speed: (r.spd != null ? +r.spd : null), heading: (r.hdg != null ? +r.hdg : null),
+                  altitude: (r.alt != null ? +r.alt : null), altitudeAccuracy: null },
+        timestamp: +r.t || Date.now(),
+        simulated: !!r.sim
+      }))
+      .catch(e=>{ if(typeof err === 'function') err({ code: (+(e && e.code)) || 2, message: (e && e.message) || 'position unavailable' }); });
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(got, e=>{ if(typeof err === 'function') err(e); }, opts);
+}
+// 아이폰 앱일 때만 부품을 돌려준다. 안드로이드 웹뷰는 앱 권한을 그대로 쓰므로 창이 한 번 더 뜨지 않는다.
+function geoIosPlugin(){
+  try{
+    const C = window.Capacitor;
+    if(!C || !C.isNativePlatform || !C.isNativePlatform() || C.getPlatform() !== 'ios') return null;
+    const P = C.Plugins && C.Plugins.BaetnilTrack;
+    return (P && typeof P.once === 'function') ? P : null;
+  }catch(_){ return null; }
 }
 
 // 등록 화면의 지도에서 현재 위치를 잡는다
@@ -45694,21 +45719,22 @@ async function ensureWx(){
   const key = wxPtKey(wxCur.lat, wxCur.lon);
   if(wxData && wxData.key === key){ wxStamp(); return wxData; }
   wxEnsuring = true;
+  // ★ 6.0 — 자리를 먼저 잡아 둔다. 담아 둔 것을 읽는 동안 지점이 바뀌면 열쇠와 날씨가 서로 다른 곳이 된다.
+  const wxLat0 = wxCur.lat, wxLon0 = wxCur.lon;
+  const wxSame = () => !!wxCur && wxPtKey(wxCur.lat, wxCur.lon) === key;
   try{
     const c = await wxCacheGet(key);
     // ① 담아 둔 것이 한 시간 안이면 그것을 쓴다 — 부르지 않는다
     if(c && (Date.now() - (c.at || 0)) < WX_FRESH_MS){
-      wxData = { key: key, w: c.w, m: c.m };
-      wxStamp();
+      if(wxSame()){ wxData = { key: key, w: c.w, m: c.m }; wxStamp(); }
     }else{
       try{
-        const d = await wxFetch(wxCur.lat, wxCur.lon);
-        wxData = { key, ...d };
-        wxCachePut(key, d);
-        wxStamp();
+        const d = await wxFetch(wxLat0, wxLon0);
+        wxCachePut(key, d);                           // 그 자리의 날씨는 그 자리 열쇠로 담는다 — 맞는 것이다
+        if(wxSame()){ wxData = { key, ...d }; wxStamp(); }
       }catch(e){
         // ② 못 받았으면 담아 둔 것이라도 쓴다 (반나절까지). 빈 화면보다 낫다.
-        if(c && (Date.now() - (c.at || 0)) < WX_KEEP_MS){
+        if(c && (Date.now() - (c.at || 0)) < WX_KEEP_MS && wxSame()){
           wxData = { key: key, w: c.w, m: c.m };
           wxStamp();
         }
@@ -46816,6 +46842,18 @@ async function renderWeather(){
   if(!wxCur){ wxInit(); }
   await loadTide();
   await loadKr();
+  // ★★★ 6.0 — 보고 있는 **날씨 지점**이 그 나라 물이면 그 나라 물때도 받는다.
+  //   전에는 「기기가 지금 그 나라에 있거나 그 말을 쓸 때」 만 받았다(tidePackSync).
+  //   한국에 있는 사람이 도쿄 지점을 골라 두면 일본 물때표가 없어서,
+  //   예전에는 1000km 떨어진 한국 관측소 물때가 「도쿄 물때」 로 떴고(6.0 거리 한도 전),
+  //   거리 한도를 둔 뒤로는 아예 관 물때가 안 나왔다. (2026-09-22 시뮬레이터 검사 2회째)
+  //   그 지점을 사람이 골랐다는 것이 「거기 갈 것」 이라는 뜻이라, 그때만 받는다 — 한 번 받으면 기기에 남는다.
+  try{
+    if(wxCur && typeof spotPacksFor === 'function'){
+      tidePackLoadLocal();
+      for(const pk of spotPacksFor(wxCur.lat, wxCur.lon)){ await tidePackGet(pk); }
+    }
+  }catch(_){}
   // ★ 배가 한국 해역 밖일 때만 일본 자료를 받는다. 한국에 있는 배에는 부를 까닭이 없다.
   if(typeof boatOutsideKR === 'function' && boatOutsideKR()){
     await loadSeaJP();
@@ -46875,10 +46913,18 @@ async function renderWeather(){
 
   if(!wxData || wxData.key !== wxCur.lat+','+wxCur.lon){
     L.innerHTML = head + `<div class="mrnone" id="wxStatus">${esc(t('날씨 불러오는 중…'))}</div>`;
+    // ★★★ 6.0 — 받는 동안 다른 지점을 누르면 **앞 지점의 날씨가 뒤 지점 이름으로** 붙었다.
+    //   전에는 다 받은 뒤에야 그때의 wxCur 로 열쇠를 만들었다.
+    //   그 사이 사람이 여수 → 도쿄로 넘기면 여수 날씨·물때가 「도쿄」 로 저장되고 그대로 그려졌다.
+    //   (2026-09-22 시뮬레이터 검사 2회째 — 도쿄를 골랐는데 여수 물때가 떠 있었다.)
+    //   이제 부르기 전에 열쇠를 잡아 두고, 받고 나서 지점이 바뀌었으면 버리고 지금 지점으로 다시 그린다.
+    const wxKey0 = wxCur.lat+','+wxCur.lon;
     try{
       const d = await wxFetch(wxCur.lat, wxCur.lon);
-      wxData = { key: wxCur.lat+','+wxCur.lon, ...d };
+      if(!wxCur || (wxCur.lat+','+wxCur.lon) !== wxKey0) return renderWeather();
+      wxData = { key: wxKey0, ...d };
     }catch(e){
+      if(!wxCur || (wxCur.lat+','+wxCur.lon) !== wxKey0) return renderWeather();
       L.innerHTML = head + `<div class="mrnone">${esc(t('날씨를 불러오지 못했습니다.'))}<br>${esc(t('인터넷 연결을 확인한 뒤 다시 시도해 주세요.'))}<br><br><button class="tab" onclick="wxData=null;renderWeather()">${esc(t('다시 시도'))}</button></div>`;
       return;
     }
