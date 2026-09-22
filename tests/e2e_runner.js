@@ -170,7 +170,10 @@
   step('다시 로그인 (A)', async function(){ await emailLogin(S.a, false); await shot('06-signed-in'); });
   step('배 등록', async function(){
     unlock();
-    openBoatSetup(); await sleep(800); await shot('07-boat-setup');
+    // 로그인 뒤 앱이 계정 화면을 늦게 다시 열 수 있다(8회째) — 배 등록 칸이 보일 때까지 다시 연다
+    await sleep(1500);
+    await until(function(){ if(!$('#nbName')) openBoatSetup(); return !!$('#nbName'); }, 15000, '배 등록 화면');
+    await sleep(500); await shot('07-boat-setup');
     setv('nbName', '자동검사배');
     try{ mapS.pick = { lat:34.7404, lon:127.7449 }; }catch(_){}
     createBoat();
