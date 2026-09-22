@@ -27,7 +27,8 @@ public class BaetnilTrack: CAPPlugin, CAPBridgedPlugin, CLLocationManagerDelegat
         CAPPluginMethod(name: "start",  returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "stop",   returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "drain",  returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "status", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "status", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "once",   returnType: CAPPluginReturnPromise)
     ]
 
     static let FILE = "baetnil_track.jsonl"
@@ -106,6 +107,25 @@ public class BaetnilTrack: CAPPlugin, CAPBridgedPlugin, CLLocationManagerDelegat
         }
     }
 
+    /// ★ 6.0 — 지금 자리 한 번 읽기 (날씨 지점·홈포트·현재 위치 단추)
+    ///   웹뷰의 navigator.geolocation 을 쓰면 아이폰은 앱 권한과 **따로**
+    ///   「"localhost" would like to use your current location」 창을 한 번 더 띄운다.
+    ///   (2026-09-22 시뮬레이터 검사 2회째 화면 사진에서 확인 — 검사 내내 그 창이 떠 있었다.)
+    ///   사람에게 "localhost" 라는 낯선 이름이 보이고, 떠 있는 동안 애플 로그인 창도 못 뜬다.
+    ///   그래서 아이폰에서는 코어로케이션으로 직접 한 번 읽는다. 권한 창은 앱 이름으로 한 번만 뜬다.
+    private var shots: [BaetnilOneShot] = []
+    @objc func once(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let o = BaetnilOneShot(call: call,
+                                   high: call.getBool("high") ?? false,
+                                   timeoutMs: call.getDouble("timeout") ?? 15000,
+                                   maxAgeMs: call.getDouble("maxAge") ?? 0)
+            o.done = { [weak self] x in self?.shots.removeAll { $0 === x } }
+            self.shots.append(o)
+            o.begin()
+        }
+    }
+
     // ── 점이 올 때마다 파일 끝에 한 줄씩 붙인다 (웹뷰가 멈춰 있어도 여기는 돈다)
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         var buf = ""
@@ -146,5 +166,92 @@ public class BaetnilTrack: CAPPlugin, CAPBridgedPlugin, CLLocationManagerDelegat
         var cut = half
         while cut < all.count && all[cut] != 0x0A { cut += 1 }   // 줄 경계에서 자른다
         if cut + 1 < all.count { try? all.subdata(in: (cut + 1)..<all.count).write(to: u) }
+    }
+}
+
+
+/// 한 번 읽고 끝나는 위치 요청. 항적을 쌓는 관리자(lm)와 섞이지 않게 따로 둔다.
+///   실패 코드는 웹의 GeolocationPositionError 와 같게 맞춘다 — 1 거절 · 2 못 읽음 · 3 시간 넘김
+final class BaetnilOneShot: NSObject, CLLocationManagerDelegate {
+    let call: CAPPluginCall
+    let high: Bool
+    let timeoutMs: Double
+    let maxAgeMs: Double
+    var done: ((BaetnilOneShot) -> Void)?
+    private let m = CLLocationManager()
+    private var finished = false
+    private var asked = false
+
+    init(call: CAPPluginCall, high: Bool, timeoutMs: Double, maxAgeMs: Double) {
+        self.call = call; self.high = high; self.timeoutMs = timeoutMs; self.maxAgeMs = maxAgeMs
+        super.init()
+    }
+
+    func begin() {
+        m.delegate = self
+        m.desiredAccuracy = high ? kCLLocationAccuracyBest : kCLLocationAccuracyHundredMeters
+        // 방금 읽은 것이 있으면 그것을 쓴다 (웹의 maximumAge 와 같은 뜻)
+        if maxAgeMs > 0, let l = m.location, -l.timestamp.timeIntervalSinceNow * 1000 <= maxAgeMs,
+           m.authorizationStatus == .authorizedWhenInUse || m.authorizationStatus == .authorizedAlways {
+            ok(l); return
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + max(1, timeoutMs) / 1000) { [weak self] in
+            self?.fail("3", "timeout")
+        }
+        go()
+    }
+
+    private func go() {
+        switch m.authorizationStatus {
+        case .notDetermined:
+            if !asked { asked = true; m.requestWhenInUseAuthorization() }   // 답은 아래 DidChangeAuthorization 으로 온다
+        case .denied, .restricted:
+            fail("1", "denied")
+        default:
+            m.requestLocation()
+        }
+    }
+
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        if finished { return }
+        if manager.authorizationStatus == .notDetermined { return }
+        go()
+    }
+
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let l = locations.last { ok(l) }
+    }
+
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        if let e = error as? CLError, e.code == .denied { fail("1", "denied"); return }
+        fail("2", error.localizedDescription)
+    }
+
+    private func ok(_ l: CLLocation) {
+        if finished { return }
+        finished = true
+        var r: [String: Any] = [
+            "lat": l.coordinate.latitude, "lon": l.coordinate.longitude,
+            "acc": l.horizontalAccuracy, "t": l.timestamp.timeIntervalSince1970 * 1000
+        ]
+        if l.speed >= 0 { r["spd"] = l.speed }
+        if l.course >= 0 { r["hdg"] = l.course }
+        if l.verticalAccuracy >= 0 { r["alt"] = l.altitude }
+        if #available(iOS 15.0, *), let si = l.sourceInformation { r["sim"] = si.isSimulatedBySoftware }
+        call.resolve(r)
+        end()
+    }
+
+    private func fail(_ code: String, _ msg: String) {
+        if finished { return }
+        finished = true
+        call.reject(msg, code)
+        end()
+    }
+
+    private func end() {
+        m.stopUpdatingLocation()
+        m.delegate = nil
+        done?(self)
     }
 }
