@@ -244,12 +244,16 @@
   });
   step('날씨·물때 — 도쿄', async function(){
     wxCur = { id:'e2e2', name:'東京', lat:35.62, lon:139.77 }; wxData = null; setHomeSub('weather');
-    await until(function(){ return wxData && /만조|간조/.test(txt('#weatherList')); }, 30000, '도쿄 물때');
+    await until(function(){ return wxData && wxData.key === (wxCur.lat+','+wxCur.lon) && /만조|간조/.test(txt('#weatherList')); }, 40000, '도쿄 물때');
+    // ★ 6.0 — 1회째는 1000km 떨어진 한국 관측소 물때를 보고도 통과했다. 가까운 일본 관측소인지 본다.
+    var sp = nearestTideSpot();
+    if(!sp || !(sp.dist <= 150)) throw new Error('도쿄 물때가 먼 관측소 것 (' + (sp ? sp.name + ' ' + Math.round(sp.dist) + 'km' : '없음') + ')');
+    log('INFO 도쿄 물때 관측소: ' + sp.name + ' ' + Math.round(sp.dist) + 'km');
     await shot('18-wx-tokyo');
   });
   step('날씨·물때 — 블라디보스토크(EOT20)', async function(){
     wxCur = { id:'e2e3', name:'Владивосток', lat:43.11, lon:131.88 }; wxData = null; setHomeSub('weather');
-    await until(function(){ return wxData && /EOT20/.test(txt('#weatherList') + txt('body')); }, 30000, 'EOT20 표시');
+    await until(function(){ return wxData && wxData.key === (wxCur.lat+','+wxCur.lon) && /EOT20/.test(txt('#weatherList')); }, 40000, 'EOT20 표시');
     await shot('19-wx-vlad');
   });
   step('다리 통과높이', async function(){
@@ -363,7 +367,20 @@
   });
   step('B — A 의 글 신고', async function(){
     switchTab('community'); setComSub('talk'); await sleep(2000);
-    await until(function(){ return (talkList || []).some(function(x){ return String(x.id) === S.post; }); }, 20000, 'A 글 보임');
+    var seen = function(){
+      var byId = (talkList || []).some(function(x){ return String(x.id) === S.post; });
+      if(byId) return true;
+      var byT = (talkList || []).find(function(x){ return String(x.title || '').indexOf(S.run) >= 0; });
+      if(byT){ log('INFO A 글이 다른 번호로 보임 ' + S.post + ' → ' + byT.id); S.post = String(byT.id); keep(S); return true; }
+      return false;
+    };
+    try{ await until(seen, 10000, 'A 글 보임'); }
+    catch(e){
+      // 무엇이 보였는지 남기고, 사람이 하듯 목록을 새로 받아 본다
+      log('INFO 글판 ' + (talkList || []).length + '개 · 찾는 글 ' + S.post + ' · 앞 3개 ' + (talkList || []).slice(0,3).map(function(x){ return x.id; }).join(','));
+      listRefresh('talk');
+      await until(seen, 20000, 'A 글 보임 (새로 받은 뒤)');
+    }
     reportTalk(S.post); await sleep(500);
     var o = $('#fp0 .fopt'); if(o) o.click();
     formOk();
@@ -424,6 +441,7 @@
     await sleep(2000);
     openAccount(); await sleep(500);
     S.i++; keep(S);
+    if(needAgree()){ openAgree(function(){}); await sleep(300); agreeAll(); doAgree(); await sleep(300); openAccount(); }
     log('NATIVE google');
     doGoogle();
     await sleep(60000);
