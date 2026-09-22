@@ -44,4 +44,7 @@ ruby ios/App/prepare_ios.rb
 grep -q '"apple.com"' ios/App/App/capacitor.config.json || { echo "::error::capacitor.config.json 에 apple.com 이 없습니다."; exit 1; }
 grep -q '"google.com"' ios/App/App/capacitor.config.json || { echo "::error::capacitor.config.json 에 google.com 이 없습니다."; exit 1; }
 grep -q "CapacitorFirebaseAuthentication/Google" ios/App/Podfile || { echo "::error::Podfile 에 구글 로그인 부품 줄이 없습니다."; exit 1; }
+# ④ 시스템 창(구글 로그인 「"App" Wants to Use…」)에 나오는 앱 이름 — 6.0 시뮬레이터 검사 3회째에서 「App」 으로 나왔다
+[ "$($PB -c 'Print :CFBundleName' "$INFO")" = "뱃일" ] || { echo "::error::Info.plist CFBundleName 이 「뱃일」 이 아닙니다."; exit 1; }
+[ "$($PB -c 'Print :CFBundleDisplayName' "$INFO")" = "뱃일" ] || { echo "::error::Info.plist CFBundleDisplayName 이 「뱃일」 이 아닙니다."; exit 1; }
 echo "아이폰 설정 맞춤 끝"
