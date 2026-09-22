@@ -12,7 +12,7 @@ const cut = (a) => { const i = src.indexOf(a); let d=0; for(let k=src.indexOf('{
 
 const MARK = '// ★★★ 5.2 — 물때를 **조화상수로 직접 셈한다**';
 const i = src.indexOf(MARK), j = src.indexOf('function hcTidePts(lat, lon){', i);
-const block = src.slice(i, j) + cut('function hcTidePts(lat, lon){');
+const block = src.slice(i, j) + cut('function hcTidePts(lat, lon){') + '\n' + cut('function hcVal(near, pts){');
 let api = null, err = '';
 try{
   api = new Function('atob', cut('function hav(') + '\n' + block + '\n return { hcAll, hcTidePts, NEAPS: globalThis.NEAPS };')

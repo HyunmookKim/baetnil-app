@@ -30,7 +30,9 @@ for(let k = src.indexOf('{', j); k < src.length; k++){
   if(src[k] === '{') d++;
   else if(src[k] === '}'){ d--; if(!d){ end = k + 1; break; } }
 }
-const block = src.slice(i, end);
+// ★ 5.10 — hcTidePts 가 hcVal 을 부른다 (거리·safe 를 자리마다 새로 만든다). 그것도 같이 뗀다.
+const hcValSrc = (() => { const a = src.indexOf('function hcVal(near, pts){'); if(a < 0) return ''; let dd=0; for(let k=src.indexOf('{',a);k<src.length;k++){ if(src[k]==='{')dd++; else if(src[k]==='}'){dd--; if(!dd) return src.slice(a,k+1);} } return ''; })();
+const block = src.slice(i, end) + '\n' + hcValSrc;
 const hav = (() => { const a = src.indexOf('function hav('); let dd=0; for(let k=src.indexOf('{',a);k<src.length;k++){ if(src[k]==='{')dd++; else if(src[k]==='}'){dd--; if(!dd) return src.slice(a,k+1);} } })();
 
 let api = null, err = '';
