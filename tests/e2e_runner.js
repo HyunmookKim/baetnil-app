@@ -38,7 +38,18 @@
     keep(S);
     console.log(TAG + 'ACCOUNTS ' + S.a.em + ' ' + S.b.em + ' mode=' + MODE);
   }
-  function log(m){ console.log(TAG + m); }
+  // ★ 6.0 — 앱의 console.log 는 파일로 돌리면 한참 모였다가 한꺼번에 나온다(2회째: 사진이 전부 마지막 화면).
+  //   그래서 같은 줄을 앱 안 Documents/e2e_cmd.txt 에도 적는다. 깃허브 맥은 이 파일을 곧바로 읽는다.
+  var FS = null; try{ FS = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem; }catch(_){}
+  var fq = Promise.resolve();
+  function fileLog(line){
+    if(!FS) return;
+    fq = fq.then(function(){
+      return FS.appendFile({ path:'e2e_cmd.txt', directory:'DOCUMENTS', data: line + '\n', encoding:'utf8' })
+        .catch(function(){ return FS.writeFile({ path:'e2e_cmd.txt', directory:'DOCUMENTS', data: line + '\n', encoding:'utf8' }); });
+    }).catch(function(){});
+  }
+  function log(m){ console.log(TAG + m); fileLog(TAG + m); }
   function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
   async function until(fn, ms, what){
     var t0 = Date.now();
@@ -55,7 +66,20 @@
     if(!e) throw new Error('#' + id + ' 칸이 없음');
     e.value = v; e.dispatchEvent(new Event('input', {bubbles:true})); e.dispatchEvent(new Event('change', {bubbles:true}));
   }
-  async function shot(name){ log('SHOT ' + name); await sleep(2500); }
+  // 사진을 찍었다는 답(Documents/e2e_ack.txt)이 올 때까지 화면을 그대로 둔다
+  async function shot(name){
+    log('SHOT ' + name);
+    if(!FS){ await sleep(2500); return; }
+    var t0 = Date.now();
+    while(Date.now() - t0 < 20000){
+      try{
+        var r = await FS.readFile({ path:'e2e_ack.txt', directory:'DOCUMENTS', encoding:'utf8' });
+        if(String(r && r.data || '').trim() === name) return;
+      }catch(_){}
+      await sleep(300);
+    }
+    console.log(TAG + 'INFO 사진 답 없음 ' + name);
+  }
   // 앱의 확인 창(ask)이 뜨면 「확인」 쪽으로 답한다
   var autoYes = true;
   setInterval(function(){

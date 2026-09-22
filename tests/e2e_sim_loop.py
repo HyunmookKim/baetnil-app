@@ -16,10 +16,32 @@ logs = []
 def sh(*a, **k):
     return subprocess.run(list(a), capture_output=True, text=True, **k)
 
-def shot(name):
+CONT = [None]
+def container():
+    # 앱 자료 폴더 — 앱이 Documents/e2e_cmd.txt 에 줄을 적고, 여기가 사진 답(e2e_ack.txt)을 적는다
+    if CONT[0] is None:
+        r = sh('xcrun', 'simctl', 'get_app_container', DEV, BID, 'data')
+        c = r.stdout.strip()
+        if c and os.path.isdir(c):
+            CONT[0] = c
+            os.makedirs(os.path.join(c, 'Documents'), exist_ok=True)
+            logs.append([os.path.join(c, 'Documents', 'e2e_cmd.txt'), 0])
+            print('앱 자료 폴더: ' + c, flush=True)
+    return CONT[0]
+
+def ack(name):
+    c = container()
+    if not c: return
+    try:
+        with open(os.path.join(c, 'Documents', 'e2e_ack.txt'), 'w') as fh: fh.write(name)
+    except Exception as e:
+        print('답 못 씀: %s' % e, flush=True)
+
+def shot(name, answer=False):
     safe = re.sub(r'[^0-9A-Za-z._-]+', '_', name)[:60]
     p = os.path.join(OUT, safe + '.png')
     sh('xcrun', 'simctl', 'io', DEV, 'screenshot', p)
+    if answer: ack(name)
     return p
 
 def launch():
@@ -54,6 +76,7 @@ logs.append([os.path.join(OUT, 'oslog.txt'), 0])
 launch()
 t0 = time.time(); last = time.time()
 while time.time() - t0 < LIMIT:
+    container()
     lines = read_new()
     if lines: last = time.time()
     for m in lines:
@@ -62,7 +85,7 @@ while time.time() - t0 < LIMIT:
         seen.add(m)
         print('  ' + m, flush=True)
         if m.startswith('SHOT '):
-            shot(m[5:])
+            shot(m[5:].strip(), answer=True)
         elif m.startswith('BG '):
             sec = int(re.findall(r'\d+', m)[0])
             sh('xcrun', 'simctl', 'launch', DEV, 'com.apple.Preferences')
