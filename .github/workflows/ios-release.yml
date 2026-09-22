@@ -79,11 +79,21 @@ jobs:
       - name: cap sync ios
         run: npx cap sync ios
 
+      - name: ★ 아이폰 설정 맞추기 (권한 안내문 네 나라 말 · 구글 로그인 주소 · 로그인 부품 확인)
+        run: bash ios/App/prepare_ios.sh
+
       - name: pod install
         working-directory: ios/App
         run: |
           pod repo update --silent || true
           pod install
+          # ★ 6.0 — 구글 로그인 부품이 빠진 채(Lite) 나가면 아이폰 구글 로그인이 대답 없이 멈춘다
+          grep -q "GoogleSignIn" Podfile.lock || { echo "::error::구글 로그인 부품(GoogleSignIn)이 안 들어갔습니다."; exit 1; }
+
+      - name: ★ 검사 파일이 섞이지 않았는가
+        run: |
+          if [ -f ios/App/App/public/e2e.js ] || grep -q 'e2e.js' ios/App/App/public/index.html; then
+            echo "::error::시뮬레이터 검사 파일(e2e.js)이 스토어용 빌드에 들어 있습니다."; exit 1; fi
 
       - name: ★ 시뮬레이터에서 켜 보기 — 오류가 나면 애플에 안 올린다
         working-directory: ios/App

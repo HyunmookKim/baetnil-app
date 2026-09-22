@@ -1,0 +1,106 @@
+# 뱃일 — 아이폰 시뮬레이터에서 앱 기능 전체를 자동으로 눌러 본다 (6.0)
+#
+#   ★ 애플에 아무것도 올리지 않는다. 검사만 한다.
+#   ★ tests/e2e_runner.js 를 시뮬레이터용 빌드에만 끼워 넣는다. 애플로 가는 빌드(ios-release.yml)에는 안 들어간다.
+#   아이폰 큰 화면: 전체 단계 · 아이폰 SE · 아이패드: 화면만 훑는 단계
+#   결과: 단계마다 통과/실패, 화면 사진, 앱 기록 → 「simulator-e2e-…」 묶음
+
+name: 아이폰 전체 기능 시뮬레이터 검사
+
+on:
+  workflow_dispatch:
+    inputs:
+      devices:
+        description: '어느 기기 (full=아이폰 전체 · all=아이폰 전체+SE+아이패드)'
+        type: choice
+        options: [all, full]
+        default: all
+
+jobs:
+  e2e:
+    runs-on: macos-latest
+    timeout-minutes: 90
+    env:
+      BUNDLE_ID: kr.baetnil.app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: npm 설치
+        run: npm ci || npm install
+
+      - name: 파이어베이스 설정 파일 놓기
+        env:
+          PLIST: ${{ secrets.GOOGLE_SERVICE_PLIST }}
+        run: |
+          set -e
+          printf '%s' "$PLIST" > /tmp/gs.raw
+          if head -c 5 /tmp/gs.raw | grep -q '<?xml'; then cp /tmp/gs.raw ios/App/App/GoogleService-Info.plist
+          else base64 --decode -i /tmp/gs.raw -o ios/App/App/GoogleService-Info.plist; fi
+          plutil -lint ios/App/App/GoogleService-Info.plist
+
+      - name: cap sync ios
+        run: npx cap sync ios
+
+      - name: ★ 아이폰 설정 맞추기 (권한 안내문 네 나라 말 · 구글 로그인 주소)
+        run: bash ios/App/prepare_ios.sh
+
+      - name: pod install
+        working-directory: ios/App
+        run: |
+          pod repo update --silent || true
+          pod install
+          grep -q "GoogleSignIn" Podfile.lock || { echo "::error::구글 로그인 부품(GoogleSignIn)이 안 들어갔습니다."; exit 1; }
+
+      - name: 검사 파일 끼워 넣기 (시뮬레이터용에만)
+        run: |
+          set -e
+          P=ios/App/App/public
+          cp tests/e2e_runner.js "$P/e2e.js"
+          python3 - <<'PY'
+          p='ios/App/App/public/index.html'
+          s=open(p,encoding='utf-8').read()
+          tag='<script src="e2e.js"></script>'
+          assert tag not in s
+          i=s.rfind('</body>')
+          s=s[:i]+tag+'\n'+s[i:]
+          open(p,'w',encoding='utf-8').write(s)
+          print('끼워 넣음')
+          PY
+
+      - name: 시뮬레이터용 빌드
+        working-directory: ios/App
+        run: |
+          set -e -o pipefail
+          xcodebuild build -workspace App.xcworkspace -scheme App -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/sim" CODE_SIGNING_ALLOWED=NO | tail -20
+          APP="$RUNNER_TEMP/sim/Build/Products/Debug-iphonesimulator/App.app"
+          [ -d "$APP" ] || { echo "::error::시뮬레이터용 앱이 안 만들어졌습니다."; exit 1; }
+          /usr/libexec/PlistBuddy -c "Print :CFBundleURLTypes:0:CFBundleURLSchemes:0" "$APP/Info.plist"
+          test -f "$APP/public/e2e.js"
+          grep -q '"apple.com"' "$APP/capacitor.config.json" || { echo "::error::앱 안 설정에 apple.com 이 없습니다."; exit 1; }
+          echo "APP=$APP" >> "$GITHUB_ENV"
+
+      - name: 아이폰(큰 화면) — 전체 단계
+        run: bash tests/e2e_sim_run.sh "iPhone 16 Pro|iPhone 17 Pro|iPhone 15 Pro|iPhone Pro" full "$RUNNER_TEMP/out/iphone"
+
+      - name: 아이폰 SE — 화면 훑기
+        if: ${{ always() && inputs.devices == 'all' }}
+        run: bash tests/e2e_sim_run.sh "iPhone SE" quick "$RUNNER_TEMP/out/iphone-se"
+
+      - name: 아이패드 — 화면 훑기
+        if: ${{ always() && inputs.devices == 'all' }}
+        run: bash tests/e2e_sim_run.sh "iPad Pro|iPad Air|iPad" quick "$RUNNER_TEMP/out/ipad"
+
+      - name: 결과 남겨 두기
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simulator-e2e-${{ github.run_number }}
+          path: ${{ runner.temp }}/out
+          retention-days: 30
