@@ -285,15 +285,30 @@
     crewCvExport(); await sleep(1500); await shot('16-crewcv');
     if(!$('#mrPanel .paperfr') && !(typeof tellIsOpen === 'function' && tellIsOpen())) throw new Error('종이도 안내도 안 뜸');
   });
+  // ★ 12회째 작은 아이폰 — 날씨 서버가 한 번 대답을 안 해 「날씨를 불러오지 못했습니다」 가 떴다.
+  //   앱은 「다시 시도」 단추를 내주고 있었다(맞는 동작). 검사는 그 단추를 눌러 한 번 더 기다린다.
+  async function wxWait(pred, ms, what){
+    var t0 = Date.now(), tried = 0;
+    while(Date.now() - t0 < ms){
+      try{ if(pred()) return true; }catch(_){}
+      if(/불러오지 못했습니다|Could not load|Не удалось|読み込めませんでした/.test(txt('#weatherList')) && tried < 3){
+        tried++; log('INFO 날씨를 못 받아 다시 시도 ' + tried);
+        try{ wxData = null; renderWeather(); }catch(_){}
+        await sleep(3000);
+      }
+      await sleep(250);
+    }
+    throw new Error('기다려도 안 됨: ' + what);
+  }
   step('날씨·물때 — 여수', async function(){
     wxCur = { id:'e2e1', name:'여수', lat:34.7404, lon:127.7449 }; wxData = null;
     switchTab('home'); setHomeSub('weather');
-    await until(function(){ return wxData && /물때|만조|간조/.test(txt('#weatherList')); }, 30000, '여수 물때');
+    await wxWait(function(){ return wxData && /물때|만조|간조/.test(txt('#weatherList')); }, 60000, '여수 물때');
     await shot('17-wx-yeosu');
   });
   step('날씨·물때 — 도쿄', async function(){
     wxCur = { id:'e2e2', name:'東京', lat:35.62, lon:139.77 }; wxData = null; setHomeSub('weather');
-    await until(function(){ return wxData && wxData.key === (wxCur.lat+','+wxCur.lon) && /만조|간조/.test(txt('#weatherList')); }, 40000, '도쿄 물때');
+    await wxWait(function(){ return wxData && wxData.key === (wxCur.lat+','+wxCur.lon) && /만조|간조/.test(txt('#weatherList')); }, 60000, '도쿄 물때');
     // ★ 6.0 — 1회째는 1000km 떨어진 한국 관측소 물때를 보고도 통과했다. 가까운 일본 관측소인지 본다.
     var sp = nearestTideSpot();
     if(!sp || !(sp.dist <= 150)) throw new Error('도쿄 물때가 먼 관측소 것 (' + (sp ? sp.name + ' ' + Math.round(sp.dist) + 'km' : '없음') + ')');
@@ -302,12 +317,12 @@
   });
   step('날씨·물때 — 블라디보스토크(EOT20)', async function(){
     wxCur = { id:'e2e3', name:'Владивосток', lat:43.11, lon:131.88 }; wxData = null; setHomeSub('weather');
-    await until(function(){ return wxData && wxData.key === (wxCur.lat+','+wxCur.lon) && /EOT20/.test(txt('#weatherList')); }, 40000, 'EOT20 표시');
+    await wxWait(function(){ return wxData && wxData.key === (wxCur.lat+','+wxCur.lon) && /EOT20/.test(txt('#weatherList')); }, 60000, 'EOT20 표시');
     await shot('19-wx-vlad');
   });
   step('다리 통과높이', async function(){
     wxCur = { id:'e2e1', name:'여수', lat:34.7404, lon:127.7449 }; wxData = null; setHomeSub('weather');
-    await until(function(){ return wxData; }, 30000);
+    await wxWait(function(){ return wxData; }, 60000, '여수 날씨(다리 칸)');
     quickClrInput('20'); await sleep(800);
     if(!/통과|배 높이/.test(txt('#weatherList'))) throw new Error('다리 칸 결과 없음');
     await shot('20-bridge');
