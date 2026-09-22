@@ -16,6 +16,9 @@ on:
         options: [all, full]
         default: all
 
+permissions:
+  contents: write
+
 jobs:
   e2e:
     runs-on: macos-latest
@@ -87,15 +90,28 @@ jobs:
           echo "APP=$APP" >> "$GITHUB_ENV"
 
       - name: 아이폰(큰 화면) — 전체 단계
-        run: bash tests/e2e_sim_run.sh "iPhone 16 Pro|iPhone 17 Pro|iPhone 15 Pro|iPhone Pro" full "$RUNNER_TEMP/out/iphone"
+        run: bash tests/e2e_sim_run.sh "iPhone 17 Pro Max|iPhone 16 Pro Max|iPhone 16 Plus|iPhone Pro" full "$RUNNER_TEMP/out/iphone"
 
-      - name: 아이폰 SE — 화면 훑기
+      - name: 작은 아이폰 — 화면 훑기
         if: ${{ always() && inputs.devices == 'all' }}
-        run: bash tests/e2e_sim_run.sh "iPhone SE" quick "$RUNNER_TEMP/out/iphone-se"
+        run: bash tests/e2e_sim_run.sh "iPhone SE|iPhone 16e|iPhone 17" quick "$RUNNER_TEMP/out/iphone-small"
 
       - name: 아이패드 — 화면 훑기
         if: ${{ always() && inputs.devices == 'all' }}
         run: bash tests/e2e_sim_run.sh "iPad Pro|iPad Air|iPad" quick "$RUNNER_TEMP/out/ipad"
+
+      - name: 결과를 e2e-results 가지에 올리기 (Claude 가 git 으로 받아 화면 사진을 본다)
+        if: always()
+        run: |
+          set -e
+          cd "$RUNNER_TEMP/out"
+          # 사진을 줄여 둔다 (가지가 무거워지지 않게)
+          find . -name '*.png' -exec sips -Z 900 {} \; >/dev/null 2>&1 || true
+          git init -q -b e2e-results
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          echo "run ${{ github.run_number }} · ${{ github.sha }}" > RUN.txt
+          git add -A && git commit -qm "e2e run ${{ github.run_number }}"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" e2e-results
 
       - name: 결과 남겨 두기
         if: always()
