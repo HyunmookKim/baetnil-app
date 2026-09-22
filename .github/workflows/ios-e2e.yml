@@ -82,11 +82,24 @@ jobs:
           # ★ 6.0 — 서명을 아예 끄면(CODE_SIGNING_ALLOWED=NO) 권한 목록(App.entitlements)이 안 들어가
           #   애플 로그인이 「error 1000」 으로 바로 끝난다(2회째에서 확인). 시뮬레이터용 임시 서명(-)으로
           #   권한 목록을 넣어 본다. 안 되면 예전처럼 서명 없이 만든다(그때는 애플 창은 못 본다고 적는다).
+          #   (3회째: 명령줄로 주면 팟 타겟까지 먹어서 실패했다 → App 타겟에만 넣는다)
+          ruby - <<'RUBY' || true
+          require 'xcodeproj'
+          proj = Xcodeproj::Project.open('App.xcodeproj')
+          app  = proj.targets.find { |t| t.name == 'App' }
+          app.build_configurations.each do |c|
+            next unless c.name == 'Debug'
+            c.build_settings['CODE_SIGN_ENTITLEMENTS'] = 'App/App.entitlements'
+            c.build_settings['CODE_SIGN_STYLE'] = 'Manual'
+            c.build_settings['CODE_SIGN_IDENTITY[sdk=iphonesimulator*]'] = '-'
+            c.build_settings['DEVELOPMENT_TEAM'] = ''
+          end
+          proj.save
+          puts 'App 타겟(Debug)에 권한 목록 넣음'
+          RUBY
           if xcodebuild build -workspace App.xcworkspace -scheme App -configuration Debug \
                -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
-               -derivedDataPath "$RUNNER_TEMP/sim" \
-               CODE_SIGN_ENTITLEMENTS=App/App.entitlements CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual \
-               DEVELOPMENT_TEAM= PROVISIONING_PROFILE_SPECIFIER= CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=YES > /tmp/b1.log 2>&1; then
+               -derivedDataPath "$RUNNER_TEMP/sim" > /tmp/b1.log 2>&1; then
             tail -5 /tmp/b1.log; echo "SIGNED=1" >> "$GITHUB_ENV"
           else
             tail -30 /tmp/b1.log
