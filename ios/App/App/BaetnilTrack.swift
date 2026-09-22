@@ -55,7 +55,7 @@ public class BaetnilTrack: CAPPlugin, CAPBridgedPlugin, CLLocationManagerDelegat
                 let m = CLLocationManager()
                 m.delegate = self
                 m.desiredAccuracy = kCLLocationAccuracyBest
-                m.distanceFilter = 10                       // 10m 움직일 때마다
+                m.distanceFilter = 5                        // 5m 움직일 때마다 (5.10: 앱 저장 간격 10m 보다 촘촘히)
                 m.activityType = .otherNavigation           // 배 — 도로에 붙이지 않는다
                 m.pausesLocationUpdatesAutomatically = false // ★ 멈춰 있어도 끄지 않는다 (정박 중에도)
                 m.allowsBackgroundLocationUpdates = true     // ★ UIBackgroundModes 에 location 이 있어야 한다
