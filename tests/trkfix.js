@@ -31,9 +31,11 @@ const T = (n, c, w) => { if(c){ ok++; console.log('통과: ' + n); }
   else { bad++; console.log('★ 실패: ' + n + (w !== undefined ? ' — ' + JSON.stringify(w).slice(0,200) : '')); } };
 
 // ── 한도가 있는가
-const ACC = num('TRK_ACC'), MAXKT = num('TRK_MAXKT'), LOST = num('TRK_LOST');
+const ACC = num('TRK_ACC'), MAXKT = 0, LOST = num('TRK_LOST');
 T('★ 흐린 점을 버리는 한도가 있다 (TRK_ACC)', ACC !== null && ACC > 0 && ACC <= 200, ACC);
-T('★ 배가 낼 수 없는 속도 한도가 있다 (TRK_MAXKT)', MAXKT !== null && MAXKT >= 10 && MAXKT <= 60, MAXKT);
+// ★ 5.10 — 정해진 최고 속도로 자르지 않는다 (사장님: 「100키로 넘게 달리는 차는 어떻게 찍냐」)
+T('★★★ 정해진 속도 한도(TRK_MAXKT)가 없다', !/const TRK_MAXKT\s*=/.test(src) && !/trkMaxKt\(/.test(src));
+T('★★ GPS 칩 속도로 판단하는 값이 있다 (TRK_SPD_X)', num('TRK_SPD_X') > 1, num('TRK_SPD_X'));
 T('연달아 버리면 기준을 다시 잡는 한도가 있다 (TRK_LOST)', LOST !== null && LOST >= 2, LOST);
 
 // ── 받침대
@@ -43,7 +45,7 @@ T('거리 셈(hav)이 있다', !!HAV);
 // ── ① trkPush — 흐린 점을 안 받는다
 const PUSH = grab('trkPush');
 T('trkPush 가 있다', !!PUSH);
-if(PUSH && HAV && ACC && MAXKT){
+if(PUSH && HAV && ACC){
   const base = { la: 34.7200, lo: 127.7300 };
   const T0 = Date.parse('2026-08-27T08:00:00Z');
   const F = new Function('IN', `
@@ -51,13 +53,15 @@ if(PUSH && HAV && ACC && MAXKT){
     const TRK_DIST=50, TRK_TOL=25, TRK_MAX=4000, TRK_FLUSH=1e9;
     const TRK_ACC=${ACC}, TRK_MAXKT=${MAXKT}, TRK_LOST=${LOST};
     const TRK_BLUR_WARN=${num('TRK_BLUR_WARN')};
+    const TRK_GPS_ACC=${num('TRK_GPS_ACC')}, TRK_Q=${num('TRK_Q')}; let trkKal=null;
+    ${grab('trkSmooth') || ''}
     let 말 = [];
     const tsub = (m,o)=>String(m).replace(/\\{(\\w+)\\}/g,(a,k)=>(o&&o[k]!=null)?o[k]:a);
     const tell = m => { 말.push(String(m)); return Promise.resolve(); };
     let trkNow = { vid:'v1', pts: [], saved: 0 };
     function trkKeep(){} function trkFlush(){} function trkLive(){}
     ${grab('trkSimplify') || ''}
-    ${grab('trkTooFast') || ''}
+    ${require('./trkspd_pre.js')(src)}${grab('trkTooFast') || ''}
     ${grab('trkBlurWarn') || ''}
     ${grab('trkSkip') || ''}
     ${PUSH}
@@ -144,7 +148,7 @@ if(CLEAN && HAV){
   const C = new Function('PTS', `
     ${HAV}
     const TRK_MAXKT=${MAXKT}, TRK_LOST=${LOST};
-    ${grab('trkTooFast') || ''}
+    ${require('./trkspd_pre.js')(src)}${grab('trkTooFast') || ''}
     ${grab('trkClean1') || ''}
     ${CLEAN}
     return trkClean(PTS);
@@ -186,7 +190,8 @@ if(CLEAN && HAV){
   if(QQ){
     const Q = new Function('PTS', `
       ${HAV}
-      const TRK_MAXKT=${MAXKT};
+      const TRK_MAXKT=${MAXKT}, TRK_LOST=${LOST};
+      ${require('./trkspd_pre.js')(src)}${grab('trkTooFast') || ''}
       ${QQ}
       return trkQuality(PTS);
     `);
@@ -198,5 +203,34 @@ if(CLEAN && HAV){
   }
 }
 
+
+// ── ★★★ 5.10 — 빠른 배·차량도 칩이 잰 속도대로면 그대로 받는다
+{
+  const HAV2 = grab('hav');
+  const F5 = new Function('A','B', `${HAV2}\n${require('./trkspd_pre.js')(src)}\n${grab('trkTooFast')}\nreturn trkTooFast(A,B);`);
+  const T0 = Date.parse('2026-09-22T00:00:00Z');
+  // 시속 108km = 30m/s. 10초에 300m. 칩도 30m/s 라고 한다.
+  const a = { la: 34.7000, lo: 127.7000, t: new Date(T0).toISOString(), ac: 5, sp: 30 };
+  const b = { la: 34.7027, lo: 127.7000, t: new Date(T0 + 10000).toISOString(), ac: 5, sp: 30 };
+  T('★★★ 시속 108km(58노트)로 달린 위치도 버리지 않는다 (칩 속도와 맞음)', F5(a, b) === false);
+  // 시속 300km = 83m/s — 칩도 83m/s
+  const c = { la: 34.7075, lo: 127.7000, t: new Date(T0 + 20000).toISOString(), ac: 5, sp: 83 };
+  T('★★★ 시속 300km 로 움직인 위치도 칩 속도와 맞으면 받는다', F5(b, c) === false);
+  // 칩은 3m/s(6노트)라는데 10초에 2km 를 뛰었다 → 이상한 위치
+  const d = { la: 34.7000, lo: 127.7000, t: new Date(T0).toISOString(), ac: 5, sp: 3 };
+  const e = { la: 34.7180, lo: 127.7000, t: new Date(T0 + 10000).toISOString(), ac: 8, sp: 3 };
+  T('★★★ 칩 속도와 맞지 않게 크게 뛴 위치만 이상하다고 본다', F5(d, e) === true);
+  // 정확도가 있고 칩 속도가 없는 위치 — 속도로 자르지 않는다
+  const f = { la: 34.7000, lo: 127.7000, t: new Date(T0).toISOString(), ac: 5 };
+  const g = { la: 34.7090, lo: 127.7000, t: new Date(T0 + 10000).toISOString(), ac: 5 };
+  T('★★ 정확도로 이미 거른 위치는 속도로 다시 자르지 않는다', F5(f, g) === false);
+  // 5분 넘게 끊겼다 이어진 것은 판단하지 않는다
+  const h = { la: 34.8000, lo: 127.7000, t: new Date(T0 + 400000).toISOString(), ac: 5, sp: 3 };
+  T('★★ 오래 끊겼다 이어진 것은 속도로 판단하지 않는다', F5(d, h) === false);
+  // iOS 는 모르면 speed -1 을 준다 — 그것은 속도가 없는 것으로 본다
+  const i1 = { la: 34.7000, lo: 127.7000, t: new Date(T0).toISOString(), ac: 5, sp: -1 };
+  const i2 = { la: 34.7090, lo: 127.7000, t: new Date(T0 + 10000).toISOString(), ac: 5, sp: -1 };
+  T('★ 음수 속도(iOS 가 모를 때)는 속도가 없는 것으로 본다', F5(i1, i2) === false);
+}
 console.log('\n합계: ' + ok + '개 통과 / ' + bad + '개 실패');
 process.exit(bad ? 1 : 0);

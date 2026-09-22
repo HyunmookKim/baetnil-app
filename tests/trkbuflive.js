@@ -67,14 +67,14 @@ T('★★★ 앱을 다시 볼 때 곧바로 가져온다', /trkBufDrain\(\)/.te
 // ── 진짜로 돌려 본다
 {
   const body = [
-    'const TRK_DIST=50, TRK_ACC=60, TRK_GPS_ACC=30, TRK_MAXKT=20, TRK_LOST=6, TRK_MAX=4000, TRK_FLUSH=20, TRK_Q=5;',
+    'const TRK_DIST=50, TRK_ACC=60, TRK_GPS_ACC=30, TRK_MAXKT=20, TRK_LOST=6, TRK_MAX=4000, TRK_FLUSH=20, TRK_Q=5, TRK_STILL_MS=0.3;',
     'let trkKal=null, trkNow=null, trkDraining=false;',
     'function hav(a,b,c,d){const R=6371,t=x=>x*Math.PI/180;const dLat=t(c-a),dLon=t(d-b);' +
       'const q=Math.sin(dLat/2)**2+Math.cos(t(a))*Math.cos(t(c))*Math.sin(dLon/2)**2;return 2*R*Math.asin(Math.sqrt(q));}',
     'function trkSkip(){ trkNow.skip=(Number(trkNow.skip)||0)+1; }',
     'function trkKeep(){}  function trkFlush(){}  function trkLive(){}  function trkSimplify(a){return a;}',
     'function trkBufMark(){}',
-    grab('trkSmooth'), grab('trkSmoothReset'), grab('trkTooFast'), grab('trkPush'),
+    require('./trkspd_pre.js')(src), grab('trkSmooth'), grab('trkSmoothReset'), grab('trkTooFast'), grab('trkPush'),
     grab('trkP'), grabAsync('trkBufDrain'),
     'return { set(v){trkNow=v;}, get(){return trkNow;}, trkBufDrain, trkSmoothReset };'
   ].join('\n');

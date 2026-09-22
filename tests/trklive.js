@@ -27,7 +27,7 @@ const T=(n,c)=>{ if(c){pass++;console.log('통과: '+n);} else {fail++;console.l
 
 // ── 진짜 함수를 떼어 온다. 스텁으로 두면 「버퍼를 그린다」가 검사되지 않는다.
 const need = ['trkRaw','trkLine','trkHas','trkFlush','trkLive','trkPush','trkSimplify','trkPoints',
-              'trkTooFast','trkSkip','trkClean','trkClean1','trkBackTrack',    // 4.51 — 튄 점 거르기
+              'trkTooFast','trkSpd','trkOldMaxKt','trkSkip','trkClean','trkClean1','trkBackTrack',    // 4.51 — 튄 점 거르기
               'trkGap',                              // 4.116 — 기록이 끊긴 데는 선을 안 잇는다
               'trkSmooth','trkSmoothReset'];        // 4.79 — 떨림 고르개
 const missing = need.filter(f => !grab(src, f));
@@ -64,7 +64,7 @@ globalThis.hav = (a1,o1,a2,o2) => {           // km
 { const m = src.match(/const TRK_GPS_ACC\s*=\s*[^;]+;/); if(m) eval(m[0].replace('const TRK_GPS_ACC','globalThis.TRK_GPS_ACC')); }
 { const m = src.match(/const TRK_Q\s*=\s*[^;]+;/); if(m) eval(m[0].replace('const TRK_Q','globalThis.TRK_Q')); }
 globalThis.trkKal = null;
-{ const m = src.match(/const TRK_MAXKT\s*=\s*[^;]+;/); if(m) eval(m[0].replace('const TRK_MAXKT','globalThis.TRK_MAXKT')); }
+for(const k of ['TRK_SPD_X','TRK_SPD_PAD','TRK_SPD_GAP','TRK_SPD_WIN','TRK_STILL_MS']){ const m = src.match(new RegExp('const ' + k + '\\s*=\\s*([\\d.]+)')); if(m) globalThis[k] = Number(m[1]); }
 { const m = src.match(/const TRK_LOST\s*=\s*[^;]+;/);  if(m) eval(m[0].replace('const TRK_LOST','globalThis.TRK_LOST')); }
 // 4.79 — 되돌아간 점 거르기 (뒤늦게 하네스에 없어서 검사가 통째로 터졌다)
 { const m = src.match(/const TRK_BACK_M\s*=\s*[^;]+;/); if(m) eval(m[0].replace('const TRK_BACK_M','globalThis.TRK_BACK_M')); }

@@ -38,7 +38,7 @@ function grab(name){
   T('점을 담는 곳이 있다 (trkPush)', !!grab('trkPush'));
   T('직선 간소화가 있다 (trkSimplify)', !!grab('trkSimplify'));
   T('앱을 다시 켰을 때 이어 붙이는 곳이 있다 (trkResume)', !!grab('trkResume'));
-  T('거리가 50m 로 박혀 있다', /TRK_DIST\s*=\s*50\b/.test(src), (src.match(/TRK_DIST\s*=\s*\d+/)||[])[0]);
+  T('거리가 10m 로 박혀 있다 (5.10 — OsmAnd 권장 5m 에 맞춤)', /TRK_DIST\s*=\s*10\b/.test(src), (src.match(/TRK_DIST\s*=\s*\d+/)||[])[0]);
   T('★ 시작할 때 로그인·동의를 먼저 본다',
     /locMay\s*\(/.test(grab('trkStart')), grab('trkStart').slice(0,400));
   T('★ 끝낼 때 확인자료에 한 줄 남긴다 (점마다가 아니다)',
@@ -190,14 +190,22 @@ function grab(name){
     const send = (km) => { __t += 40000; w.cb({ latitude: la0, longitude: lo0 + dLo * km,
                                 accuracy: 5, time: __t }, null); };
     send(0);          // 첫 점
-    send(0.010);      // 10m — 버려진다
-    send(0.020);      // 20m — 버려진다
+    send(0.002);      // 2m — 버려진다
+    send(0.004);      // 4m — 버려진다
     send(0.100);      // 100m — 담는다
-    send(0.105);      // 5m 더 — 버려진다
+    send(0.102);      // 2m 더 — 버려진다
     send(0.300);      // 200m 더 — 담는다
-    return { 점수: trkNow.pts.length };
+    const n1 = trkNow.pts.length;
+    // ★ 5.10 — 멈춰 있다고 칩이 말하는데(0.1m/s) 정확도(20m) 안에서 12m 흔들린 것은 안 담는다
+    __t += 40000; w.cb({ latitude: la0, longitude: lo0 + dLo * 0.312, accuracy: 20, speed: 0.1, time: __t }, null);
+    const n2 = trkNow.pts.length;
+    // 칩 속도가 있고 움직이고 있으면 12m 도 담는다
+    __t += 5000; w.cb({ latitude: la0, longitude: lo0 + dLo * 0.324, accuracy: 5, speed: 2.5, time: __t }, null);
+    return { 점수: n1, 멈춤: n2 - n1, 움직임: trkNow.pts.length - n2, 점: trkNow.pts.map(p => Math.round((p.lo - lo0) / dLo * 1000)) };
   });
-  T('★★ 50m 못 미치게 움직인 것은 안 담는다 (정박 중 선이 안 자란다)', push.점수 === 3, push);
+  T('★★ 최소 이동 거리 못 미치게 움직인 것은 안 담는다', push.점수 === 3, push);
+  T('★★ 멈춰 있을 때(칩 속도 0.1m/s) 흔들린 위치는 안 담는다', push.멈춤 === 0, push);
+  T('★★ 움직이고 있으면 짧은 거리도 담는다', push.움직임 === 1, push);
 
   // 오류가 오면 멈추고 설정을 열어 준다
   const errCase = await pg.evaluate(async () => {

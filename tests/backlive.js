@@ -39,7 +39,7 @@ const CASES = [
   let pass=0, fail=0;
   for(const [name, open] of CASES){
     const p=await b.newPage({ locale:'ko-KR',viewport:{width:360,height:780}});
-    await p.goto('http://localhost:8763/work.html'); await p.waitForTimeout(2200);
+    await p.goto('http://localhost:8763/'); await p.waitForTimeout(2200);
     await p.evaluate(seed); await p.waitForTimeout(500);
     const before = await p.evaluate(()=>history.length);
     await p.evaluate(open); await p.waitForTimeout(700);

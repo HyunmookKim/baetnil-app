@@ -63,6 +63,7 @@ const srv = http.createServer((req,res)=>{
   T('기록 중 숫자 자리가 화면에 있다', first !== null);
   T('처음에는 0점이다', /0/.test(String(first)));
 
+  // ★ 5.10 — speed 는 실제 움직임(20초에 약 160m = 8m/s)과 맞춘다. 칩 속도와 안 맞으면 이상한 위치로 본다.
   // ★ 점에 accuracy·speed 를 넣어 준다. 4.78 부터 「흐리고 speed·bearing 도 없는 점」 은
   //   기지국 자리로 보고 버린다 — 실제 폰은 언제나 accuracy 를 준다(W3C Geolocation 규격).
   //   그것을 안 넣은 옛 검사가 「점이 안 쌓인다」 고 했었다.
@@ -75,7 +76,7 @@ const srv = http.createServer((req,res)=>{
     let la = 34.7387, lo = 127.6789;
     for(let i=0;i<5;i++){
       la += 0.0012; lo += 0.0009;
-      trkPush({ latitude:la, longitude:lo, accuracy:8, speed:3.2, time:Date.now() + i*20000 });
+      trkPush({ latitude:la, longitude:lo, accuracy:8, speed:8, time:Date.now() + i*20000 });
     }
     return {
       saved:(voyage.find(v=>v.id==='liveV').trk||[]).length,
@@ -92,7 +93,7 @@ const srv = http.createServer((req,res)=>{
     let la = 34.7387 + 5*0.0012, lo = 127.6789 + 5*0.0009;
     for(let i=0;i<16;i++){
       la += 0.0012; lo += 0.0009;
-      trkPush({ latitude:la, longitude:lo, accuracy:8, speed:3.2, time:Date.now() + (5+i)*20000 });
+      trkPush({ latitude:la, longitude:lo, accuracy:8, speed:8, time:Date.now() + (5+i)*20000 });
     }
     const el = document.getElementById('trkcnt');
     return {

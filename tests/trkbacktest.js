@@ -35,7 +35,7 @@ const F = new Function(`
   const TRK_LOST  = ${CONST('TRK_LOST')};
   const TRK_BACK_R = ${CONST('TRK_BACK_R')};
   const TRK_BACK_M = ${CONST('TRK_BACK_M')};
-  ${grab(src, 'trkTooFast')}
+  ${require('./trkspd_pre.js')(src)}${grab(src, 'trkTooFast')}
   ${grab(src, 'trkBackTrack')}
   ${grab(src, 'trkClean1')}
   ${grab(src, 'trkClean')}
@@ -173,7 +173,7 @@ const P = (dx, dy, sec) => ({ la: LA0 + dy * M, lo: LO0 + dx * MO,
     ${grab(src, 'trkGap')}
     let RAW = [];
     const trkRaw = () => RAW;
-    ${grab(src, 'trkTooFast')}
+    ${require('./trkspd_pre.js')(src)}${grab(src, 'trkTooFast')}
     ${grab(src, 'trkBackTrack')}
     ${grab(src, 'trkClean1')}
     ${grab(src, 'trkClean')}

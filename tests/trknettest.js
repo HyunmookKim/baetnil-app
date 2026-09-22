@@ -35,7 +35,7 @@ T('★★★ 흐리다고 사람을 부르는 창(trkBlurWarn)이 없다', !/trk
 }
 // ★★★ 떨림 고르개 (4.79) — 다른 기록 앱들이 쓰는 칼만 고르개를 그대로 쓴다
 T('★★★ 떨림 고르개가 있다', /function trkSmooth\(/.test(src));
-T('★★★ 담기 전에 실제로 고른다', /trkSmooth\(la, lo, ac, tms\)/.test(src));
+T('★★★ 담기 전에 실제로 고른다', /trkSmooth\(la, lo, ac, tms, spd\)/.test(src));
 T('★★★ 고른 자리를 담는다 (받은 그대로가 아니다)', /la:\+sm\.la\.toFixed\(5\)/.test(src));
 T('★★ 항해를 새로 켜면 고르개도 새로 시작한다', /trkSmoothReset\(\);\n  trkNow = \{ vid/.test(src));
 T('★★ 입항하면 튄 점을 알아서 걷어낸다 (사람이 누르지 않아도)',
@@ -44,11 +44,11 @@ T('★★ 입항하면 튄 점을 알아서 걷어낸다 (사람이 누르지 �
 // 실제로 돌려 본다
 {
   const env = `
-    const TRK_ACC=60, TRK_GPS_ACC=30, TRK_DIST=50, TRK_LOST=5, TRK_MAX=9999, TRK_TOL=1, TRK_FLUSH=9999, TRK_MAXKT=20;
+    const TRK_ACC=60, TRK_GPS_ACC=30, TRK_DIST=50, TRK_LOST=5, TRK_MAX=9999, TRK_TOL=1, TRK_FLUSH=9999, TRK_MAXKT=20, TRK_STILL_MS=0.3;
     let trkNow = { vid:'v', pts:[], id:null };
     const hav=(a,b,c,d)=>{const R=6371,r=x=>x*Math.PI/180,dLa=r(c-a),dLo=r(d-b);
       const q=Math.sin(dLa/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(dLo/2)**2;return 2*R*Math.asin(Math.sqrt(q));};
-    ${grab(src,'trkTooFast')}
+    ${require('./trkspd_pre.js')(src)}${grab(src,'trkTooFast')}
     const trkSkip=()=>{ trkNow.drop=(trkNow.drop||0)+1; trkNow.skip=(trkNow.skip||0)+1; };
     const trkKeep=()=>{}, trkFlush=()=>{}, trkLive=()=>{}, trkSimplify=a=>a;
     ${(src.match(/const TRK_Q = [^;]+;/)||['const TRK_Q = 0;'])[0]} let trkKal = null;

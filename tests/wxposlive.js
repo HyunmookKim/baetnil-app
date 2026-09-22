@@ -104,7 +104,7 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.lo
   await pg.evaluate(()=>{ openMR('voyage', voyage[voyage.length-1].id); });
   await pg.waitForTimeout(400);
   const seen = await pg.evaluate(()=> document.getElementById('mrPanel').innerText);
-  T('화면에 「이 위치 예보」로 나온다', /이 자리 예보/.test(seen), seen.slice(0,220));
+  T('화면에 「이 위치 예보」로 나온다', /이 위치 예보/.test(seen), seen.slice(0,220));
   T('화면에 「개도」가 위치처럼 덜렁 나오지 않는다', !/· 개도(?! 예보)/.test(seen), seen.slice(0,220));
 
   // ── 좌표를 못 잡는 사람은 어떻게 되나 (권한 거부)
