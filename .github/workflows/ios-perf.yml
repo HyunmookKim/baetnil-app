@@ -82,12 +82,31 @@ jobs:
           test -f "$APP/public/perf.js"
           echo "APP=$APP" >> "$GITHUB_ENV"
 
-      - name: 큰 아이폰
-        run: bash tests/perf_sim_run.sh "iPhone 17 Pro Max|iPhone 16 Pro Max|iPhone 16 Plus|iPhone Pro" "$RUNNER_TEMP/out/ios-큰아이폰"
+      - name: 가) 지금 그대로 — 큰 아이폰
+        run: bash tests/perf_sim_run.sh "iPhone 17 Pro Max|iPhone 16 Pro Max|iPhone 16 Plus|iPhone Pro" "$RUNNER_TEMP/out/ios-가-큰아이폰"
 
-      - name: 작은 아이폰
+      - name: 가) 지금 그대로 — 작은 아이폰
         if: always()
-        run: bash tests/perf_sim_run.sh "iPhone SE|iPhone 16e|iPhone 17" "$RUNNER_TEMP/out/ios-작은아이폰"
+        run: bash tests/perf_sim_run.sh "iPhone SE|iPhone 16e|iPhone 17" "$RUNNER_TEMP/out/ios-가-작은아이폰"
+
+      - name: 나) 코드를 바깥 파일로 옮긴 판 짓기 (재기용 — 앱은 안 고침)
+        if: always()
+        working-directory: ios/App
+        run: |
+          set -e -o pipefail
+          python3 ../../tests/perf_variant.py App/public
+          xcodebuild build -workspace App.xcworkspace -scheme App -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/sim" CODE_SIGNING_ALLOWED=NO | tail -5
+          test -f "$APP/public/app-code-1.js"
+
+      - name: 나) 바깥 파일 — 큰 아이폰
+        if: always()
+        run: bash tests/perf_sim_run.sh "iPhone 17 Pro Max|iPhone 16 Pro Max|iPhone 16 Plus|iPhone Pro" "$RUNNER_TEMP/out/ios-나-큰아이폰"
+
+      - name: 나) 바깥 파일 — 작은 아이폰
+        if: always()
+        run: bash tests/perf_sim_run.sh "iPhone SE|iPhone 16e|iPhone 17" "$RUNNER_TEMP/out/ios-나-작은아이폰"
 
       - name: 결과를 perf-results 가지에 올리기
         if: always()
