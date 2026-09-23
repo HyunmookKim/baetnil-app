@@ -8,6 +8,7 @@ adb wait-for-device
 adb shell getprop ro.build.version.release > "$OUT/device.txt"
 adb shell getprop ro.product.model >> "$OUT/device.txt"
 adb shell dumpsys package com.google.android.webview 2>/dev/null | grep -m1 versionName >> "$OUT/device.txt" || true
+adb uninstall $PKG >/dev/null 2>&1 || true   # 앞 판의 기록(몇 번째 켰나)을 지우고 새로
 adb install -r -g "$APK"
 adb logcat -c
 for i in 1 2 3; do

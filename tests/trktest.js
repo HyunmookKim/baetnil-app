@@ -46,8 +46,9 @@ function grab(name){
     grab('trkStop').slice(-300));
   T('★ 클라우드로는 끝낼 때 한 번만 올린다',
     /schedulePush\(\)/.test(grab('trkStop')) && !/schedulePush\(\)/.test(grab('trkPush')));
+  // ★ 5.14 — 점을 묶음으로 나눠 남긴다 (머리는 trkKeepMeta, 묶음은 trkKeep). 자세한 것은 trkchunktest.
   T('기록 중인 것을 폰에 남긴다 (앱이 죽어도 안 잃는다)',
-    /localStorage\.setItem\(TRK_KEY/.test(grab('trkKeep')));
+    /localStorage\.setItem\(TRK_PKEY\(/.test(grab('trkKeep')) && /localStorage\.setItem\(TRK_KEY/.test(grab('trkKeepMeta')));
   T('★ 껍데기 앱에서는 서비스워커를 안 켠다',
     /isNativePlatform[\s\S]{0,80}serviceWorker\.register|serviceWorker[\s\S]{0,200}isNativePlatform/.test(src));
 }

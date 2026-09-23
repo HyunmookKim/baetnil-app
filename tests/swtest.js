@@ -42,6 +42,12 @@ T('addAll 로 통째로 받지 않는다 — 한 개라도 실패하면 전부 �
 
 // ── 3. 화면 파일은 인터넷이 있으면 새것을 먼저 받는다
 T('index.html 은 인터넷 우선으로 받는다', /networkFirst|netFirst/.test(sw));
+// ★★★ 5.14 — 켤 때마다 통째로 받지 않는다. 「바뀌었나요?」 만 묻는다(304).
+{
+  const nf = (sw.match(/async function networkFirst\(req\)\{[\s\S]*?\n\}/) || [''])[0];
+  T('★★★ 켤 때 화면 파일은 「바뀌었나요?」 만 묻는다 (cache:no-cache — 안 바뀌었으면 304)',
+    /cache\s*:\s*'no-cache'/.test(nf) && !/cache\s*:\s*'reload'/.test(nf));
+}
 {
   const nf = grab(sw, 'networkFirst') || grab(sw, 'netFirst') || '';
   T('받아온 새것을 저장분에 넣는다', /caches\.open|\.put\(/.test(nf));
