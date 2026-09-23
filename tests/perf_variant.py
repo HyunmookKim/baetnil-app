@@ -17,5 +17,11 @@ def rep(m):
     open(os.path.join(d, name), 'w', encoding='utf-8').write(body)
     return '<script%s src="%s"></script>' % (attrs, name)
 s2 = re.sub(r'<script([^>]*)>(.*?)</script>', rep, s, flags=re.S)
+# 안드로이드 빌드(build.gradle)는 화면 파일에서 `const APP_VER = '…'` 줄을 찾아 판 번호를 정한다.
+# 코드를 바깥으로 옮기면 그 줄이 사라져 versionCode 0 으로 빌드가 깨진다 → 주석으로 한 줄 남긴다 (동작에는 영향 없음).
+mv = re.search(r"const APP_VER = '([^']+)'", s)
+if mv and not re.search(r"const APP_VER = '", s2):
+    s2 = s2.replace('</head>', "<!-- const APP_VER = '%s' (재기용 판 · 빌드 번호용) -->\n</head>" % mv.group(1), 1)
+    print('판 번호 줄 남김', mv.group(1))
 open(p, 'w', encoding='utf-8').write(s2)
 print('바깥으로 옮긴 스크립트', n, '개 · 화면 파일', len(s), '→', len(s2), '글자')
