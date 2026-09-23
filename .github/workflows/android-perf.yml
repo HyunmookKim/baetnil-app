@@ -1,0 +1,97 @@
+# 뱃일 — 안드로이드 에뮬레이터에서 효율을 잰다 (재기만 한다. 앱을 고치지 않는다)
+#
+#   ★ 구글에 아무것도 올리지 않는다. 서명도 쓰지 않는다(디버그 빌드).
+#   ★ tests/perf_probe.js 를 이 재기용 빌드에만 끼워 넣는다. 스토어로 가는 빌드에는 안 들어간다.
+#   ★ 에뮬레이터는 깃허브 기계의 CPU 로 돈다 — **절대 시간은 실제 안드로이드 폰과 다르다.**
+#     여기서 보는 것은 안드로이드 웹뷰(크롬 엔진 V8)가 「어떻게 동작하는가」 다:
+#     두 번째 켤 때 빨라지는가 · 폰 저장소 한도 · 항적이 길어지면 몇 배 느려지는가.
+#   결과: perf-results 가지 (android-…)
+
+name: 안드로이드 효율 재기
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  perf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: npm 설치
+        run: npm ci || npm install
+
+      - name: 파이어베이스 설정 파일 놓기
+        env:
+          GS: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          set -e
+          printf '%s' "$GS" > /tmp/gs.raw
+          if head -c 1 /tmp/gs.raw | grep -q '{'; then cp /tmp/gs.raw android/app/google-services.json
+          else base64 --decode /tmp/gs.raw > android/app/google-services.json; fi
+
+      - name: cap sync android
+        run: npx cap sync android
+
+      - name: 재기 파일 끼워 넣기 (이 빌드에만)
+        run: |
+          set -e
+          P=android/app/src/main/assets/public
+          cp tests/perf_probe.js "$P/perf.js"
+          python3 - <<'PY2'
+          p='android/app/src/main/assets/public/index.html'
+          s=open(p,encoding='utf-8').read()
+          tag='<script src="perf.js"></script>'
+          assert tag not in s
+          i=s.rfind('</body>')
+          s=s[:i]+tag+'\n'+s[i:]
+          open(p,'w',encoding='utf-8').write(s)
+          print('끼워 넣음')
+          PY2
+
+      - name: 디버그 APK 짓기
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleDebug
+          ls -l app/build/outputs/apk/debug/
+
+      - name: KVM 켜기 (에뮬레이터를 빠르게)
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: 에뮬레이터에서 세 번 켜며 재기 (안드로이드 14)
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
+          script: bash tests/perf_emu_run.sh android/app/build/outputs/apk/debug/app-debug.apk "$RUNNER_TEMP/out/android-14"
+
+      - name: 결과를 perf-results 가지에 올리기
+        if: always()
+        run: |
+          set -e
+          mkdir -p "$RUNNER_TEMP/out"; cd "$RUNNER_TEMP/out"
+          rm -f */logcat-all.txt.gz; for f in */logcat-all.txt; do [ -f "$f" ] && gzip -9 "$f"; done
+          git init -q -b perf-results
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add o "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          git fetch -q o perf-results 2>/dev/null && git checkout -q o/perf-results -- . 2>/dev/null || true
+          echo "android run ${{ github.run_number }} · ${{ github.sha }}" > RUN-android.txt
+          git add -A && git commit -qm "android perf ${{ github.run_number }}" && git push -qf o HEAD:perf-results
