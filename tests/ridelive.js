@@ -103,7 +103,7 @@ const T = (n, c, w) => { if(c){ ok++; console.log('통과: ' + n); }
 
   // ── 여러 개 고르기 칸이 진짜 눌리는가
   const picks = await pg.evaluate(()=>{
-    openForm({ title:'시험', fields:[{ key:'w', label:'어떤 분', type:'picks',
+    openForm({ title:'시험', fields:[{ key:'w', label:'모집 대상', type:'picks',
       value:['new'], options:RIDE_WANT }], onOk:()=>{} });
     const box = document.getElementById('fp0');
     const on0 = [...box.children].filter(b=>b.classList.contains('on')).length;
