@@ -47,10 +47,31 @@ def launch(fresh=False):
     r = sh('adb', 'shell', 'am', 'start', '-n', PKG + '/.MainActivity')
     print('앱 켬: ' + (r.stdout.strip() + r.stderr.strip())[:200], flush=True)
 
-def webview_box():
-    # 웹뷰가 화면의 어디에 있는가 (가장자리까지 꽉 차게 그리면 0,0 부터)
+def ui_dump():
     sh('adb', 'shell', 'uiautomator', 'dump', '/sdcard/ui.xml')
-    x = sh('adb', 'shell', 'cat', '/sdcard/ui.xml').stdout
+    return sh('adb', 'shell', 'cat', '/sdcard/ui.xml').stdout
+
+def clear_anr():
+    # ★ 7회째 — 에뮬레이터의 바탕화면 앱(Pixel Launcher)이 「응답 없음」 창을 띄워 우리 앱을 덮었고,
+    #   그 위를 누르는 바람에 입력칸이 안 잡혔다. 우리 앱과 상관없는 창이라 「기다리기」 를 눌러 닫는다.
+    for _ in range(3):
+        x = ui_dump()
+        if "isn't responding" not in x and '응답하지 않' not in x: return
+        m = re.search(r'text="(?:Wait|기다리기)"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', x)
+        if not m:
+            m = re.search(r'bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"[^>]*text="(?:Wait|기다리기)"', x)
+        print('  !! 시스템 「응답 없음」 창이 떠 있어 닫습니다', flush=True)
+        results.append('INFO 에뮬레이터 바탕화면 앱 「응답 없음」 창을 닫음')
+        if m:
+            a, b, c, d = (int(v) for v in m.groups())
+            sh('adb', 'shell', 'input', 'tap', str((a + c) // 2), str((b + d) // 2))
+        else:
+            sh('adb', 'shell', 'input', 'keyevent', 'KEYCODE_BACK')
+        time.sleep(1.5)
+
+def webview_box(x=None):
+    # 웹뷰가 화면의 어디에 있는가 (가장자리까지 꽉 차게 그리면 0,0 부터)
+    if x is None: x = ui_dump()
     m = re.search(r'class="android\.webkit\.WebView"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', x)
     if not m: return None
     return tuple(int(v) for v in m.groups())
@@ -79,6 +100,7 @@ while time.time() - t0 < LIMIT:
             if len(nums) < 5:
                 print('  !! TAP 줄을 못 읽음: ' + m, flush=True); continue
             x, y, dpr, w, h = nums
+            clear_anr()
             box = webview_box()
             if box:
                 L, T, R, B = box
@@ -88,6 +110,23 @@ while time.time() - t0 < LIMIT:
                 px, py = int(x * dpr), int(y * dpr)
             print('  → 누름 %d,%d (웹뷰 %s)' % (px, py, box), flush=True)
             sh('adb', 'shell', 'input', 'tap', str(px), str(py))
+        elif m.startswith('TOPCHK '):
+            # ★ 7회째 — 머리줄 글씨가 시계·배터리 줄에 겹쳤다. 앱 안에서는 시계 줄이 안 보이므로 여기서 본다.
+            #   웹뷰가 시계 줄 밑에서 시작하거나(웹뷰 위 여백), 웹뷰 안 머리줄이 그만큼 비워 두어야 한다.
+            #   둘을 합친 높이가 20 (화면 글씨 크기 단위) 이상이면 비킨 것이다. 시계 줄은 폰마다 24~50 쯤이다.
+            parts = m.split()
+            try:
+                pad = float(parts[1]); dpr = float(parts[2]); nm = ' '.join(parts[3:])
+            except Exception:
+                print('  !! TOPCHK 줄을 못 읽음: ' + m, flush=True); continue
+            clear_anr()
+            box = webview_box()
+            top = box[1] if box else 0
+            room = (top + pad * dpr) / (dpr or 1)
+            line = '머리줄이 시계·배터리 줄을 비키는가 (%s) — 웹뷰 위 %dpx + 머리줄 위 여백 %.0f → %.0f' % (nm, top, pad, room)
+            print('  ' + line, flush=True)
+            results.append(('OK ' if room >= 20 else 'FAIL ') + line)
+            shot('top-' + nm)
         elif m.startswith('BG '):
             sec = int(re.findall(r'\d+', m)[0])
             sh('adb', 'shell', 'input', 'keyevent', 'KEYCODE_HOME')

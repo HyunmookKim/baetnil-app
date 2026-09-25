@@ -190,6 +190,10 @@
     var r = el.getBoundingClientRect();
     var h0 = window.innerHeight;
     var hd = document.querySelector('header'); var pad0 = hd ? getComputedStyle(hd).paddingTop : '';
+    // ★ 7회째 — 머리줄 글씨가 시계·배터리 줄에 겹쳤다(키보드와 상관없이). 앱 안에서는 시계 줄이 안 보이므로
+    //   머리줄 위 여백을 알려 주고, 바깥(e2e_emu_loop.py)에서 웹뷰 자리와 합쳐 본다.
+    log('TOPCHK ' + (parseFloat(pad0) || 0) + ' ' + (window.devicePixelRatio || 1) + ' ' + id + '-키보드전');
+    await sleep(3000);
     log('TAP ' + Math.round(r.left + r.width / 2) + ' ' + Math.round(r.top + r.height / 2) + ' ' + (window.devicePixelRatio || 1) + ' ' + window.innerWidth + ' ' + window.innerHeight);
     // ★ 에뮬레이터는 키보드를 처음 띄울 때 몇 초 걸린다(5회째: 4초에 재니 아직 안 줄었고, 사진에서는 줄어 있었다) — 12초까지 기다린다
     function hNow(){ var v = window.visualViewport ? window.visualViewport.height : window.innerHeight; return Math.min(v, window.innerHeight); }
@@ -204,9 +208,11 @@
     if(!document.activeElement || document.activeElement.id !== id) throw new Error(id + ' 칸을 눌렀는데 입력칸이 안 잡힘');
     if(h1 > h0 - 100) throw new Error('키보드가 떴는데 화면이 안 줄었음 (보이는 높이 ' + Math.round(h1) + '/' + h0 + ') — 아래쪽 칸이 키보드에 가려짐');
     if(r2.bottom > h1 + 2) throw new Error('키보드가 ' + id + ' 칸을 가림 (칸 아래끝 ' + Math.round(r2.bottom) + ' > 보이는 높이 ' + Math.round(h1) + ')');
-    // ★ 6회째 사진 — 키보드가 뜬 동안 머리줄이 시계·배터리 줄 밑으로 올라갔다 → 위쪽 여백이 그대로인지 본다
+    // ★ 키보드가 뜬 동안에도 머리줄 위 여백이 그대로인지 본다
     var pad1 = hd ? getComputedStyle(hd).paddingTop : '';
     log('INFO 머리줄 위 여백 ' + pad0 + ' → ' + pad1);
+    log('TOPCHK ' + (parseFloat(pad1) || 0) + ' ' + (window.devicePixelRatio || 1) + ' ' + id + '-키보드뜸');
+    await sleep(3000);
     if(pad0 !== pad1) throw new Error('키보드가 뜨니 머리줄 위 여백이 바뀜 (' + pad0 + ' → ' + pad1 + ') — 글씨가 시계 줄 밑으로 들어감');
     try{ el.blur(); }catch(_){}
     await sleep(1200);
