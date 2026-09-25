@@ -15,12 +15,12 @@ adb install -r -g "$APK"
 adb shell pm grant $PKG android.permission.ACCESS_BACKGROUND_LOCATION 2>/dev/null || true
 adb shell pm grant $PKG android.permission.POST_NOTIFICATIONS 2>/dev/null || true
 adb shell settings put secure show_ime_with_hard_keyboard 1   # 에뮬레이터에서도 화면 키보드가 뜨게
-# 여수 앞바다를 천천히 도는 위치 (항적 검사용) — 뒤에서 계속 흘려 준다
-( while true; do
-    for p in "127.7449 34.7404" "127.7500 34.7380" "127.7560 34.7340" "127.7620 34.7300" "127.7680 34.7260" \
-             "127.7740 34.7220" "127.7800 34.7180" "127.7860 34.7140" "127.7920 34.7100" "127.7980 34.7060"; do
-      adb emu geo fix $p >/dev/null 2>&1; sleep 2
-    done
+# 여수 앞바다에서 남쪽으로 꾸준히 나아가는 위치 (항적 검사용) — 2초마다 약 22m.
+# ★ 4회째: 열 점을 빙빙 돌게 했더니 같은 자리로 되돌아와 점이 안 늘었다 → 한 방향으로만 간다.
+( LAT=34.7404; LON=127.7449
+  while true; do
+    LAT=$(python3 -c "print(round($LAT-0.0002,6))"); LON=$(python3 -c "print(round($LON+0.00005,6))")
+    adb emu geo fix $LON $LAT >/dev/null 2>&1; sleep 2
   done ) &
 GEO=$!
 export OUT PKG
