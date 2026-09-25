@@ -927,7 +927,8 @@ h1{font-size:20px;font-weight:800;color:var(--th);letter-spacing:-.02em}
 .ferr.on{display:block}
 /* ★ 5.15 — 로그인·회원가입 칸: 이름은 위, 칸은 아래 (칸 밑에 빨간 줄이 붙을 자리가 있게).
    글자 16px — 아이폰은 이보다 작은 칸을 누르면 화면을 확대한다. */
-#mrPanel .suf{display:flex;flex-direction:column;gap:6px;margin:12px 0}
+#mrPanel .suf{display:flex;flex-direction:column;gap:6px;margin:9px 0;background:rgba(9,24,39,.5);border-radius:14px;padding:13px 15px}
+#mrPanel .suf:focus-within{box-shadow:0 0 0 1px var(--bd2,#2d5a80)}
 #mrPanel .suf label{font-size:14px;font-weight:700;color:var(--tx2,#9fb3c8)}
 #mrPanel .suf input,#mrPanel.full .suf input{width:100%;box-sizing:border-box;font-size:16px}
 .frow.bad input,.frow.bad textarea,.frow.bad select{border-color:var(--red,#E4756A)}
@@ -16139,6 +16140,7 @@ function openAccount(){
       <div class="mrrow" style="justify-content:space-between;padding-top:0">
         <button class="minib blu" onclick="openSignup()">${esc(t('회원가입'))}</button>
         <button class="minib blu" onclick="doPwReset()">${esc(t('비밀번호 찾기'))}</button></div>
+      <div style="height:24px"></div>
 `;
   }
   showPanel(P);
