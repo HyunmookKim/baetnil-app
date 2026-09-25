@@ -2227,7 +2227,10 @@ body.panelfull header > *:not(.hrow):not(#hNav){display:none!important}
    ★ 값을 한 곳(--sat)에만 적어 둔다. 화면마다 따로 적으면
      새 화면을 만들 때 또 빠뜨리고, 그 화면만 글씨가 가린다.
    ★ 웹에서는 이 값이 0 이다 — 웹 화면은 아무것도 안 바뀐다. */
-:root{--sat:env(safe-area-inset-top,0px)}
+/* ★ 5.15 — 안드로이드에서 키보드가 뜨면(웹뷰를 키보드만큼 줄이는 동안) env(safe-area-inset-top) 이 0 으로 떨어져
+     머리줄 글씨가 시계·배터리 줄 밑으로 올라갔다(에뮬레이터 검사 6회째 사진). 안드로이드에서만 한 번 잰 값을 붙잡아 둔다(--satKeep).
+     아이폰은 가로로 돌리면 이 값이 진짜로 0 이 되므로 붙잡지 않는다 — --satKeep 이 없으면 max(env, 0) 곧 지금과 같다. */
+:root{--sat:max(env(safe-area-inset-top,0px),var(--satKeep,0px))}
 header{padding-top:var(--sat)}
 #formOv,#dgPick,#trashView,#helpOv,#hatPanelOv{padding-top:var(--sat)}
 #drawer{padding-top:calc(14px + var(--sat))}
@@ -49251,6 +49254,22 @@ if('serviceWorker' in navigator
    && !(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform())){
   window.addEventListener('load', ()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
 }
+</script>
+<script>
+// ★ 5.15 — 안드로이드: 시계·배터리 줄 높이를 한 번 재서 붙잡아 둔다 (위 --satKeep 설명 참조)
+(function(){
+  try{
+    var C = window.Capacitor;
+    if(!(C && typeof C.getPlatform === 'function' && C.getPlatform() === 'android')) return;
+    var p = document.createElement('div');
+    p.style.cssText = 'position:fixed;top:0;left:0;width:0;height:env(safe-area-inset-top,0px);visibility:hidden;pointer-events:none';
+    document.body.appendChild(p);
+    var keep = 0;
+    function upd(){ try{ var h = p.getBoundingClientRect().height; if(h > keep){ keep = h; document.documentElement.style.setProperty('--satKeep', keep + 'px'); } }catch(_){} }
+    upd(); setTimeout(upd, 500); setTimeout(upd, 2000);
+    window.addEventListener('resize', upd);
+  }catch(_){}
+})();
 </script>
 </body>
 </html>
