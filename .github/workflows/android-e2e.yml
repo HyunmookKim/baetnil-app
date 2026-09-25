@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       api:
-        description: '안드로이드 판 (35=안드로이드 15 · 34=안드로이드 14)'
+        description: '안드로이드 버전 (35=안드로이드 15 · 34=안드로이드 14)'
         type: choice
         options: ['35', '34']
         default: '35'
@@ -87,7 +87,9 @@ jobs:
           profile: pixel_6
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
-          script: bash tests/e2e_emu_run.sh "$RUNNER_TEMP/e2e.apk" "$RUNNER_TEMP/out/android-${{ inputs.api }}"
+          script: |
+            bash tests/e2e_emu_double.sh "$RUNNER_TEMP/e2e.apk" "$RUNNER_TEMP/out/android-${{ inputs.api }}" || echo "DOUBLE_FAIL=1" >> "$GITHUB_ENV"
+            bash tests/e2e_emu_run.sh "$RUNNER_TEMP/e2e.apk" "$RUNNER_TEMP/out/android-${{ inputs.api }}"
 
       - name: 결과를 e2e-android-results 가지에 올리기
         if: always()
