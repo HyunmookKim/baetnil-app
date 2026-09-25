@@ -5,6 +5,11 @@ APK="$1"; OUT="$2"; PKG=kr.baetnil.app
 mkdir -p "$OUT"
 adb wait-for-device
 { adb shell getprop ro.build.version.release; adb shell getprop ro.product.model; adb shell wm size; adb shell wm density; } > "$OUT/device.txt"
+# ★ 에뮬레이터가 막 켜진 뒤 한동안 화면 설정(테마 덮개)이 바뀌며 앱 화면을 다시 만든다.
+#   그 사이에 앱을 켜면 앱이 두 벌 돌았다(2회째 — 모든 줄이 두 번씩, 한쪽은 폭 0).
+#   부팅이 끝나고 조용해질 때까지 기다린다.
+adb shell 'while [ "$(getprop sys.boot_completed)" != 1 ]; do sleep 1; done'
+sleep 60
 adb uninstall $PKG >/dev/null 2>&1 || true
 adb install -r -g "$APK"
 adb shell pm grant $PKG android.permission.ACCESS_BACKGROUND_LOCATION 2>/dev/null || true

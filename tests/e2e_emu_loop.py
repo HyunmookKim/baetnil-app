@@ -57,6 +57,13 @@ def webview_box():
 
 results = []; done = False; stuck = 0; seen = set()
 launch()
+# ★ 앱이 두 벌 떠 있으면(화면을 다시 만드는 사이 옛 웹뷰가 살아 있음) 검사 결과를 믿을 수 없다 — 알리고 다시 켠다
+time.sleep(15)
+with open(LOG, 'r', errors='replace') as fh: _l = fh.read()
+if _l.count('Starting BridgeActivity') > 1:
+    print('!! 앱 화면이 켜지자마자 다시 만들어졌습니다 — 끄고 다시 켭니다', flush=True)
+    results.append('INFO 켜자마자 화면이 다시 만들어짐(%d번) — 다시 켬' % _l.count('Starting BridgeActivity'))
+    launch(fresh=True)
 t0 = time.time(); last = time.time()
 while time.time() - t0 < LIMIT:
     lines = read_new()

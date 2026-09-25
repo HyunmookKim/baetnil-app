@@ -114,7 +114,9 @@
   // ★ 5.15 — 회원가입은 따로 된 화면: 「회원가입」 → 약관 동의 → 이메일·비밀번호·비밀번호 확인 → 가입하기.
   //   사람이 누르는 순서 그대로 누른다 (단추를 글자로 찾아 누른다).
   function tapBtn(label){
-    var b = [].slice.call(document.querySelectorAll('#mrPanel button')).find(function(x){ return x.textContent.trim() === label; });
+    // ★ 화면 언어가 영어일 때도 찾는다 (18회째 — 영어로 바꾼 뒤 「로그인」 을 못 찾아 테스트 계정이 안 지워졌다)
+    var tr = (typeof t === 'function') ? t(label) : label;
+    var b = [].slice.call(document.querySelectorAll('#mrPanel button')).find(function(x){ var s = x.textContent.trim(); return s === label || s === tr; });
     if(!b) throw new Error('「' + label + '」 단추 없음 — 화면: ' + txt('#mrPanel').slice(0, 80));
     b.click();
   }
