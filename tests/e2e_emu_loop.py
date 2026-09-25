@@ -27,10 +27,12 @@ def read_new():
     with open(LOG, 'r', errors='replace') as fh:
         fh.seek(pos[0]); data = fh.read(); pos[0] = fh.tell()
     for line in data.splitlines():
-        if TAG in line:
-            m = line[line.index(TAG) + len(TAG):]
-            m = re.sub(r'"?\s*-- From line.*$', '', m)   # 캐퍼시터가 뒤에 붙이는 자리 표시
-            out.append(m.strip())
+        # ★ 앱이 console.log 로 남긴 줄(Capacitor/Console)만 본다.
+        #   같은 줄이 파일 쓰기 부품 호출 기록(V/Capacitor … methodData)에도 찍히는데,
+        #   그쪽은 뒤에 \n","encoding":"utf8"} 이 붙어 숫자 읽기가 깨진다 (1회째에 여기서 멈춤).
+        if 'Capacitor/Console' not in line or TAG not in line: continue
+        m = line[line.index(TAG) + len(TAG):]
+        out.append(m.strip())
     return out
 
 def shot(name):
@@ -66,7 +68,9 @@ while time.time() - t0 < LIMIT:
         if m.startswith('SHOT '):
             time.sleep(0.8); shot(m[5:].strip())
         elif m.startswith('TAP '):
-            nums = [float(v) for v in m.split()[1:6]]
+            nums = [float(v) for v in re.findall(r'-?\d+(?:\.\d+)?', m)[:5]]
+            if len(nums) < 5:
+                print('  !! TAP 줄을 못 읽음: ' + m, flush=True); continue
             x, y, dpr, w, h = nums
             box = webview_box()
             if box:
