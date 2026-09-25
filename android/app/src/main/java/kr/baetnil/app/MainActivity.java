@@ -1,6 +1,11 @@
 package kr.baetnil.app;
 
 import android.os.Bundle;
+import android.view.ViewGroup;
+import android.webkit.WebView;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import com.getcapacitor.BridgeActivity;
 
 public class MainActivity extends BridgeActivity {
@@ -14,5 +19,51 @@ public class MainActivity extends BridgeActivity {
         //   화면을 꺼서 웹뷰가 얼어도 점이 파일에 쌓이고, 깨어나면 통째로 가져간다.
         registerPlugin(BaetnilTrack.class);
         super.onCreate(savedInstanceState);
+
+        // ★★★ 5.15 — 키보드가 입력칸을 가리던 것 (안드로이드 15 이상).
+        //   앱이 안드로이드 16 기준(targetSdk 36)이라 화면을 가장자리까지 꽉 채워 그린다.
+        //   그러면 키보드가 떠도 웹뷰가 줄지 않아, 아래쪽 칸(로그인 비밀번호 등)이 키보드 밑에 숨는다
+        //   (에뮬레이터 검사에서 확인: 키보드가 떴는데 보이는 높이 915/924 그대로. Capacitor 이슈 #8166).
+        //   키보드가 차지한 만큼만 웹뷰 아래를 비운다. 키보드가 없으면 0 — 지금 모양 그대로다.
+        //   insets 는 그대로 넘긴다(소비하지 않는다) — 화면 위아래 안전 여백 계산은 웹뷰가 계속 한다.
+        try {
+            WebView wv = getBridge() != null ? getBridge().getWebView() : null;
+            if (wv != null) {
+                ViewCompat.setOnApplyWindowInsetsListener(wv, (v, insets) -> {
+                    Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
+                    int bottom = Math.max(0, ime.bottom);
+                    ViewGroup.LayoutParams lp = v.getLayoutParams();
+                    if (lp instanceof ViewGroup.MarginLayoutParams) {
+                        ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) lp;
+                        if (mlp.bottomMargin != bottom) {
+                            mlp.bottomMargin = bottom;
+                            v.setLayoutParams(mlp);
+                        }
+                    }
+                    return insets;
+                });
+            }
+        } catch (Exception ignored) {}
+    }
+
+    // ★★★ 5.15 — 화면이 다시 만들어질 때 옛 웹뷰를 확실히 닫는다.
+    //   안드로이드가 설정 변경(테마·글자 크기 등)으로 화면을 새로 만들 때, 화면이 채 붙기도 전에 닫히면
+    //   Capacitor 는 옛 웹뷰를 닫지 않는다(창에서 떨어질 때만 닫는다). 그러면 옛 앱이 안 보이는 채로
+    //   계속 돌아 앱이 두 벌이 된다 — 에뮬레이터 검사 2회째에서 모든 줄이 두 번씩, 한쪽은 폭 0 으로 찍혔다.
+    //   두 벌이면 항적·저장·서버 연결이 두 번씩 일어날 수 있다.
+    @Override
+    public void onDestroy() {
+        WebView wv = null;
+        try { wv = getBridge() != null ? getBridge().getWebView() : null; } catch (Exception ignored) {}
+        super.onDestroy();
+        if (wv != null) {
+            try {
+                wv.stopLoading();
+                wv.loadUrl("about:blank");
+                if (wv.getParent() instanceof ViewGroup) ((ViewGroup) wv.getParent()).removeView(wv);
+                wv.removeAllViews();
+                wv.destroy();
+            } catch (Exception ignored) {}
+        }
     }
 }
