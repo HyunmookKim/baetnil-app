@@ -27,7 +27,7 @@ T('viewport 에 viewport-fit=cover 가 있다',
   /<meta name="viewport"[^>]*viewport-fit=cover/.test(S),
   (S.match(/<meta name="viewport"[^>]*>/)||[''])[0]);
 T('위쪽 여백 값을 한 곳에 정해 둔다',
-  /--sat:\s*env\(safe-area-inset-top/.test(S));
+  /--sat:\s*(max\()?env\(safe-area-inset-top/.test(S));  // 5.15 — 안드로이드 키보드 동안 붙잡은 값(--satKeep)과 큰 쪽
 
 // 덮이는 것은 머리줄만이 아니다 — 화면 가득 뜨는 것들도 다 비켜야 한다.
 // ★ 한 곳에 모아 두었는지로 본다. 흩어 놓으면 새 화면을 만들 때 또 빠뜨린다.
