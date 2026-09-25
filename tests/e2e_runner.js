@@ -324,6 +324,9 @@
   // 5.10 — 거짓 위치 거르기: 시뮬레이터 위치는 iOS 가 「소프트웨어가 만든 위치」 로 표시한다.
   //   그 표시를 그대로 두면 앱이 그 점을 버려야 한다(mock 수가 늘고 점은 안 는다).
   step('항해 — 거짓 위치는 버리는가', async function(){
+    // ★ 5.15 — 안드로이드 에뮬레이터의 위치(adb emu geo fix)는 「가짜 위치 앱」 표시가 안 붙는 진짜 GPS 로 들어온다.
+    //   그래서 이 단계는 안드로이드 에뮬레이터로는 확인할 길이 없다 — 통과로 치지 않고 따로 적는다.
+    if(PLAT === 'android'){ log('INFO 거짓 위치 — 안드로이드 에뮬레이터로는 확인 불가 (아이폰 검사로 확인)'); return; }
     var m0 = Number(trkNow.mock) || 0, p0 = trkNow.pts.length;
     window.__e2eKeepMock = true;
     try{ await until(function(){ return (Number(trkNow.mock) || 0) >= m0 + 3; }, 30000, '거짓 위치 버림 (버린 수 ' + ((Number(trkNow.mock)||0) - m0) + ')'); }
@@ -341,8 +344,10 @@
     await shot('15-voyage-done');
   });
   step('승선 이력 종이', async function(){
-    crewCvExport(); await sleep(1500); await shot('16-crewcv');
-    if(!$('#mrPanel .paperfr') && !(typeof tellIsOpen === 'function' && tellIsOpen())) throw new Error('종이도 안내도 안 뜸');
+    crewCvExport();
+    // ★ 5.15 — 승선 이력은 서버에서 항해를 찾아온 뒤에 뜬다. 에뮬레이터는 1.5초 안에 못 받는다 → 15초까지 기다린다.
+    await until(function(){ return $('#mrPanel .paperfr') || (typeof tellIsOpen === 'function' && tellIsOpen()); }, 15000, '종이도 안내도 안 뜸');
+    await sleep(600); await shot('16-crewcv');
   });
   // ★ 12회째 작은 아이폰 — 날씨 서버가 한 번 대답을 안 해 「날씨를 불러오지 못했습니다」 가 떴다.
   //   앱은 「다시 시도」 단추를 내주고 있었다(맞는 동작). 검사는 그 단추를 눌러 한 번 더 기다린다.
@@ -425,6 +430,7 @@
     marketDraft.photos = [dot()];
     await itemSave();
     await until(function(){ return /자동검사/.test(txt('#mrPanel') + txt('body')); }, 20000, '장터');
+    await sleep(2500);   // ★ 사진 올리기가 끝난 뒤 물건 화면이 늦게 열려 다음 단계 화면을 덮는다(안드로이드 3회째)
     await shot('24-market');
   });
   step('장터·정박지 사진 붙이기 함수(고친 것)', async function(){
@@ -436,6 +442,7 @@
     unlock(); try{ closeBoat(); }catch(_){} switchTab('community'); setComSub('spots'); await sleep(800);
     await until(function(){
       if($('#spName')) return true;
+      try{ if(typeof closeMR === 'function') closeMR(); }catch(_){}
       try{ writeSpot(); }catch(_){}
       try{ spotPickCtx.draft = spotPickCtx.draft || {}; spotPickCtx.draft.lat = 34.73; spotPickCtx.draft.lon = 127.74; spotForm(); }catch(_){}
       return !!$('#spName');
