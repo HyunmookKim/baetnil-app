@@ -190,9 +190,13 @@
     var r = el.getBoundingClientRect();
     var h0 = window.innerHeight;
     log('TAP ' + Math.round(r.left + r.width / 2) + ' ' + Math.round(r.top + r.height / 2) + ' ' + (window.devicePixelRatio || 1) + ' ' + window.innerWidth + ' ' + window.innerHeight);
-    await sleep(4000);
-    var vv = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-    var h1 = Math.min(vv, window.innerHeight);
+    // ★ 에뮬레이터는 키보드를 처음 띄울 때 몇 초 걸린다(5회째: 4초에 재니 아직 안 줄었고, 사진에서는 줄어 있었다) — 12초까지 기다린다
+    function hNow(){ var v = window.visualViewport ? window.visualViewport.height : window.innerHeight; return Math.min(v, window.innerHeight); }
+    await sleep(1500);
+    var t0 = Date.now();
+    while(Date.now() - t0 < 12000 && hNow() > h0 - 100) await sleep(300);
+    await sleep(600);
+    var h1 = hNow();
     var r2 = el.getBoundingClientRect();
     log('INFO 키보드(' + id + ') — 눌린 칸=' + (document.activeElement && document.activeElement.id) + ' 보이는 높이=' + Math.round(h1) + '/' + h0 + ' 칸 아래끝=' + Math.round(r2.bottom));
     await shot(shotName);
