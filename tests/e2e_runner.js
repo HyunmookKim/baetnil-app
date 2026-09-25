@@ -179,27 +179,39 @@
   });
   // ★ 5.15 — 키보드가 입력칸을 가리는가 (안드로이드 15 이상에서 여러 앱이 겪는 문제 — Capacitor #8166).
   //   안드로이드에서는 깃허브 기계가 칸을 손가락처럼 눌러 키보드를 띄운다(TAP). 아이폰 시뮬레이터는 누를 길이 없어 사진만.
-  step('회원가입 화면 — 키보드가 맨 아래 칸을 가리지 않는가', async function(){
+  // ★ 5.15 — 키보드가 입력칸을 가리는가 (안드로이드 15 이상 — Capacitor #8166).
+  //   안드로이드에서는 깃허브 기계가 칸을 손가락처럼 눌러 키보드를 띄운다(TAP).
+  //   3회째: 키보드가 떴는데 웹뷰가 안 줄었다(보이는 높이 915/924) → 5.15 에서 MainActivity 가 키보드만큼 웹뷰를 줄인다.
+  //   이제는 「키보드가 뜨면 보이는 높이가 준다」 와 「누른 칸이 키보드 위에 있다」 둘 다 본다. 로그인 비밀번호 칸(아래쪽)도 본다.
+  async function kbdCheck(id, shotName){
+    var el = $('#' + id);
+    if(!el) throw new Error('#' + id + ' 칸 없음');
+    el.scrollIntoView({ block:'end' }); await sleep(600);
+    var r = el.getBoundingClientRect();
+    var h0 = window.innerHeight;
+    log('TAP ' + Math.round(r.left + r.width / 2) + ' ' + Math.round(r.top + r.height / 2) + ' ' + (window.devicePixelRatio || 1) + ' ' + window.innerWidth + ' ' + window.innerHeight);
+    await sleep(4000);
+    var vv = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    var h1 = Math.min(vv, window.innerHeight);
+    var r2 = el.getBoundingClientRect();
+    log('INFO 키보드(' + id + ') — 눌린 칸=' + (document.activeElement && document.activeElement.id) + ' 보이는 높이=' + Math.round(h1) + '/' + h0 + ' 칸 아래끝=' + Math.round(r2.bottom));
+    await shot(shotName);
+    if(!document.activeElement || document.activeElement.id !== id) throw new Error(id + ' 칸을 눌렀는데 입력칸이 안 잡힘');
+    if(h1 > h0 - 100) throw new Error('키보드가 떴는데 화면이 안 줄었음 (보이는 높이 ' + Math.round(h1) + '/' + h0 + ') — 아래쪽 칸이 키보드에 가려짐');
+    if(r2.bottom > h1 + 2) throw new Error('키보드가 ' + id + ' 칸을 가림 (칸 아래끝 ' + Math.round(r2.bottom) + ' > 보이는 높이 ' + Math.round(h1) + ')');
+    try{ el.blur(); }catch(_){}
+    await sleep(1200);
+  }
+  step('회원가입·로그인 화면 — 키보드가 칸을 가리지 않는가', async function(){
     openAccount(); await sleep(400);
     tapBtn('회원가입');
     await agreeIfAsked();
     await until(function(){ return !!$('#suPw2'); }, 10000, '회원가입 화면');
     await sleep(600); await shot('03b-signup');
-    if(PLAT !== 'android') return;
-    var el = $('#suPw2');
-    el.scrollIntoView({ block:'center' }); await sleep(500);
-    var r = el.getBoundingClientRect();
-    log('TAP ' + Math.round(r.left + r.width / 2) + ' ' + Math.round(r.top + r.height / 2) + ' ' + (window.devicePixelRatio || 1) + ' ' + window.innerWidth + ' ' + window.innerHeight);
-    await sleep(4000);
-    var vv = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-    var r2 = el.getBoundingClientRect();
-    log('INFO 키보드 — 눌린 칸=' + (document.activeElement && document.activeElement.id) + ' 보이는 높이=' + Math.round(vv) + '/' + window.innerHeight + ' 칸 아래끝=' + Math.round(r2.bottom));
-    await shot('03c-signup-keyboard');
-    if(!document.activeElement || document.activeElement.id !== 'suPw2') throw new Error('칸을 눌렀는데 입력칸이 안 잡힘');
-    if(vv < window.innerHeight - 50 && r2.bottom > vv + 2) throw new Error('키보드가 칸을 가림 (칸 아래끝 ' + Math.round(r2.bottom) + ' > 보이는 높이 ' + Math.round(vv) + ')');
-    if(vv >= window.innerHeight - 50) log('INFO 키보드가 떠도 보이는 높이가 안 줄었음 — 사진(03c)으로 가리는지 확인');
-    try{ el.blur(); }catch(_){}
-    await sleep(800);
+    if(PLAT !== 'android'){ openAccount(); return; }
+    await kbdCheck('suPw2', '03c-signup-keyboard');
+    openAccount(); await sleep(600);
+    await kbdCheck('acPw', '03d-login-keyboard');
     openAccount();
   });
   step('메일로 회원가입 (A)', async function(){
