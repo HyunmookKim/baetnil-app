@@ -195,19 +195,29 @@
     log('TOPCHK ' + (parseFloat(pad0) || 0) + ' ' + (window.devicePixelRatio || 1) + ' ' + id + '-키보드전');
     await sleep(3000);
     log('TAP ' + Math.round(r.left + r.width / 2) + ' ' + Math.round(r.top + r.height / 2) + ' ' + (window.devicePixelRatio || 1) + ' ' + window.innerWidth + ' ' + window.innerHeight);
-    // ★ 에뮬레이터는 키보드를 처음 띄울 때 몇 초 걸린다(5회째: 4초에 재니 아직 안 줄었고, 사진에서는 줄어 있었다) — 12초까지 기다린다
-    function hNow(){ var v = window.visualViewport ? window.visualViewport.height : window.innerHeight; return Math.min(v, window.innerHeight); }
+    // ★ 5.16 — 키보드가 뜨면 화면(웹뷰)은 그대로, 누른 칸만 스크롤로 키보드 위에 올라와야 한다.
+    //   아래 탭 줄은 키보드에 가려져야 한다(위로 따라 올라오면 안 된다 — 5.15 사장님 지적).
+    //   키보드 높이는 앱 껍데기가 알려 준 값(window.__kbdH)으로 본다. 에뮬레이터는 처음 띄울 때 몇 초 걸린다 — 12초까지 기다린다.
+    var tb = document.getElementById('tabbar');
+    var tb0 = tb ? Math.round(tb.getBoundingClientRect().bottom) : -1;
     await sleep(1500);
     var t0 = Date.now();
-    while(Date.now() - t0 < 12000 && hNow() > h0 - 100) await sleep(300);
-    await sleep(600);
-    var h1 = hNow();
+    while(Date.now() - t0 < 12000 && !((window.__kbdH || 0) > 100)) await sleep(300);
+    await sleep(900);
+    var kb = window.__kbdH || 0;
+    var h1 = window.innerHeight;
+    var kbTop = h1 - kb;
     var r2 = el.getBoundingClientRect();
-    log('INFO 키보드(' + id + ') — 눌린 칸=' + (document.activeElement && document.activeElement.id) + ' 보이는 높이=' + Math.round(h1) + '/' + h0 + ' 칸 아래끝=' + Math.round(r2.bottom));
+    var tb1 = tb ? Math.round(tb.getBoundingClientRect().bottom) : -1;
+    log('INFO 키보드(' + id + ') — 눌린 칸=' + (document.activeElement && document.activeElement.id) + ' 키보드 높이=' + Math.round(kb) + ' 화면 높이=' + h1 + '/' + h0 + ' 칸 아래끝=' + Math.round(r2.bottom) + ' 키보드 윗줄=' + Math.round(kbTop) + ' 탭 줄 아래끝=' + tb0 + '→' + tb1);
     await shot(shotName);
     if(!document.activeElement || document.activeElement.id !== id) throw new Error(id + ' 칸을 눌렀는데 입력칸이 안 잡힘');
-    if(h1 > h0 - 100) throw new Error('키보드가 떴는데 화면이 안 줄었음 (보이는 높이 ' + Math.round(h1) + '/' + h0 + ') — 아래쪽 칸이 키보드에 가려짐');
-    if(r2.bottom > h1 + 2) throw new Error('키보드가 ' + id + ' 칸을 가림 (칸 아래끝 ' + Math.round(r2.bottom) + ' > 보이는 높이 ' + Math.round(h1) + ')');
+    if(!(kb > 100)) throw new Error('키보드가 떴는데 앱이 키보드 높이를 못 받음 (' + Math.round(kb) + ')');
+    if(Math.abs(h1 - h0) > 2) throw new Error('키보드가 뜨니 화면이 줄었음 (' + h0 + ' → ' + h1 + ') — 줄이지 말고 스크롤해야 함');
+    if(tb && Math.abs(tb1 - tb0) > 2) throw new Error('아래 탭 줄이 키보드를 따라 움직였음 (' + tb0 + ' → ' + tb1 + ')');
+    if(r2.bottom > kbTop + 2) throw new Error('키보드가 ' + id + ' 칸을 가림 (칸 아래끝 ' + Math.round(r2.bottom) + ' > 키보드 윗줄 ' + Math.round(kbTop) + ')');
+    var hdb = hd ? hd.getBoundingClientRect().bottom : 0;
+    if(r2.top < hdb - 2) throw new Error(id + ' 칸이 머리줄 밑으로 올라가 숨었음 (칸 윗끝 ' + Math.round(r2.top) + ' < 머리줄 아래끝 ' + Math.round(hdb) + ')');
     // ★ 키보드가 뜬 동안에도 머리줄 위 여백이 그대로인지 본다
     var pad1 = hd ? getComputedStyle(hd).paddingTop : '';
     log('INFO 머리줄 위 여백 ' + pad0 + ' → ' + pad1);
@@ -216,6 +226,11 @@
     if(pad0 !== pad1) throw new Error('키보드가 뜨니 머리줄 위 여백이 바뀜 (' + pad0 + ' → ' + pad1 + ') — 글씨가 시계 줄 밑으로 들어감');
     try{ el.blur(); }catch(_){}
     await sleep(1200);
+    var t1 = Date.now();
+    while(Date.now() - t1 < 8000 && (window.__kbdH || 0) > 0) await sleep(300);
+    var spc = document.getElementById('kbdSpacer');
+    log('INFO 키보드 내린 뒤 — 키보드 높이=' + Math.round(window.__kbdH || 0) + ' 덧붙인 여백=' + (spc ? spc.style.height : '없음'));
+    if(spc && parseFloat(spc.style.height) > 0) throw new Error('키보드를 내렸는데 스크롤용 여백이 남음 (' + spc.style.height + ')');
   }
   step('회원가입·로그인 화면 — 키보드가 칸을 가리지 않는가', async function(){
     openAccount(); await sleep(400);
