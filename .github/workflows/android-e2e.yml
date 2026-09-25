@@ -1,24 +1,30 @@
-# 뱃일 — 안드로이드 에뮬레이터에서 효율을 잰다 (재기만 한다. 앱을 고치지 않는다)
+# 뱃일 — 안드로이드 에뮬레이터에서 앱 기능 전체를 자동으로 눌러 본다 (5.15)
 #
 #   ★ 구글에 아무것도 올리지 않는다. 서명도 쓰지 않는다(디버그 빌드).
-#   ★ tests/perf_probe.js 를 이 재기용 빌드에만 끼워 넣는다. 스토어로 가는 빌드에는 안 들어간다.
-#   ★ 에뮬레이터는 깃허브 기계의 CPU 로 돈다 — **절대 시간은 실제 안드로이드 폰과 다르다.**
-#     여기서 보는 것은 안드로이드 웹뷰(크롬 엔진 V8)가 「어떻게 동작하는가」 다:
-#     두 번째 켤 때 빨라지는가 · 폰 저장소 한도 · 항적이 길어지면 몇 배 느려지는가.
-#   결과: perf-results 가지 (android-…)
+#   ★ tests/e2e_runner.js 를 이 검사용 빌드에만 끼워 넣는다. 스토어로 가는 빌드에는 안 들어간다.
+#   아이폰 검사(ios-e2e.yml)와 같은 단계를 안드로이드에서 누른다 — 사장님 지시(2026-09-25):
+#   「안드로이드와 아이폰에서 각각 … 잘 돌아가는지 확인까지 확실하게」
+#   안드로이드 15(화면을 가장자리까지 그리는 판)에서 키보드가 칸을 가리는지도 본다.
+#   결과: e2e-android-results 가지 (Claude 가 git 으로 받아 화면 사진을 본다)
 
-name: 안드로이드 효율 재기
+name: 안드로이드 전체 기능 에뮬레이터 검사
 
 on:
   workflow_dispatch:
+    inputs:
+      api:
+        description: '안드로이드 판 (35=안드로이드 15 · 34=안드로이드 14)'
+        type: choice
+        options: ['35', '34']
+        default: '35'
 
 permissions:
   contents: write
 
 jobs:
-  perf:
+  e2e:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -43,15 +49,15 @@ jobs:
       - name: cap sync android
         run: npx cap sync android
 
-      - name: 재기 파일 끼워 넣기 (이 빌드에만)
+      - name: 검사 파일 끼워 넣기 (이 빌드에만)
         run: |
           set -e
           P=android/app/src/main/assets/public
-          cp tests/perf_probe.js "$P/perf.js"
+          cp tests/e2e_runner.js "$P/e2e.js"
           python3 - <<'PY2'
           p='android/app/src/main/assets/public/index.html'
           s=open(p,encoding='utf-8').read()
-          tag='<script src="perf.js"></script>'
+          tag='<script src="e2e.js"></script>'
           assert tag not in s
           i=s.rfind('</body>')
           s=s[:i]+tag+'\n'+s[i:]
@@ -59,19 +65,12 @@ jobs:
           print('끼워 넣음')
           PY2
 
-      - name: 디버그 APK 짓기 — 가) 지금 그대로 (코드가 화면 파일 안에)
+      - name: 디버그 APK 짓기
         working-directory: android
         run: |
           chmod +x gradlew
           ./gradlew --no-daemon assembleDebug
-          cp app/build/outputs/apk/debug/app-debug.apk "$RUNNER_TEMP/A.apk"
-
-      - name: 디버그 APK 짓기 — 나) 코드를 바깥 파일로 옮긴 판 (재기용 — 앱은 안 고침)
-        run: |
-          python3 tests/perf_variant.py android/app/src/main/assets/public
-          cd android && ./gradlew --no-daemon assembleDebug
-          cp app/build/outputs/apk/debug/app-debug.apk "$RUNNER_TEMP/B.apk"
-          ls -l "$RUNNER_TEMP"/*.apk
+          cp app/build/outputs/apk/debug/app-debug.apk "$RUNNER_TEMP/e2e.apk"
 
       - name: KVM 켜기 (에뮬레이터를 빠르게)
         run: |
@@ -79,31 +78,29 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: 에뮬레이터에서 세 번 켜며 재기 (안드로이드 14)
+      - name: 에뮬레이터에서 전체 단계
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 34
+          api-level: ${{ inputs.api }}
           target: google_apis
           arch: x86_64
           profile: pixel_6
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
-          script: |
-            bash tests/perf_emu_run.sh "$RUNNER_TEMP/A.apk" "$RUNNER_TEMP/out/android-가-화면파일안"
-            bash tests/perf_emu_run.sh "$RUNNER_TEMP/B.apk" "$RUNNER_TEMP/out/android-나-바깥파일"
+          script: bash tests/e2e_emu_run.sh "$RUNNER_TEMP/e2e.apk" "$RUNNER_TEMP/out/android-${{ inputs.api }}"
 
-      - name: 결과를 perf-results 가지에 올리기
+      - name: 결과를 e2e-android-results 가지에 올리기
         if: always()
         run: |
           set -e
           mkdir -p "$RUNNER_TEMP/out"; cd "$RUNNER_TEMP/out"
-          rm -f */logcat-all.txt.gz; for f in */logcat-all.txt; do [ -f "$f" ] && gzip -9 "$f"; done
-          # ★ 옛 결과를 받아 온 다음 이번 결과를 그 위에 덮는다 (거꾸로 하면 옛것이 새것을 덮는다 — 5.15 에서 고침)
+          for f in */logcat.txt; do [ -f "$f" ] && gzip -9 "$f"; done
+          # ★ 옛 결과를 받아 온 다음 이번 결과를 그 위에 덮는다 (거꾸로 하면 옛것이 새것을 덮는다)
           rm -rf "$RUNNER_TEMP/new"; cp -r "$RUNNER_TEMP/out" "$RUNNER_TEMP/new"
-          git init -q -b perf-results
+          git init -q -b e2e-android-results
           git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git remote add o "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
-          git fetch -q o perf-results 2>/dev/null && git checkout -q o/perf-results -- . 2>/dev/null || true
+          git fetch -q o e2e-android-results 2>/dev/null && git checkout -q o/e2e-android-results -- . 2>/dev/null || true
           cp -r "$RUNNER_TEMP/new/." .
-          echo "android run ${{ github.run_number }} · ${{ github.sha }}" > RUN-android.txt
-          git add -A && git commit -qm "android perf ${{ github.run_number }}" && git push -qf o HEAD:perf-results
+          echo "android e2e run ${{ github.run_number }} · api ${{ inputs.api }} · ${{ github.sha }}" > RUN.txt
+          git add -A && git commit -qm "android e2e ${{ github.run_number }}" && git push -qf o HEAD:e2e-android-results
