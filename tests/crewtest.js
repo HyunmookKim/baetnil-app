@@ -92,7 +92,7 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + n); } else { fail+
   T('이메일 가입이 큰 버튼이다', /mrbtn big[^`]{0,120}?openAccount\(\)/.test(w));
   T('구글이 없어도 된다고 알려 준다', /구글|Google 계정이 없|아무 이메일/.test(w));
   const a = grab(js, 'openAccount') || '';
-  T('계정 화면에 회원가입이 있다', /doEmail\(true\)/.test(a));
+  T('계정 화면에 회원가입이 있다', /openSignup\(\)/.test(a));  // 5.15 — 회원가입은 따로 된 화면으로
   T('회원가입이 무엇인지 알려 준다', /가입|처음/.test(a));
 }
 

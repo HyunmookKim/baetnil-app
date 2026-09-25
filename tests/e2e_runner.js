@@ -43,6 +43,9 @@
   // ★ 6.0 — 앱의 console.log 는 파일로 돌리면 한참 모였다가 한꺼번에 나온다(2회째: 사진이 전부 마지막 화면).
   //   그래서 같은 줄을 앱 안 Documents/e2e_cmd.txt 에도 적는다. 깃허브 맥은 이 파일을 곧바로 읽는다.
   var FS = null; try{ FS = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem; }catch(_){}
+  // ★ 5.15 — 안드로이드 에뮬레이터에서도 돈다. 안드로이드는 깃허브 기계가 logcat 으로 줄을 읽고,
+  //   사진 답(e2e_ack.txt)은 못 준다(앱 문서 폴더를 밖에서 못 씀) — 그래서 사진은 기다리지 않고 3초만 쉰다.
+  var PLAT = 'web'; try{ PLAT = window.Capacitor.getPlatform(); }catch(_){}
   var fq = Promise.resolve();
   function fileLog(line){
     if(!FS) return;
@@ -71,7 +74,7 @@
   // 사진을 찍었다는 답(Documents/e2e_ack.txt)이 올 때까지 화면을 그대로 둔다
   async function shot(name){
     log('SHOT ' + name);
-    if(!FS){ await sleep(2500); return; }
+    if(!FS || PLAT === 'android'){ await sleep(PLAT === 'android' ? 3000 : 2500); return; }
     var t0 = Date.now();
     while(Date.now() - t0 < 20000){
       try{
@@ -108,13 +111,28 @@
     await sleep(600);
     if($('#mrPanel .agchk')){ agreeAll(); doAgree(); await sleep(800); }
   }
+  // ★ 5.15 — 회원가입은 따로 된 화면: 「회원가입」 → 약관 동의 → 이메일·비밀번호·비밀번호 확인 → 가입하기.
+  //   사람이 누르는 순서 그대로 누른다 (단추를 글자로 찾아 누른다).
+  function tapBtn(label){
+    var b = [].slice.call(document.querySelectorAll('#mrPanel button')).find(function(x){ return x.textContent.trim() === label; });
+    if(!b) throw new Error('「' + label + '」 단추 없음 — 화면: ' + txt('#mrPanel').slice(0, 80));
+    b.click();
+  }
   async function emailLogin(acc, isNew){
     openAccount(); await sleep(400);
-    setv('acEm', acc.em); setv('acPw', acc.pw);
-    doEmail(!!isNew);
-    await agreeIfAsked();
+    if(isNew){
+      tapBtn('회원가입');
+      await agreeIfAsked();
+      await until(function(){ return !!$('#suPw2'); }, 10000, '동의 뒤 회원가입 화면 (화면: ' + txt('#mrPanel').slice(0, 60) + ')');
+      setv('suEm', acc.em); setv('suPw', acc.pw); setv('suPw2', acc.pw);
+      tapBtn('가입하기');
+    } else {
+      setv('acEm', acc.em); setv('acPw', acc.pw);
+      tapBtn('로그인');
+      await agreeIfAsked();
+    }
     await until(function(){ return window.__user && window.__user.email === acc.em; }, 30000,
-      '로그인 상태 (acMsg: ' + txt('#acMsg') + ')');
+      '로그인 상태 (acMsg: ' + txt('#acMsg') + ' / suMsg: ' + txt('#suMsg') + ' / 칸 밑: ' + txt('#mrPanel .ferr.on') + ')');
   }
   async function signOut(){
     if(!window.__user) return;
@@ -154,6 +172,33 @@
     if(!$('.lgbtn.lg-g')) throw new Error('구글 단추 없음');
     if(!$('#acEm') || !$('#acPw')) throw new Error('이메일 칸 없음');
     if(!/비밀번호 찾기/.test(txt('#mrPanel'))) throw new Error('비밀번호 찾기 없음');
+    if(!/회원가입/.test(txt('#mrPanel'))) throw new Error('회원가입 단추 없음');
+    if($('#suPw2')) throw new Error('로그인 화면에 비밀번호 확인 칸이 있음');
+  });
+  // ★ 5.15 — 키보드가 입력칸을 가리는가 (안드로이드 15 이상에서 여러 앱이 겪는 문제 — Capacitor #8166).
+  //   안드로이드에서는 깃허브 기계가 칸을 손가락처럼 눌러 키보드를 띄운다(TAP). 아이폰 시뮬레이터는 누를 길이 없어 사진만.
+  step('회원가입 화면 — 키보드가 맨 아래 칸을 가리지 않는가', async function(){
+    openAccount(); await sleep(400);
+    tapBtn('회원가입');
+    await agreeIfAsked();
+    await until(function(){ return !!$('#suPw2'); }, 10000, '회원가입 화면');
+    await sleep(600); await shot('03b-signup');
+    if(PLAT !== 'android') return;
+    var el = $('#suPw2');
+    el.scrollIntoView({ block:'center' }); await sleep(500);
+    var r = el.getBoundingClientRect();
+    log('TAP ' + Math.round(r.left + r.width / 2) + ' ' + Math.round(r.top + r.height / 2) + ' ' + (window.devicePixelRatio || 1) + ' ' + window.innerWidth + ' ' + window.innerHeight);
+    await sleep(4000);
+    var vv = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    var r2 = el.getBoundingClientRect();
+    log('INFO 키보드 — 눌린 칸=' + (document.activeElement && document.activeElement.id) + ' 보이는 높이=' + Math.round(vv) + '/' + window.innerHeight + ' 칸 아래끝=' + Math.round(r2.bottom));
+    await shot('03c-signup-keyboard');
+    if(!document.activeElement || document.activeElement.id !== 'suPw2') throw new Error('칸을 눌렀는데 입력칸이 안 잡힘');
+    if(vv < window.innerHeight - 50 && r2.bottom > vv + 2) throw new Error('키보드가 칸을 가림 (칸 아래끝 ' + Math.round(r2.bottom) + ' > 보이는 높이 ' + Math.round(vv) + ')');
+    if(vv >= window.innerHeight - 50) log('INFO 키보드가 떠도 보이는 높이가 안 줄었음 — 사진(03c)으로 가리는지 확인');
+    try{ el.blur(); }catch(_){}
+    await sleep(800);
+    openAccount();
   });
   step('메일로 회원가입 (A)', async function(){
     await emailLogin(S.a, true);
