@@ -1,6 +1,7 @@
 package kr.baetnil.app;
 
 import android.os.Bundle;
+import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import androidx.core.graphics.Insets;
@@ -25,28 +26,31 @@ public class MainActivity extends BridgeActivity {
         //   그러면 키보드가 떠도 웹뷰가 줄지 않아, 아래쪽 칸(로그인 비밀번호 등)이 키보드 밑에 숨는다
         //   (에뮬레이터 검사에서 확인: 키보드가 떴는데 보이는 높이 915/924 그대로. Capacitor 이슈 #8166).
         //   키보드가 차지한 만큼만 웹뷰 아래를 비운다. 키보드가 없으면 0 — 5.14 모양 그대로다.
-        // ★★★ 에뮬레이터 검사 6·7회째 — 머리줄 글씨가 시계·배터리 줄에 겹쳤다.
-        //   이 여백 처리기를 웹뷰에 걸면 웹뷰가 스스로 받던 화면 가장자리 정보(시계 줄 높이 등)를 더는 못 받아서,
-        //   웹 화면의 위쪽 여백(env(safe-area-inset-top))이 0 이 됐다. (8회째: 처리기를 안 걸면 49 로 제대로 나옴)
-        //   그래서 여백만 정한 뒤 받은 정보를 웹뷰에게 그대로 넘겨준다(ViewCompat.onApplyWindowInsets).
+        // ★★★ 에뮬레이터 검사 6~10회째 — 머리줄 글씨가 시계·배터리 줄에 겹쳤다.
+        //   웹뷰 자신에게 여백 처리기를 걸면, 웹뷰(크롬)가 스스로 걸어 둔 처리기가 밀려나
+        //   웹 화면의 위쪽 여백(env(safe-area-inset-top))이 0 이 된다.
+        //   8회째(처리기 없음): 49 · 10회째(웹뷰에 걸고 정보를 넘겨줘도): 0 — 넘겨주는 것으로는 안 된다.
+        //   그래서 처리기는 웹뷰를 담은 바깥 틀에 걸고, 웹뷰에는 아래 여백만 준다.
+        //   받은 정보는 손대지 않고 그대로 안쪽(웹뷰)으로 흘려보낸다 — 웹뷰는 5.14 때처럼 스스로 받는다.
         //   (Capacitor 7 은 기본값이 「disable」 이라 원래 웹뷰에 여백을 걸지 않는다 — 5.14 도 그랬다.)
         try {
-            WebView wv = getBridge() != null ? getBridge().getWebView() : null;
-            if (wv != null) {
-                ViewCompat.setOnApplyWindowInsetsListener(wv, (v, insets) -> {
+            final WebView wv = getBridge() != null ? getBridge().getWebView() : null;
+            final View host = (wv != null && wv.getParent() instanceof View) ? (View) wv.getParent() : null;
+            if (wv != null && host != null) {
+                ViewCompat.setOnApplyWindowInsetsListener(host, (v, insets) -> {
                     Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
                     int bottom = Math.max(0, ime.bottom);
-                    ViewGroup.LayoutParams lp = v.getLayoutParams();
+                    ViewGroup.LayoutParams lp = wv.getLayoutParams();
                     if (lp instanceof ViewGroup.MarginLayoutParams) {
                         ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) lp;
                         if (mlp.bottomMargin != bottom) {
                             mlp.bottomMargin = bottom;
-                            v.setLayoutParams(mlp);
+                            wv.setLayoutParams(mlp);
                         }
                     }
-                    return ViewCompat.onApplyWindowInsets(v, insets);
+                    return insets;
                 });
-                ViewCompat.requestApplyInsets(wv);
+                ViewCompat.requestApplyInsets(host);
             }
         } catch (Exception ignored) {}
     }
