@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import com.getcapacitor.BridgeActivity;
@@ -21,32 +20,26 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(BaetnilTrack.class);
         super.onCreate(savedInstanceState);
 
-        // ★★★ 5.15 — 키보드가 입력칸을 가리던 것 (안드로이드 15 이상).
-        //   앱이 안드로이드 16 기준(targetSdk 36)이라 화면을 가장자리까지 꽉 채워 그린다.
-        //   그러면 키보드가 떠도 웹뷰가 줄지 않아, 아래쪽 칸(로그인 비밀번호 등)이 키보드 밑에 숨는다
-        //   (에뮬레이터 검사에서 확인: 키보드가 떴는데 보이는 높이 915/924 그대로. Capacitor 이슈 #8166).
-        //   키보드가 차지한 만큼만 웹뷰 아래를 비운다. 키보드가 없으면 0 — 5.14 모양 그대로다.
-        // ★★★ 에뮬레이터 검사 6~10회째 — 머리줄 글씨가 시계·배터리 줄에 겹쳤다.
-        //   웹뷰 자신에게 여백 처리기를 걸면, 웹뷰(크롬)가 스스로 걸어 둔 처리기가 밀려나
-        //   웹 화면의 위쪽 여백(env(safe-area-inset-top))이 0 이 된다.
-        //   8회째(처리기 없음): 49 · 10회째(웹뷰에 걸고 정보를 넘겨줘도): 0 — 넘겨주는 것으로는 안 된다.
-        //   그래서 처리기는 웹뷰를 담은 바깥 틀에 걸고, 웹뷰에는 아래 여백만 준다.
-        //   받은 정보는 손대지 않고 그대로 안쪽(웹뷰)으로 흘려보낸다 — 웹뷰는 5.14 때처럼 스스로 받는다.
-        //   (Capacitor 7 은 기본값이 「disable」 이라 원래 웹뷰에 여백을 걸지 않는다 — 5.14 도 그랬다.)
+        // ★★★ 5.16 — 키보드가 뜨면 화면은 그대로 두고, 누른 칸만 스크롤로 키보드 위에 올린다.
+        //   아이폰 앱·아이폰 사파리·안드로이드 크롬(108 부터)이 모두 이렇게 한다.
+        //   키보드가 화면 아래를 덮고, 아래 탭 줄은 키보드에 가려진다.
+        //   ★ 5.15 에서는 웹뷰를 키보드만큼 줄였다 → 아래 탭 줄이 키보드 위로 따라 올라왔다(사장님 지적). 그 방식은 버린다.
+        //   안드로이드 15 이상(targetSdk 36)은 시스템이 칸을 올려 주지 않으므로(Capacitor 이슈 #8166),
+        //   여기서는 키보드 높이만 재서 웹 화면에 알려 주고(__kbd), 스크롤은 웹 화면이 한다(index.html 끝).
+        // ★ 처리기는 웹뷰가 아니라 웹뷰를 담은 바깥 틀에 건다 — 웹뷰에 걸면 웹뷰가 스스로 받던
+        //   시계 줄 높이 정보가 막혀 머리줄이 시계 줄에 겹친다(에뮬레이터 검사 10회째: 위 여백 0).
+        //   받은 정보는 손대지 않고 그대로 안쪽(웹뷰)으로 흘려보낸다.
         try {
             final WebView wv = getBridge() != null ? getBridge().getWebView() : null;
             final View host = (wv != null && wv.getParent() instanceof View) ? (View) wv.getParent() : null;
             if (wv != null && host != null) {
+                final int[] last = { -1 };
                 ViewCompat.setOnApplyWindowInsetsListener(host, (v, insets) -> {
-                    Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
-                    int bottom = Math.max(0, ime.bottom);
-                    ViewGroup.LayoutParams lp = wv.getLayoutParams();
-                    if (lp instanceof ViewGroup.MarginLayoutParams) {
-                        ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) lp;
-                        if (mlp.bottomMargin != bottom) {
-                            mlp.bottomMargin = bottom;
-                            wv.setLayoutParams(mlp);
-                        }
+                    boolean shown = insets.isVisible(WindowInsetsCompat.Type.ime());
+                    int px = shown ? Math.max(0, insets.getInsets(WindowInsetsCompat.Type.ime()).bottom) : 0;
+                    if (px != last[0]) {
+                        last[0] = px;
+                        try { wv.evaluateJavascript("window.__kbd&&window.__kbd(" + px + ")", null); } catch (Exception ignored) {}
                     }
                     return insets;
                 });
