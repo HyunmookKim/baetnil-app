@@ -478,14 +478,20 @@
   step('정박지 올리기', async function(){
     // 장터 글이 열린 채면 글쓰기 화면이 안 뜰 때가 있다(5회째) — 닫고 들어가서, 이름 칸이 보일 때까지 기다린다
     unlock(); try{ closeBoat(); }catch(_){} switchTab('community'); setComSub('spots'); await sleep(800);
-    await until(function(){
-      if($('#spName')) return true;
+    // ★ 22회째 큰 아이폰 — 이름 칸이 한 번 보인 뒤, 앞 단계(장터)의 물건 화면이 늦게 열려 덮었다.
+    //   배 등록과 같이 칸이 2초 동안 그대로 있을 때까지 다시 열고, 값을 넣기 직전에도 한 번 더 본다.
+    function openSpotForm(){
       try{ if(typeof closeMR === 'function') closeMR(); }catch(_){}
       try{ writeSpot(); }catch(_){}
       try{ spotPickCtx.draft = spotPickCtx.draft || {}; spotPickCtx.draft.lat = 34.73; spotPickCtx.draft.lon = 127.74; spotForm(); }catch(_){}
-      return !!$('#spName');
-    }, 15000, '정박지 이름 칸');
+    }
+    var steadySp = 0;
+    await until(function(){
+      if(!$('#spName')){ steadySp = 0; openSpotForm(); return false; }
+      return ++steadySp >= 8;   // 0.25초마다 보니 8번 = 2초
+    }, 30000, '정박지 이름 칸');
     await sleep(300);
+    if(!$('#spName')){ openSpotForm(); await until(function(){ return !!$('#spName'); }, 10000, '정박지 이름 칸(다시)'); }
     setv('spName', '[자동검사] 정박지 ' + S.run);
     await spotSave();
     await sleep(2000); await shot('25-spot');
