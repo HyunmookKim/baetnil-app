@@ -86,7 +86,7 @@ T("예정에는 '나간 뒤' 칸(도착·거리·항적)을 안 보여 준다",
 // ── 모집
 T('모집 칸은 예정 항해에서만 보인다', /if\(!isPlan\(it\)\) return '';/.test(grab(src, 'rideBox')));
 T('모집 내용을 한 곳에서만 만든다', (src.match(/function rideInfo\(/g) || []).length === 1);
-T('어떤 분을 하나도 안 고르면 막는다', /어떤 분을 구하시는지 하나는 골라 주세요/.test(edit));
+T('어떤 분을 하나도 안 고르면 막는다', /어떤 분을 구하시는지 하나 이상 선택해 주세요/.test(edit));
 T('모집을 켜면 글판에 올라간다', /function ridePush\(/.test(src) && /__talk\.add\(post\)/.test(grab(src, 'ridePush')));
 T('고칠 때는 새 글을 또 만들지 않는다', /if\(it\.ridePost\)\{[\s\S]{0,300}__talk\.edit/.test(grab(src, 'ridePush')));
 T('모집을 그만두면 글이 마감으로 바뀐다', /info\.open = false/.test(grab(src, 'rideStop')));
