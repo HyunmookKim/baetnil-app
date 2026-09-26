@@ -1,0 +1,37 @@
+⚡️  Loading app at capacitor://localhost...
+[ FirebaseAuthentication ]  <CapacitorFirebaseAuthentication.RuntimeError: 0x104993e40>
+⚡️  To Native ->  App addListener 59933871
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-app
+⚡️  WebView loaded
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-app
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-firestore
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-firestore
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-auth
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-auth
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-storage
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-storage
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-functions
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-functions
+⚡️  [log] - [baetnil-boot] 시작하기
+⚡️  [log] - [baetnil-boot] 자료방
+⚡️  [log] - [baetnil-boot] 로그인
+⚡️  [log] - [baetnil-boot] 사진창고
+⚡️  [log] - [baetnil-boot] 붙었습니다
+⚡️  To Native ->  LocalNotifications createChannel 59933872
+ERROR MESSAGE:  {"errorMessage":"not implemented","code":"UNIMPLEMENTED","message":"not implemented","data":{}}
+⚡️  [error] - {"errorMessage":"not implemented","code":"UNIMPLEMENTED","message":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications createChannel 59933873
+ERROR MESSAGE:  {"data":{},"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented"}
+⚡️  [error] - {"data":{},"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented"}
+⚡️  To Native ->  LocalNotifications getPending 59933874
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  [log] - [baetnil-e2e] NATIVE share
+⚡️  To Native ->  Filesystem writeFile 59933875
+⚡️  To Native ->  Filesystem appendFile 59933876
+⚡️  TO JS {"uri":"file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/4FEF8B02-F6D8-44C6-A8F4-734345EBABC6\/Library\/Caches\/baetnil-e2e.txt"}
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem getUri 59933877
+⚡️  TO JS {"uri":"file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/4FEF8B02-F6D8-44C6-A8F4-734345EBABC6\/Library\/Caches\/baetnil-e2e.txt"}
+⚡️  To Native ->  Share share 59933878
