@@ -101,6 +101,7 @@ while time.time() - t0 < LIMIT:
                 print('  !! TAP 줄을 못 읽음: ' + m, flush=True); continue
             x, y, dpr, w, h = nums
             clear_anr()
+            time.sleep(2)   # 창이 닫히고 앱이 다시 손가락을 받을 때까지
             box = webview_box()
             if box:
                 L, T, R, B = box

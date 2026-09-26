@@ -200,6 +200,14 @@
     //   키보드 높이는 앱 껍데기가 알려 준 값(window.__kbdH)으로 본다. 에뮬레이터는 처음 띄울 때 몇 초 걸린다 — 12초까지 기다린다.
     var tb = document.getElementById('tabbar');
     var tb0 = tb ? Math.round(tb.getBoundingClientRect().bottom) : -1;
+    // ★ 13회째 — 에뮬레이터 「응답 없음」 창을 닫는 사이에 누름이 빗나갔다. 6초 안에 칸이 안 잡히면 한 번 더 누른다.
+    var tw = Date.now();
+    while(Date.now() - tw < 6000 && document.activeElement !== el) await sleep(300);
+    if(document.activeElement !== el){
+      log('INFO ' + id + ' 칸이 안 잡혀 한 번 더 누름');
+      var rr = el.getBoundingClientRect();
+      log('TAP ' + Math.round(rr.left + rr.width / 2) + ' ' + Math.round(rr.top + rr.height / 2) + ' ' + (window.devicePixelRatio || 1) + ' ' + window.innerWidth + ' ' + window.innerHeight);
+    }
     await sleep(1500);
     var t0 = Date.now();
     while(Date.now() - t0 < 12000 && !((window.__kbdH || 0) > 100)) await sleep(300);

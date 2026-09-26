@@ -15,6 +15,10 @@ adb install -r -g "$APK"
 adb shell pm grant $PKG android.permission.ACCESS_BACKGROUND_LOCATION 2>/dev/null || true
 adb shell pm grant $PKG android.permission.POST_NOTIFICATIONS 2>/dev/null || true
 adb shell settings put secure show_ime_with_hard_keyboard 1   # 에뮬레이터에서도 화면 키보드가 뜨게
+# ★ 7·13회째 — 에뮬레이터 바탕화면 앱(Pixel Launcher) 「응답 없음」 창이 앱을 덮어 입력칸을 못 눌렀다.
+#   뒤에 있는 앱의 「응답 없음」 창과 오류 창을 띄우지 않게 한다 (에뮬레이터에서만, 앱과 무관).
+adb shell settings put global anr_show_background 0 || true
+adb shell settings put global hide_error_dialogs 1 || true
 # 여수 앞바다에서 남쪽으로 꾸준히 나아가는 위치 (항적 검사용) — 2초마다 약 22m.
 # ★ 4회째: 열 점을 빙빙 돌게 했더니 같은 자리로 되돌아와 점이 안 늘었다 → 한 방향으로만 간다.
 ( LAT=34.7404; LON=127.7449
