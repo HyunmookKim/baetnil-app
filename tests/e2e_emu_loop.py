@@ -76,7 +76,7 @@ def webview_box(x=None):
     if not m: return None
     return tuple(int(v) for v in m.groups())
 
-results = []; done = False; stuck = 0; seen = set()
+results = []; done = False; stuck = 0; seen = set(); cleanup_tried = False; cleaned = False
 launch()
 # ★ 앱이 두 벌 떠 있으면(화면을 다시 만드는 사이 옛 웹뷰가 살아 있음) 검사 결과를 믿을 수 없다 — 알리고 다시 켠다
 time.sleep(15)
@@ -142,13 +142,24 @@ while time.time() - t0 < LIMIT:
             results.append(m)
         elif m.startswith('DONE'):
             results.append(m); done = True
+        elif m.startswith('CLEANUP END'):
+            # ★ 5.18 — 멈춘 뒤 남은 검사 계정·배를 앱이 스스로 지웠다
+            results.append('INFO 뒷정리 끝'); cleaned = True
     if done: break
+    if cleanup_tried and cleaned: break
     if time.time() - last > 240:
         stuck += 1
         print('!! 4분 동안 아무 줄이 없습니다 — 멈춘 것으로 봅니다 (%d번째)' % stuck, flush=True)
         shot('stuck-%d' % stuck)
         results.append('FAIL (멈춤 %d) — 4분 동안 앱이 아무 줄도 안 남김' % stuck)
-        if stuck > 2: break
+        if stuck > 2:
+            # ★ 5.18 — 그냥 끝내면 검사 계정과 배가 남는다(9/25 에 계정 5개가 남음).
+            #   한 번 더 켜면 앱 안 검사가 「같은 단계에서 세 번 멈춤」 을 알아보고 뒷정리만 한다.
+            if cleanup_tried or stuck > 3: break
+            cleanup_tried = True
+            results.append('INFO 뒷정리를 하려고 앱을 한 번 더 켬')
+            launch(fresh=True); last = time.time()
+            continue
         launch(fresh=True); last = time.time()
     time.sleep(0.5)
 

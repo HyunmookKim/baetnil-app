@@ -588,6 +588,7 @@
     if(window.__user) throw new Error('아직 로그인되어 있음');
     openAccount(); await sleep(300); setv('acEm', S.b.em); setv('acPw', S.b.pw); doEmail(false);
     await sleep(6000);
+    if(!window.__user){ S.bGone = true; keep(S); }
     if(window.__user) throw new Error('지운 계정으로 로그인됨');
   });
   step('A 다시 로그인 · 배 지우기', async function(){
@@ -615,6 +616,7 @@
   step('A 가 지워졌는가', async function(){
     await sleep(2000);
     if(window.__user) throw new Error('아직 로그인되어 있음');
+    S.aGone = true; keep(S);
   });
   // ── 네이티브 창 — 깃허브 맥이 사진을 찍고 앱을 다시 켠다 ──
   step('애플 로그인 — 아이폰 로그인 창이 뜨는가', async function(){
@@ -680,8 +682,58 @@
     }
   }catch(_){}
 
+  // ── 뒷정리 (5.18) ─────────────────────────────────────────────
+  // ★ 검사가 중간에 멈추면(에뮬레이터가 굳음) 계정 삭제 단계까지 못 가서 검사 계정과 그 배가 남았다.
+  //   2026-09-25 에 그렇게 계정 5개와 배가 남아 운영자 명부에 「이름 없음」 으로 떴다 (사장님 지적 9/27).
+  //   그래서 ① 같은 단계에서 앱이 세 번 다시 켜졌으면(= 세 번 멈춤) ② 끝까지 갔는데 계정이 안 지워졌으면
+  //   남은 계정으로 다시 로그인해 앱의 「계정 삭제」 를 그대로 부른다 — 선주인 배·글·명부·로그인 계정이 같이 지워진다.
+  //   계정 삭제는 앱을 다시 켜므로, 어디까지 했는지 S 에 적고 이어서 한다.
+  if(S.lastBootI === S.i){ S.sameBoot = (S.sameBoot || 0) + 1; } else { S.sameBoot = 0; S.lastBootI = S.i; }
+  keep(S);
+  function leftover(){ return (S.a && S.a.uid && !S.aGone) || (S.b && S.b.uid && !S.bGone); }
+  async function cleanup(){
+    S.cleaning = true; keep(S);
+    log('INFO 뒷정리 — 남은 검사 계정을 지웁니다');
+    var keys = ['b', 'a'];
+    for(var j = 0; j < keys.length; j++){
+      var k = keys[j], acc = S[k], K = k.toUpperCase();
+      if(!acc || !acc.uid || S[k + 'Gone']) continue;
+      if(S['wiped_' + k]){
+        // 지우기를 눌렀고 앱이 다시 켜졌다 — 정말 지워졌는지 로그인으로 확인한다
+        await sleep(3000);
+        try{ await signOut(); }catch(_){}
+        var still = true;
+        try{ await emailLogin(acc, false); }catch(_){ still = false; }
+        if(still){ log('FAIL 뒷정리 — ' + K + ' 계정이 안 지워짐'); try{ await signOut(); }catch(_){} }
+        else log('OK 뒷정리 — ' + K + ' 계정 지워짐');
+        S[k + 'Gone'] = true; keep(S);
+        continue;
+      }
+      try{ await signOut(); }catch(_){}
+      try{ await emailLogin(acc, false); }
+      catch(e){ log('INFO 뒷정리 — ' + K + ' 로그인 안 됨 (이미 지워진 것으로 봄)'); S[k + 'Gone'] = true; keep(S); continue; }
+      unlock();
+      await sleep(8000);                      // 클라우드에서 배를 받아 올 틈
+      S['wiped_' + k] = true; keep(S);
+      try{ await doWipe(); }catch(e){ log('INFO 뒷정리 — 계정 삭제 중 오류 ' + String((e && e.message) || e).slice(0, 200)); }
+      await sleep(60000);                     // 계정 삭제가 끝나면 앱이 스스로 다시 켜진다
+      return;                                 // 다시 켜지면 위에서 이어서 한다
+    }
+    S.cleaning = false; S.cleaned = true; keep(S);
+    log('CLEANUP END');
+    if(S.i >= STEPS.length) log('DONE ' + S.ok + '/' + STEPS.length + ' fail=' + S.fail);
+  }
+
   async function run(){
     await sleep(1500);
+    if(S.cleaning){ await cleanup(); return; }
+    if(S.sameBoot >= 3 && !S.cleaned){
+      log('FAIL ' + (STEPS[S.i] ? STEPS[S.i].name : '?') + ' — 같은 단계에서 세 번 멈춤, 뒷정리로 넘어감');
+      S.fail++; S.i = STEPS.length; keep(S);
+      if(leftover()){ await cleanup(); return; }
+      log('CLEANUP END');
+      return;
+    }
     while(S.i < STEPS.length){
       var st = STEPS[S.i];
       var n0 = ERRS.length, i0 = S.i;
@@ -702,6 +754,7 @@
       }
       S.i++; keep(S);
     }
+    if(leftover() && !S.cleaned){ await cleanup(); return; }
     log('DONE ' + S.ok + '/' + STEPS.length + ' fail=' + S.fail);
   }
   if(document.readyState === 'complete') run(); else window.addEventListener('load', run);
