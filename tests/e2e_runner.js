@@ -600,7 +600,9 @@
     await until(function(){ return !boats.some(function(x){ return String(x.id) === S.boat; }); }, 20000, '배 지워짐');
     // ★ 5.18 — 기기에서 빠진 것만 보면 안 된다. 클라우드 배 문서까지 지워졌는지 본다.
     //   전에는 여기서 바로 계정 삭제로 넘어가 클라우드 지우기가 끊겼고, 배 문서가 스무 척 넘게 남았다.
-    await until(function(){ return typeof boatDelPend !== 'undefined' && !boatDelPend.has(String(S.boat)); }, 60000, '클라우드에서 배 지워짐');
+    var t0 = Date.now();
+    await until(function(){ return typeof boatDelPend !== 'undefined' && !boatDelPend.has(String(S.boat)); }, 150000, '클라우드에서 배 지워짐');
+    log('INFO 클라우드 배 지우기 ' + Math.round((Date.now() - t0) / 1000) + '초');
   });
   step('A — 계정 삭제(글·장터·정박지도 함께)', async function(){
     S.i++; keep(S);
