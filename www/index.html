@@ -48989,7 +48989,9 @@ window.__boot = 'start';
       const colls = ['all','items','trash','maint','repair','voyage','fuel','runs',
                      'contacts','vdocs','checkt','mrtrash','lockers','shapes','posts','dgimgs',
                      'reviews','meta'];
-      for(const name of colls){
+      // ★ 5.18 — 열여덟 갈래를 한꺼번에 지운다. 하나씩 차례로 하면 느린 기기(아이패드 시뮬레이터)에서
+      //   1분을 넘겼고, 그 사이에 앱을 닫으면 배 문서가 남았다.
+      await Promise.all(colls.map(async name => {
         try{
           const snap = await getDocs(collection(fdb, 'boats', id, name));
           for(let off=0; off<snap.docs.length; off+=200){
@@ -48998,7 +49000,7 @@ window.__boot = 'start';
             await b.commit();
           }
         }catch(e){ /* 없는 컬렉션은 넘어간다 */ }
-      }
+      }));
       try{ await window.__boatIndex.del(id); }catch(_){}   // 배를 지우기 전에 — 지운 뒤에는 선주인지 가릴 수 없다
       try{ await deleteDoc(doc(fdb, 'boats', id)); }
       catch(e){ return (e && e.code === 'permission-denied') ? 'denied' : false; }
