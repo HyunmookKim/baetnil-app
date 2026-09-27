@@ -119,7 +119,8 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + n); } else { fail+
   T('복원 버튼을 감추지 않는다', !/body\.locked #restoreBtn\{display:none\}/.test(src));
   const d = grab(js, 'drawerRestore') || '';
   T('복원 버튼이 있다', d.length > 0);
-  T('무엇이 갈아 끼워지는지 알려 준다', /갈아 끼/.test(d));
+  // ★ 5.18 — 무엇이 바뀌는지는 파일을 고른 뒤 restoreData 가 「현재 목록 N개는 교체됩니다」 로 묻는다
+  T('무엇이 갈아 끼워지는지 알려 준다', /교체됩니다/.test(grab(js, 'restoreData') || ''));
   T('그러고 나서 파일을 고르게 한다', /restoreFile/.test(d));
 
   // ★ 잠금 판단은 한 곳에만 둔다 — 곳곳에 흩어 놓으면 또 하나를 빠뜨린다.
@@ -131,7 +132,10 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + n); } else { fail+
   T('그 자리에서 편집 중으로 바꿔 준다', /toggleLock\(/.test(ne));
   T('바꾼 뒤 하려던 일을 이어서 한다', /fn\(\);/.test(ne));
   T('이미 편집 중이면 그냥 한다', /if\(unlocked\)\{ fn\(\); return; \}/.test(ne));
-  T('복원도 그 곳을 쓴다', /needEdit\(/.test(d));
+  // ★ 5.18 — 복원은 설정 안에 있다. 보기 전용과 상관없이 바로 하고, 보기 전용이어도 저장한다
+  //   (사장님 2026-09-27 「설정까지 들어갔다는 건 이미 고칠 마음을 먹고 들어간 곳」)
+  T('복원은 보기 전용이어도 묻지 않고 바로 한다', !/needEdit\(/.test(d));
+  T('복원한 것은 보기 전용이어도 저장한다', /saveFree\(\)/.test(grab(js, 'restoreData') || ''));
 
   // ★ 감춰 놓은 버튼이 남아 있으면 또 '기능이 없다' 는 말을 듣는다
   const hidden = [...js.matchAll(/unlocked \? `<button[^`]{0,120}/g)].map(m=>m[0].slice(0,70));
@@ -141,8 +145,9 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + n); } else { fail+
   const fl = grab(js, 'openFleet') || '';
   T('배 목록에 등록 버튼이 있다', /배 등록하기/.test(fl));
   T('그 버튼이 늘 보인다', !/unlocked \? `<div class="mrrow"[^`]*배 등록하기/.test(fl));
-  T('그 버튼도 잠금 판단을 거친다', /needEdit\([^)]*addBoat\)/.test(fl));
-  T('참여 코드 버튼도 있다', /needEdit\([^)]*joinByCode\)/.test(fl));
+  // ★ 5.18 — 새로 시작하는 일이라 보기 전용이어도 보이고, 누르면 바로 편집 중으로 넘어간다 (editGo)
+  T('그 버튼은 누르면 바로 편집 중으로 넘어간다', /editGo\(addBoat\)/.test(fl));
+  T('참여 코드 버튼도 있다', /editGo\(joinByCode\)/.test(fl));
   T('배가 여러 척일 수 있다고 알려 준다', /여러 척/.test(fl));
 }
 

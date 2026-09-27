@@ -104,7 +104,9 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + cut(n)); } else { 
   const d = grab(js, 'doWipe') || '';
   T('지우는 곳이 있다', d.length > 0);
   T('먼저 하는 중이라고 알린다', d.indexOf('wipeSay(') < d.indexOf('delBoatData'));
-  T('내 배를 지운다', /delBoatData\(b\.id\)/.test(d) && /__delBoat/.test(d));
+  // ★ 5.18 — 클라우드 지우기는 cloudDelBoat 한 곳을 탄다 (지우다 만 것을 적어 두고 다시 지운다)
+  T('내 배를 지운다', /delBoatData\(b\.id\)/.test(d) && /cloudDelBoat\(b\.id\)/.test(d));
+  T('지우다 만 배부터 지운다 (계정이 없어지면 다시는 못 지운다)', /retryBoatDels\(\)/.test(d) && d.indexOf('retryBoatDels()') < d.indexOf('removeAuth()'));
   T('커뮤니티 글을 지운다', /minePosts\(true\)/.test(d));
   T('명부 기록을 지운다', /wipeUserDoc\(\)/.test(d));
   T('로그인 계정을 지운다', /removeAuth\(\)/.test(d));

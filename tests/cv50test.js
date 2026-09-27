@@ -41,7 +41,8 @@ T('사람이 그만둔 것은 고장으로 안 친다', /cancel\|1001/.test(ap))
 
 // ── 도면 단추 세 개 (A12)
 T("앱에 없는 class=\"btn\" 을 안 쓴다", (src.match(/<button class="btn"/g) || []).length === 0);
-T('앱이 쓰는 단추(.mrbtn)로 바꿨다', /<button class="mrbtn big ok" onclick="dgPickBuiltin/.test(src));
+// ★ 5.18 — 보기 전용이면 감춘다(edt)
+T('앱이 쓰는 단추(.mrbtn)로 바꿨다', /<button class="mrbtn big ok(?: edt)?" onclick="dgPickBuiltin/.test(src));
 T('셋을 세로로 같은 너비로 세운다', /\.dgpick\{display:flex;flex-direction:column/.test(src));
 
 console.log('\n합계: ' + ok + '개 통과 / ' + bad + '개 실패');

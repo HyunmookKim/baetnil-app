@@ -140,7 +140,8 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + n); } else { fail+
   const ob = grab(js, 'openBoat') || '';
   // ★ 3.85 부터 사전을 거친다 — `+ ${esc(t('배 등록하기'))}` 모양이다
   T('기본정보 아래에 배 등록하기가 있다', /\+ \$\{esc\(t\('배 등록하기'\)\)\}/.test(ob));
-  T('그 버튼도 잠기면 되묻는다', /needEdit\('배를 한 척 더 등록합니다\.', addBoat\)/.test(ob));
+  // ★ 5.18 — 되묻지 않고 바로 편집 중으로 넘어가 등록한다 (editGo). 보기 전용이어도 단추는 보인다.
+  T('그 버튼은 보기 전용이면 바로 편집 중으로 넘어간다', /editGo\(addBoat\)/.test(ob));
   T('참여 코드로 신청도 같이 있다', /joinByCode/.test(ob));
 
   // 배 목록 화면 자체

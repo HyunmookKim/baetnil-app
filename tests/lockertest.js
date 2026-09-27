@@ -81,6 +81,7 @@ async function runRestore(bk, startLockers){
   globalThis.selected=null; globalThis.inBox=null; globalThis.moveId=null; globalThis.mergeId=null;
   let msg='', done='';
   globalThis.save=()=>{};
+  globalThis.saveFree=()=>{};   // 5.18 — 복원은 설정 안 일이라 보기 전용이어도 저장한다(saveFree)
   // ★ 앱은 confirm/alert 를 안 쓴다. 자기 창(ask/tell)을 띄우고, restoreData 는 async 다.
   //   예전 검사가 confirm 을 가로채고 있어서 복원이 아예 안 돌았다.
   globalThis.confirm=m=>{ msg=m; return true; };
