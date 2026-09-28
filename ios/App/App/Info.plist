@@ -78,6 +78,14 @@
 	<key>NSRemindersFullAccessUsageDescription</key>
 	<string>정비 때를 미리 알려 드리기 위해 미리 알림을 사용합니다.</string>
 
+	<!-- 5.19 — 파일 앱에 「나의 iPhone › 뱃일」 폴더를 보이게 한다.
+	     백업·서류 파일을 앱의 문서 폴더에 넣는데, 이 두 줄이 없으면 그 폴더가 아무 데도 안 보인다.
+	     (캐퍼시터 Filesystem 문서: 파일 앱에 보이려면 두 값을 YES 로) -->
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+
 	<!-- 암호화 : 표준 HTTPS 만 씁니다 -->
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
