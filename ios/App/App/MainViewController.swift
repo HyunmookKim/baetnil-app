@@ -250,7 +250,7 @@ class MainViewController: CAPBridgeViewController, UIGestureRecognizerDelegate {
                     self.busy = false
                 })
             }
-        }
+        })
     }
 
     // "rgb(14, 22, 32)" · "rgba(14, 22, 32, 0.5)" → UIColor. 투명이면 nil.
