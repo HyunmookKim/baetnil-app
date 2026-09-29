@@ -179,13 +179,16 @@ if(rules){
   T('그 자리에서 권한을 켜고 끌 수 있다', /personPerm\(/.test(op));
   T('아직 운영자가 아니면 켜는 순간 세운다', /personAppoint\(/.test(grab(js, 'personPerm') || ''));
   T('그 자리에서 막거나 풀 수 있다', /personBan\(/.test(op) && /personUnban\(/.test(op));
-  // 글판에서 글쓴이를 누른다 — 운영자에게만 눌리게
+  // ★★★ 5.20 — 글쓴이는 **누구나** 눌러 그 사람의 프로필을 본다 (사장님: 「다른 커뮤니티들은 게시글같은거 쓰면
+  //   그사람 눌러봐서 그사람에 대해서 이것저것 볼수 있는데」). 운영자는 그 프로필 안의 [관리] 로 이 화면에 온다
+  //   — Reddit·Discord·네이버 카페처럼 관리 정보가 보통 프로필을 대신하지 않는다.
   const rt = grab(js, 'renderTalk') || '';
   const ot = grab(js, 'openTalk') || '';
-  T('글 목록·글 화면에서 글쓴이를 누를 수 있다',
-    /openPerson\(/.test(rt) || /openPerson\(/.test(ot));
-  T('운영자가 아니면 누를 것이 아예 없다',
-    /isAdmin\(\)[\s\S]{0,200}?openPerson\(/.test(rt + ot));
+  const op2 = grab(js, 'openProfile') || '';
+  T('글 목록·글 화면에서 글쓴이를 누를 수 있다 (누구나 — 프로필로)',
+    /whoLink\(/.test(rt) && /whoLink\(/.test(ot) && !/isAdmin\(\) && po\.by/.test(rt + ot));
+  T('운영자는 프로필 안의 [관리] 로 이 화면에 온다',
+    /isAdmin\(\)[\s\S]{0,160}?openPerson\(/.test(op2));
 }
 
 // ── 6. 사람 막기

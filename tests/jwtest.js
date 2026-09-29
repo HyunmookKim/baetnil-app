@@ -210,7 +210,8 @@ const ctxOf = (o) => Object.assign({
   const wa = grab(src, 'wxAlertBox') || '';
   T('★★★ 특보 칸이 일본 것을 먼저 본다 (문 하나)',
     wa.indexOf('jwAlertBox()') > 0 && wa.indexOf('myWarnings()') > wa.indexOf('jwAlertBox()'), wa.slice(0,300));
-  const rw = grab(src, 'renderWeather') || '';
+  // ★ 5.20 — 날씨 화면의 곁 자료는 wxAuxRun 이 받는다 (날씨부터 그리고, 다 받으면 한 번 더)
+  const rw = grab(src, 'wxAuxRun') || '';
   T('★★ 날씨 화면이 일본 자료를 받아 둔다',
     rw.indexOf('loadSeaJP()') > 0 && rw.indexOf('loadJW(') > 0, rw.slice(0,600));
   T('★★ 한국 해역 안이면 일본 자료를 안 부른다',

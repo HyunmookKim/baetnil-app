@@ -77,7 +77,8 @@ const CUR = { updated: new Date().toISOString(), source:'x', unit:'cm/s', days:[
       return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':00'; });
     const mk = v => Array(N).fill(v);
     wxCur = { id:'t', name:'여수', lat:34.7450, lon:127.7450 };
-    wxData = { key: wxCur.lat+','+wxCur.lon, utc_offset_seconds: 32400,
+    // ★ 5.20 — 날씨 열쇠는 오늘 화면과 같은 wxPtKey 로 (날씨 화면만 모양이 달라 받아 둔 날씨를 못 알아봤다)
+    wxData = { key: wxPtKey(wxCur.lat, wxCur.lon), utc_offset_seconds: 32400,
       w: { utc_offset_seconds: 32400, hourly: { time: times, wind_speed_10m: mk(8), wind_gusts_10m: mk(12), wind_direction_10m: mk(0),
         temperature_2m: mk(20), precipitation: mk(0), visibility: mk(20000) } },
       m: { hourly: { wave_height: mk(0.5), wave_period: mk(5) } } };

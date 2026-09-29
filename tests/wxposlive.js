@@ -58,6 +58,10 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.lo
     // 날씨 지점은 엉뚱한 곳으로 잡아 둔다 — 이걸 쓰면 실패다
     wxCur = { id:'s1', name:'개도', lat:34.6250, lon:127.5900 };
     wxSet('bt_wxcur', wxCur);
+    // ★ 5.20 — 오늘 화면은 날씨가 비어 있으면 스스로 다시 부른다(wxHomeHeal).
+    //   그 부름(고른 지점 개도)이 항해 쪽 부름과 섞이지 않게, 개도 날씨는 이미 받아 둔 것으로 둔다
+    //   — 실제 앱에서도 항해를 시작할 때는 오늘 화면 날씨가 이미 떠 있다.
+    wxData = null;
     // ★ 4.1x 부터 위치는 「로그인 + 동의」 가 있어야 받는다(위치정보법).
     //   그 문을 안 열어 두면 앱이 옳게 거절하는데, 검사는 그것을 「좌표를 안 썼다」 로
     //   잘못 읽는다. 여기서 둘 다 켜 준다.
@@ -67,6 +71,7 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.lo
     window.ask  = () => Promise.resolve(true);
   });
 
+  await pg.evaluate(async ()=>{ await ensureWx(); window.__asked = []; });
   // ── 항해 하나를 새로 만든다 (자동 기록 경로 그대로)
   await pg.evaluate(()=>{ unlocked = true; addVoyage(); });
   await pg.waitForTimeout(2500);
@@ -120,8 +125,9 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.lo
     return { asked: window.__asked.slice(), wxOut:v.wxOut, posOut:v.posOut };
   });
   T('위치를 못 잡아도 날씨는 들어온다 (막히지 않는다)', !!(r.wxOut && r.wxOut.text), r.wxOut);
+  // ★ 5.20 — 고른 지점 날씨는 이미 들고 있으면 다시 부르지 않는다(담아 둔 것을 쓴다). 부른다면 고른 지점이어야 한다.
   T('그때는 고른 지점(34.625)으로 받는다',
-    r.asked.length > 0 && r.asked.every(x => Math.abs(x - 34.625) < 0.01), r.asked);
+    r.asked.every(x => Math.abs(x - 34.625) < 0.01), r.asked);
   T('그때는 「개도 예보」로 나온다', (r.wxOut||{}).spot === '개도' && !(r.wxOut||{}).pos, r.wxOut);
 
   // ── 영어로도 말이 되는가

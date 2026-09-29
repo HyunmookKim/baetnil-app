@@ -15,7 +15,8 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.lo
 
 // ── 소스에서 보는 것
 T('1 ★★ 전 세계 해안 모형 점(hc-eot20.txt)을 받아 조화상수 점에 더한다', /DATA_BASE \+ 'hc-eot20\.txt/.test(src) && /hcRows\.concat\(hcModelRows\)/.test(src));
-T('1 ★ 날씨 화면이 모형 점을 먼저 받는다', /await loadHcModel\(\);/.test(src));
+// ★ 5.20 — 날씨 화면은 날씨부터 그리고, 모형 점은 곁 자료(wxAuxRun)로 받아 다 받으면 한 번 더 그린다
+T('1 ★ 날씨 화면이 모형 점을 받는다 (곁 자료 — 받으면 다시 그린다)', /function wxAuxRun\(\)[\s\S]{0,700}loadHcModel\(\)/.test(src) && /aux\.p\.then\([\s\S]{0,120}renderWeather\(\)/.test(src));
 T('1 ★ 추정값(omTidePts)은 조화상수 점이 없을 때만 (tideSource 맨 끝)', /const H = hcTidePts\(wxCur\.lat, wxCur\.lon\);\s*if\(H && H\.pts\.length >= 4\) return H;\s*\}[\s\S]{0,200}const E = omTidePts\(\);/.test(src));
 T('4 ★★ 조차 문을 30cm → 5cm 로', /const OM_TIDE_MIN_RANGE = 0\.05;/.test(src));
 T('5 ★★ 모형 점도 15km 안이면 다리·수심에 쓰되 0.3m 여유', /const HC_MODEL_SAFE_KM = 15;/.test(src) && /const HC_MODEL_PAD = 0\.3;/.test(src)

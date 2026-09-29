@@ -62,6 +62,13 @@ const T = (n, c, x) => { if(c){ ok++; console.log('통과: ' + n); }
 
     // ★ 딱 한 번 — 진짜 손가락으로
     const g = await pg.$('#formFoot .fbtn.go');
+    // ★ 5.20 — 사람은 보이는 단추를 누른다. 글자 크기(크게)에서는 칠 때 화면이 조금 더 내려가
+    //   [저장] 이 아래 탭 줄 뒤에 들어가 있을 수 있다 — 탭 줄 위로 보이게 한 번 올려 둔 뒤 누른다.
+    //   (펴진 단추줄은 그대로 둔다 — 이 검사가 보는 것은 누르는 순간 단추줄이 접히며 단추가 달아나는가이다)
+    await pg.evaluate(() => { const b = document.querySelector('#formFoot .fbtn.go'); const tb = document.getElementById('tabbar');
+      const top = tb ? tb.getBoundingClientRect().top : innerHeight; const r = b.getBoundingClientRect();
+      if(r.bottom > top - 8) window.scrollBy(0, r.bottom - (top - 8) + 40); });
+    await pg.waitForTimeout(200);
     const box = await g.boundingBox();
     await pg.touchscreen.tap(box.x + box.width/2, box.y + box.height/2);
     await pg.waitForTimeout(800);

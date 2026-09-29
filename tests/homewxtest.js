@@ -130,8 +130,9 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + n); } else { fail+
   T('시작할 때 부른다', /ensureWx\(/.test(js.replace(e, '')));
   // 두 번 동시에 받으러 가지 않는다
   // ★ '표시 글자가 있다' 로는 부족하다. 표시만 하고 안 돌아서면 동시에 여러 번 받아온다.
+  // ★ 5.20 — 도는 중이면 같은 것(wxEnsureP)을 돌려준다. 새로 받는 것도 열쇠마다 하나(WX_BG).
   T('한 번에 하나만 받아온다',
-    /if\(wxEnsuring\) return[\s\S]{0,400}?wxEnsuring = true/.test(e));
+    /if\(wxEnsureP\) return wxEnsureP/.test(e) && /if\(WX_BG\[key\]\) return WX_BG\[key\]/.test(js));
   // ★ 5.0 — 한 시간 안이면 다시 안 부른다 (Open-Meteo 하루 한도)
   T('★ 담아 둔 것이 한 시간 안이면 안 부른다', /WX_FRESH_MS/.test(e) && /wxCacheGet\(key\)/.test(e));
   T('★ 못 받으면 담아 둔 것이라도 쓴다', /WX_KEEP_MS/.test(e));

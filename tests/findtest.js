@@ -9,7 +9,8 @@ function grab(s, name){
   return s.slice(i, j);
 }
 const src = fs.readFileSync(process.argv[2] || 'work.html', 'utf8');
-const js  = src.slice(src.indexOf('<script>') + 8, src.indexOf('</script>'));
+// ★ 5.20 — <head> 에 테마 엔진(<script id="btLook">)이 먼저 있다. 끝 자리는 본체 시작부터 찾는다.
+const js  = src.slice(src.indexOf('<script>') + 8, src.indexOf('</script>', src.indexOf('<script>')));
 const mod = src.slice(src.indexOf('<script type="module">'));
 let pass=0, fail=0;
 const T=(n,c)=>{ if(c){pass++;console.log('통과: '+n);} else {fail++;console.log('★ 실패: '+n);} };

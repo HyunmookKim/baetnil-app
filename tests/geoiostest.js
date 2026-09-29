@@ -65,45 +65,46 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + n); } else { fail+
   // ⑤ 날씨 — 받는 사이 지점을 바꾸면 앞 지점 날씨를 뒤 지점 이름으로 붙이지 않는다
   {
     const rw = grab(src, 'renderWeather');
-    T('★★★ renderWeather: 부르기 전에 열쇠를 잡아 둔다', /const wxKey0 = wxCur\.lat\+','\+wxCur\.lon;/.test(rw));
-    T('★★★ renderWeather: 받은 뒤 지점이 바뀌었으면 버리고 다시 그린다', /!== wxKey0\) return renderWeather\(\);\s*\n\s*wxData = \{ key: wxKey0/.test(rw));
+    // ★ 5.20 — 열쇠는 오늘 화면(ensureWx)과 같은 wxPtKey, 받는 것은 ensureWx 한 문으로
+    T('★★★ renderWeather: 부르기 전에 열쇠를 잡아 둔다', /const wxKey0 = wxPtKey\(wxCur\.lat, wxCur\.lon\);/.test(rw));
+    T('★★★ renderWeather: 받은 뒤 지점이 바뀌었으면 버리고 다시 그린다', /await ensureWx\(\);[\s\S]{0,60}\n\s*if\(!wxCur \|\| wxPtKey\(wxCur\.lat, wxCur\.lon\) !== wxKey0\) return renderWeather\(\);/.test(rw));
     T('renderWeather: 받은 뒤 wxCur 로 열쇠를 다시 만들지 않는다', !/wxData = \{ key: wxCur\.lat\+','\+wxCur\.lon/.test(rw));
     const ew = grab(src, 'ensureWx');
-    T('ensureWx: 잡아 둔 자리로 받는다', /wxFetch\(wxLat0, wxLon0\)/.test(ew) && !/wxFetch\(wxCur\.lat, wxCur\.lon\)/.test(ew));
-    T('ensureWx: 지점이 바뀌었으면 wxData 를 안 바꾼다', (ew.match(/wxSame\(\)/g) || []).length >= 3);
+    // ★ 5.20 — 새로 받는 것은 wxRefresh(열쇠, 잡아 둔 자리) 로
+    T('ensureWx: 잡아 둔 자리로 받는다', /wxRefresh\(key, wxLat0, wxLon0\)/.test(ew) && !/wxFetch\(wxCur\.lat, wxCur\.lon\)/.test(ew) && /wxFetch\(lat, lon\)/.test(grab(src, 'wxRefresh')));
+    // ★ 5.20 — 담아 둔 것을 쓸 때는 ensureWx 가(wxSame), 새로 받은 것은 wxRefresh 가(열쇠 비교) 확인한다
+    T('ensureWx: 지점이 바뀌었으면 wxData 를 안 바꾼다', (ew.match(/wxSame\(\)/g) || []).length >= 2 && /if\(wxCur && wxPtKey\(wxCur\.lat, wxCur\.lon\) === key\)\{\s*\n\s*wxData = /.test(grab(src, 'wxRefresh')));
     // 실제로 돌려 본다 — 여수를 받는 동안 도쿄로 바꾼다
-    let wxCur = { lat:34.74, lon:127.74 }, wxData = null, calls = [], L = { innerHTML:'' };
+    // ★ 5.20 — 받는 일은 wxRefresh(열쇠, 자리) 한 문이 한다. 받는 사이 지점이 바뀌면 wxData 를 안 바꾼다.
+    let wxCur = { lat:34.74, lon:127.74 }, wxData = null, calls = [];
     let release;
-    const env = {
-      document: { getElementById: () => L },
-      wxFetch: (la, lo) => { calls.push(la + ',' + lo); if(calls.length === 1) return new Promise(r => { release = () => r({ w:'여수날씨' }); }); return Promise.resolve({ w:'도쿄날씨' }); },
-    };
-    // renderWeather 앞쪽(자료 받기)만 떼어 돌린다
-    const body = rw.slice(rw.indexOf('if(!wxData || wxData.key !== wxCur.lat'), rw.indexOf('    }\n  }', rw.indexOf('if(!wxData || wxData.key !== wxCur.lat')) + 10);
-    const fn = new Function('S', 'env', `
-      let { document, wxFetch } = env;
-      const t = x => x, esc = x => x, head = '';
-      return async function renderWeather(){
-        let wxCur = S.cur(), wxData = S.data();
-        const L = document.getElementById('weatherList');
-        ${body.replace(/wxData = \{/g, 'wxData = S.set({')
-              .replace(/\.\.\.d \};/g, '...d });')
-              .replace(/(\(wxCur\.lat\+','\+wxCur\.lon\) !== wxKey0)/g, '(S.cur().lat+\',\'+S.cur().lon) !== wxKey0')}
-        return 'done';
-      };`);
-    const S = { cur: () => wxCur, data: () => wxData, set: v => (wxData = v) };
-    const rwf = fn(S, env);
-    const p1 = rwf();                              // 여수를 받기 시작
+    const rf = grab(src, 'wxRefresh');
+    const make = new Function('S', `
+      const WX_BG = {};
+      const wxPtKey = (a, b) => (+a).toFixed(2) + ',' + (+b).toFixed(2);
+      const wxCachePut = () => {}, wxStamp = () => {};
+      const wxFetch = (la, lo) => { S.calls.push(la + ',' + lo);
+        if(S.calls.length === 1) return new Promise(r => { S.release = () => r({ w:'여수날씨' }); });
+        return Promise.resolve({ w:'도쿄날씨' }); };
+      let wxFailed = false;
+      const renderHome = () => {}, renderWeather = () => {}, curScreen = () => '';
+      ${rf.replace(/wxCur/g, 'S.cur()').replace(/wxData = \{/g, 'S.set({').replace(/_at: Date\.now\(\) \};/g, '_at: Date.now() });')}
+      return { wxRefresh, wxPtKey };`);
+    const S = { cur: () => wxCur, set: v => (wxData = v), calls };
+    const R = make(S);
+    const p1 = R.wxRefresh(R.wxPtKey(34.74, 127.74), 34.74, 127.74);   // 여수를 받기 시작
     await new Promise(r => setTimeout(r, 5));
-    wxCur = { lat:35.62, lon:139.77 };             // 사람이 도쿄로 넘긴다
-    release();                                     // 이제 여수 날씨가 도착한다
+    wxCur = { lat:35.62, lon:139.77 };                                   // 사람이 도쿄로 넘긴다
+    S.release();                                                          // 이제 여수 날씨가 도착한다
     await p1;
-    T('★★★ 여수 날씨가 도쿄 이름으로 붙지 않는다', !(wxData && wxData.key === '35.62,139.77' && wxData.w === '여수날씨'));
-    T('도쿄로 다시 받아 도쿄 날씨가 도쿄 이름으로 붙는다', wxData && wxData.key === '35.62,139.77' && wxData.w === '도쿄날씨');
+    T('★★★ 여수 날씨가 도쿄 이름으로 붙지 않는다', !(wxData && wxData.w === '여수날씨'), wxData);
+    await R.wxRefresh(R.wxPtKey(35.62, 139.77), 35.62, 139.77);
+    T('도쿄로 다시 받아 도쿄 날씨가 도쿄 이름으로 붙는다', wxData && wxData.key === '35.62,139.77' && wxData.w === '도쿄날씨', wxData);
   }
   // ⑥ 보는 날씨 지점이 일본이면 일본 물때를 받는다
   {
-    const rw = grab(src, 'renderWeather');
+    // ★ 5.20 — 곁 자료(물때 꾸러미 포함)는 wxAuxRun 이 받는다
+    const rw = grab(src, 'wxAuxRun');
     T('renderWeather: 날씨 지점 자리로 나라 물때 꾸러미를 받는다', /spotPacksFor\(wxCur\.lat, wxCur\.lon\)/.test(rw) && /await tidePackGet\(pk\)/.test(rw));
     const jp = (src.match(/\{ k:'jp', cc:'jp'[^\n]*/) || [''])[0];
     T('일본 꾸러미에 물때 파일이 있다', /tide:'tide-jp\.json'/.test(jp));
