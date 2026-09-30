@@ -293,6 +293,8 @@ const at = (d, tm) => new Date(d + 'T' + tm + ':00').getTime();
     /끝\.lph != null/.test(rf) && /기록에서 빠졌을 수 있습니다/.test(rf));
   T('★★★ 확인 뒤 넣은 기름을 잔량 설명에 밝힌다', /그 뒤 넣은 \{a\}L를 더하고/.test(rf));
   T('★★★ 홈의 연료 칸도 잔량 확인에서 시작하면 그렇게 말한다', /잔량 확인 뒤 \{h\} 돌렸습니다/.test(src));
+  const cb = grab('createBoat');
+  T('★★★ 5.25 — 새 배의 잔량 확인 방법은 연료 게이지다 (사장님: 「더 정확한 방식으로」)', /fuelSet: \{ how: 'gauge' \}/.test(cb), cb.slice(0, 900));
   T('★★★ 혼자 쓰는 배(명부 없음)는 받아올 것이 없으니 바로 채운다', /fuelMarkAt\(\), c = voyHoursFill\(\)/.test(grab('migrateVoyage')));
 }
 

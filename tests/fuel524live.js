@@ -26,6 +26,10 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.lo
   await pg.waitForTimeout(400);
   await pg.evaluate(()=>{ document.getElementById('nbName').value='시험호'; createBoat(); });
   await pg.waitForTimeout(1500);
+  const how0 = await pg.evaluate(()=>{ goMaint('fuel'); renderFuel(); return { how: fuelHow(),
+    st: [...document.querySelectorAll('#fuelList .stat')].map(x=>x.innerText.replace(/\s+/g,' ').trim()) }; });
+  T('★★★ 5.25 — 새 배는 연료 게이지로 시작한다 (사장님: 「더 정확한 방식으로」)',
+    how0.how === 'gauge' && how0.st.some(s=>/연료 게이지/.test(s)) && !how0.st.some(s=>/잔량 추정/.test(s)), how0);
   // ── 사장님 기록 모양
   await pg.evaluate(()=>{
     const b = curBoat(); b.spec = Object.assign({}, b.spec || {}, { fuelTank: 240 });
