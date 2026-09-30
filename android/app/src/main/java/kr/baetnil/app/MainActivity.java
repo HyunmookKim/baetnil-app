@@ -1,5 +1,6 @@
 package kr.baetnil.app;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,21 @@ public class MainActivity extends BridgeActivity {
         //   화면을 꺼서 웹뷰가 얼어도 점이 파일에 쌓이고, 깨어나면 통째로 가져간다.
         registerPlugin(BaetnilTrack.class);
         super.onCreate(savedInstanceState);
+
+        // ★★★ 5.21 — 안드로이드 14 이하에서 머리줄이 시계·배터리 줄 밑으로 들어가던 것 (5.20 에서 생김).
+        //   5.20 에 넣은 시계 줄 부품(@capacitor/status-bar)은 켜질 때 기본값으로 「웹 화면을 시계 줄 밑까지 깐다」
+        //   (overlaysWebView 기본 true). 안드로이드 15 이상은 원래 그렇게 그리고 웹 화면이 시계 줄 높이만큼 비워 두지만,
+        //   14 이하에서는 웹 화면이 그 높이를 모른다 → 머리줄이 시계 줄에 겹쳤다(에뮬레이터 안드로이드 14 검사: 위 여백 0).
+        //   14 이하에서는 5.19 까지처럼 시계 줄 아래부터 그리게 되돌린다. 15 이상은 손대지 않는다.
+        //   시계 줄 바탕색은 웹 화면이 테마에 맞춰 칠한다(index.html statusBar).
+        if (Build.VERSION.SDK_INT < 35) {
+            try {
+                View d = getWindow().getDecorView();
+                d.setSystemUiVisibility(d.getSystemUiVisibility()
+                        & ~View.SYSTEM_UI_FLAG_LAYOUT_STABLE & ~View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+                getWindow().setStatusBarColor(0xFF122A44);
+            } catch (Exception ignored) {}
+        }
 
         // ★★★ 5.16 — 키보드가 뜨면 화면은 그대로 두고, 누른 칸만 스크롤로 키보드 위에 올린다.
         //   아이폰 앱·아이폰 사파리·안드로이드 크롬(108 부터)이 모두 이렇게 한다.
