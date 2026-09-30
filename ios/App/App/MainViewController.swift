@@ -59,6 +59,16 @@ class MainViewController: CAPBridgeViewController, UIGestureRecognizerDelegate {
         pan = g
     }
 
+    // ★ 5.21 — 폰 맨 위 시계 줄 글자 색을 앱 테마(노을·흰색·검정)대로 다시 맞춘다.
+    //   상태 표시줄 부품(@capacitor/status-bar)은 이 화면이 나타날 때마다(viewDidAppear) 글자 색을
+    //   「기본」 으로 되돌린다 — 앱이 켜질 때, 사진·파일 선택 창, 공유 창, 구글·애플 로그인 창이 닫힐 때.
+    //   「기본」 은 폰의 밝은/어두운 모드를 따르므로, 밝은 모드 폰이면 노을·검정 화면 위에 짙은 글자가 되어
+    //   시계가 안 보인다. 그래서 되돌려진 바로 뒤에 앱이 고른 색을 다시 넣는다.
+    override open func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        webView?.evaluateJavaScript("window.btLook&&window.btLook.statusBar&&window.btLook.statusBar()", completionHandler: nil)
+    }
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         snaps.removeAll(); snapOrder.removeAll(); snapAt.removeAll()
