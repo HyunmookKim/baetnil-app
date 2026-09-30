@@ -27,7 +27,8 @@ const SRC = fs.readFileSync(FILE, 'utf8');
         if(theme) localStorage.setItem('bt_theme', theme); if(size) localStorage.setItem('bt_fs', size); }catch(_){}
       window.__sb = [];
       window.Capacitor = { isNativePlatform:()=>true, getPlatform:()=>'android',
-        Plugins:{ StatusBar:{ setStyle:(o)=>{ window.__sb.push(o.style); return Promise.resolve(); } },
+        Plugins:{ StatusBar:{ setStyle:(o)=>{ window.__sb.push(o.style); return Promise.resolve(); },
+                              setBackgroundColor:(o)=>{ window.__sbc = o.color; return Promise.resolve(); } },
                   App:{ addListener:()=>Promise.resolve({remove(){}}) } } };
     }, {theme, size});
     const pg = await ctx.newPage();
@@ -43,7 +44,7 @@ const SRC = fs.readFileSync(FILE, 'utf8');
     const fsz = getComputedStyle(lbl).fontSize; lbl.remove();
     const d = document.createElement('div'); d.setAttribute('style', 'color:#8AA0B4;font-size:11px'); document.body.appendChild(d);
     return new Promise(r => setTimeout(()=>{ const s = d.getAttribute('style'); d.remove();
-      r({ bg, mrlbl: fsz, inline: s, theme: window.btLook.theme(), size: window.btLook.size(), sb: window.__sb.slice(-1)[0] }); }, 50));
+      r({ bg, mrlbl: fsz, inline: s, theme: window.btLook.theme(), size: window.btLook.size(), sb: window.__sb.slice(-1)[0], sbc: window.__sbc }); }, 50));
   });
 
   // ── 처음(아무것도 안 고름): 노을 + 크게(초안)
@@ -54,6 +55,7 @@ const SRC = fs.readFileSync(FILE, 'utf8');
   T('★ 크게 — 화면을 그릴 때 붙는 글자 크기도 커진다 (11px → 13px)', /font-size:13px/.test(r.inline), r.inline);
   T('노을은 색을 안 바꾼다 (#8AA0B4 그대로)', /#8AA0B4/i.test(r.inline), r.inline);
   T('노을 — 폰 시계 줄은 밝은 글자(DARK)', r.sb === 'DARK', r.sb);
+  T('★ 5.21 노을 — 안드로이드 14 이하 시계 줄 바탕은 머리줄 맨 윗색(#122A44)', r.sbc === '#122A44', r.sbc);
 
   // ── 흰색으로 바꾼다 (다시 켜지 않아도 바로)
   await A.pg.evaluate(()=>window.btLook.set('theme','light'));
@@ -62,6 +64,7 @@ const SRC = fs.readFileSync(FILE, 'utf8');
   T('★ 흰색 — 바탕이 흰색', r.bg === 'rgb(255, 255, 255)', r.bg);
   T('★ 흰색 — 그릴 때 붙는 색도 바뀐다 (옅은 회청 → 짙은 글씨)', /color:rgb\((\d+),(\d+),(\d+)\)/.test(r.inline) && Math.max(...r.inline.match(/rgb\((\d+),(\d+),(\d+)\)/).slice(1).map(Number)) < 140, r.inline);
   T('★ 흰색 — 폰 시계 줄은 짙은 글자(LIGHT)', r.sb === 'LIGHT', r.sb);
+  T('★ 5.21 흰색 — 안드로이드 14 이하 시계 줄 바탕도 흰색 (짙은 글자가 보이게)', r.sbc === '#FFFFFF', r.sbc);
   const card = await A.pg.evaluate(()=>{ homeSub='today'; switchTab('home'); const c = [...document.querySelectorAll('.hcard')].find(e=>/지금 나갈 수 있나/.test(e.textContent)); return c ? getComputedStyle(c).backgroundColor : ''; });
   T('흰색 — 카드가 흰 바탕 위 옅은 회색', /rgba?\((2[2-5]\d), (2[2-5]\d), (2[2-5]\d)/.test(card), card);
   // 여러 번 바꿔도 두 번 바뀌지 않는다(처음 값에서 다시 만든다)
@@ -81,6 +84,7 @@ const SRC = fs.readFileSync(FILE, 'utf8');
   const card2 = await A.pg.evaluate(()=>{ renderHome(); const c = [...document.querySelectorAll('.hcard')].find(e=>/지금 나갈 수 있나/.test(e.textContent)); return c ? getComputedStyle(c).backgroundColor : ''; });
   T('★ 검정 — 카드는 한 칸 떠 보이는 짙은 회색 (검정 위에 묻히지 않는다)', (()=>{ const m = card2.match(/(\d+), (\d+), (\d+)/); return m && +m[1] > 15 && +m[1] < 60; })(), card2);
   T('검정 — 폰 시계 줄은 밝은 글자(DARK)', r.sb === 'DARK', r.sb);
+  T('★ 5.21 검정 — 안드로이드 14 이하 시계 줄 바탕은 검정', r.sbc === '#000000', r.sbc);
 
   // ── 노을 + 보통 = 5.19 와 똑같다 (아무것도 안 바꾼다)
   await A.pg.evaluate(()=>{ window.btLook.set('theme','sunset'); window.btLook.set('size','normal'); });
