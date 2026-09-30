@@ -56,7 +56,8 @@ T('②-3 ★★ 정기점검 묶음 이름표가 사전을 거친다 (한글 계
   /<b>\$\{esc\(keyShow\(g\)\)\}<\/b>/.test(src),
   (src.match(/<span class="garr">[^\n]*/) || [''])[0]);
 T('②-4 ★ 계통 칸을 고치면 다시 한국어 열쇠로 되돌린다 (묶음이 둘로 갈라지지 않게)',
-  /function mrGrpSet\(/.test(src) && /onchange="mrGrpSet\(this\.value,'기타'\)"/.test(src));
+  // 5.27 — 정기점검 계통은 눌러서 목록에서 선택(grpPick). 목록 값도 직접 입력도 같은 문(mrGrpSet)으로 간다.
+  /function mrGrpSet\(/.test(src) && /mrGrpSet\(v\.g, '기타'\)/.test(src) && /mrGrpSet\(String\(s\)\.trim\(\), '기타'\)/.test(src));
 T('②-5 ★ 수리 계통도 같은 문을 쓴다',
   /onchange="mrGrpSet\(this\.value,''\)"/.test(src));
 T('②-6 ★ 엔진 가동 목적도 사전을 거친다',

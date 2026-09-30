@@ -52,7 +52,8 @@ const SRC = fs.readFileSync(FILE, 'utf8');
   let r = await look(A.pg);
   T('★ 처음은 노을 · 크게 (사장님이 좋다고 하신 초안 크기)', r.theme === 'sunset' && r.size === 'big', r);
   T('★ 크게 — 칸 이름(11.5px 이하)이 커진다', parseFloat(r.mrlbl) >= 13, r.mrlbl);
-  T('★ 크게 — 화면을 그릴 때 붙는 글자 크기도 커진다 (11px → 13px)', /font-size:13px/.test(r.inline), r.inline);
+  // 5.27 — 안드로이드 14 글자 크기 표(1.15 단계): 10→11.5 · 12→13.8 사이라 11px 은 12.5px (0.5 단위)
+  T('★ 크게 — 화면을 그릴 때 붙는 글자 크기도 커진다 (11px → 12.5px)', /font-size:12.5px/.test(r.inline), r.inline);
   T('노을은 색을 안 바꾼다 (#8AA0B4 그대로)', /#8AA0B4/i.test(r.inline), r.inline);
   T('노을 — 폰 시계 줄은 밝은 글자(DARK)', r.sb === 'DARK', r.sb);
   T('★ 5.21 노을 — 안드로이드 14 이하 시계 줄 바탕은 머리줄 맨 윗색(#122A44)', r.sbc === '#122A44', r.sbc);

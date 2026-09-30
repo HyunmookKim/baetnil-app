@@ -75,6 +75,30 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.lo
   const y1=await pg.evaluate(()=>document.getElementById('acEm').getBoundingClientRect().top);
   T('이미 보이는 칸은 움직이지 않는다', Math.abs(y1-y0)<2, [y0,y1]);
   await pg.evaluate(()=>window.__kbd(0));
+  // ★★★ 5.26 — 폰이 키보드만큼 화면을 줄여 버리는 경우(안드로이드 10 이하 · 5.25 까지의 11~14)
+  //   ① 아래 탭 줄을 감춘다(키보드 위로 따라 올라오지 않게) ② 줄어든 만큼은 여백을 또 붙이지 않는다(칸이 두 번 튀지 않게)
+  await pg.evaluate(()=>openSignup()); await pg.waitForTimeout(300);
+  if(await pg.evaluate(()=>!document.getElementById('suPw2'))){ await pg.evaluate(()=>{ try{agreeAll();}catch(_){} const b=[...document.querySelectorAll('#mrPanel button')].find(b=>/동의하고 계속/.test(b.textContent)); b&&b.click(); }); await pg.waitForTimeout(300); }
+  await pg.evaluate(()=>{ const e=document.getElementById('suPw2'); e.scrollIntoView({block:'center'}); e.focus(); });
+  await pg.waitForTimeout(150);
+  T('(줄이는 폰) 키보드 전에는 탭 줄이 보인다', await pg.evaluate(()=>getComputedStyle(document.getElementById('tabbar')).display!=='none'));
+  await pg.setViewportSize({width:412,height:924-KB}); await pg.waitForTimeout(250);
+  await pg.evaluate(px=>window.__kbd(px), Math.round(KB*2.625)); await pg.waitForTimeout(400);
+  const rz=await pg.evaluate(()=>{ const r=document.getElementById('suPw2').getBoundingClientRect(); const hd=document.querySelector('header').getBoundingClientRect();
+    return { rs: document.body.classList.contains('kbdrs'), tb: getComputedStyle(document.getElementById('tabbar')).display,
+      sp: parseFloat((document.getElementById('kbdSpacer')||{style:{}}).style.height)||0, bot:r.bottom, top:r.top, h:innerHeight, hdb:hd.bottom,
+      act: document.activeElement && document.activeElement.id }; });
+  T('★★★ (줄이는 폰) 키보드가 뜨면 아래 탭 줄을 감춘다 — 키보드 위로 따라 올라오지 않는다', rz.rs && rz.tb==='none', rz);
+  T('★★★ (줄이는 폰) 이미 줄어든 만큼은 여백을 또 붙이지 않는다', rz.sp < 5, rz);
+  T('★★ (줄이는 폰) 누른 칸이 보인다 (줄어든 화면 안, 머리줄 밑이 아니다)', rz.bot <= rz.h + 1 && rz.top >= rz.hdb - 1 && rz.act==='suPw2', rz);
+  await pg.evaluate(()=>{ document.getElementById('suPw2').blur(); window.__kbd(0); });
+  await pg.setViewportSize({width:412,height:924}); await pg.waitForTimeout(300);
+  T('★★★ (줄이는 폰) 키보드가 내려가면 탭 줄이 돌아온다', await pg.evaluate(()=>!document.body.classList.contains('kbdrs') && getComputedStyle(document.getElementById('tabbar')).display!=='none'));
+  // 줄이지 않는 폰(안드로이드 11 이상 · 5.26)은 예전 그대로 — 탭 줄을 감추지 않는다(키보드가 덮는다)
+  await pg.evaluate(()=>{ const e=document.getElementById('suPw2'); e.focus(); });
+  await pg.evaluate(px=>window.__kbd(px), Math.round(KB*2.625)); await pg.waitForTimeout(300);
+  T('★★ (줄이지 않는 폰) 탭 줄을 감추지 않는다 — 제자리에서 키보드에 가려진다', await pg.evaluate(()=>!document.body.classList.contains('kbdrs')));
+  await pg.evaluate(()=>{ document.getElementById('suPw2').blur(); window.__kbd(0); });
   T('페이지 오류 없음', errs.length===0, errs);
   await br.close(); srv.close();
   console.log(`\n합계: ${ok}개 통과 / ${bad}개 실패`);

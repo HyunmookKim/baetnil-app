@@ -151,8 +151,10 @@ if(PK){
   //   사장님이 「수리에서 어떤 장비인지 고를 수 있게」 하라고 하셨을 때
   //   그 기능은 이미 있었는데 숨어 있었던 것이다. 이제 늘 보여 주고,
   //   장비가 없으면 그 자리에서 만들 수 있게 한다.
+  // 5.27 — 칸을 누르면 목록(gearPick)이 뜨고, 목록 끝 「장비 추가」 가 그 자리에서 장비를 만들어 연결한다.
+  const GP = grab('gearPick');
   T('★★ 장비가 없어도 칸을 보여 주고, 그 자리에서 장비를 만들 수 있다',
-    /if\(!rows\.length\)/.test(PK) && /gearMakeFor\(/.test(PK), PK.slice(0,300));
+    !/if\(!rows\.length\) *return ''/.test(PK) && /gearPick\(/.test(PK) && !!GP && /__add/.test(GP) && /gearMakeFor\(/.test(GP), PK.slice(0,300));
   T('★ 보기 전용에서는 고른 장비 이름만 보여 준다', /unlocked/.test(PK) && /mrv/.test(PK));
   T('★ 고른 장비로 바로 건너갈 수 있다', /openMR\('gear'/.test(PK));
 }

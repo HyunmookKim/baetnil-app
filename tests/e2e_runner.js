@@ -471,6 +471,19 @@
     await sleep(2500);   // ★ 사진 올리기가 끝난 뒤 물건 화면이 늦게 열려 다음 단계 화면을 덮는다(안드로이드 3회째)
     await shot('24-market');
   });
+  // ★★ 5.27 — 사장님: 「자동검사글은 언제 지울래」 → 「그래 1 2 다해라」
+  //   ① 올린 것이 제대로 올라갔는지 보고 **그 자리에서 바로** 지운다 (검사 끝까지 두지 않는다)
+  //   ② 검사 계정이 올린 것에는 e2e 표가 달려 다른 사람 목록에 안 나온다 — 표가 달렸는지도 본다
+  step('장터 — 표 확인 후 바로 지우기', async function(){
+    var m = await until(function(){ return (marketList || []).find(function(x){ return String(x.title || '').indexOf(S.run) >= 0; }); }, 20000, '장터 물건 찾기');
+    if(m.e2e !== true) throw new Error('검사 표(e2e)가 안 달림');
+    try{ closeMR(); }catch(_){}
+    await delItem(m.id);
+    await until(function(){ return !(marketList || []).some(function(x){ return String(x.id) === String(m.id); }); }, 20000, '장터 물건 지워짐');
+    // 목록을 클라우드에서 새로 받아 봐도 없어야 한다
+    listRefresh('market'); await sleep(2500);
+    await until(function(){ return !(marketList || []).some(function(x){ return String(x.id) === String(m.id); }); }, 20000, '새로 받아도 없음');
+  });
   step('장터·정박지 사진 붙이기 함수(고친 것)', async function(){
     var out = await resizePhotos([dot()]);
     if(!Array.isArray(out) || !out.length) throw new Error('resizePhotos 가 사진을 안 돌려줌');
@@ -495,6 +508,13 @@
     setv('spName', '[자동검사] 정박지 ' + S.run);
     await spotSave();
     await sleep(2000); await shot('25-spot');
+  });
+  step('정박지 — 표 확인 후 바로 지우기', async function(){
+    var sp = await until(function(){ return (spotList || []).find(function(x){ return String(x.name || '').indexOf(S.run) >= 0; }); }, 20000, '정박지 찾기');
+    if(sp.e2e !== true) throw new Error('검사 표(e2e)가 안 달림');
+    try{ closeMR(); }catch(_){}
+    await delSpot(sp.id);
+    await until(function(){ return !(spotList || []).some(function(x){ return String(x.id) === String(sp.id); }); }, 20000, '정박지 지워짐');
   });
   step('다른 배 보기', async function(){ switchTab('others'); await sleep(1500); await shot('26-others'); });
   step('뉴스', async function(){ switchTab('home'); setHomeSub('news'); await sleep(2500); await shot('27-news'); });
@@ -593,6 +613,19 @@
   });
   step('A 다시 로그인 · 배 지우기', async function(){
     await emailLogin(S.a, false);
+    // ★ 5.27 — 신고 검사가 끝났으니 A 의 글을 곧바로 지운다. 댓글을 먼저 지운다 —
+    //   글을 지워도 댓글은 따로 남는다(파이어스토어는 딸린 칸을 같이 지우지 않는다).
+    try{
+      var cs = await window.__cmt.list('community', S.post);
+      for(var ci = 0; ci < (cs || []).length; ci++){
+        if(String(cs[ci].by) === String(S.a.uid)) await window.__cmt.del('community', S.post, cs[ci].id);
+      }
+      unlock(); switchTab('community'); setComSub('talk'); listRefresh('talk');
+      await until(function(){ return (talkList || []).some(function(x){ return String(x.id) === S.post; }); }, 20000, 'A 글 받아옴');
+      await delTalk(S.post);
+      await until(function(){ return !(talkList || []).some(function(x){ return String(x.id) === S.post; }); }, 20000, 'A 글 지워짐');
+      log('INFO A 글·댓글 지움');
+    }catch(e){ log('INFO A 글 바로 지우기 못함(계정 삭제 때 지워짐): ' + ((e && e.message) || e)); }
     await until(function(){ return boats.some(function(b){ return String(b.id) === S.boat; }); }, 30000, '클라우드에서 배 받아옴');
     unlock();
     askDelBoat(S.boat); await sleep(1500);
