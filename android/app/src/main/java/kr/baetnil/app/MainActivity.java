@@ -45,9 +45,22 @@ public class MainActivity extends BridgeActivity {
                 //   그래서 14 이하도 15 이상처럼 그리고, 시계 줄 높이만 여기서 재서 웹 화면에 알려 준다(__sat).
                 //   안드로이드 공식 안내도 모든 버전에서 화면 끝까지 그려 버전마다 같게 보이게 하라고 한다(enableEdgeToEdge).
                 final int[] lastSat = { -1 };
+                // 시계 줄 높이 — 창 전체가 받은 여백에서 읽고, 없으면 시스템 값(status_bar_height)을 쓴다.
+                //   (웹뷰를 담은 틀에는 0 으로 올 때가 있다 — 에뮬레이터 안드로이드 14 #25: 머리줄 위 여백 0)
                 final Runnable sendSat = () -> {
-                    if (lastSat[0] < 0) return;
-                    try { wv.evaluateJavascript("window.__sat&&window.__sat(" + lastSat[0] + ")", null); } catch (Exception ignored) {}
+                    try {
+                        int sat = 0;
+                        WindowInsetsCompat ri = ViewCompat.getRootWindowInsets(getWindow().getDecorView());
+                        if (ri != null) sat = ri.getInsets(WindowInsetsCompat.Type.statusBars()).top;
+                        if (sat <= 0) {
+                            int id = getResources().getIdentifier("status_bar_height", "dimen", "android");
+                            if (id > 0) sat = getResources().getDimensionPixelSize(id);
+                        }
+                        if (sat > 0) {
+                            lastSat[0] = sat;
+                            wv.evaluateJavascript("window.__sat&&window.__sat(" + sat + ")", null);
+                        }
+                    } catch (Exception ignored) {}
                 };
                 ViewCompat.setOnApplyWindowInsetsListener(host, (v, insets) -> {
                     boolean shown = insets.isVisible(WindowInsetsCompat.Type.ime());
@@ -56,10 +69,7 @@ public class MainActivity extends BridgeActivity {
                         last[0] = px;
                         try { wv.evaluateJavascript("window.__kbd&&window.__kbd(" + px + ")", null); } catch (Exception ignored) {}
                     }
-                    if (Build.VERSION.SDK_INT < 35) {
-                        int sat = Math.max(0, insets.getInsets(WindowInsetsCompat.Type.statusBars()).top);
-                        if (sat != lastSat[0]) { lastSat[0] = sat; sendSat.run(); }
-                    }
+                    if (Build.VERSION.SDK_INT < 35) host.post(sendSat);
                     return insets;
                 });
                 ViewCompat.requestApplyInsets(host);
