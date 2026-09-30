@@ -116,6 +116,12 @@ const SRC = fs.readFileSync(FILE, 'utf8');
   r = await look(A.pg);
   T('★ 화면에서 누르면 곧바로 바뀐다', r.theme === 'black' && r.bg === 'rgb(0, 0, 0)', r);
 
+  // ── 5.22 — 안드로이드 14 이하: 앱이 알려 주는 시계 줄 높이(기기 픽셀)로 머리줄이 비켜 간다
+  const sat = await A.pg.evaluate(()=>{ const h = document.querySelector('header'); const before = getComputedStyle(h).paddingTop;
+    window.__sat(49 * (window.devicePixelRatio || 1)); const after = getComputedStyle(h).paddingTop;
+    window.__sat(0); const zero = getComputedStyle(h).paddingTop; return { before, after, zero }; });
+  T('★ 5.22 시계 줄 높이를 받으면 머리줄 위 여백이 그만큼 (웹은 0 → 49px)', sat.before === '0px' && sat.after === '49px', sat);
+  T('0 이나 엉뚱한 값은 무시한다', sat.zero === '49px', sat);
   T('오류가 없다', A.errs.length === 0, A.errs.slice(0,3));
   await br.close(); server.close();
   console.log(`\n통과 ${ok} · 실패 ${bad}`);
