@@ -206,6 +206,10 @@ const P = (dx, dy, sec) => ({ la: LA0 + dy * M, lo: LO0 + dx * MO,
   const F3 = new Function(`
     const hm = v => v;
     ${(src.match(/const VOY_IN_GRACE = [^;]+;/) || [''])[0]}
+    ${(src.match(/const voyDay = [^\n]+\n/) || [''])[0]}
+    ${grab(src, 'tsOf')}
+    ${grab(src, 'voyOutMs')}
+    ${grab(src, 'voyInMs')}
     ${grab(src, 'voyInAt')}
     ${grab(src, 'trkAfterIn')}
     ${grab(src, 'trkCutAfterIn')}

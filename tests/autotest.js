@@ -111,9 +111,11 @@ T('④-2 ★ 대신 「+ 정비수첩」 을 누르라고 알려 준다',
   //   gearMakeFor — 정비·수리 기록에서 「장비 만들어 매달기」 를 누른 것
   //   mrRestore   — 휴지통에서 되살린 것
   //   mlogMoveOld — 4.63 옛 자료 이사. 한 번 돌고 그 칸을 지워서 다시는 안 돈다
+  //   fuelLevelAdd — 5.24 연료 「지금 잔량」 창에서 저장을 누른 것 (fuelEditLeft 의 onOk)
+  //   voyGauge     — 5.24 항해 출항·입항 칸의 연료 게이지 눈금(E·¼·½·¾·F)을 누른 것
   const 허락 = ['addMlog','mlogMoveOld','mrAdd','mrRestore','addGear','gearSwap','addMaintForGear',
                 'addRepairForGear','addReview','addVoyage','addPlan','addFuel','addVdoc','addContact',
-                'pinNewRec','gearReplace','gearMakeFor','restoreAll','importAll'];
+                'pinNewRec','gearReplace','gearMakeFor','restoreAll','importAll','fuelLevelAdd','voyGauge'];
   const 몰래 = [];
   for(const [nm, re] of 검사할것){
     re.lastIndex = 0; let m;

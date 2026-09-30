@@ -49,6 +49,10 @@ globalThis.openMR = () => {};
 globalThis.mrOpenType = ''; globalThis.mrOpenId = '';
 globalThis.unlocked = true;
 globalThis.tsOf = () => 1755400000000;
+// 5.24 — 도착은 도착 날짜로, 며칠짜리 항해의 중간 기록은 그 날로 받는다. 여기서는 하루짜리 항해다.
+globalThis.voyMultiDay = () => false;
+globalThis.voyInMs = it => (it && String(it.timeIn || '').trim()) ? globalThis.tsOf(it.date, it.timeIn) : null;
+globalThis.voyLogMs = () => globalThis.tsOf();
 globalThis.fmtWhen = () => '2026-08-17 13:36';
 globalThis.dirName = () => '남남서';
 globalThis.wxHourIndex = () => 3;
