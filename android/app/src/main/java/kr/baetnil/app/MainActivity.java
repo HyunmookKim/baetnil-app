@@ -4,6 +4,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.webkit.WebView;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -39,6 +40,18 @@ public class MainActivity extends BridgeActivity {
                         & ~View.SYSTEM_UI_FLAG_LAYOUT_STABLE & ~View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
                 getWindow().setStatusBarColor(0xFF122A44);
             } catch (Exception ignored) {}
+        }
+
+        // ★★★ 5.26 — 안드로이드 11~14 도 키보드가 뜰 때 화면(웹뷰)을 줄이지 않는다 (사장님: 「고칠수 있음 고쳐라」).
+        //   14 이하는 위(5.21)처럼 시계 줄 아래부터 그리므로, 안드로이드가 예전 방식대로 키보드만큼 화면을 줄였다 —
+        //   그래서 아래 탭 줄이 키보드 위로 따라 올라왔다(9/25 사장님 지적과 같은 모습, 에뮬레이터 14 사진).
+        //   게다가 아래 __kbd 도 같이 와서 웹 화면이 키보드만큼 한 번 더 올려 칸이 튀었다.
+        //   → 화면은 그대로 두라고(ADJUST_NOTHING) 하고, 키보드 높이는 15 이상과 똑같이 __kbd 로만 알린다.
+        //   ★ 11(API 30) 부터만 — 10 이하는 화면을 안 줄이면 키보드 높이를 앱이 알 길이 없다(WindowInsetsCompat 안내).
+        //     10 이하는 예전처럼 화면이 줄고, 웹 화면이 그것을 알아채 탭 줄을 감춘다(index.html kbdrs).
+        //   시계 줄 쪽(5.22·5.23 에서 에뮬레이터를 멈추게 한 것)은 건드리지 않는다.
+        if (Build.VERSION.SDK_INT >= 30 && Build.VERSION.SDK_INT < 35) {
+            try { getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING); } catch (Exception ignored) {}
         }
 
         // ★★★ 5.16 — 키보드가 뜨면 화면은 그대로 두고, 누른 칸만 스크롤로 키보드 위에 올린다.
