@@ -8,6 +8,7 @@ import android.webkit.WebView;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import com.getcapacitor.BridgeActivity;
+import com.getcapacitor.WebViewListener;
 
 public class MainActivity extends BridgeActivity {
     @Override
@@ -78,6 +79,15 @@ public class MainActivity extends BridgeActivity {
                     host.postDelayed(sendSat, 1500);
                     host.postDelayed(sendSat, 4000);
                     host.postDelayed(sendSat, 9000);
+                    // 화면 파일을 다시 읽으면(새로 고침) 웹에 넣은 값이 사라지므로, 다 읽을 때마다 다시 보낸다
+                    //   (에뮬레이터 안드로이드 14 #26: 키보드가 뜨기 전까지 머리줄 위 여백 0).
+                    getBridge().addWebViewListener(new WebViewListener() {
+                        @Override
+                        public void onPageLoaded(WebView webView) {
+                            host.post(sendSat);
+                            host.postDelayed(sendSat, 800);
+                        }
+                    });
                 }
             }
         } catch (Exception ignored) {}
