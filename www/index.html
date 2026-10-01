@@ -789,10 +789,7 @@ header{background:rgba(8,21,33,.92);backdrop-filter:blur(12px);border-bottom:1px
 .sub{font-size:10px;letter-spacing:.18em;color:var(--td);font-weight:600;
   display:flex;gap:8px;align-items:baseline;white-space:nowrap;overflow:hidden}
 #boatSub{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-/* ★ 5.27 — 글자를 키우거나 「클라우드 연결 안 됨 · 눌러서 확인」 처럼 상태 글이 길면 배 이름이 한 글자만 남았다.
-   배 이름을 먼저 보이게 하고, 상태 글이 줄어든다. */
-#boatSub{flex:0 0 auto;max-width:62%}
-#syncState{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+#syncState{flex:0 0 auto}
 h1{font-size:20px;font-weight:800;color:var(--th);letter-spacing:-.02em}
 #syncState{font-size:10.5px;font-weight:600;color:var(--tm);letter-spacing:.02em}
 .tab{background:var(--sf2);border:1px solid var(--bd);border-radius:999px;color:#C4C8CD;font-size:12.5px;font-weight:700;padding:8px 13px}
@@ -1329,12 +1326,6 @@ body.pnsc #mrPanel .mrhead::before, body.pnsc #mrPanel > .mrtop::before{opacity:
 .dbadge.on{display:inline-block}
 .ditem{display:flex;align-items:center}
 .cklink{padding:5px 10px;font-size:11px;text-decoration:none;flex-shrink:0}
-/* ★ 5.28 — 「바로가기」·「수정」 단추가 있는 줄은 글자를 키우면 항목 이름이 서너 줄로 접혔다(「원거리 / 수상레저 / 신고 (해당 / 시)」).
-   이름에 최소 폭을 주고, 단추가 안 들어가면 단추 묶음이 다음 줄 오른쪽으로 내려간다. */
-.ckrow{flex-wrap:wrap}
-.cklbl{flex:1 1 9em;min-width:9em}
-.ckacts{display:flex;gap:8px;align-items:center;margin-left:auto;flex-shrink:0}
-.ckacts:empty{display:none}
 .newsup{font-size:11px;color:var(--td);margin:12px 18px 0}
 .newsr .cn{font-size:15px;line-height:1.45}
 .newss{font-size:12.5px;color:#9BA1A9;line-height:1.65;margin:7px 0 10px;white-space:pre-line}
@@ -1718,11 +1709,8 @@ body.panelfull header > *:not(.hrow):not(#hNav){display:none!important}
 #mrPanel.full .mrrow{
   background:rgba(255,255,255,.045);border-radius:14px;
   padding:13px 15px;margin:9px 0;gap:12px;align-items:center}
-/* ★ 5.27 — 칸마다 높이가 들쭉날쭉했다(글만 있는 줄 50 · 입력 칸 줄 70). 입력 칸 줄 높이에 맞춘다. */
-#mrPanel.full .mrrow{min-height:70px}
 #mrPanel.full .mrrow.edt,
 #mrPanel.full .mrrow:empty{background:transparent;padding:2px 0;margin:6px 0}
-#mrPanel.full .mrrow.edt,#mrPanel.full .mrrow:empty{min-height:0}
 #mrPanel.full .mrlbl{
   width:58px;flex-shrink:0;font-size:10.5px;font-weight:600;letter-spacing:.12em;
   color:#93AABD}
@@ -1732,16 +1720,9 @@ body.panelfull header > *:not(.hrow):not(#hNav){display:none!important}
   background:transparent;border:none;border-radius:0;padding:0;
   font-size:15px;font-weight:450;color:var(--th);flex:1;min-width:0}
 #mrPanel.full input::placeholder,#mrPanel.full textarea::placeholder{color:#7C93A8}
-/* ★ 5.28 — 좁은 칸에서 자리글이 「선택하거나 직접 입력하세」 처럼 글자 중간에서 잘렸다. 잘리면 … 로 줄인다. */
-#mrPanel.full input{text-overflow:ellipsis}
 #mrPanel.full select{appearance:none;-webkit-appearance:none;
   background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M1 1l5 5 5-5' fill='none' stroke='%236E8497' stroke-width='1.6' stroke-linecap='round'/></svg>") no-repeat right center}
 #mrPanel.full textarea{resize:vertical;min-height:44px;line-height:1.6}
-/* 5.27 — 눌러서 목록에서 선택하는 칸. 선택 칸(select)과 같은 생김새 */
-.mrpickb{flex:1;min-width:0;min-height:40px;text-align:left;cursor:pointer;
-  background:var(--sf);border:1px solid var(--bd);border-radius:10px;color:var(--tx);padding:7px 30px 7px 10px;font-size:13px;font-family:inherit}
-#mrPanel.full .mrpickb{min-height:44px;background:transparent url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M1 1l5 5 5-5' fill='none' stroke='%236E8497' stroke-width='1.6' stroke-linecap='round'/></svg>") no-repeat right center;
-  border:none;border-radius:0;padding:0 22px 0 0;font-size:15px;font-weight:450;color:var(--th)}
 
 /* 무리 이름표 */
 #mrPanel.full .mrtop b,#mrPanel.full .mrsecthead{
@@ -2079,10 +2060,6 @@ body.panelfull #panel .ph{padding-top:0}
 #searchWrap input:focus,.qbox input:focus{
   border-color:rgba(156,198,232,.55);background:rgba(0,0,0,.42)}
 .qbox{margin:12px 0 10px}
-/* ★ 5.27 — 목록 화면(장비·정기점검·수리·정비수첩·항해일지·연료)의 찾기 칸·안내 글·줄이 화면 끝에 붙어 있었다.
-   목록 줄(.mr)·묶음 이름(.ghead)·숫자 칸(.statrow)은 양옆 20px 을 띄우는데 이 셋만 빠져 있었다. 같은 20px 로 맞춘다. */
-:is(#gearList,#maintList,#repairList,#mlogList,#voyageList,#fuelList,#rvList,#contactsList) > .qbox{margin-left:20px;margin-right:20px}
-:is(#gearList,#maintList,#repairList,#mlogList,#voyageList,#fuelList,#rvList,#contactsList) > :is(.mrnone,.mrrow){margin-left:20px;margin-right:20px}
 #mrPanel.full .qbox{margin:6px 0 12px}
 #mrPanel.full .qbox input{background:rgba(0,0,0,.30);border:1px solid rgba(255,255,255,.10);
   border-radius:13px;padding:13px 14px 13px 40px;font-size:14px}
@@ -2377,26 +2354,18 @@ img.imgbroken::after{content:attr(data-brokentxt);position:absolute;inset:0;
     if(v === undefined){ const p = parse(m); v = p ? fmt((th === 'light' ? light : black)(...p)) : m; M.set(m, v); }
     return v;
   }
-  // 글자 크기표 — 보통(5.19 그대로) · 크게 · 아주 크게
-  // ★★★ 5.27 — 사장님 지적: 「글자크기가 조정되는것도 있고 조정 안되는것도 있네 … 들죽날죽이다」
-  //   5.20 표는 작은 글씨(12→14, +17%)만 크게 키우고 본문(16→17, +6%)·제목(20→20.5)은 거의 그대로,
-  //   24px 이상은 아예 그대로 두었다. 그래서 「크게」 를 골라도 본문·제목은 안 바뀐 것처럼 보였다.
-  //   → 안드로이드 14 의 글자 크기 표(FontScaleConverter, 글꼴 크기 1.15 · 1.3 단계)를 그대로 쓴다.
-  //     작은 글씨는 더, 큰 글씨는 덜 커지지만 **30px 아래는 모두 커진다.** 30px 이상 큰 숫자만 그대로.
-  //     (안드로이드 14 는 이렇게 해서 큰 글씨가 화면을 넘지 않게 하면서 크기 차례를 지킨다.)
-  const FS_BIG    = [[8,9.2],[10,11.5],[12,13.8],[14,16.4],[18,19.8],[20,21.8],[24,25.2],[30,30]];
-  const FS_BIGGER = [[8,10.4],[10,13],[12,15.6],[14,18.8],[18,21.6],[20,23.6],[24,26.4],[30,30]];
-  function fsTable(px, T){
-    if(px >= 30) return px;
-    if(px <= T[0][0]) return Math.round(px * T[0][1] / T[0][0] * 2) / 2;
-    for(let i=0;i<T.length-1;i++){ const [a0,b0]=T[i],[a1,b1]=T[i+1];
+  // 글자 크기표 — 보통(5.19 그대로) · 크게(초안) · 아주 크게
+  const FS = [[9,12],[10,12.5],[11,13],[11.5,13.5],[12,14],[12.5,14.5],[13,15],[13.5,15.5],[14,16],[15,16.5],[16,17],[17,18],[18,19],[20,20.5],[24,24]];
+  function fsBig(px){
+    if(px <= FS[0][0]) return FS[0][1];
+    if(px >= 24) return px;
+    for(let i=0;i<FS.length-1;i++){ const [a0,b0]=FS[i],[a1,b1]=FS[i+1];
       if(px>=a0 && px<=a1) return Math.round((b0+(b1-b0)*(px-a0)/(a1-a0))*2)/2; }
     return px;
   }
-  function fsBig(px){ return fsTable(px, FS_BIG); }
   function fsMap(px, fs){
-    if(fs === 'big') return fsTable(px, FS_BIG);
-    if(fs === 'bigger') return fsTable(px, FS_BIGGER);
+    if(fs === 'big') return fsBig(px);
+    if(fs === 'bigger') return px >= 24 ? px : Math.round(Math.min(24, fsBig(px) * 1.12) * 2) / 2;
     return px;
   }
   const THEMES = ['sunset', 'light', 'black'], SIZES = ['normal', 'big', 'bigger'];
@@ -2430,10 +2399,6 @@ img.imgbroken::after{content:attr(data-brokentxt);position:absolute;inset:0;
           + (theme === 'light' ? `:root{color-scheme:light}` : `:root{color-scheme:dark}`)
         : '')
       // 글자를 키우면 좁아지는 자리 — 칸 이름 자리를 넓히고, 머리줄 연결 상태 글은 배 이름에 자리를 양보한다
-      // ★ 5.27 — 크기를 따로 안 적은 글씨는 브라우저 기본 16px 을 물려받아 안 커졌다(칸 옆 단위 m·L·kt 등). 바탕 크기도 키운다.
-      + (fs !== 'normal' ? `body{font-size:${fsMap(16, fs)}px}` : '')
-      // 「아주 크게」 에서 장비 화면 위 단추 줄(장비 목록·정기점검·리뷰·도면)이 360px 폰에서 두 줄이 되었다 — 단추 안 여백만 줄인다
-      + (fs === 'bigger' ? `.mrhead .tab{padding-left:10px;padding-right:10px}` : '')
       + (wide ? `.mrlbl{width:${wide}px !important} .gtierow .mrlbl{width:${wide - 12}px !important} #syncState{font-size:12px !important}`
           // 아래 탭 줄은 키우지 않는다 — 애플 지침도 탭 줄 이름표는 글자 크기 설정을 따라 커지지 않는다.
           // 화면들이 탭 줄 높이에 맞춰 아래를 비워 두어서, 줄이 높아지면 [저장] 같은 단추를 덮는다(tblsavelive).
