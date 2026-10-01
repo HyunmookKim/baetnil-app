@@ -789,10 +789,7 @@ header{background:rgba(8,21,33,.92);backdrop-filter:blur(12px);border-bottom:1px
 .sub{font-size:10px;letter-spacing:.18em;color:var(--td);font-weight:600;
   display:flex;gap:8px;align-items:baseline;white-space:nowrap;overflow:hidden}
 #boatSub{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-/* ★ 5.27 — 글자를 키우거나 「클라우드 연결 안 됨 · 눌러서 확인」 처럼 상태 글이 길면 배 이름이 한 글자만 남았다.
-   배 이름을 먼저 보이게 하고, 상태 글이 줄어든다. */
-#boatSub{flex:0 0 auto;max-width:62%}
-#syncState{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+#syncState{flex:0 0 auto}
 h1{font-size:20px;font-weight:800;color:var(--th);letter-spacing:-.02em}
 #syncState{font-size:10.5px;font-weight:600;color:var(--tm);letter-spacing:.02em}
 .tab{background:var(--sf2);border:1px solid var(--bd);border-radius:999px;color:#C4C8CD;font-size:12.5px;font-weight:700;padding:8px 13px}
