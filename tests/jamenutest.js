@@ -57,9 +57,11 @@ T('②-3 ★★ 정기점검 묶음 이름표가 사전을 거친다 (한글 계
   (src.match(/<span class="garr">[^\n]*/) || [''])[0]);
 T('②-4 ★ 계통 칸을 고치면 다시 한국어 열쇠로 되돌린다 (묶음이 둘로 갈라지지 않게)',
   // 5.27 — 정기점검 계통은 눌러서 목록에서 선택(grpPick). 목록 값도 직접 입력도 같은 문(mrGrpSet)으로 간다.
-  /function mrGrpSet\(/.test(src) && /mrGrpSet\(v\.g, '기타'\)/.test(src) && /mrGrpSet\(String\(s\)\.trim\(\), '기타'\)/.test(src));
+  /function mrGrpSet\(/.test(src) && /mrGrpSet\(v\.g, dflt\)/.test(src) && /mrGrpSet\(String\(s\)\.trim\(\), dflt\)/.test(src)
+  && /const dflt = K === 'repair' \? '' : '기타';/.test(src));
 T('②-5 ★ 수리 계통도 같은 문을 쓴다',
-  /onchange="mrGrpSet\(this\.value,''\)"/.test(src));
+  // 5.27 — 수리 계통도 눌러서 선택 (사장님: 「내가 그렇게 바꾸라 했잖아」) — 같은 문(grpPick → mrGrpSet)
+  /grpPick\('\$\{jsq\(String\(it\.id\)\)\}','repair'\)/.test(src));
 T('②-6 ★ 엔진 가동 목적도 사전을 거친다',
   /esc\(keyShow\(it\.purpose\) \|\| '—'\)/.test(src) && /esc\(keyShow\(x\.o\.purpose\) \|\| t\('기타'\)\)/.test(src));
 T('②-7 ★ 배 종류 고르는 칸도 사전을 거친다',

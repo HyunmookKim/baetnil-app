@@ -119,6 +119,13 @@ globalThis.vdocs = [
   { id: 'd2', title: '만료일 없음', expiry: '' }
 ];
 
+// ★ 5.27 — 주유 (사장님: 「달력에 기름 넣은건 안나오네」 → 「주유만 넣어라」). 잔량 확인은 안 올린다.
+globalThis.fmtNum = n => String(Math.round(n * 10) / 10);
+globalThis.fuel = [
+  { id: 'f1', date: '2026-09-10', time: '15:35', liters: '100', full: true },
+  { id: 'f2', date: '2026-09-11', kind: 'level', level: 0 }
+];
+
 globalThis.saved = 0;
 const rows = calItems('2026-09-01', '2026-09-30');
 // 넓은 범위 — 지난 정비 이력과 옛날에 올린 고장까지 본다
@@ -403,7 +410,7 @@ const tblKeys = [...new Set((kindTbl.match(/^\s*([a-zA-Z]+)\s*:\s*\{/gm) || []).
 T('⑤-12 ★ 달력에 나오는 갈래가 표에 다 있다',
   rows.every(r => tblKeys.indexOf(r.kind) >= 0), { 나온것: [...new Set(rows.map(r => r.kind))], 표: tblKeys });
 T('⑤-13 ★ 표에만 있고 안 쓰는 갈래가 없다',
-  tblKeys.length === 8, tblKeys);
+  tblKeys.length === 9, tblKeys);   // 5.27 — 주유 갈래가 더해져 아홉
 
 // ══════════════════════════════════════════════════════
 // 6. 새 낱말이 세 언어에 다 있는가
@@ -455,4 +462,16 @@ NEW_WORDS.forEach(w => {
   T('⑨-6 ★ 안 적었으면 빈 칸이다 (— 로 지어내지 않는다)', g('p2').time === '', g('p2'));
   T('⑨-7 ★★ 시각이 아닌 글자는 버린다', g('p3').time === '', g('p3'));
   T('⑨-8 ★ 다녀온 항해도 시각을 보여 준다', g('p4').time === '06:05', g('p4'));
+}
+
+// ── ⑩ 주유 (5.27 — 사장님: 「달력에 기름 넣은건 안나오네」 → 「주유만 넣어라」)
+{
+  const r10 = calItems('2026-09-01', '2026-09-30');
+  const f1 = r10.find(x => x.kind === 'fuel' && x.id === 'f1');
+  T('⑩-1 ★★★ 주유가 그 날짜에 올라간다', !!f1 && f1.date === '2026-09-10', f1);
+  T('⑩-2 ★ 넣은 양과 만탱크가 보인다', !!f1 && /100 L/.test(f1.title) && /만탱크/.test(f1.title), f1);
+  T('⑩-3 ★ 넣은 시각도 담긴다', !!f1 && f1.time === '15:35', f1);
+  T('⑩-4 ★★ 잔량 확인 기록은 안 올린다', !r10.some(x => x.id === 'f2'));
+  T('⑩-5 ★ 주유 갈래 이름·색이 있다', CAL_KINDS.fuel && CAL_KINDS.fuel.n === '주유' && /^#/.test(CAL_KINDS.fuel.c));
+  T('⑩-6 ★ 눌렀을 때 연료 기록 창으로 간다', /fuel:'fuel'/.test(src.slice(src.indexOf('function calGo'), src.indexOf('function calGo') + 400)));
 }

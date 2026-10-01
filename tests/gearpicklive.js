@@ -1,4 +1,4 @@
-// 5.27 — 정기점검 항목의 「계통」·「장비」, 장비의 「상태」 를 눌러서 목록에서 선택 (2026-09-30 사장님 지적)
+// 5.27 — 정기점검·수리의 「계통」·「장비」, 장비의 「상태」 를 눌러서 목록에서 선택 (2026-09-30 사장님 지적)
 // 사장님 말씀: 「정기점검 그 항목에서 보면은 거기에 계통도 있고 그리고 그 안에 이제 어떤 장비인지도 나오는데
 //              그거 그 목록을 이제 내가 눌러 가지고 볼 수 있게 하면 되잖아요」
 // 쓰는 법: node gearpicklive.js ../www/index.html [사진폴더]
@@ -55,7 +55,7 @@ const server = http.createServer((rq, rs) => { const u = rq.url.split('?')[0];
   console.log('장비 목록:', gearOpts.join(' / '));
   T('누르면 장비 목록이 뜬다', gearOpts.includes('엔진') && gearOpts.includes('빌지펌프'));
   T('엔진 계통 항목이면 엔진 쪽 장비(추진·연료)가 먼저 나온다', gearOpts[1] === '엔진' && gearOpts[2] === '연료탱크');
-  T('맨 앞은 선택 안 함, 맨 끝은 장비 추가', gearOpts[0] === '선택 안 함' && gearOpts[gearOpts.length - 1] === '장비 추가');
+  T('맨 앞은 선택 안 함, 끝에 직접 입력·장비 추가', gearOpts[0] === '선택 안 함' && gearOpts[gearOpts.length - 2] === '직접 입력' && gearOpts[gearOpts.length - 1] === '장비 추가');
   if(SHOT) await pg.screenshot({ path: path.join(SHOT, 'gear-list.png') });
   await pg.locator('#formOv .fopt', { hasText: '엔진' }).first().click();
   await pg.locator('#formOv .fbtn.go').click(); await pg.waitForTimeout(500);
@@ -68,12 +68,24 @@ const server = http.createServer((rq, rs) => { const u = rq.url.split('?')[0];
   await pg.locator('#formOv .fopt', { hasText: '선택 안 함' }).first().click();
   await pg.locator('#formOv .fbtn.go').click(); await pg.waitForTimeout(400);
   T('선택 안 함으로 연결을 끊을 수 있다', !(await pg.evaluate(() => maint.find(x => x.id === 'm07').gearId)));
-  // 장비 추가
+  // 직접 입력 — 사장님: 「꼭 등록된 장비가 아닐수도 있으니가 자기가 칠수도 있게」
+  await pg.evaluate(() => { window.askText = () => Promise.resolve('발전기(혼다 EU22i)'); });
+  const nGear0 = await pg.evaluate(() => gearRows().length);
+  await pg.locator('#mrPanel .mrrow', { hasText: '장비' }).locator('button.mrpickb').click(); await pg.waitForTimeout(300);
+  await pg.locator('#formOv .fopt', { hasText: '직접 입력' }).first().click();
+  await pg.locator('#formOv .fbtn.go').click(); await pg.waitForTimeout(700);
+  const typed = await pg.evaluate(() => { const m = maint.find(x => x.id === 'm07'); return { n: m.gearName, id: m.gearId || '' }; });
+  T('직접 입력 — 친 이름이 그 항목에 남는다', typed.n === '발전기(혼다 EU22i)' && !typed.id, typed);
+  T('직접 입력 — 장비 목록에는 안 들어간다', await pg.evaluate(() => gearRows().length) === nGear0);
+  T('직접 입력 — 칸에 친 이름이 보인다', (await pg.locator('#mrPanel .mrrow', { hasText: '장비' }).first().innerText()).includes('발전기(혼다 EU22i)'));
+  // 장비 추가 — 친 이름이 있으면 그 이름으로 장비를 만든다
   await pg.locator('#mrPanel .mrrow', { hasText: '장비' }).locator('button.mrpickb').click(); await pg.waitForTimeout(300);
   await pg.locator('#formOv .fopt', { hasText: '장비 추가' }).first().click();
   await pg.locator('#formOv .fbtn.go').click(); await pg.waitForTimeout(600);
   const made = await pg.evaluate(() => { const m = maint.find(x => x.id === 'm07'); const g = gearOf(m.gearId); return g ? { name: g.name, sys: g.sys } : null; });
   T('장비 추가 — 새 장비를 만들어 연결한다 (계통은 추진)', made && made.sys === '추진');
+  T('장비 추가 — 직접 입력해 둔 이름으로 만든다', made && made.name === '발전기(혼다 EU22i)', made);
+  T('장비 추가 뒤 쳐 둔 이름은 비운다', !(await pg.evaluate(() => maint.find(x => x.id === 'm07').gearName)));
   // 보기 모드에서는 누르는 칸이 아니다
   await pg.evaluate(() => { unlocked = false; openMR('maint', 'm07'); }); await pg.waitForTimeout(300);
   T('편집 중이 아니면 누르는 칸이 안 나온다', await pg.locator('#mrPanel button.mrpickb').count() === 0);
@@ -81,6 +93,19 @@ const server = http.createServer((rq, rs) => { const u = rq.url.split('?')[0];
   await pg.evaluate(() => { unlocked = true; repair = [{ id:'r1', title:'빌지펌프 고장', status:'open', created:'2026-09-30' }]; saveMR(); goMaint('repair'); openMR('repair', 'r1'); });
   await pg.waitForTimeout(400);
   T('수리 창의 장비 칸도 누르는 칸이다', await pg.locator('#mrPanel .mrrow', { hasText: '장비' }).locator('button.mrpickb').count() === 1);
+  // 수리 창 계통 — 사장님: 「내가 그렇게 바꾸라 했잖아」
+  const rgBtn = pg.locator('#mrPanel .mrrow', { hasText: '계통' }).locator('button.mrpickb');
+  T('수리 창의 계통 칸도 누르는 칸이다', await rgBtn.count() === 1);
+  await rgBtn.click(); await pg.waitForTimeout(300);
+  const rgOpts = await pg.locator('#formOv .fopt b').allInnerTexts();
+  T('수리 계통 목록 — 맨 앞 선택 안 함, 계통들, 맨 끝 직접 입력', rgOpts[0] === '선택 안 함' && rgOpts.includes('엔진') && rgOpts[rgOpts.length - 1] === '직접 입력', rgOpts.join('/'));
+  await pg.locator('#formOv .fopt', { hasText: '엔진' }).first().click();
+  await pg.locator('#formOv .fbtn.go').click(); await pg.waitForTimeout(500);
+  T('수리 계통을 선택하면 바뀐다', await pg.evaluate(() => repair[0].grp) === '엔진');
+  await pg.locator('#mrPanel .mrrow', { hasText: '계통' }).locator('button.mrpickb').click(); await pg.waitForTimeout(300);
+  await pg.locator('#formOv .fopt', { hasText: '선택 안 함' }).first().click();
+  await pg.locator('#formOv .fbtn.go').click(); await pg.waitForTimeout(500);
+  T('수리 계통은 비울 수 있다', !(await pg.evaluate(() => repair[0].grp)));
   // ── 장비 창 「상태」 — 사장님: 「이건또 이상이 없는지 있는지 못바꾸냐」 → 1번(누르면 목록, 고장이면 고장 기록)
   await pg.evaluate(() => { unlocked = true; repair = []; saveMR(); setBoatSubTab('gear'); openMR('gear', 'g2'); });
   await pg.waitForTimeout(400);
