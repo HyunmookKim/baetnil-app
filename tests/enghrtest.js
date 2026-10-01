@@ -15,10 +15,17 @@ const blk = src.slice(from, to);
 
 const 하루 = 864e5;
 const 날 = d => { const x = new Date(Date.now() + d*하루); return x.toISOString().slice(0,10); };
-const F = new Function('H', `
+// ★ 5.29 — 엔진 시간은 「마지막 날 뒤 가동시간」 으로 센다. 가동 기록(runs)·항해일지(voyage)를 넣어 준다.
+//   R: [[며칠 전, 시간], …] 엔진 가동 기록. H: 앱 총 가동시간(옛 셈에만 쓰던 값).
+const F = (H, R, V) => new Function('H', 'runs', 'voyage', `
   const t = s => s;
   const tsub = (s,o) => String(s).replace(/\\{(\\w+)\\}/g, (_,k)=> o[k]);
   const engineHours = () => ({ total: H });
+  const voyDay = v => /^\\d{4}-\\d{2}-\\d{2}$/.test(String(v||'')) ? String(v) : '';
+  const voyOutMs = v => v && v.timeOut ? new Date(v.date + 'T' + v.timeOut + ':00').getTime() : null;
+  const runAt = (d, h) => (d && h) ? new Date(d + 'T' + h + ':00') : null;
+  const runOn = r => !!(r && r.on);
+  const runMins = () => null;
   function addPeriod(d, n, u){
     const x = new Date(d + 'T00:00:00');
     if(u === 'd') x.setDate(x.getDate() + n);
@@ -27,102 +34,90 @@ const F = new Function('H', `
     return x;
   }
   ${blk}
-  return { mStatus, mHourLeft, engNow };`);
+  return { mStatus, mHourLeft, engNow, engHoursSince, mHoursUsed };`)(H,
+  (R || []).map(([d, h]) => ({ date: 날(-d), time: '10:00', hours: h })),
+  (V || []).map(([d, h, tm]) => ({ date: 날(-d), timeOut: tm || '', engineH: h })));
 
 // ══ 1. 시간 주기를 안 적으면 여태와 똑같다 ═══════════════════════════
 {
-  const A = F(500);
+  const A = F(500, [[3, 5]]);
   T('★★★ 시간 주기가 없으면 달력만 본다 (있던 기록 그대로)',
     A.mStatus({ lastDate: 날(-10), months:12, unit:'m' }).t.includes('일'));
   T('★★ 아무것도 없으면 「미기록」', A.mStatus({}).k === 'none');
-  T('★★ 시간 주기가 없으면 mHourLeft 가 null', A.mHourLeft({ months:12 }) === null);
+  T('★★ 시간 주기가 없으면 mHourLeft 가 null', A.mHourLeft({ months:12, lastDate: 날(-10) }) === null);
 }
 
-// ══ 2. 시간 주기만 있을 때 ═══════════════════════════════════════════
+// ══ 2. ★★★ 5.29 — 마지막 날 뒤 가동시간으로 센다 (사장님: 「엔진 시간 저건 가동 시간이고 사람이 직접 쓰는
+//      엔진시간은 엔진 가동 얼마나 하고 나서 점검을 받는지 세는 기준인데 … 같이 동기화하면 어떻게 하냐」)
 {
-  const A = F(300);                       // 지금까지 300시간 돌았다
-  // 100시간에 마지막으로 했고 250시간마다 → 350에 해야 함 → 50 남음
-  const s = A.mStatus({ hrs:250, lastH:100 });
-  T('★★★ 시간 주기만 있어도 셈한다', /시간/.test(s.t), s);
-  T('★★★ 남은 시간이 맞다 (50)', /50/.test(s.t), s);
-  T('★★ 아직 여유 있으면 초록', s.k === 'ok', s);
-  // 60시간에 했고 250마다 → 310 → 10 남음 → 곧
-  T('★★★ 20시간 안쪽이면 「곧」 으로 본다', A.mStatus({ hrs:250, lastH:60 }).k === 'soon');
-  // 20에 했고 250마다 → 270 → 이미 30 지남
-  const 지남 = A.mStatus({ hrs:250, lastH:20 });
-  T('★★★ 지났으면 빨강', 지남.k === 'late', 지남);
-  T('★★ 얼마나 지났는지 말한다 (30)', /30/.test(지남.t), 지남);
+  // 마지막 40일 전. 그 전 가동 50시간(안 센다), 그 뒤 가동 4+6=10시간, 항해일지 엔진 2시간
+  const A = F(59.8, [[60, 50], [20, 4], [5, 6]], [[10, 2, '09:00'], [45, 7, '09:00']]);
+  const it = { lastDate: 날(-40), months:'', hrs:30 };
+  T('★★★ 마지막 날 뒤 가동시간만 센다 (12시간 — 앞의 57시간은 안 센다)', A.mHoursUsed(it) === 12, A.mHoursUsed(it));
+  T('★★★ 남은 시간 = 주기 − 그 뒤 가동시간 (30 − 12 = 18)', A.mHourLeft(it) === 18, A.mHourLeft(it));
+  T('★★★ 앱 총 가동시간(59.8)은 셈에 안 들어간다', A.mHourLeft(it) !== (30 + 30 - 59.8));
+  T('★★★ 옛 「마지막 엔진」 값(lastH)이 있어도 셈에 안 쓴다', A.mHourLeft(Object.assign({ lastH:30 }, it)) === 18);
+  const s = A.mStatus(it);
+  T('★★ 상태가 시간으로 나온다 (남음 18시간)', /18/.test(s.t) && /시간/.test(s.t), s);
+  T('★★★ 주기를 넘기면 「지남」', F(0, [[5, 35]]).mStatus({ lastDate: 날(-10), months:'', hrs:30 }).k === 'late');
+  T('★★ 20시간 안쪽이면 「곧」', F(0, [[5, 15]]).mStatus({ lastDate: 날(-10), months:'', hrs:30 }).k === 'soon');
+  T('★★★ 마지막 날짜가 없으면 시간으로 안 센다 (「미기록」)', A.mStatus({ months:'', hrs:30 }).k === 'none');
+  // 완료 처리를 누른 날 — 누른 때 뒤부터
+  const 오늘 = 날(0);
+  const B = F(0, [], [[0, 3, '00:01']]);   // 오늘 00:01 에 나간 항해 엔진 3시간
+  T('★★★ 완료 처리한 날은 누른 때 뒤부터 센다 (그날 앞선 항해는 안 센다)',
+    B.engHoursSince(오늘, Date.now()) === 0 && B.engHoursSince(오늘) === 3);
+  T('★★ 누른 때가 다른 날이면 마지막 날짜 0시부터', B.engHoursSince(오늘, Date.now() - 3 * 864e5) === 3);
+}
+
+// ══ 2-2. ★★★ 5.29 — 달력 주기를 비우면 엔진 시간만 (사장님: 「내가 엔진 시간으로만 하고 싶은데 왜 꼭 날짜가 들어가냐?」)
+{
+  const A = F(59.8, [[20, 4]]);
+  const s = A.mStatus({ lastDate: 날(-44), months:'', unit:'m', hrs:30 });
+  T('★★★ 달력 주기를 비우면 날짜로 세지 않는다 (다음 날짜 없음)', s.next === null && s.days === null, s);
+  T('★★★ 엔진 시간으로만 남은 시간을 말한다', /시간/.test(s.t) && !/일/.test(s.t), s);
+  T('★★ 오래전 날짜여도 달력으로 「지남 n일」 이 안 뜬다', !/일/.test(A.mStatus({ lastDate: 날(-900), months:'', hrs:30 }).t));
+  T('★★ 달력 주기·마지막 날짜 둘 다 없으면 「미기록」', A.mStatus({ months:'', hrs:30 }).k === 'none');
+  T('★★ months 가 0 이어도 달력을 안 본다', A.mStatus({ lastDate: 날(-900), months:0, hrs:30 }).days === null);
+  T('★★★ 옛 기록(months 숫자)은 그대로 달력도 본다', A.mStatus({ lastDate: 날(-10), months:12, unit:'m' }).days !== null);
 }
 
 // ══ 3. ★★★ 둘 다 있으면 먼저 오는 쪽 ═══════════════════════════════
 {
-  const A = F(300);
-  // 달력은 아직 멀었고(300일), 시간은 이미 지남 → 시간이 이긴다
-  const a = A.mStatus({ lastDate: 날(-65), months:12, unit:'m', hrs:250, lastH:20 });
-  T('★★★ 달력은 멀었어도 엔진 시간이 지났으면 그것을 알려 준다',
-    a.k === 'late' && /시간/.test(a.t), a);
+  // 달력은 아직 멀었고, 시간은 이미 지남 → 시간이 이긴다
+  const a = F(0, [[30, 260]]).mStatus({ lastDate: 날(-65), months:12, unit:'m', hrs:250 });
+  T('★★★ 달력은 멀었어도 엔진 시간이 지났으면 그것을 알려 준다', a.k === 'late' && /시간/.test(a.t), a);
   // 달력은 지났고, 시간은 아직 멀었다 → 달력이 이긴다
-  const b = A.mStatus({ lastDate: 날(-400), months:12, unit:'m', hrs:250, lastH:290 });
-  T('★★★ 엔진 시간은 멀었어도 달력이 지났으면 그것을 알려 준다',
-    b.k === 'late' && /일/.test(b.t), b);
-  // 둘 다 여유 — 더 가까운 쪽
-  const c = A.mStatus({ lastDate: 날(-1), months:12, unit:'m', hrs:250, lastH:295 });
-  T('★★★ 둘 다 여유면 더 가까운 쪽을 보여 준다 (시간 245 < 날짜 364)',
-    /시간/.test(c.t), c);
+  const b = F(0, [[30, 10]]).mStatus({ lastDate: 날(-400), months:12, unit:'m', hrs:250 });
+  T('★★★ 엔진 시간은 멀었어도 달력이 지났으면 그것을 알려 준다', b.k === 'late' && /일/.test(b.t), b);
+  // 둘 다 여유 — 더 가까운 쪽 (시간 245 < 날짜 364)
+  const c = F(0, [[0.5, 5]]).mStatus({ lastDate: 날(-1), months:12, unit:'m', hrs:250 });
+  T('★★★ 둘 다 여유면 더 가까운 쪽을 보여 준다', /시간/.test(c.t), c);
 }
 
-// ══ 4. 마지막에 찍어 둔 시간부터 센다 ════════════════════════════════
-{
-  T('★★★ 완료할 때 그때의 엔진 시간을 찍는다', /it\.lastH = engNow\(\)/.test(src));
-  const A = F(1000);
-  // ★★★ 4.102 — 찍어 둔 값이 없으면 **시간으로 세지 않는다** (사장님 지적으로 고침).
-  //   여태는 기준이 없으면 0시간부터 센 셈으로 봤다. 엔진을 이미 400시간 돌린 배에서는
-  //   「250시간 지남」 이 바로 떠 버린다 — 앱이 모르는 것을 아는 척한 것이다.
-  //   기준이 없으면 달력만 보고, 화면에서 [지금부터] 로 기준을 잡게 한다.
-  T('★★★ 찍어 둔 값이 없으면 시간으로 안 센다 (0부터 셌다고 거짓말하지 않는다)',
-    A.mStatus({ hrs:250 }).k === 'none');
-  T('★★ 기준이 있으면 그때부터 센다', A.mStatus({ hrs:250, lastH:900 }).k === 'ok');
-  T('★★★ 기준 + 주기를 넘으면 「지남」 이다', A.mStatus({ hrs:250, lastH:600 }).k === 'late');
-}
+// ══ 4. 완료 처리 ═════════════════════════════════════════════════════
+T('★★★ 완료할 때 누른 때를 찍는다 (그 뒤부터 센다)', /it\.lastAt = Date\.now\(\)/.test(src));
+T('★★ 지난 이력용 「그때 엔진시간」 은 그대로 남긴다', /it\.lastH = engNow\(\)/.test(src));
 
 // ══ 5. 이상한 값에 안 무너진다 ═══════════════════════════════════════
 {
-  const A = F(300);
+  const A = F(300, [[3, 5]]);
   [ {hrs:0}, {hrs:-5}, {hrs:'abc'}, {hrs:null}, {hrs:''} ].forEach(x=>{
-    T('★ 시간 주기가 ' + JSON.stringify(x.hrs) + ' 이면 안 센다', A.mHourLeft(x) === null);
+    T('★ 시간 주기가 ' + JSON.stringify(x.hrs) + ' 이면 안 센다', A.mHourLeft(Object.assign({ lastDate: 날(-10) }, x)) === null);
   });
-  T('★ 엔진 시간을 못 재도 안 터진다',
-    new Function(`const t=s=>s; const tsub=(s,o)=>s; const engineHours=()=>{throw new Error('x')};
-      ${blk} return engNow();`)() === 0);
+  T('★ 마지막 날짜가 이상하면 안 센다', A.engHoursSince('abc') === null && A.engHoursSince('') === null);
 }
 
-// ══ 6. 화면에 칸이 있다 ══════════════════════════════════════════════
-//
-// ★★★ 4.102 — 화면을 **다시 만들었다** (사장님 지적)
-//   사장님: 「이해가 딱 봐서 하나도 안 되는데 이걸 어떻게 쓰라는 거야? 누가 어플을 공부해서 쓰냐?」
-//   옛 화면: 「엔진 시간 [ ] 안 쓰면 달력만 · 지금까지 21.6시간 · [지금부터][기준 지움][오늘로 맞춤]」
-//     — 「기준」 이 뭔지 화면에 없고, 단추 셋이 뭐가 다른지 눌러 봐야 알았다.
-//   새 화면: 차량 정비 앱(오토업·마카롱·카닥)처럼 **두 가지만** 묻는다 —
-//     주기   [6][개월▾]  엔진 [250] 시간
-//     마지막 [2026-09-04]  엔진 [21.6] 시간  [지금 21.6시간]
-//   ★ 그래서 여기서 보는 것도 바뀌었다. 「엔진 시간」 이라는 **낱말**이 아니라
-//     **주기 옆과 마지막 옆에 엔진 칸이 하나씩 있는가** 를 본다.
-T('★★★ 주기 줄에 엔진 시간 칸이 있다',
-  /function mCycleRow/.test(src) && /mrField\('hrs'/.test(src));
-T('★★★ 마지막 줄에 그때의 엔진 시간 칸이 있다',
-  /function mLastRow/.test(src) && /mrField\('lastH'/.test(src));
-T('★★★ 단추 이름에 들어갈 숫자를 그대로 보여 준다 (눌러 보지 않아도 안다)',
-  /지금 \{n\}시간/.test(src));
-// ★ 주석에는 「무엇이 잘못이었나」 를 적어 두었으므로 옛 이름이 나온다.
-//   보아야 할 것은 **화면에 그 말이 나가는가** 다 — t('…') 로 지나는 것만 본다.
-T('★★★ 「기준」 이라는 말이 화면에 안 나간다',
-  !/t\('기준 지움'\)|t\('지금부터'\)|t\('오늘로 맞춤'\)/.test(src));
-T('★★ 엔진 칸을 비우면 달력만 본다고 알려 준다',
-  /비워 두면 달력만 봅니다/.test(src));
-T('★★ 둘 다 적으면 먼저 오는 쪽을 알려 준다고 적혀 있다',
-  /먼저 오는 쪽을 알려 드립니다/.test(src));
-T('★★ 도움말이 있다 (「?」 를 둘에서 하나로 줄였다)',
-  /cycle: \[t\('점검 주기'\)/.test(src) && !/hrs: \[t\(/.test(src));
+// ══ 6. 화면 ══════════════════════════════════════════════════════════
+T('★★★ 주기 줄에 엔진 시간 칸이 있다', /function mCycleRow/.test(src) && /mrField\('hrs'/.test(src));
+T('★★★ 5.29 — 마지막 줄에 엔진 시간을 적는 칸이 없다 (사람은 날짜만 적는다)', !/mrField\('lastH'/.test(src));
+T('★★★ 5.29 — 「지금 n시간」 단추(가동시간을 칸에 넣던 것)가 없다', !/mHourBaseNow\(/.test(src.replace(/\/\/[^\n]*/g, '')));
+T('★★ 마지막 줄에 그 뒤 가동시간을 보여 준다 (앱이 센 값)', /t\('가동시간'\)/.test(src.slice(src.indexOf('function mLastRow'), src.indexOf('function mStatus'))));
+T('★★★ 「기준」 이라는 말이 화면에 안 나간다', !/t\('기준 지움'\)|t\('지금부터'\)|t\('오늘로 맞춤'\)/.test(src));
+T('★★ 엔진 칸을 비우면 달력만 본다고 알려 준다', /비워 두면 달력만 봅니다/.test(src));
+T('★★ 둘 다 적으면 먼저 오는 쪽을 알려 준다고 적혀 있다', /먼저 오는 쪽을 알려 드립니다/.test(src));
+T('★★★ 5.29 — 지어낸 문장 「엔진 시간만 봅니다」 가 화면에 안 나간다', !/t\('엔진 시간만/.test(src) && !/'엔진 시간만 봅니다/.test(src));
+T('★★ 도움말이 있다', /cycle: \[t\('점검 주기'\)/.test(src));
 
 console.log('\n통과 ' + pass + ' · 실패 ' + fail);
 process.exit(fail ? 1 : 0);

@@ -1,4 +1,4 @@
-const CACHE = 'baetnil-5.9';
+const CACHE = 'baetnil-5.29';
 const TILES = 'baetnil-tiles';   // 지도 타일 전용 (앱 버전을 올려도 지우지 않는다)
 const PHOTOS = 'baetnil-photos'; // 창고 사진 전용 (앱 버전을 올려도 지우지 않는다)
 
@@ -28,7 +28,7 @@ const SEEN = 'baetnil-seen';     // 한 번 본 사진 (글판·장터·정박�
 const SEEN_KEEP = 200;
 // ★ 5.6 — 파이어베이스를 앱 파일로 넣었다. 인터넷이 끊겨도 켜지려면 이것도 담아 둔다.
 const ASSETS = ['./','./index.html','./manifest.webmanifest','./font.woff2','./icon-192.png','./icon-512.png','./icon-180.png',
-  './firebase/app.js','./firebase/auth.js','./firebase/chunk-4EOZNMR2.js','./firebase/firestore.js','./firebase/functions.js','./firebase/storage.js'];
+  './firebase/app.js','./firebase/auth.js','./firebase/chunk-6S4RX4WH.js','./firebase/firestore.js','./firebase/functions.js','./firebase/storage.js'];
 const TILE_HOSTS = ['tile.openstreetmap.org','tiles.openseamap.org'];
 
 // ★ 왜 이렇게 하는가 (2.13 까지 실제로 겪은 사고)
@@ -57,13 +57,33 @@ self.addEventListener('install', e=>{
 self.addEventListener('activate', e=>{
   e.waitUntil(caches.keys()
     .then(ks=>Promise.all(ks.filter(k=>k!==CACHE && k!==TILES && k!==PHOTOS && k!==SEEN).map(k=>caches.delete(k))))
+    // ★ 5.10 — 앞 판이 담아 둔 자료 파일(?v=…)·오류 응답을 치운다 (위 fetch 주석 참고)
+    .then(()=>caches.open(CACHE)).then(async c=>{
+      try{
+        const reqs = await c.keys();
+        await Promise.all(reqs.map(async r=>{
+          let uu = null; try{ uu = new URL(r.url); }catch(_){}
+          if(uu && uu.searchParams.has('v')) return c.delete(r);
+          const res = await c.match(r);
+          if(res && !res.ok) return c.delete(r);
+        }));
+      }catch(_){}
+    }).catch(()=>{})
     .then(()=>self.clients.claim()));
 });
 
 // 화면 파일 — 인터넷 우선. 새로 받으면 저장분도 갱신한다.
+//
+// ★★★ 5.14 — 켤 때마다 화면 파일(4.6MB, 압축 1.9MB)을 통째로 받던 것을 고쳤다.
+//   여태 cache:'reload' 였다 — 「묻지 않고 늘 통째로 받는다」(MDN). 바뀐 것이 없어도 매번 받았다.
+//   다른 웹사이트들이 하는 대로 cache:'no-cache' 로 바꾼다 — 「바뀌었나요?」 만 묻고,
+//   서버가 「그대로」(304)라고 하면 브라우저가 가진 것을 쓴다. 바뀌었으면 그때 받는다.
+//   baetnil.com 은 파일 날짜(Last-Modified)를 주고 304 로 답한다 — 2026-09-23 실제로 물어서 확인.
+//   ★ 새 판이 늦게 가는 일은 없다. 매번 서버에 묻는 것은 그대로다.
+//   ★ install 의 cache:'reload' 는 그대로 둔다 — 새 서비스워커가 설치될 때는 반드시 새로 받아야 한다(2.13 사고).
 async function networkFirst(req){
   try{
-    const res = await fetch(new Request(req, { cache:'reload' }));
+    const res = await fetch(new Request(req, { cache:'no-cache' }));
     if(res && res.ok){
       const copy = res.clone();
       caches.open(CACHE).then(c=>c.put(req, copy)).catch(()=>{});
@@ -168,11 +188,20 @@ self.addEventListener('fetch', e=>{
              || u.pathname.endsWith('/sw.js');
   if(isDoc){ e.respondWith(networkFirst(e.request)); return; }
 
+  // ★★★ 5.10 — ?v= 를 붙여 부르는 자료 파일(tide.json?v=… · current.json?v=… · hc-eot20.txt?v=…)은 건드리지 않는다.
+  //   앱이 스스로 기기(IndexedDB)에 담아 두고, 매번 ?v=지금시각 을 붙여 새로 받는다.
+  //   여기서 담으면 부를 때마다 주소가 달라 **같은 자료가 끝없이 쌓였다**(tide.json 3MB 가 부를 때마다 한 벌씩).
+  //   그리고 없는 파일의 404 까지 담아서, 나중에 파일이 생겨도 영영 404 로 나왔다.
+  if(u.searchParams.has('v')){ return; }
+
   // 아이콘·매니페스트 같은 것은 저장분 우선 (배 위에서 인터넷이 없다)
   e.respondWith(
     caches.match(e.request).then(hit=> hit || fetch(e.request).then(res=>{
-      const copy = res.clone();
-      caches.open(CACHE).then(c=>c.put(e.request, copy)).catch(()=>{});
+      // ★ 5.10 — 성한 응답만 담는다. 404·500 을 담으면 그 파일이 영영 안 보인다.
+      if(res && res.ok){
+        const copy = res.clone();
+        caches.open(CACHE).then(c=>c.put(e.request, copy)).catch(()=>{});
+      }
       return res;
     }).catch(()=>caches.match('./index.html')))
   );

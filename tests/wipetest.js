@@ -61,7 +61,9 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + cut(n)); } else { 
   T('백업을 먼저 받게 한다', /backupData\(\)/.test(w));
   // ★ 남의 배에 얹혀 있는 경우 — 그 배는 안 지워진다. 그걸 말해 줘야 한다.
   T('남의 배는 안 지워진다고 말한다', /guestBoats\(\)/.test(w) && /지워지지 않습니다/.test(w));
-  T('남의 댓글도 함께 사라진다고 말한다', /남의 댓글/.test(w));
+  // ★ 5.29 — 사장님 「2는 2로」: 커뮤니티 글·댓글은 남고 「탈퇴한 회원」 으로 보인다. 그걸 먼저 말한다.
+  T('남는 글·댓글을 말하고, 지우려면 탈퇴 전에 지우라고 한다',
+    /남는 것/.test(w) && /탈퇴한 회원/.test(w) && /탈퇴하기 전에 직접 지워/.test(w));
   // 숫자 세기가 늦어도 화면은 먼저 떠야 한다
   T('세는 동안 화면이 먼저 뜬다', w.indexOf('showPanel(P)') < w.indexOf('minePosts(false)'));
   T('못 세도 화면이 안 무너진다', /셀 수 없음/.test(w));
@@ -119,7 +121,7 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + cut(n)); } else { 
   T('다시 로그인이 필요하면 거기서 멈춘다',
     /if\(r === 'relogin'\)/.test(d) && d.indexOf("r === 'relogin'") < d.indexOf('wipeLocal()'));
   T('멈췄을 때 무엇을 하라고 알려 준다', /다시 로그인/.test(d) && /로그아웃/.test(d));
-  T('이미 지운 것은 지웠다고 말해 준다', /이미 지웠습니다/.test(d));
+  T('이미 한 것은 했다고 말해 준다', /이미 지웠고/.test(d) && /탈퇴한 회원/.test(d));
   T('끝나면 알려 준다', /계정을 지웠습니다/.test(d));
   T('한 걸음마다 넘어져도 계속 간다', (d.match(/catch\(_\)\{\}/g) || []).length >= 3);
 
@@ -137,7 +139,10 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + cut(n)); } else { 
   T('계정 창구가 있다', /window\.__account = \{/.test(mod));
   const seg = mod.slice(mod.indexOf('window.__account'), mod.indexOf('window.__auth = {'));
   T('세기와 지우기를 한 곳에서 한다', /async minePosts\(del\)/.test(seg));
-  T('세 곳을 다 본다', /'community', ?'spots', ?'market'/.test(seg));
+  // ★ 5.29 — 정박지·장터는 지우고, 커뮤니티 글과 모든 댓글은 이름만 지운다
+  T('정박지·장터는 지운다', /\['spots', ?'market'\]/.test(seg) && /deleteDoc\(d\.ref\)/.test(seg));
+  T('커뮤니티 글과 댓글은 이름만 지운다', /collection\(fdb, 'community'\)/.test(seg)
+    && /collectionGroup\(fdb, 'comments'\)/.test(seg) && /gone: true/.test(seg));
   T('내가 올린 것만 본다', /where\('by','==',uid\)/.test(seg));
   T('명부 기록을 지운다', /deleteDoc\(doc\(fdb, 'users', uid\)\)/.test(seg));
   T('로그인 계정을 지운다', /deleteUser\(fauth\.currentUser\)/.test(seg));

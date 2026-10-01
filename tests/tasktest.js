@@ -38,7 +38,7 @@ globalThis.boats = [];
 { const m = src.match(/const RANK_SEED = \[[\s\S]*?\n\];/); if(m) eval(m[0].replace('const RANK_SEED','globalThis.RANK_SEED')); }
 
 const need = ['mkPerms','seedRanks','rankList','rankOf','myRank','myPos','permOf','can',
-              'taskItem','assignTask','taskOwnerName','myTasks','openTasksOf','taskCount','mStatus','mHourLeft','addPeriod','addMonths'];
+              'taskItem','assignTask','taskOwnerName','myTasks','openTasksOf','taskCount','mStatus','mHourLeft','mHasMonths','mHoursUsed','engHoursSince','addPeriod','addMonths'];
 const missing = need.filter(f => !grab(src, f));
 if(missing.length){
   console.log('★ 함수가 없습니다: ' + missing.join(', '));
@@ -48,6 +48,7 @@ if(missing.length){
 // ★ 앱은 화면 글자를 사전(t)을 거쳐 낸다. 한국어에서는 원문을 그대로 내주므로
 //   여기서는 그대로 돌려주는 t 를 끼워 두면 검사의 뜻이 그대로 산다.
 globalThis.t = x => x;
+globalThis.voyage = []; globalThis.runs = []; globalThis.voyDay = v => /^\d{4}-\d{2}-\d{2}$/.test(String(v||'')) ? String(v) : '';
 for(const f of need){ eval('globalThis.'+f+' = '+grab(src,f)); }
 
 let pass=0, fail=0;

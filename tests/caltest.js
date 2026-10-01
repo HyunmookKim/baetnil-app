@@ -57,7 +57,7 @@ T('②-3 달력 이름의 저장 칸이 없다', SY && SY.every(x => !/^cal/i.te
 // ══════════════════════════════════════════════════════
 // 3. 실제로 돌려 본다
 // ══════════════════════════════════════════════════════
-const need = ['calItems', 'calIcs', 'mStatus', 'mHourLeft', 'addPeriod', 'addMonths',
+const need = ['calItems', 'calIcs', 'mStatus', 'mHourLeft', 'mHasMonths', 'mHoursUsed', 'engHoursSince', 'addPeriod', 'addMonths',
               'fmtDate', 'vdocDue', 'maintRows', 'mlogRows', 'icsEsc', 'icsFold'];
 const missing = need.filter(f => !grab(src, f));
 if(missing.length){
@@ -89,7 +89,8 @@ globalThis.APP_VER = '0';
   if(!m){ console.log('★ 실패: 갈래 표(CAL_KINDS)가 없습니다'); process.exit(1); }
   eval(m[0].replace('const CAL_KINDS', 'globalThis.CAL_KINDS')); }
 
-for(const f of ['mHourLeft', 'addMonths', 'addPeriod', 'fmtDate', 'vdocDue',
+globalThis.runs = []; globalThis.voyDay = v => /^\d{4}-\d{2}-\d{2}$/.test(String(v||'')) ? String(v) : '';
+for(const f of ['mHourLeft', 'mHasMonths', 'mHoursUsed', 'engHoursSince', 'addMonths', 'addPeriod', 'fmtDate', 'vdocDue',
                 'maintRows', 'mlogRows', 'mStatus', 'icsEsc', 'icsFold', 'calItems', 'calIcs']){
   eval('globalThis.' + f + ' = ' + grab(src, f).replace(/^(async )?function /, (a, b) => (b || '') + 'function '));
 }
