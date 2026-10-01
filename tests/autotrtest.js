@@ -36,7 +36,7 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.lo
   const B = grab('trBar');
   T('★★★ 안 옮겨진 남의 말 글은 알아서 옮긴다', /trAuto\(/.test(B), B.slice(-500));
   T('★★★ 「번역해서 보기」 를 기본으로 내놓지 않는다',
-    B.indexOf('trAuto(') < B.indexOf("t('번역해서 보기')"), B.slice(-500));
+    B.indexOf('trAuto(') < B.indexOf("t('번역 보기')"), B.slice(-500));
   T('★★ 옮긴 뒤에는 「원어로 보기」 만 남는다', /trOff\(/.test(B) && /원어로 보기/.test(B));
   // ★ 4.85 — 「내 말인가」 를 셈하는 곳을 trMine 하나로 모았다.
   //   전에는 trBar 와 trAuto 가 따로 셈해서, 한국어 글에 러시아어 댓글이 달리면

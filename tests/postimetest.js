@@ -64,7 +64,7 @@ function grab(s, name){
   T('★★★ 그 시각 날씨도 같이 받는다 (또 「받기」 를 안 누르게)',
     /if\(넣은\)\{[\s\S]{0,200}wxCapture\(key, id\)/.test(ph), ph);
   T('★★★ 무엇을 넣었는지 사람에게 말한다 (몰래 고치지 않는다)',
-    /\{what\} 시각도 \{t\}로 함께 넣었습니다\./.test(ph), ph);
+    /\{what\} 시각도 \{t\}로 함께 입력했습니다\./.test(ph), ph); // 5.30 — 문구 바뀜
   T('★★ 어느 자리인지 사람 말로 적는다', !!grab(src, 'posWhatName'));
   const wn = new Function(`const t = s => s; ${grab(src, 'posWhatName')} return posWhatName;`)();
   T('★★ 출발이라고 부른다', wn('wxOut') === '출발');
@@ -175,7 +175,7 @@ function grab(s, name){
 
 // ══ 6. 새로 쓴 말이 네 나라 말에 다 있다 ═══════════════════════════
 {
-  ['{what} 시각도 {t}로 함께 넣었습니다.','지금 출발 (시각·위치·날씨)'].forEach(k=>{
+  ['{what} 시각도 {t}로 함께 입력했습니다.','지금 출발 (시각·위치·날씨)'].forEach(k=>{
     ['en','ru','ja'].forEach(lg=>{
       const i = src.indexOf('\n  ' + lg + ': {');
       const j = src.indexOf('\n  },', i);

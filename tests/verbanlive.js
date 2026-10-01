@@ -108,7 +108,7 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);}
     /새로고침 필요/.test((await 줄()).글), await 줄());
   // ★ 4.106 까지 {old}/{now} 가 뒤집혀 「지금 (새 파일) 이 돌고 있습니다」 로 나왔다.
   T('★★★ 띠가 「지금 도는 판」을 바르게 말한다',
-    new RegExp('지금 ' + APP_VER.replace('.', '\\.')).test((await 띠()) || ''), await 띠());
+    new RegExp('현재 실행 중: ' + APP_VER.replace('.', '\\.')).test((await 띠()) || ''), await 띠());
 
   // ══ ④ 사진·지도 저장분을 앱 파일로 착각하지 않는다 ═══════════════
   await pg.evaluate(async ()=>{

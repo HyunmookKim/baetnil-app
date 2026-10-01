@@ -52,7 +52,7 @@ function fakeWx(u){
   }, { w: fakeWx('forecast'), m: fakeWx('marine') });
   // 오늘 화면의 「지금 나갈 수 있나」 칸만 본다
   const homeTxt = () => pg.evaluate(()=>{ const H = document.getElementById('homeList'); if(!H) return '';
-    const t = H.innerText; const i = t.indexOf('지금 나갈 수 있나'); return i < 0 ? '(날씨 칸 없음) ' + t.slice(0,80) : t.slice(i, i + 160); });
+    const t = H.innerText; const i = t.indexOf('출항 가능 여부'); return i < 0 ? '(날씨 칸 없음) ' + t.slice(0,80) : t.slice(i, i + 160); });
 
   // ── ① 켜자마자 — 담아 둔 날씨가 곧바로, 「3시간 전 예보」 로
   wxCalls = 0;
@@ -61,7 +61,7 @@ function fakeWx(u){
   await pg.evaluate(()=>{ try{ skipWelcome(); }catch(_){} homeSub='today'; switchTab('home'); });
   await sleep(300);
   let h = await homeTxt();
-  T('★ 켜고 2초 — 날씨 서버가 아직 대답 전인데 오늘 화면에 담아 둔 날씨가 떠 있다', /나갈 만합니다|조심하세요|나가지 마세요/.test(h) && /9kt/.test(h), h.slice(0,200));
+  T('★ 켜고 2초 — 날씨 서버가 아직 대답 전인데 오늘 화면에 담아 둔 날씨가 떠 있다', /출항해도 좋습니다|주의|출항하지 마세요/.test(h) && /9kt/.test(h), h.slice(0,200));
   T('★ 옛 예보라는 것을 밝힌다 (3시간 전 예보)', /3시간 전 예보/.test(h), h.slice(0,200));
   T('뒤에서 새 예보를 받으러 갔다', wxCalls > 0, wxCalls);
   await sleep(4500);
@@ -90,7 +90,7 @@ function fakeWx(u){
   await pg.evaluate(()=>{ wxTryAt = 0; wxFailed = false; wxCur = { id:'s2', name:'거문도', lat:34.03, lon:127.31 }; renderHome(); });
   await sleep(2500);
   h = await homeTxt();
-  T('★ 못 받았으면 「받지 못했습니다」 와 [다시 시도] (영영 「받는 중」 이 아니다)', /받지 못했습니다/.test(h) && /다시 시도/.test(h), h.slice(0,200));
+  T('★ 못 받았으면 「받지 못했습니다」 와 [다시 시도] (영영 「받는 중」 이 아니다)', /불러오지 못했습니다/.test(h) && /다시 시도/.test(h), h.slice(0,200));
 
   T('오류가 없다', errs.length === 0, errs.slice(0,3));
   await br.close(); server.close();

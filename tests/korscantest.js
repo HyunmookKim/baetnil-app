@@ -114,7 +114,7 @@ T('setSync 가 스스로 옮긴다', /el\.textContent = t\(msg\)/.test(grab('set
 T('acMsg 가 스스로 옮긴다', /esc\(t\(one\)\)/.test(grab('acMsg')));
 T('acMsg 매개변수가 t 를 가리지 않는다', /function acMsg\(msg\)/.test(src));
 T('배 등록 GPS 안내가 사전을 거친다', /const say = msg => \{[^}]*t\(msg\)/.test(src));
-T('banNotice 가 스스로 옮긴다', /t\('글쓰기가 막혀 있습니다\.'\)/.test(grab('banNotice')));
+T('banNotice 가 스스로 옮긴다', /t\('글쓰기가 차단되었습니다\.'\)/.test(grab('banNotice')));  // 5.30 — 문구 바뀜
 T('권한 안내를 부르는 쪽이 옮긴다', !/if\(why\)\{ tell\(why\); return; \}/.test(src));
 
 console.log('\n합계: ' + pass + '개 통과 / ' + fail + '개 실패');

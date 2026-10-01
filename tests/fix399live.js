@@ -130,7 +130,7 @@ async function mk(x0,y0,x1,y1,n,z){ await drag(x0,y0,x1,y1); await fillForm([n,z
   T('화면에도 벽면 표시(b-w)가 붙는다', /b-w/.test(cls), cls);
   // 되돌릴 수 있어야 한다
   await pg.evaluate(i=>lkMenu(i), id0); await pg.waitForTimeout(500);
-  await fillForm(['선수 창고','선수'], ['1층','물건 칸']);
+  await fillForm(['선수 창고','선수'], ['1층','수납칸']);
   await pg.waitForTimeout(500);
   const back = (await LK())[0];
   T('다시 1층·물건 칸으로 되돌릴 수 있다', !back.deck2 && !back.wall, back);

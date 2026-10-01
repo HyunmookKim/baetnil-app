@@ -35,7 +35,7 @@ T('비용은 고르기 두 가지뿐이다',
   && (src.match(/const RIDE_COST = \[[\s\S]*?\];/)||[''])[0].split("v:'").length - 1 === 2);
 T('비용 칸에 숫자를 넣는 자리가 없다',
   !/key:'cost'[\s\S]{0,200}type:'(?!pick)/.test(edit));
-T('한마디에 금액을 적으면 막는다', /원\|만원\|천원/.test(edit) && /금액은 적을 수 없습니다/.test(edit));
+T('한마디에 금액을 적으면 막는다', /원\|만원\|천원/.test(edit) && /금액은 입력할 수 없습니다/.test(edit)); // 5.30 — 문구 바뀜
 T('법 안내를 한 곳에서만 정한다',
   (src.match(/const RIDE_LAW =/g) || []).length === 1
   && /낚시어선업 신고나 마리나선박 대여업 등록/.test(src));

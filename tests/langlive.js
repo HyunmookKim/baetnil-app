@@ -278,7 +278,7 @@ const LIMIT = { home: 0, boat: 0, voyage: 0, stow: 0 };
     await pg.waitForTimeout(400);
     const ko = await pg.evaluate(()=>document.getElementById('homeList').innerText);
     T('한국어판은 그대로다 — 고르는 줄',
-      ko.indexOf('어느 쪽이십니까') >= 0 && ko.indexOf('배가 있습니다') >= 0
+      ko.indexOf('어느 쪽에 해당하시나요?') >= 0 && ko.indexOf('배가 있습니다') >= 0
       && ko.indexOf('타기만 합니다') >= 0, ko.slice(0,160));
     T('한국어판은 그대로다 — 배 쪽이 먼저 펴져 있다',
       ko.indexOf('배 한 척의 기록을 한 곳에') >= 0 && ko.indexOf('배 등록하기') >= 0, ko.slice(0,220));

@@ -67,8 +67,8 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.lo
   T('★★★ 잔량이 9/30 확인(0L) + 100L − 그 뒤 충전분이다 (90~100)', 잔량 > 90 && 잔량 < 100, scr.st);
   const lph = parseFloat((scr.st[2]||'').split(' ')[0]);
   T('★★★ L/시간이 3.0 이 아니다 — 실제로 쓴 240L 가 들어갔다', lph > 4, scr.st);
-  T('★★★ 앱이 보던 양과 실제가 달랐다고 말한다', /잔량 확인 때 앱은 \d+L 남았다고 봤는데 실제는 0L였습니다/.test(scr.txt), scr.txt.slice(0,600));
-  T('★★★ 잔량 설명에 확인 뒤 넣은 100L 가 나온다', /0L에 그 뒤 넣은 100L를 더하고/.test(scr.txt), scr.txt.slice(0,900));
+  T('★★★ 앱이 보던 양과 실제가 달랐다고 말한다', /잔량 확인 때 추정 잔량은 \d+L, 실제 잔량은 0L였습니다/.test(scr.txt), scr.txt.slice(0,600));
+  T('★★★ 잔량 설명에 확인 뒤 넣은 100L 가 나온다', /0L에 이후 주유량 100L를 더하고/.test(scr.txt), scr.txt.slice(0,900));
   T('★★ 잔량 확인 방법 줄이 있다', /잔량 확인 방법/.test(scr.txt) && /앱 추정/.test(scr.txt) && /연료 게이지/.test(scr.txt));
   if(SHOT) await pg.screenshot({ path: path.join(SHOT, 'fuel524-est.png'), fullPage: false });
   // ── 지금 잔량을 적는다 → 기록이 쌓이고 목록에 보인다

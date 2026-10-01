@@ -49,7 +49,7 @@ if(BOX){
   // 사장님 백업 그대로 — maint 도 review 도 없다
   const 사장님 = { port:true, spec:true, intro:true, phone:true, board:true, voyage:true };
   const off = F(사장님)('maint');
-  T('★★★ 배 쪽이 꺼져 있으면 말해 준다', /꺼져 있어 아직 안 올라갑니다/.test(off), off.slice(0,140));
+  T('★★★ 배 쪽이 꺼져 있으면 말해 준다', /꺼져 있어 아직 공개되지 않습니다/.test(off), off.slice(0,140)); // 5.30 — 문구 바뀜
   T('★★★ 그 자리에 켜는 단추가 있다', /pubGateOn\('maint'\)/.test(off), off.slice(0,240));
   T('★★ 어느 스위치인지 이름을 대 준다', /정비 기록/.test(off), off.slice(0,140));
   const rv = F(사장님)('review');

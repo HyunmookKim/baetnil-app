@@ -77,7 +77,7 @@ t('골라 둔 분야는 오늘 목록에 없어도 남긴다',
   /notiGet\(\)\[notiCatKey\(kind\)\]\.forEach/.test(fn('newsCats')));
 t('없어진 연재도 끌 수 있게 남긴다', /names\.indexOf\(n\) < 0\) names\.push\(n\)/.test(fn('openNotiSubs')));
 // ★ 아직 보내는 장치가 없다. 켜 놓고 안 오면 고장으로 읽힌다 — 조용한 실패가 가장 나쁘다
-t('아직 안 온다는 것을 말해 준다', !!fn('notiSoonHtml') && /만드는 중/.test(fn('notiSoonHtml')));
+t('아직 안 온다는 것을 말해 준다', !!fn('notiSoonHtml') && /준비 중/.test(fn('notiSoonHtml'))); // 5.30 — 문구 바뀜
 // ★ 정비는 이제 진짜 울린다. 셋을 한 말로 뭉뚱그리면 그 자체가 거짓말이 된다.
 t('고르는 두 화면은 아직이라고 말한다',
   ['openNotiCats','openNotiSubs'].every(n=>/notiSoonHtml\(\)/.test(fn(n))));
@@ -135,11 +135,11 @@ t('기본값이 저장 구조에 있다', (()=>{
   const m = h.match(/const NOTI_DEF = \{[\s\S]*?\n\};/);
   return m && /maintBefore:/.test(m[0]) && /maintAgain:/.test(m[0]) && /maintAt:/.test(m[0]); })());
 // ★ 못 걸었으면 왜 못 걸었는지 말한다 — 조용한 실패가 가장 나쁘다
-t('몇 개 걸어 뒀는지 보여 준다', /걸어 둔 알람 \{n\}개/.test(fn('maintAlarmHtml')));
-t('못 걸었으면 까닭을 보여 준다', /알람을 걸지 못했습니다/.test(fn('maintAlarmHtml'))
+t('몇 개 걸어 뒀는지 보여 준다', /설정된 알람 \{n\}개/.test(fn('maintAlarmHtml'))); // 5.30 — 문구 바뀜
+t('못 걸었으면 까닭을 보여 준다', /알람을 설정하지 못했습니다/.test(fn('maintAlarmHtml')) // 5.30 — 문구 바뀜
   && /maintAlarmLast\.why/.test(fn('maintAlarmHtml')));
-t('웹에서는 웹이라 안 된다고 말한다', /웹에서는 알람을 걸 수 없습니다/.test(fn('maintAlarmHtml')));
-t('걸 기한이 없으면 그렇다고 말한다', /걸어 둘 기한이 없습니다/.test(fn('maintAlarmHtml')));
+t('웹에서는 웹이라 안 된다고 말한다', /웹에서는 알람을 설정할 수 없습니다/.test(fn('maintAlarmHtml'))); // 5.30 — 문구 바뀜
+t('걸 기한이 없으면 그렇다고 말한다', /설정할 기한이 없습니다/.test(fn('maintAlarmHtml'))); // 5.30 — 문구 바뀜
 t('손으로 다시 걸 수 있다', !!fn('maintAlarmNow') && /maintAlarmNow\(\)/.test(fn('maintAlarmHtml')));
 t('실패한 까닭을 들고 있는다', /let maintAlarmLast = \{ n: 0, why: '', at: '' \};/.test(h));
 // ★ 기한이 바뀌면 알람도 따라와야 한다
@@ -209,7 +209,7 @@ t('분야 단추가 38px 이상', /\.catbtn\{min-height:38px/.test(h));
 t('고르는 단추가 38px 이상', /\.optb\{min-height:38px/.test(h));
 
 // ── 8. 말 — 세 나라 말 다
-['설정','알림 받기','이 항목 알림','미루기','준비 중','밤에는 안 울리기','알림 꺼짐','미룸','구독 · 관심','구독한 연재','관심 분야 소식','구독','구독 중','관심 분야','관심 분야 선택','정비 · 점검','며칠 전에','지나면 다시','울리는 시각','당일에만',// 5.0 — 「다시 걸기」 는 「다시 등록」 으로 합쳐졌고, 「글판」 은 「게시판」 이 되었다
+['설정','알림 받기','이 항목 알림','미루기','준비 중','야간 알림 끄기','알림 꺼짐','미룸','구독 · 관심','구독한 연재','관심 분야 소식','구독','구독 중','관심 분야','관심 분야 선택','정비 · 점검','사전 알림','기한 경과 후 다시 알림','알림 시각','당일에만',// 5.0 — 「다시 걸기」 는 「다시 등록」 으로 합쳐졌고, 「글판」 은 「게시판」 이 되었다
  '안 함','다시 등록','소식','게시판 · 정박지'].forEach(k=>{
   const re = new RegExp("'" + k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + "':'[^']+'", 'g');
   t('세 나라 말 — ' + k, (h.match(re)||[]).length >= 2);

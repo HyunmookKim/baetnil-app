@@ -67,7 +67,7 @@ const T=(n,c,w)=>{ if(c){pass++;console.log('통과: '+n);}
   const sb = grab('setBoatSpec');
   T('제원에 성한 범위가 있다', /const SPEC_MAX = \{/.test(src));
   T('제원 검사 함수가 있다', /function specNumOk\(key, n\)/.test(src));
-  T('음수를 막는다', /if\(n < 0\) return '0보다 작은 값은 넣을 수 없습니다\.'/.test(src));
+  T('음수를 막는다', /if\(n < 0\) return '0보다 작은 값은 입력할 수 없습니다\.'/.test(src));  // 5.30 — 문구 바뀜
   T('너무 큰 값을 막는다', /if\(mx && n > mx\)/.test(src));
   T('막히면 저장하지 않는다', /if\(bad\)\{[\s\S]{0,160}return;/.test(sb));
   T('제원이 parseFloat 결과를 그냥 넣지 않는다',
@@ -87,7 +87,7 @@ const T=(n,c,w)=>{ if(c){pass++;console.log('통과: '+n);}
   const i = src.indexOf('const I18N = {'), j = src.indexOf('\n};', i);
   const en = src.slice(src.indexOf('\n  en: {', i), j);
   const ru = src.slice(src.indexOf('\n  ru: {', i), j);
-  ['숫자를 넣어 주세요.', '0보다 작은 값은 넣을 수 없습니다.', '{n}까지 넣을 수 있습니다.', '기준 {v}']
+  ['숫자를 입력해 주세요.', '0보다 작은 값은 입력할 수 없습니다.', '{n}까지 입력할 수 있습니다.', '기준 {v}']
     .forEach(k=>{
       T('영어 사전에 있다: ' + k, en.indexOf("'" + k + "':") > 0);
       T('러시아어 사전에 있다: ' + k, ru.indexOf("'" + k + "':") > 0);

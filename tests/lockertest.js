@@ -142,7 +142,7 @@ chk('새 백업: 백업에 든 칸 40개를 그대로 씀', lockers.length === 4
 chk('새 백업: 갈 곳 없는 물품을 버리지 않음', items.length === N물품, items.length + '개');
 chk('새 백업: 미배치를 세어 알림', stray > 0 && r.msg.includes(String(stray) + '개는 해당하는 수납칸이 없습니다'),
     '미배치 ' + stray + '개');
-chk('새 백업: 완료 알림에도 미배치를 알림', (r.done||'').includes('못 찾은 물품이 ' + stray + '개'));
+chk('새 백업: 완료 알림에도 미배치를 알림', (r.done||'').includes('지정되지 않은 물품이 ' + stray + '개'));  // 5.30 — 문구 바뀜 (못 찾은→지정되지 않은)
 
 console.log(results.join('\n'));
 const fail = results.filter(x=>x.startsWith('실패')).length;

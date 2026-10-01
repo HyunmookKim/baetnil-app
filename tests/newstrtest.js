@@ -108,7 +108,7 @@ globalThis.TR_NEWS = { en: {} };
 T('★★★ 켜졌어도 바뀐 글자가 없으면 아무 말도 안 낸다 (거짓말 금지)',
   newsTrBar([KR]) === '', newsTrBar([KR]));
 globalThis.TR_NEWS = { en: { [KR.title]: 'EN:' + KR.title } };
-T('★★ 실제로 옮겼으면 원어로 보기를 낸다', /원어로 보기/.test(newsTrBar([KR])));
+T('★★ 실제로 옮겼으면 원어로 보기를 낸다', /원문 보기/.test(newsTrBar([KR])));  // 5.30 — 문구 바뀜 (「원어로 보기」 → 「원문 보기」)
 T('★★ 원래 내 말인 것에는 아무 말도 안 낸다 (고장으로 보인다)', newsTrBar([WW]) === '');
 globalThis.trNewsOn = false; globalThis.TR_NEWS = {};
 

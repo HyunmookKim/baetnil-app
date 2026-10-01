@@ -259,14 +259,15 @@ function F(o){
   T('★★★ 큰 숫자와 아래 잔글씨가 같은 수다 (둘 다 평균)',
     /const lphShow = 내lph \|\| \(rate \? rate\.avg : null\)/.test(rf), rf);
   T('★★★ 마지막 구간 값을 큰 자리에 안 쓴다', !/rate\.last/.test(rf), rf);
-  T('★★★ 눌러서 고칠 수 있다고 밝힌다', /L\/시간과 잔량은 눌러서 고칠 수 있습니다/.test(rf));
+  T('★★★ 눌러서 고칠 수 있다고 밝힌다', /L\/시간과 잔량은 눌러서 수정할 수 있습니다/.test(rf));  // 5.30 — 문구 바뀜
   T('★★ L\/시간 칸을 누르면 고치는 창이 열린다', /class="stat tapstat" onclick="fuelEditLph\(\)"/.test(rf));
   T('★★ 잔량 칸을 누르면 적는 창이 열린다', /class="stat tapstat" onclick="fuelEditLeft\(\)"/.test(rf));
-  T('★★★ 사람이 적은 값이면 그렇다고 밝힌다', /내가 적음/.test(rf), rf);
+  T('★★★ 사람이 적은 값이면 그렇다고 밝힌다', /t\('직접 입력'\)/.test(rf), rf);  // 5.30 — 문구 바뀜 (내가 적음 → 직접 입력)
   T('★★ 눌러지는 칸으로 보이게 한다 (밑줄·손가락)',
     /\.stat\.tapstat\{cursor:pointer\}/.test(src) && /\.stat\.tapstat b\{text-decoration:underline/.test(src));
   T('★★★ 앱이 셈한 값으로 되돌리는 단추가 있다',
-    /onclick="fuelClearLph\(\)"/.test(src) && /onclick="fuelClearMark\(\)"/.test(src));
+    /onclick="fuelClearLph\(\)"/.test(src) && /onclick="fuelClearMark\(\)"/.test(src)
+    && /t\('계산값으로 되돌리기'\)/.test(rf));  // 5.30 — 문구 바뀜 (앱이 셈한 값으로 → 계산값으로 되돌리기)
 }
 
 // ══ 8. 문이 하나다 ═══════════════════════════════════════════════
@@ -281,8 +282,8 @@ function F(o){
 
 // ══ 9. 새로 쓴 말이 네 나라 말에 다 있다 ═══════════════════════════
 {
-  const 새말 = ['내가 적음','L/시간과 잔량은 눌러서 고칠 수 있습니다.','주유량 L','지금 잔량',
-    '앱이 셈한 값으로','0보다 큰 수를 적어 주세요.','0 이상의 수를 적어 주세요.'];
+  const 새말 = ['직접 입력','L/시간과 잔량은 눌러서 수정할 수 있습니다.','주유량 L','현재 잔량',   // 5.30 — 문구 바뀜
+    '계산값으로 되돌리기','0보다 큰 값을 입력해 주세요.','0 이상의 값을 입력해 주세요.'];
   ['en','ru','ja'].forEach(lg=>{
     const i = src.indexOf('\n  ' + lg + ': {');
     const j = src.indexOf('\n  },', i);

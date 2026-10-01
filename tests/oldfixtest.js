@@ -6,7 +6,7 @@
 //     느낄 거리가 없었다.
 //  나. 사진을 창고로 옮긴 것은 '그 뒤에 새로 저장한 것' 뿐이다.
 //     이미 올라가 있던 사진은 아직 문서 안에 글자로 들어 있다.
-//  다. '도움된 순' 은 그 칸이 없는 문서를 아예 안 내놓는다 —
+//  다. '도움이 된 순' 은 그 칸이 없는 문서를 아예 안 내놓는다 —
 //     옛 글에 0 을 채워 두지 않으면 옛 글이 통째로 사라진다.
 const fs = require('fs');
 function grab(s, name){
@@ -61,8 +61,8 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + cut(n)); } else { 
   const rh = grab(js, 'renderHome') || '';
   T('배가 없을 때만 내놓는다', /if\(!b\)\{\s*\n?\s*out \+= introCard\(\);/.test(rh.replace(/\r/g,'')));
   // ★ 날씨를 세 갈래로 갈라 말한다
-  T('어디 날씨인지 못 정했으면 정하는 길을 준다', /어디 날씨를 볼지 아직 정하지 않았습니다/.test(rh));
-  T('정했으면 받는 중이라고 말한다', /날씨를 받는 중입니다/.test(rh));
+  T('어디 날씨인지 못 정했으면 정하는 길을 준다', /날씨를 볼 위치를 아직 선택하지 않았습니다/.test(rh)); // 5.30 — 문구 바뀜
+  T('정했으면 받는 중이라고 말한다', /날씨 정보를 불러오는 중입니다/.test(rh)); // 5.30 — 문구 바뀜
   T('배 없이도 날씨를 볼 수 있다고 말한다', /배를 등록하지 않아도 날씨와 물때는/.test(rh));
   const g = grab(js, 'homeUseGPS') || '';
   T('현재 위치로 잡는 길이 있다', g.length > 0 && /wxUseGPS\(/.test(g));
@@ -144,7 +144,7 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + cut(n)); } else { 
   T('화면에 고르는 칸이 있다', /setTalkSort\('likeN'\)/.test(rt) && /setTalkSort\('ts'\)/.test(rt));
   T('받아올 때 그 값을 넘긴다', /list\(false, talkSort\)/.test(rt));
   // ★ 남이 쓴 아주 옛 글은 내가 못 고친다 — 안 나올 수 있다고 미리 말해 준다
-  T('옛 글이 빠질 수 있다고 알려 준다', /아주 오래된 글은 여기 안 나올 수 있습니다/.test(rt));
+  T('옛 글이 빠질 수 있다고 알려 준다', /아주 오래된 글은 여기에 표시되지 않을 수 있습니다/.test(rt)); // 5.30 — 문구 바뀜
 
   const seg = mod.slice(mod.indexOf('window.__talk'), mod.indexOf('window.__talk') + 600);
   T('모듈이 줄 세우기를 받는다', /async list\(more, ord\)/.test(seg));

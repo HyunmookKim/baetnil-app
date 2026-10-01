@@ -77,7 +77,7 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);}
             {id:'r3',name:'다 고친 것',status:'done',created:'2026-06-01'}];
     saveMR(); switchTab('home'); setHomeSub('today'); renderHome();
     return document.getElementById('homeList').innerText; });
-  T('★ 오늘 화면에 「고쳐야 할 곳」 이 뜬다', /고쳐야 할 곳/.test(home), home.slice(0,300));
+  T('★ 오늘 화면에 「고쳐야 할 곳」 이 뜬다', /수리 필요/.test(home), home.slice(0,300));
   T('고장 난 것이 이름째 보인다', /윈치 손잡이 헐거움/.test(home));
   T('진행중인 것도 보인다', /조타등 불량/.test(home));
   T('다 고친 것은 안 나온다', !/다 고친 것/.test(home));

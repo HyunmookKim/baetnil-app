@@ -84,13 +84,13 @@ const srv = http.createServer((req,res)=>{
   t('알림 화면이 뜬다', /알림 받기/.test(noti));
   t('내 글에 댓글이 보인다', /내 글에 댓글/.test(noti));
   t('정비 기한이 보인다', /정비/.test(noti) && /기한/.test(noti));
-  t('밤에는 안 울리기가 보인다', /밤에는 안 울리기/.test(noti));
+  t('밤에는 안 울리기가 보인다', /야간 알림 끄기/.test(noti));
   t('구독한 연재 줄이 보인다', /구독한 연재/.test(noti));
   t('관심 분야 소식 줄이 보인다', /관심 분야 소식/.test(noti));
   t('이제 준비 중이 아니다', !/준비 중/.test(noti));
   // ★ 정비(폰이 스스로)와 서버가 보내는 것은 되는 조건이 다르다. 갈라서 말해야 한다.
   t('무엇이 되고 무엇이 아직인지 갈라서 말한다',
-    /정비/.test(noti) && /댓글/.test(noti) && /앱으로 여셔야/.test(noti));
+    /정비/.test(noti) && /댓글/.test(noti) && /앱에서만 받을 수 있습니다/.test(noti));
 
   // 스위치가 실제로 눌리는 크기인가
   const sizes = await page.evaluate(()=>

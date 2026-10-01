@@ -163,8 +163,8 @@ const 끝 = async (br) => { console.log('\n합계: ' + ok + '개 통과 / ' + ba
     return { 이름표:lbl, 도는틀:!!document.querySelector('.runon') };
   });
   T('④-1 ★ 끄고 나면 「돌고 있습니다」 틀이 사라진다', 끝화면.도는틀 === false, 끝화면);
-  T('④-2 켠 시각 칸이 있다', 끝화면.이름표.indexOf('켠 시각') >= 0, 끝화면.이름표);
-  T('④-3 끈 시각 칸이 있다', 끝화면.이름표.indexOf('끈 시각') >= 0, 끝화면.이름표);
+  T('④-2 켠 시각 칸이 있다', 끝화면.이름표.indexOf('시동 시각') >= 0, 끝화면.이름표);
+  T('④-3 끈 시각 칸이 있다', 끝화면.이름표.indexOf('정지 시각') >= 0, 끝화면.이름표);
   T('④-4 가동시간 칸이 있다', 끝화면.이름표.indexOf('가동시간') >= 0, 끝화면.이름표);
 
   // ── 끈 시각을 손으로 고치면 다시 셈하는가
@@ -214,7 +214,7 @@ const 끝 = async (br) => { console.log('\n합계: ' + ok + '개 통과 / ' + ba
   await pg.waitForTimeout(800);
   const 목록 = await pg.evaluate(() => {
     const txt = (document.getElementById('fuelList') || {}).textContent || '';
-    return { 돌고:/돌고 있음/.test(txt), 분:/40분|39분|41분/.test(txt) };
+    return { 돌고:/가동 중/.test(txt), 분:/40분|39분|41분/.test(txt) };
   });
   T('⑥-1 ★ 목록에서 「돌고 있음」이 보인다', 목록.돌고 === true, 목록);
   T('⑥-2 ★ 돌고 있는 것도 지금까지 얼마인지 보인다', 목록.분 === true, 목록);

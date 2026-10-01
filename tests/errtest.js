@@ -54,9 +54,9 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + n); } else { fail+
       /한도/.test(R['resource-exhausted'].t) && !/오프라인/.test(R['resource-exhausted'].t));
     T('한도 초과는 429 원문으로도 알아본다 — ' + R['429원문'].t, /한도/.test(R['429원문'].t));
     T('한도 초과 사연에 언제 풀리는지 적는다', /풀립니다|초기화|다시/.test(R['resource-exhausted'].h));
-    T('한도 초과 사연에 기록은 안전하다고 적는다', /기기에 있는 기록/.test(R['resource-exhausted'].h));
+    T('한도 초과 사연에 기록은 안전하다고 적는다', /기기에 저장된 기록/.test(R['resource-exhausted'].h));  // 5.30 — 문구 바뀜
     T('권한 문제는 권한이라고 말한다 — ' + R['permission-denied'].t, /권한/.test(R['permission-denied'].t));
-    T('로그인 풀림은 그렇게 말한다 — ' + R['unauthenticated'].t, /로그인/.test(R['unauthenticated'].t));
+    T('로그인 풀림은 그렇게 말한다 — ' + R['unauthenticated'].t, /로그아웃/.test(R['unauthenticated'].t));  // 5.30 — 문구 바뀜 (로그인이 풀렸습니다 → 로그아웃됨)
     T('진짜 오프라인만 오프라인이라 한다 — ' + R['unavailable'].t, /오프라인/.test(R['unavailable'].t));
     T('알 수 없는 것도 무너지지 않는다', typeof R['없음'].t === 'string' && R['없음'].t.length > 0);
     // 눌러서 볼 수 있어야 한다 — 짧은 줄만으로는 뭘 해야 할지 모른다

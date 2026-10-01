@@ -37,7 +37,7 @@ T('그물은 항해가 없어진 것도 잡는다',
 T('① 휴지통으로 옮기기 전에 멈춘다',
   /if\(row === 'voyage'\)\{ try\{ await trkStopFor\(it\.id\); \}catch\(_\)\{\} \}/.test(grab(src, 'mrDelete')));
 T('② 배를 바꾸기 전에 멈춘다',
-  /await trkStop\(\); snack\('배를 바꿔서 항적 기록을 멈췄습니다'/.test(grab(src, 'switchBoat')));
+  /await trkStop\(\); snack\('배를 변경하여 항적 기록을 중지했습니다'/.test(grab(src, 'switchBoat')));
 T('③ 배를 지우기 전에 멈춘다',
   /if\(trkNow && String\(id\) === String\(currentBoatId\)\)\{ try\{ await trkStop\(\); \}catch\(_\)\{\} \}/
     .test(grab(src, 'doDelBoat')));
@@ -50,9 +50,9 @@ T('trkResume 도 없어진 항해는 안 되살린다',
   /if\(await trkDropIfGone\(\)\) return;/.test(grab(src, 'trkResume')));
 
 // ── 말은 네 나라 것이 다 있어야 한다
-['항적 기록을 멈췄습니다',
- '기록 중이던 항해가 없어져서 항적 기록을 멈췄습니다',
- '배를 바꿔서 항적 기록을 멈췄습니다'].forEach(w => {
+['항적 기록을 중지했습니다',
+ '기록 중이던 항해를 찾을 수 없어 항적 기록을 중지했습니다',
+ '배를 변경하여 항적 기록을 중지했습니다'].forEach(w => {
   const n = (src.match(new RegExp("'" + w + "':'", 'g')) || []).length;
   T("'" + w + "' 이 영어·러시아어·일본어에 다 있다 — " + n, n === 3);
 });

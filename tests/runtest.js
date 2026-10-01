@@ -170,10 +170,11 @@ T('①-8 날짜가 없으면 셈하지 않는다', runMins(R({ date:'', time:'09
     /needEdit\(/.test(grab(src, 'runStopUI') || ''), grab(src, 'runStopUI'));
   T('⑤-12c ★ 「돌고 있음」 틀을 제 함수로 뺐다 (겹겹이 낀 틀문자열은 사전 검사기가 못 읽는다)',
     !!grab(src, 'runOnBox'));
-  T('⑤-13 돌고 있으면 목록에서 눈에 띈다', /돌고 있음/.test(src));
-  T('⑤-14 ★ 끄는 것을 잊으면 알려 준다', /const RUN_MAXH = \d+;/.test(src) && /하루가 넘었습니다/.test(src));
+  // 5.30 — 문구 바뀜 (돌고 있음 → 가동 중). 옛 말은 이제 주석에만 남아 헛통과가 되므로 화면 딱지를 본다
+  T('⑤-13 돌고 있으면 목록에서 눈에 띈다', /runOn\(x\.o\) \? `<span class="chip warn">\$\{esc\(t\('가동 중'\)\)\}/.test(src));
+  T('⑤-14 ★ 끄는 것을 잊으면 알려 준다', /const RUN_MAXH = \d+;/.test(src) && /\{h\}시간이 넘었습니다/.test(src) && /tsub\('\{h\}시간이 넘었습니다[^']*', \{ h: RUN_MAXH \}\)/.test(src)); // 5.30 — 문구 바뀜
   T('⑤-15 켠 시각 · 끈 시각 두 칸이 있다',
-    /'켠 시각'/.test(src) && /'끈 시각'/.test(src));
+    /'시동 시각'/.test(src) && /'정지 시각'/.test(src));
   T('⑤-16 ★ 끈 시각 칸이 runTimeSet 을 지난다',
     /runTimeSet\('endTime', v\)/.test(src));
 }
@@ -185,10 +186,10 @@ T('①-8 날짜가 없으면 셈하지 않는다', runMins(R({ date:'', time:'09
   const dict = l => (src.match(new RegExp('\\n  ' + l + ': \\{[\\s\\S]*?\\n  \\},')) || [''])[0];
   const EN = dict('en'), RU = dict('ru'), JA = dict('ja');
   T('⑥-0 사전 셋을 읽었다', EN.length > 1000 && RU.length > 1000 && JA.length > 1000);
-  ['엔진이 돌고 있습니다', '지금 껐습니다', '켠 시각', '끈 시각', '돌고 있음',
-   '아직 돌고 있습니다', '{d} {t}부터', '엔진을 껐습니다 — {v} 돌렸습니다',
-   '적으시면 가동시간이 저절로 계산됩니다',
-   '하루가 넘었습니다. 끄는 것을 잊으셨다면 시각을 고쳐 주세요.'].forEach(w => {
+  ['엔진 가동 중', '지금 껐습니다', '시동 시각', '정지 시각', '가동 중',
+   '아직 가동 중입니다', '{d} {t}부터', '엔진을 껐습니다. 가동 시간 {v}',
+   '입력하면 가동 시간이 자동으로 계산됩니다',
+   '{h}시간이 넘었습니다. 엔진 끄는 것을 잊으셨다면 시각을 수정해 주세요.'].forEach(w => {
     const q = "'" + w + "':";
     T('⑥ 「' + w.slice(0, 18) + '」 세 언어', EN.indexOf(q) >= 0 && RU.indexOf(q) >= 0 && JA.indexOf(q) >= 0,
       { en: EN.indexOf(q) >= 0, ru: RU.indexOf(q) >= 0, ja: JA.indexOf(q) >= 0 });

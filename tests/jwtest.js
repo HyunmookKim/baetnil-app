@@ -171,7 +171,7 @@ const ctxOf = (o) => Object.assign({
     if(process.env.TZ === 'Asia/Seoul')
       T('★★★ 세계표준시를 그대로 내지 않는다', h.indexOf('14:40') < 0, h);
   }
-  T('★★ 내 배가 어느 해역인지 밝힌다', h.indexOf('내 배 자리') > 0, h);
+  T('★★ 내 배가 어느 해역인지 밝힌다', h.indexOf('내 배 위치') > 0, h);  // 5.30 — 문구 바뀜 (자리→위치)
   T('★★ 제목에 해역을 두 번 적지 않는다',
     h.slice(0, h.indexOf('jwz')).indexOf('해역') < 0, h.slice(0, 160));
   T('알림 셈에도 잡힌다', m.jwKeyOf(W) === '海上風警報@四国沖南部', m.jwKeyOf(W));
@@ -193,7 +193,7 @@ const ctxOf = (o) => Object.assign({
   // ★★★ 못 받았을 때 — 「경보 없음」 이라고 하면 그 말을 믿고 바다에 나간다
   const m = make(ctxOf({ jwCache: { ok:false, why:'HTTP 503' } }));
   const h = m.jwAlertBox();
-  T('★★★ 못 받았으면 못 받았다고 말한다', h.indexOf('못 받았습니다') > 0, h);
+  T('★★★ 못 받았으면 못 받았다고 말한다', h.indexOf('가져오지 못했습니다') > 0, h);  // 5.30 — 문구 바뀜 (못 받았습니다→가져오지 못했습니다)
   T('★★★ 못 받았을 때 「경보 없음」 이라고 하지 않는다', h.indexOf('경보 없음') < 0, h);
   T('★★★ 못 받았을 때도 출처를 적는다', h.indexOf('気象庁') > 0, h);
   T('★★★ 못 받았을 때도 気象庁 자리로 가는 길을 준다',

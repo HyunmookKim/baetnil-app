@@ -55,7 +55,7 @@ const sleep = ms => new Promise(r=>setTimeout(r,ms));
   T('★ 계정 화면에 「내 프로필」 과 [프로필 수정] 이 있다', /내 프로필/.test(tx) && /프로필 수정/.test(tx), tx.slice(0,300));
   T('★ 계정 화면에 무엇을 저장하는지 모를 [저장] 이 없다 (소개 칸이 여기서 직접 고쳐지지 않는다)',
     await pg.evaluate(()=>!document.getElementById('pfIntro') && ![...document.querySelectorAll('#mrPanel button')].some(b=>b.textContent.trim()==='저장')));
-  T('★ 「공개 범위」 아래에 누가 무엇을 보는지 적는다', /공개 범위/.test(tx) && /소개·자주 타는 바다·가고 싶은 곳을 로그인한 회원 누구나 봅니다/.test(tx), tx.slice(0,400));
+  T('★ 「공개 범위」 아래에 누가 무엇을 보는지 적는다', /공개 범위/.test(tx) && /소개·자주 타는 바다·가고 싶은 곳은 로그인한 회원 누구나 볼 수 있습니다/.test(tx), tx.slice(0,400));
 
   // ── 프로필 수정: [취소] [완료]
   await pg.evaluate(()=>openProfEdit());
@@ -116,7 +116,7 @@ const sleep = ms => new Promise(r=>setTimeout(r,ms));
   const cm = await pg.evaluate(()=>{ const a = [...document.querySelectorAll('#mrPanel .cmthead .whoa')].find(e=>e.textContent.trim()==='박선장'); if(!a) return false; a.click(); return true; });
   await sleep(500);
   tx = await panel();
-  T('★ 댓글 쓴 사람도 눌러 프로필을 본다 (소개가 없으면 없다고 말한다)', cm && /박선장/.test(tx) && /소개가 없거나/.test(tx), tx.slice(0,200));
+  T('★ 댓글 쓴 사람도 눌러 프로필을 본다 (소개가 없으면 없다고 말한다)', cm && /박선장/.test(tx) && /소개를 작성하지 않았거나/.test(tx), tx.slice(0,200));
 
   // ── 운영자가 누르면: 같은 프로필 + [관리]
   await pg.evaluate(()=>{ adminMe = { uid:'U1', super:true, perms:{} }; openTalk('p1'); });

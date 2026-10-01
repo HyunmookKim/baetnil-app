@@ -26,8 +26,8 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.lo
   const V = grab('pubHowBody');
   T('★ 공개 정비수첩 화면을 찾았다', !!V);
   // 내보내는 칸(mlogPublic)이 화면에 제 이름을 달고 나오는가
-  [['한 날','date'],['장비','gear'],['난이도','hard'],['걸린 시간','work'],
-   ['든 돈','cost'],['부품·공구','used'],['계통','sys']].forEach(([lbl, f])=>{
+  [['완료일','date'],['장비','gear'],['난이도','hard'],['걸린 시간','work'],
+   ['비용','cost'],['부품·공구','used'],['계통','sys']].forEach(([lbl, f])=>{ // 5.30 — 문구 바뀜 (든 돈 → 비용)
     T('★★ 정비수첩 — 「' + lbl + '」 이 칸 이름을 달고 나온다',
       V.indexOf("'" + lbl + "'") >= 0 && V.indexOf('m.' + f) >= 0, lbl);
   });
@@ -44,11 +44,12 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.lo
   const V = src.slice(i, i + 7000);
   T('★ 공개 리뷰 화면을 찾았다', i > 0);
   [['제품','maker'],['종류','kind'],['계통','sys'],['연식','year'],
-   ['또 살까','again'],['산 값','price']].forEach(([lbl, f])=>{
+   ['재구매 의사','again'],['구입 가격','price']].forEach(([lbl, f])=>{
     T('★★ 리뷰 — 「' + lbl + '」 이 칸 이름을 달고 나온다',
       V.indexOf("'" + lbl + "'") >= 0 && V.indexOf('r.' + f) >= 0, lbl);
   });
-  T('★★ 써 본 기간·탄 기간을 배·제품에 맞게 부른다', /탄 기간/.test(V) && /써 본 기간/.test(V));
+  // 5.30 — 문구 바뀜 (탄 기간 → 승선 기간). 「써 본 기간」 은 주석에만 걸려 헛통과였다 — 실제 칸 이름 「사용 기간」 을 본다
+T('★★ 써 본 기간·탄 기간을 배·제품에 맞게 부른다', /isB \? '승선 기간' : '사용 기간'/.test(V));
   T('★★★ 옛 방식(tags 한 줄)이 안 남아 있다', !/tags\.join/.test(V), V.slice(0,300));
   T('★ 제조사·모델이 나온다 (전에는 아예 안 보였다)', /r\.maker/.test(V) && /r\.model/.test(V));
 }

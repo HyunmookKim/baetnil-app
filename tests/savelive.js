@@ -77,8 +77,8 @@ window.Capacitor = { isNativePlatform: () => true, Plugins: {
   t('★ 어디에 넣을지 묻지 않는다 (공유 창을 안 띄운다)', r.share.length === 0, r.share);
   await page.waitForTimeout(200);
   t('★ 어디에 넣었는지 말해 준다',
-    alerts.some(a=>/^문서\/Baetnil\/backup\/baetnil-backup-\d{8}\.json에 넣었습니다\.$/.test(a)), alerts);
-  t('★ 조사가 붙여 쓰여 있다 (「… 에」 가 아니다)', !alerts.some(a=>/ 에 넣었습니다/.test(a)), alerts);
+    alerts.some(a=>/^문서\/Baetnil\/backup\/baetnil-backup-\d{8}\.json에 저장했습니다\.$/.test(a)), alerts);
+  t('★ 조사가 붙여 쓰여 있다 (「… 에」 가 아니다)', !alerts.some(a=>/ 에 저장했습니다/.test(a)), alerts);
 
   // ── 첫 자리가 막히면 다음 자리로 내려간다 (안드로이드 판마다 쓸 수 있는 자리가 다르다)
   const 내려감 = await page.evaluate(async ()=>{

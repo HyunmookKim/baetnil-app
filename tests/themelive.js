@@ -66,7 +66,7 @@ const SRC = fs.readFileSync(FILE, 'utf8');
   T('★ 흰색 — 그릴 때 붙는 색도 바뀐다 (옅은 회청 → 짙은 글씨)', /color:rgb\((\d+),(\d+),(\d+)\)/.test(r.inline) && Math.max(...r.inline.match(/rgb\((\d+),(\d+),(\d+)\)/).slice(1).map(Number)) < 140, r.inline);
   T('★ 흰색 — 폰 시계 줄은 짙은 글자(LIGHT)', r.sb === 'LIGHT', r.sb);
   T('★ 5.21 흰색 — 안드로이드 14 이하 시계 줄 바탕도 흰색 (짙은 글자가 보이게)', r.sbc === '#FFFFFF', r.sbc);
-  const card = await A.pg.evaluate(()=>{ homeSub='today'; switchTab('home'); const c = [...document.querySelectorAll('.hcard')].find(e=>/지금 나갈 수 있나/.test(e.textContent)); return c ? getComputedStyle(c).backgroundColor : ''; });
+  const card = await A.pg.evaluate(()=>{ homeSub='today'; switchTab('home'); const c = [...document.querySelectorAll('.hcard')].find(e=>/출항 가능 여부/.test(e.textContent)); return c ? getComputedStyle(c).backgroundColor : ''; });
   T('흰색 — 카드가 흰 바탕 위 옅은 회색', /rgba?\((2[2-5]\d), (2[2-5]\d), (2[2-5]\d)/.test(card), card);
   // 여러 번 바꿔도 두 번 바뀌지 않는다(처음 값에서 다시 만든다)
   const css1 = await A.pg.evaluate(()=>document.querySelector('style').textContent.length);
@@ -82,7 +82,7 @@ const SRC = fs.readFileSync(FILE, 'utf8');
   await sleep(150);
   r = await look(A.pg);
   T('★ 검정 — 바탕이 완전 검정', r.bg === 'rgb(0, 0, 0)', r.bg);
-  const card2 = await A.pg.evaluate(()=>{ renderHome(); const c = [...document.querySelectorAll('.hcard')].find(e=>/지금 나갈 수 있나/.test(e.textContent)); return c ? getComputedStyle(c).backgroundColor : ''; });
+  const card2 = await A.pg.evaluate(()=>{ renderHome(); const c = [...document.querySelectorAll('.hcard')].find(e=>/출항 가능 여부/.test(e.textContent)); return c ? getComputedStyle(c).backgroundColor : ''; });
   T('★ 검정 — 카드는 한 칸 떠 보이는 짙은 회색 (검정 위에 묻히지 않는다)', (()=>{ const m = card2.match(/(\d+), (\d+), (\d+)/); return m && +m[1] > 15 && +m[1] < 60; })(), card2);
   T('검정 — 폰 시계 줄은 밝은 글자(DARK)', r.sb === 'DARK', r.sb);
   T('★ 5.21 검정 — 안드로이드 14 이하 시계 줄 바탕은 검정', r.sbc === '#000000', r.sbc);

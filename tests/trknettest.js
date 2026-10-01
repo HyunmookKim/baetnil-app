@@ -31,7 +31,8 @@ T('★★★ 흐리다고 사람을 부르는 창(trkBlurWarn)이 없다', !/trk
 {
   const f = grab(src, 'trkCountText');
   T('★★★ 기록 중 한 줄은 점 수만 보여 준다',
-    /\{n\}점/.test(f) && !/버림/.test(f) && !/정확도/.test(f), f.slice(0, 200));
+    /\{n\}개 지점/.test(f) && !/버림/.test(f)  // 5.30 — 문구 바뀜 ({n}점 → {n}개 지점)
+      && !/정확도/.test(f), f.slice(0, 200));
 }
 // ★★★ 떨림 고르개 (4.79) — 다른 기록 앱들이 쓰는 칼만 고르개를 그대로 쓴다
 T('★★★ 떨림 고르개가 있다', /function trkSmooth\(/.test(src));

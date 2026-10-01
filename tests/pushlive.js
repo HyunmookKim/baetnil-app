@@ -148,7 +148,7 @@ window.Capacitor = { isNativePlatform: () => true, Plugins: {
                         ? (cr.querySelector('.notisw').getAttribute('onclick')||'') : '' : '' };
   });
   t('알림 화면에 이 폰 상태 줄이 있다', shown.line);
-  t('등록됐다고 사람 말로 말한다', /이 폰이 등록됐습니다/.test(shown.text), shown.text.slice(0,500));
+  t('등록됐다고 사람 말로 말한다', /이 휴대폰이 등록되었습니다/.test(shown.text), shown.text.slice(0,500));
   t('없는 스위치를 안 그린다', !/내 연재에 댓글/.test(shown.text));
   t('내 글에 댓글 줄이 있다', /내 글에 댓글/.test(shown.text), shown.text.slice(0,500));
   t('그 줄에 켜고 끄는 스위치가 달려 있다', shown.cmtSw, shown.cmtRow);

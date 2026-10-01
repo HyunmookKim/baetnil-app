@@ -150,7 +150,7 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.lo
   await pg.waitForTimeout(600);
   const lst = await pg.evaluate(()=>document.getElementById('newsList').innerText);
   T('화면에 연재 이름 머리줄이 뜬다', /돛 다루기/.test(lst) && /바다 이야기/.test(lst), lst.slice(0,200));
-  T('묶지 않은 글 자리가 있다', /묶지 않은 글/.test(lst), lst.slice(0,300));
+  T('묶지 않은 글 자리가 있다', /연재에 포함되지 않은 글/.test(lst), lst.slice(0,300));
   T('화면에서도 첫째 편이 셋째 편보다 위다',
     lst.indexOf('첫째 편') < lst.indexOf('셋째 편') && lst.indexOf('첫째 편')>=0,
     { a:lst.indexOf('첫째 편'), c:lst.indexOf('셋째 편') });

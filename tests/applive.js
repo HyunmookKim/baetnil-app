@@ -119,7 +119,7 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.lo
     }, [signedIn, agreed]);
 
     const out = await say(false, false);
-    T('로그인 안 했으면 로그인 얘기를 한다', /로그인하신 분에게만/.test(out), out.slice(0,160));
+    T('로그인 안 했으면 로그인 얘기를 한다', /로그인하신 분만/.test(out), out.slice(0,160));
     T('그때 권한 얘기는 안 한다', !/설정에서 위치 권한/.test(out), out.slice(0,160));
     T('로그인 단추가 있다',
       await pg.evaluate(()=>!!document.querySelector('#weatherWrap .emptybox button[onclick*="openAccount"]')));

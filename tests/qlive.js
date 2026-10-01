@@ -156,7 +156,7 @@ const PIX = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAO
   await pg.waitForTimeout(150);
   T('글머리표 단추가 먹는다',
     (await pg.evaluate(()=>document.querySelectorAll('#ff0 .ql-editor li[data-list=bullet]').length)) === 1);
-  await pg.click('#formBody .rtool button[title="번호"]');
+  await pg.click('#formBody .rtool button[title="번호 목록"]');
   await pg.waitForTimeout(150);
   T('번호 단추가 먹는다',
     (await pg.evaluate(()=>document.querySelectorAll('#ff0 .ql-editor li[data-list=ordered]').length)) === 1);
@@ -201,7 +201,7 @@ const PIX = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAO
   await pg.evaluate(()=>{ const b=document.getElementById('ff0_del'); b.style.display=''; b.click(); });
   await pg.waitForTimeout(200);
   alerts.push(...(await pg.evaluate(()=>{ const a = window.__said || []; window.__said = []; return a; })));
-  T('고르지 않고 누르면 알려 준다', alerts.some(a=>/지울 사진/.test(a)), alerts.slice(-2));
+  T('고르지 않고 누르면 알려 준다', alerts.some(a=>/삭제할 사진/.test(a)), alerts.slice(-2));
 
   // ── 6. 기록 넣기 (richInsert 를 밖에서 부른다)
   await openEd([{ t:'text', h:1, v:'앞' }]);

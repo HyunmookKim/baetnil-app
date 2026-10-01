@@ -153,7 +153,7 @@ const at = (d, tm) => new Date(d + 'T' + tm + ':00').getTime();
 {
   const B = A({ fuel: [ { id:'1', date:'2026-09-30', time:'09:00', liters:100 } ], nowHM:'10:00' });
   B.fuelEditLeft();
-  T('★★★ 오늘 넣은 기름까지 합친 양을 적으라고 밝힌다', /09:00 넣으신 100L까지 합친/.test(B.E.form.sub), B.E.form.sub);
+  T('★★★ 오늘 넣은 기름까지 합친 양을 적으라고 밝힌다', /09:00에 주유하신 100L를 포함한/.test(B.E.form.sub)  /* 5.30 — 문구 바뀜 */, B.E.form.sub);
   B.E.form.onOk({ left:'150' });
   const lv = B.E.fuel.filter(f => f.kind === 'level');
   T('★★★ 잔량 확인이 연료 기록에 쌓인다 (배 설정 하나를 덮지 않는다)', lv.length === 1 && lv[0].level === 150, B.E.fuel);
@@ -274,7 +274,7 @@ const at = (d, tm) => new Date(d + 'T' + tm + ':00').getTime();
   T('★★★ 「지금 도착」 이 항해 시간·엔진 시간을 넣는다',
     /const sh = sailHours\(it\); if\(sh !== null\) it\.hours = sh;/.test(an)
     && /const eh = engineHoursFromLogs\(it\); if\(eh !== null\) it\.engineH = eh;/.test(an), an);
-  T('★★★ 넣은 것을 사람에게 말한다', /항해 \{a\} · 엔진 \{b\}을 넣었습니다/.test(an));
+  T('★★★ 넣은 것을 사람에게 말한다', /항해 \{a\} · 엔진 \{b\}을 입력했습니다/.test(an));  // 5.30 — 문구 바뀜
   T('★★★ 셈은 저장보다 먼저다', an.indexOf('it.engineH = eh') < an.indexOf('saveMR()'), an);
   const fx = src.slice(src.indexOf('const FORMAT_FIXERS = ['), src.indexOf('];', src.indexOf('const FORMAT_FIXERS = [')));
   T('★★★ 받아온 뒤 고치는 문에 두 문이 들어 있다', /fuelMarkAt/.test(fx) && /voyHoursFill/.test(fx), fx);
@@ -286,13 +286,13 @@ const at = (d, tm) => new Date(d + 'T' + tm + ':00').getTime();
   T('★★ 게이지 눈금은 게이지를 고른 배에서만 보인다', /fuelHow\(\) !== 'gauge'/.test(grab('voyGaugeRow')));
   const rf = grab('renderFuel');
   T('★★★ 잔량 확인 방법을 고르는 줄이 연료 화면에 있다', /fuelHowSet\('est'\)/.test(rf) && /fuelHowSet\('gauge'\)/.test(rf));
-  T('★★★ 어긋나면 알린다 (앱이 보던 양과 실제)', /남았다고 봤는데 실제는/.test(rf));
-  T('★★★ 엔진 시간이 빈 항해가 있으면 함께 알린다', /엔진 시간이 빈 항해가 \{n\}개/.test(rf));
+  T('★★★ 어긋나면 알린다 (앱이 보던 양과 실제)', /추정 잔량은 \{p\}L, 실제 잔량은/.test(rf));  // 5.30 — 문구 바뀜
+  T('★★★ 엔진 시간이 빈 항해가 있으면 함께 알린다', /엔진 시간이 입력되지 않은 항해가 \{n\}개/.test(rf));  // 5.30 — 문구 바뀜
   T('★★ 잔량 확인이 목록에 보인다', /x\.o\.kind==='level'/.test(rf));
   T('★★★ 실제가 더 많았으면(넣은 기록 없이 늘었다) 「다시 셈했습니다」 라고 하지 않는다',
-    /끝\.lph != null/.test(rf) && /기록에서 빠졌을 수 있습니다/.test(rf));
-  T('★★★ 확인 뒤 넣은 기름을 잔량 설명에 밝힌다', /그 뒤 넣은 \{a\}L를 더하고/.test(rf));
-  T('★★★ 홈의 연료 칸도 잔량 확인에서 시작하면 그렇게 말한다', /잔량 확인 뒤 \{h\} 돌렸습니다/.test(src));
+    /끝\.lph != null/.test(rf) && /주유 기록이 누락되었을 수 있습니다/.test(rf));  // 5.30 — 문구 바뀜
+  T('★★★ 확인 뒤 넣은 기름을 잔량 설명에 밝힌다', /이후 주유량 \{a\}L를 더하고/.test(rf));  // 5.30 — 문구 바뀜
+  T('★★★ 홈의 연료 칸도 잔량 확인에서 시작하면 그렇게 말한다', /잔량 확인 후 \{h\} 가동/.test(src));  // 5.30 — 문구 바뀜
   const cb = grab('createBoat');
   T('★★★ 5.25 — 새 배의 잔량 확인 방법은 연료 게이지다 (사장님: 「더 정확한 방식으로」)', /fuelSet: \{ how: 'gauge' \}/.test(cb), cb.slice(0, 900));
   T('★★★ 혼자 쓰는 배(명부 없음)는 받아올 것이 없으니 바로 채운다', /fuelMarkAt\(\), c = voyHoursFill\(\)/.test(grab('migrateVoyage')));
@@ -300,12 +300,12 @@ const at = (d, tm) => new Date(d + 'T' + tm + ':00').getTime();
 
 // ══ 9. 새 말이 네 나라 말에 다 있다 ═══════════════════════════════════
 {
-  const 새말 = ['항해 {a} · 엔진 {b}을 넣었습니다. 다르면 아래 칸에서 고쳐 주세요.','도착 날짜가 출발 날짜보다 앞입니다.',
+  const 새말 = ['항해 {a} · 엔진 {b}을 입력했습니다. 다르면 아래 칸에서 수정해 주세요.','도착 날짜가 출발 날짜보다 앞입니다.',
     '연료 게이지','잔량 확인 방법','앱 추정','만탱크 주유','잔량 확인','남은 양','잔량 {L} L',
-    '{d} {what} 때 앱은 {p}L 남았다고 봤는데 실제는 {a}L였습니다. 이 차이로 소비량을 다시 셈했습니다.',
-    '그 사이에 엔진 시간이 빈 항해가 {n}개 있습니다. 항해일지에서 채워 주세요.',
-    '엔진 시간이 비어 있던 항해 {n}개를 출발·도착 시각으로 채웠습니다.','{d} 잔량 확인 뒤 {h} 돌렸습니다',
-    '오늘 {t} 넣으신 {L}L까지 합친 지금 양을 적어 주세요.'];
+    '{d} {what} 때 추정 잔량은 {p}L, 실제 잔량은 {a}L였습니다. 이 차이를 반영해 연료 소비량을 다시 계산했습니다.',   // 5.30 — 문구 바뀜
+    '그 사이에 엔진 시간이 입력되지 않은 항해가 {n}개 있습니다. 항해일지에서 입력해 주세요.',
+    '엔진 시간이 입력되지 않은 항해 {n}개를 출발·도착 시각으로 채웠습니다.','{d} 잔량 확인 후 {h} 가동',
+    '오늘 {t}에 주유하신 {L}L를 포함한 현재 잔량을 입력해 주세요.'];
   ['en','ru','ja'].forEach(lg => {
     const i = src.indexOf('\n  ' + lg + ': {');
     const j = src.indexOf('\n  },', i);

@@ -65,7 +65,7 @@ if(PRICE){
 }
 const SP = grab('rvSetPrice');
 T('★ 값 넣는 문이 하나다 (rvSetPrice)', !!SP);
-T('★★ 글자를 넣으면 말해 주고 안 담는다', /숫자만 넣어 주세요/.test(SP||''), (SP||'').slice(0,300));
+T('★★ 글자를 넣으면 말해 주고 안 담는다', /숫자만 입력해 주세요/.test(SP||''), (SP||'').slice(0,300));  // 5.30 — 문구 바뀜
 T('★★ 담을 때는 다듬은 숫자로 담는다 (보이는 것과 담긴 것이 같다)',
   /it\.price = raw \? String\(rvPrice\(raw\)\)/.test(SP||''), (SP||'').slice(0,400));
 

@@ -164,7 +164,7 @@ const ALLOW=new Set(['drawerRestore','restoreData','editGo','startGoCheck']);
   T('편집 중 — 회원명부에 기록·등급·내보내기가 있다', await cnt(()=>openRoster(),'^(기록|등급|내보내기)$')>=6);
   T('편집 중 — 공개설정에 켜기·끄기가 다 있다', await cnt(()=>openPublish(),'^(켜기|끄기)$')>=4);
   T('편집 중 — 게시판에 글쓰기가 있다', await cnt(()=>openBoard(),'글쓰기')>=1);
-  T('편집 중 — 기본정보에 영업 배·신청 받기 단추가 있다', await cnt(()=>openBoat('info'),'^(영업 배로|개인 배로|닫기|열기)$')>=2);
+  T('편집 중 — 기본정보에 영업 배·신청 받기 단추가 있다', await cnt(()=>openBoat('info'),'^(영업용으로 전환|개인용으로 전환|닫기|열기)$')>=2);
   // ④ 보기 전용에서 배 등록하기는 보이고, 누르면 편집 중으로 넘어간다
   await pg.evaluate(()=>{ if(unlocked) toggleLock(); openBoat('info'); window.__ab=0; window.addBoat=function(){ window.__ab++; }; });
   await pg.waitForTimeout(300);

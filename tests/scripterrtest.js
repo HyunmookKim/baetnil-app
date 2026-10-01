@@ -42,7 +42,7 @@ const T=(n,c,x)=>{ if(c){pass++;console.log('통과: '+n);} else {fail++;console
     return d ? { on:d.style.display!=='none', text:d.innerText, btn:!!d.querySelector('.errsend') } : null; });
   T('오류줄이 뜬다', !!(bar && bar.on), JSON.stringify(bar));
   T('★★ 「Script error.」 가 그대로 안 보인다', !!(bar && !/Script error/.test(bar.text)), bar && bar.text);
-  T('★★ 사람 말로 바뀐다', !!(bar && /바깥에서 받아 온 파일/.test(bar.text)), bar && bar.text);
+  T('★★ 사람 말로 바뀐다', !!(bar && /외부에서 불러온 파일/.test(bar.text)), bar && bar.text);  // 5.30 — 문구 바뀜
   T('★★ 로그인 안 했어도 보낼 단추가 있다', !!(bar && bar.btn), JSON.stringify(bar));
   T('★ 단추가 「메일로 보내기」 다', !!(bar && /메일로 보내기/.test(bar.text)), bar && bar.text);
 

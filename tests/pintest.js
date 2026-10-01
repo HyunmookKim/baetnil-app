@@ -59,7 +59,7 @@ const PNG = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJA
     openMR('maint', maint[0].id);
     pinStart();
     return { 말: window.__al.slice(), 잡힘: !!pinTarget }; });
-  T('★ 도면이 없으면 까닭을 말해 준다', /도면을 넣어/.test((none.말||[]).join(' ')), none.말);
+  T('★ 도면이 없으면 까닭을 말해 준다', /도면을 추가해/.test((none.말||[]).join(' ')), none.말); // 5.30 — 문구 바뀜
   T('도면이 없으면 핀 지정으로 안 들어간다', none.잡힘 === false, none);
 
   // ── ② 평면도만 있는 배 — 기본값이 측면도라 빈 화면이 떴다

@@ -16,7 +16,7 @@ let ok=0,bad=0;
 const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.log('★ 실패: '+n+(w!==undefined?' — '+JSON.stringify(w).slice(0,300):''));} };
 const sleep = ms => new Promise(r=>setTimeout(r,ms));
 const GONE = { ko:'탈퇴한 회원', en:'Deleted account', ru:'Удалённый аккаунт', ja:'退会したユーザー' };
-const KEEP = { ko:/탈퇴하기 전에 직접 지워/, en:/delete them yourself before you leave/, ru:/удалите их сами до выхода/, ja:/退会する前にご自身で削除/ };
+const KEEP = { ko:/탈퇴하기 전에 직접 삭제해/, en:/delete them yourself before you leave/, ru:/удалите их сами до выхода/, ja:/退会する前にご自身で削除/ };
 
 (async ()=>{
   await new Promise(r=>server.listen(0,r));

@@ -72,7 +72,7 @@ T('★★ 공개 자료에 사용기가 이 문으로만 실린다',
 T('★★ 사용기 공개는 따로 켜야 한다', /if\(pubOn\(b,'review'\)\)/.test(src));
 T('★ 공개 설정에 사용기 스위치가 있다', /k:'review'/.test(src));
 T('★★ 산 값이 따로라는 것을 스위치 설명에 적어 두었다',
-  /산 값은 리뷰마다 따로 켤 수 있음/.test(src));
+  /구매 가격은 리뷰마다 따로 공개할 수 있음/.test(src));  // 5.30 — 문구 바뀜 (산 값→구매 가격)
 
 // ── ② 문 다섯 개
 const KEYS = grab('idxKeys'), MINE = grab('idxMine'), FIND = grab('partsFind'),

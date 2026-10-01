@@ -67,7 +67,7 @@ const T = (n, c, w) => { if(c){ ok++; console.log('통과: ' + n); }
   const shown = await pg.evaluate(()=>{
     renderVoyage();
     const L = document.getElementById('voyageList');
-    return { txt: L.innerText, hasSec: /앞으로 나갈 항해/.test(L.innerText) };
+    return { txt: L.innerText, hasSec: /예정된 항해/.test(L.innerText) };
   });
   T('목록에 예정 묶음이 따로 보인다', shown.hasSec);
   T('목록에 자리 수가 보인다', /2자리/.test(shown.txt), shown.txt.slice(0,180));

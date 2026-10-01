@@ -8,7 +8,8 @@ const T = (n, c, x) => { if(c){ pass++; console.log('통과: ' + n); } else { fa
 const i = src.indexOf('const E2E_RE ='), j = src.indexOf('async function pageList(');
 T('자동검사 표를 다는 문이 있다', i > 0 && j > i);
 const blk = src.slice(i, j);
-const mk = email => new Function('fauth', blk + '\nreturn { amE2E, e2eMark, e2eHide };')({ currentUser: email ? { email } : null });
+// 5.30 — 운영자 화면용 e2eHideAdmin 이 같은 토막에 들어와 window 에 걸린다 → 빈 window 를 넘긴다
+const mk = email => new Function('fauth', 'window', blk + '\nreturn { amE2E, e2eMark, e2eHide };')({ currentUser: email ? { email } : null }, {});
 const rows = [{ id:1, title:'사람 글' }, { id:2, title:'[자동검사] 지워질 글 x', e2e:true }, { id:3, title:'또 사람 글', e2e:false }];
 const 사람 = mk('someone@gmail.com'), 손님 = mk(null), 검사 = mk('e2e-mugx1-a@baetnil.com'), 검사B = mk('E2E-abc9-b@baetnil.com');
 T('사람 계정에는 자동검사 글이 안 보인다', JSON.stringify(사람.e2eHide(rows).map(x => x.id)) === '[1,3]');

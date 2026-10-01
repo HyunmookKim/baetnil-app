@@ -137,7 +137,7 @@ const T=(n,ok,x)=>{ ok?pass++:(fail++,console.log('★ 실패:',n, x===undefined
 
   // ── 그 밖에 오늘 화면이 비어 있지 않은가
   T('곧 해야 할 정비가 나온다', /정비/.test(화면.글));
-  T('고쳐야 할 곳이 나온다', /고쳐야 할 곳/.test(화면.글));
+  T('고쳐야 할 곳이 나온다', /수리 필요/.test(화면.글));
 
   await p.screenshot({ path:'shots/01_today.png' });
   console.log('\n합계: ' + pass + '개 통과 / ' + fail + '개 실패');

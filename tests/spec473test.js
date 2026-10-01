@@ -13,7 +13,7 @@ const L = (src.match(/const SPEC_LEVELS = \[[\s\S]*?\n\];/)||[''])[0];
 T('★★★ 제원 단계가 셋이다', (L.match(/\bk:'/g)||[]).length === 3, L.slice(0,160));
 ['none','base','full'].forEach(k => T('★★ ' + k + ' 가 있다', L.indexOf("k:'"+k+"'") >= 0));
 T('★ 말은 비공개·기본만·세부까지다',
-  /name:'비공개'/.test(L) && /name:'기본만'/.test(L) && /name:'세부까지'/.test(L));
+  /name:'비공개'/.test(L) && /name:'기본 정보만'/.test(L) && /name:'상세 정보까지'/.test(L));
 T('★★ 재는 곳이 하나다', (src.match(/function specLv\(/g)||[]).length === 1);
 {
   const fn = new Function(grab(src,'specLv') + '\nreturn specLv;')();
@@ -66,7 +66,7 @@ T('★★ 정비수첩 공개 화면이 메모를 보여 준다', /trIn\('mlog',
 T('★★ 사용기 공개 화면도 보여 준다', /trIn\('review', r\.id, 'note', r\.note\)/.test(src));
 T('★★★ 「메모는 나가지 않음」 이라는 거짓말이 안 남아 있다',
   !/메모는 나가지 않/.test(src), (src.match(/메모는 나가지 않[^']{0,30}/)||[])[0]);
-T('★ 대신 조심하라고 말해 준다', /메모에 전화번호처럼 남에게 보이면 안 되는 것은 적지 마세요/.test(src));
+T('★ 대신 조심하라고 말해 준다', /전화번호처럼 다른 사람에게 보이면 안 되는 내용은 메모에 쓰지 마세요/.test(src));  // 5.30 — 문구 바뀜
 
 // ── ⑤ 남의 배 「정비 기록」 탭
 const bs = grab(src,'boatPageSecs');
@@ -77,7 +77,7 @@ T('★ 정비수첩 탭은 그대로 있다', /'mlog',t\('정비수첩'\)/.test(
 ['en','ru','ja'].forEach(Lg=>{
   const i = src.indexOf('\n  ' + Lg + ': {'), j = src.indexOf('\n  },', i);
   const dict = i > 0 ? src.slice(i, j) : '';
-  ['기본만','세부까지','제원이 밖으로 안 나갑니다.','제조사·모델·연식·길이·폭만 나갑니다.']
+  ['기본 정보만','상세 정보까지','제원이 공개되지 않습니다.','제조사·모델·연식·길이·폭만 공개됩니다.']
     .forEach(k => T(Lg + " 에 「" + k.slice(0,10) + "」 가 있다", dict.indexOf("'" + k + "'") >= 0));
 });
 

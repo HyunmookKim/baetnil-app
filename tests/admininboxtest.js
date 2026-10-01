@@ -76,7 +76,7 @@ const T = (n, c, w) => { if(c){ pass++; console.log('통과: ' + n); }
     /supTab === 'new' \? !x\.done : !!x\.done/.test(f), (f.match(/\.filter\([^\n]*/) || [''])[0]);
   T('갈래마다 몇 건인지 보여 준다', /esc\(nm\)\}\$\{n != null/.test(f) || /' ' \+ n/.test(f), f.slice(0,400));
   T('★ 비었을 때 무엇이 비었는지 말해 준다',
-    /새로 들어온 것이 없습니다/.test(f) && /확인한 것이 없습니다/.test(f), f.slice(0,600));
+    /새로 들어온 것이 없습니다/.test(f) && /확인한 항목이 없습니다/.test(f), f.slice(0,600));  // 5.30 — 문구 바뀜
   T('★★ 본문을 접어 둔다 (메일은 2만 자까지 들어온다)',
     /supOpen\[s\.id\]/.test(f) && /slice\(0, 160\)/.test(f), f.slice(0,900));
   T('짧은 글은 접지 않는다 (접을 것도 없는데 단추만 생기면 성가시다)',

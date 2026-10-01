@@ -41,7 +41,8 @@ globalThis.confirm = m => {
   globalThis.alerts.push(m);
   // 잠금 안내('지금 열까요?') 만 confirmAns 로 답한다.
   // 칸 겹침 확인 같은 다른 물음까지 '아니오' 로 답하면 엉뚱한 것이 막힌다.
-  return /열까요/.test(String(m||'')) ? globalThis.confirmAns : true;
+  // 5.30 — 문구 바뀜 ('지금 열까요?' → '지금 잠금을 해제할까요?')
+  return /열까요|해제할까요/.test(String(m||'')) ? globalThis.confirmAns : true;
 };
 globalThis.document = { getElementById: ()=>null, body:{ classList:{ toggle(){}} } };
 globalThis.localStorage = { store:{}, getItem(k){ return this.store[k]||null; },
@@ -91,7 +92,7 @@ T('수납칸이 잠기면 구역도 못 바꾼다', lkRezone('a','갤리')===nul
 T('수납칸이 잠겨도 도면은 그린다', !!shAdd('rect', {x:5,y:5,w:10,h:10}));
 T('수납칸이 잠기면 저장을 안 부른다 (도형 빼고 확인)', true);
 T('왜 안 되는지 알려준다', globalThis.alerts.some(m=>/수납칸.*잠/.test(m)));
-T('여는 방법을 알려준다', globalThis.alerts.some(m=>/열까요|자물쇠/.test(m)));
+T('여는 방법을 알려준다', globalThis.alerts.some(m=>/열까요|해제할까요|자물쇠/.test(m)));
 
 // ── 잠금 안내에서 그 자리에서 열 수 있다.
 //    다만 열어만 주고 그 동작까지 하지는 않는다 —

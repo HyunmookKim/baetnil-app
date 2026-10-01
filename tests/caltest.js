@@ -423,9 +423,9 @@ function dictOf(lang){
 const EN = dictOf('en'), RU = dictOf('ru'), JA = dictOf('ja');
 T('⑥-0 사전 셋을 읽었다', EN.length > 1000 && RU.length > 1000 && JA.length > 1000,
   { en: EN.length, ru: RU.length, ja: JA.length });
-const NEW_WORDS = ['달력', '{n}건 더', '이 날에 만들기',
+const NEW_WORDS = ['달력', '{n}건 더', '이 날짜에 추가',
                    '달력 파일 내보내기', '이 달에는 아무것도 없습니다',
-                   '구글 · 아이폰 달력에 넣으실 수 있습니다'];
+                   '구글 · 아이폰 캘린더에 추가할 수 있습니다'];
 NEW_WORDS.forEach(w => {
   const q = "'" + w + "'";
   T('⑥ 「' + w + '」 — 영어', EN.indexOf(q + ':') >= 0);

@@ -180,7 +180,7 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + n); } else { fail+
   // ★ 배 위에서 숫자를 타이핑하게 하지 않는다. 눌러서 맞춘다.
   T('수심을 눌러서 올리고 내린다', /spotDepthAdj\(/.test(f));
   T('시각도 눌러서 옮긴다', /spotDepthTime\(/.test(f));
-  T('지금으로 되돌리는 버튼이 있다', /지금/.test(f));
+  T('지금으로 되돌리는 버튼이 있다', /spotDepthNow\(\)[^\n]{0,40}현재 시각/.test(f));  // 5.30 — 문구 바뀜 (지금으로 → 현재 시각)
   T('그 시각 조위를 보여 준다', /조위/.test(f));
   T('어느 관측소인지 보여 준다', /spot\.name|\.spot\b/.test(f));
   T('환산 결과를 보여 준다', /lowTideDepth\(|저조위/.test(f));
