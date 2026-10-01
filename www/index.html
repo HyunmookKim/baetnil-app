@@ -1329,12 +1329,6 @@ body.pnsc #mrPanel .mrhead::before, body.pnsc #mrPanel > .mrtop::before{opacity:
 .dbadge.on{display:inline-block}
 .ditem{display:flex;align-items:center}
 .cklink{padding:5px 10px;font-size:11px;text-decoration:none;flex-shrink:0}
-/* ★ 5.28 — 「바로가기」·「수정」 단추가 있는 줄은 글자를 키우면 항목 이름이 서너 줄로 접혔다(「원거리 / 수상레저 / 신고 (해당 / 시)」).
-   이름에 최소 폭을 주고, 단추가 안 들어가면 단추 묶음이 다음 줄 오른쪽으로 내려간다. */
-.ckrow{flex-wrap:wrap}
-.cklbl{flex:1 1 9em;min-width:9em}
-.ckacts{display:flex;gap:8px;align-items:center;margin-left:auto;flex-shrink:0}
-.ckacts:empty{display:none}
 .newsup{font-size:11px;color:var(--td);margin:12px 18px 0}
 .newsr .cn{font-size:15px;line-height:1.45}
 .newss{font-size:12.5px;color:#9BA1A9;line-height:1.65;margin:7px 0 10px;white-space:pre-line}
@@ -1718,11 +1712,8 @@ body.panelfull header > *:not(.hrow):not(#hNav){display:none!important}
 #mrPanel.full .mrrow{
   background:rgba(255,255,255,.045);border-radius:14px;
   padding:13px 15px;margin:9px 0;gap:12px;align-items:center}
-/* ★ 5.27 — 칸마다 높이가 들쭉날쭉했다(글만 있는 줄 50 · 입력 칸 줄 70). 입력 칸 줄 높이에 맞춘다. */
-#mrPanel.full .mrrow{min-height:70px}
 #mrPanel.full .mrrow.edt,
 #mrPanel.full .mrrow:empty{background:transparent;padding:2px 0;margin:6px 0}
-#mrPanel.full .mrrow.edt,#mrPanel.full .mrrow:empty{min-height:0}
 #mrPanel.full .mrlbl{
   width:58px;flex-shrink:0;font-size:10.5px;font-weight:600;letter-spacing:.12em;
   color:#93AABD}
@@ -1732,16 +1723,9 @@ body.panelfull header > *:not(.hrow):not(#hNav){display:none!important}
   background:transparent;border:none;border-radius:0;padding:0;
   font-size:15px;font-weight:450;color:var(--th);flex:1;min-width:0}
 #mrPanel.full input::placeholder,#mrPanel.full textarea::placeholder{color:#7C93A8}
-/* ★ 5.28 — 좁은 칸에서 자리글이 「선택하거나 직접 입력하세」 처럼 글자 중간에서 잘렸다. 잘리면 … 로 줄인다. */
-#mrPanel.full input{text-overflow:ellipsis}
 #mrPanel.full select{appearance:none;-webkit-appearance:none;
   background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M1 1l5 5 5-5' fill='none' stroke='%236E8497' stroke-width='1.6' stroke-linecap='round'/></svg>") no-repeat right center}
 #mrPanel.full textarea{resize:vertical;min-height:44px;line-height:1.6}
-/* 5.27 — 눌러서 목록에서 선택하는 칸. 선택 칸(select)과 같은 생김새 */
-.mrpickb{flex:1;min-width:0;min-height:40px;text-align:left;cursor:pointer;
-  background:var(--sf);border:1px solid var(--bd);border-radius:10px;color:var(--tx);padding:7px 30px 7px 10px;font-size:13px;font-family:inherit}
-#mrPanel.full .mrpickb{min-height:44px;background:transparent url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M1 1l5 5 5-5' fill='none' stroke='%236E8497' stroke-width='1.6' stroke-linecap='round'/></svg>") no-repeat right center;
-  border:none;border-radius:0;padding:0 22px 0 0;font-size:15px;font-weight:450;color:var(--th)}
 
 /* 무리 이름표 */
 #mrPanel.full .mrtop b,#mrPanel.full .mrsecthead{
@@ -2079,10 +2063,6 @@ body.panelfull #panel .ph{padding-top:0}
 #searchWrap input:focus,.qbox input:focus{
   border-color:rgba(156,198,232,.55);background:rgba(0,0,0,.42)}
 .qbox{margin:12px 0 10px}
-/* ★ 5.27 — 목록 화면(장비·정기점검·수리·정비수첩·항해일지·연료)의 찾기 칸·안내 글·줄이 화면 끝에 붙어 있었다.
-   목록 줄(.mr)·묶음 이름(.ghead)·숫자 칸(.statrow)은 양옆 20px 을 띄우는데 이 셋만 빠져 있었다. 같은 20px 로 맞춘다. */
-:is(#gearList,#maintList,#repairList,#mlogList,#voyageList,#fuelList,#rvList,#contactsList) > .qbox{margin-left:20px;margin-right:20px}
-:is(#gearList,#maintList,#repairList,#mlogList,#voyageList,#fuelList,#rvList,#contactsList) > :is(.mrnone,.mrrow){margin-left:20px;margin-right:20px}
 #mrPanel.full .qbox{margin:6px 0 12px}
 #mrPanel.full .qbox input{background:rgba(0,0,0,.30);border:1px solid rgba(255,255,255,.10);
   border-radius:13px;padding:13px 14px 13px 40px;font-size:14px}
