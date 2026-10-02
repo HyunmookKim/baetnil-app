@@ -8,5 +8,8 @@ module.exports = function(src){
   // ★ 5.12 — trkPush 가 「첫 점은 GPS 가 잡힌 뒤에」 문을 쓰므로 그것도 같이 붙인다
   return `const TRK_SPD_X=${c('TRK_SPD_X')}, TRK_SPD_PAD=${c('TRK_SPD_PAD')}, TRK_SPD_GAP=${c('TRK_SPD_GAP')}, TRK_SPD_WIN=${c('TRK_SPD_WIN')};\n` +
          `const TRK_FIRST_ACC=${c('TRK_FIRST_ACC')}, TRK_FIRST_WAIT=${c('TRK_FIRST_WAIT')};\n` +
-         g('trkSpd') + '\n' + g('trkOldMaxKt') + '\n' + g('trkFirstWait') + '\n';
+         // ★ 5.32 — 기기별 정확도 기준(trkAccJump·trkAccSeen)과 위성 점 판정(trkSatPt)
+         `const TRK_ACC_OK=${c('TRK_ACC_OK')}, TRK_ACC_X=${c('TRK_ACC_X')}, TRK_ACC_N=${c('TRK_ACC_N')}, TRK_ACC_MINN=${c('TRK_ACC_MINN')};\n` +
+         g('trkSpd') + '\n' + g('trkOldMaxKt') + '\n' + g('trkFirstWait') + '\n' +
+         g('trkAccJump') + '\n' + g('trkAccSeen') + '\n' + g('trkSatPt') + '\n';
 };

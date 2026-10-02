@@ -73,6 +73,9 @@ for(const k of ['TRK_SPD_X','TRK_SPD_PAD','TRK_SPD_GAP','TRK_SPD_WIN','TRK_STILL
 { const m = src.match(/const TRK_GAP_S\s*=\s*[^;]+;/); if(m) eval(m[0].replace('const TRK_GAP_S','globalThis.TRK_GAP_S')); }
 { const m = src.match(/const TRK_GAP_M\s*=\s*[^;]+;/); if(m) eval(m[0].replace('const TRK_GAP_M','globalThis.TRK_GAP_M')); }
 globalThis.trkOn = () => !!globalThis.trkNow;
+// 5.12·5.32 — trkPush 가 쓰는 첫 점 기다리기·기기별 정확도 기준(trkFirstWait·trkAccJump·trkAccSeen)
+for(const k of ['TRK_FIRST_ACC','TRK_FIRST_WAIT','TRK_ACC_OK','TRK_ACC_X','TRK_ACC_N','TRK_ACC_MINN']){ const m = src.match(new RegExp('const ' + k + '\\s*=\\s*([\\d.]+)')); if(m) globalThis[k] = Number(m[1]); }
+for(const f of ['trkFirstWait','trkAccJump','trkAccSeen','trkSatPt']){ const g = grab(src,f); if(g) eval('globalThis.'+f+' = '+g); }
 for(const f of need){ eval('globalThis.'+f+' = '+grab(src,f)); }
 
 T('TRK_FLUSH 이 정해져 있다', typeof TRK_FLUSH === 'number' && TRK_FLUSH > 0);

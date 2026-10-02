@@ -113,7 +113,8 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + cut(n)); } else { 
   // ★ 이미 있는 것을 또 받으면 데이터 요금만 나간다
   T('이미 챙긴 것은 다시 안 받는다', /if\(await c\.match\(url\)\) return false/.test(k));
   T('cors 로 받는다 — 껍데기는 자리를 몇 배로 잡는다', /mode\s*:\s*'cors'/.test(k));
-  T('제대로 못 받으면 담지 않는다', /if\(!res \|\| !res\.ok\) return false/.test(k));
+  // 5.32 — 못 받으면 담지 않고, 그 사진은 하루 동안 다시 안 받는다 (keepFailNote)
+  T('제대로 못 받으면 담지 않는다', /if\(!res \|\| !res\.ok\)\{ keepFailNote\(url, true\); return false; \}/.test(k));
   T('주소가 아니면 아무 일도 안 한다', /\/\^https\?:\/i\.test\(url\)/.test(k));
   T('실패해도 조용히 넘어간다', /catch\(_\)\{ return false; \}/.test(k));
 

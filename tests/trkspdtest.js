@@ -17,7 +17,8 @@ T('★★★ 정해진 속도 한도(TRK_MAXKT·trkMaxKt)가 없다', !/const TR
 T('★★ trkTooFast 가 GPS 칩 속도(trkSpd)로 판단한다', /trkSpd\(a\)/.test(grab('trkTooFast')));
 T('★★ 기록할 때 칩 속도를 위치에 남긴다 (p.sp)', /p\.sp = Math\.round\(spd \* 10\) \/ 10/.test(grab('trkPush')));
 T('★★ 자바 쪽에서 가져온 위치도 칩 속도를 남긴다', /p\.sp = Math\.round\(qs \* 10\) \/ 10/.test(src));
-T('★★ 기지국·와이파이 위치(pv network)는 버린다', /q\.pv === 'network'/.test(src));
+// 5.32 — 위성 점 판정을 trkSatPt 한 곳으로 모았다 (안드로이드 gps 만 · network/fused 는 버림)
+T('★★ 기지국·와이파이 위치(pv network)는 버린다', /pv === 'network' \|\| pv === 'fused'/.test(src) && /if\(!trkSatPt\(q, ac\)\)/.test(src));
 T('★★ 흔들림 고르기가 칩 속도를 쓴다 (빠를수록 덜 뒤처짐)', /trkSmooth\(la, lo, ac, tms, spd\)/.test(src));
 T('★ trkQuality 도 같은 판단(trkTooFast)을 쓴다', /trkTooFast\(a\[i-1\], a\[i\]\)/.test(grab('trkQuality')));
 

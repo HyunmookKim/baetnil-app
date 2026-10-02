@@ -1,0 +1,34 @@
+// 5.31 — 수리 기록의 발견·완료 날짜를 고칠 수 있다 (사장님: 「발견 일자가 수정을 못 하게 되어 있네」)
+// 사용: node rpdatetest.js ../www/index.html
+const { chromium } = require('playwright'); const http=require('http'),fs=require('fs'),path=require('path');
+const FILE=path.resolve(process.argv[2]||'../www/index.html');
+const server=http.createServer((rq,rs)=>{const u=rq.url.split('?')[0]; fs.readFile(u==='/'?FILE:path.join(path.dirname(FILE),u),(e,d)=>{if(e){rs.writeHead(404);rs.end();return;} rs.writeHead(200); rs.end(d);});});
+let ok=0,bad=0; const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.log('★ 실패: '+n+(w!==undefined?' — '+JSON.stringify(w).slice(0,300):''));} };
+(async()=>{ await new Promise(r=>server.listen(0,r));
+ const br=await chromium.launch({executablePath:'/opt/pw-browsers/chromium-1194/chrome-linux/chrome'});
+ const ctx=await br.newContext({locale:'ko-KR',viewport:{width:390,height:800}});
+ await ctx.route(/googleapis|gstatic|firebaseio|firestore|open-meteo|openstreetmap|openseamap/,r=>r.abort());
+ await ctx.addInitScript(()=>{try{localStorage.setItem('bt_setup','done');localStorage.setItem('bt_welcome','done');}catch(_){}});
+ const pg=await ctx.newPage(); const errs=[]; pg.on('pageerror',e=>errs.push(String(e)));
+ await pg.goto('http://127.0.0.1:'+server.address().port+'/'); await pg.waitForTimeout(1500);
+ const dates = () => pg.evaluate(()=>[...document.querySelectorAll('#mrPanel input[type=date]')].map(i=>i.value));
+ await pg.evaluate(()=>{ try{skipWelcome();}catch(_){} unlocked=true;
+   const b={id:'B1',name:'시험배',type:'sail'}; boats=[b]; currentBoatId='B1'; window.currentBoatId='B1';
+   repair=[{id:'r1',title:'레이지잭 고정 줄',status:'open',grp:'',note:'',photos:[],pin:null,created:'2026-10-01',doneDate:''}];
+   save(); saveMR(); switchTab('boat'); goMaint('repair'); openMR('repair','r1'); });
+ await pg.waitForTimeout(500);
+ T('고장일 때 발견 날짜 칸이 있다', JSON.stringify(await dates())===JSON.stringify(['2026-10-01']), await dates());
+ await pg.evaluate(()=>{ const i=document.querySelector('#mrPanel input[type=date]'); i.value='2026-09-20'; i.dispatchEvent(new Event('change',{bubbles:true})); });
+ await pg.waitForTimeout(300);
+ T('발견 날짜를 고치면 저장된다', await pg.evaluate(()=>repair.find(x=>x.id==='r1').created)==='2026-09-20');
+ await pg.evaluate(()=>mrStatus('done')); await pg.waitForTimeout(300);
+ const d2=await dates();
+ T('완료로 바꾸면 완료 날짜 칸도 생긴다', d2.length===2 && d2[0]==='2026-09-20' && /^\d{4}-\d{2}-\d{2}$/.test(d2[1]), d2);
+ await pg.evaluate(()=>{ const i=document.querySelectorAll('#mrPanel input[type=date]')[1]; i.value='2026-09-25'; i.dispatchEvent(new Event('change',{bubbles:true})); });
+ await pg.waitForTimeout(300);
+ T('완료 날짜를 고치면 저장된다', await pg.evaluate(()=>repair.find(x=>x.id==='r1').doneDate)==='2026-09-25');
+ await pg.evaluate(()=>{ unlocked=false; openMR('repair','r1'); }); await pg.waitForTimeout(300);
+ const ro=await pg.evaluate(()=>({n:document.querySelectorAll('#mrPanel input[type=date]').length, txt:document.getElementById('mrPanel').innerText}));
+ T('보기 전용이면 칸 대신 글로 보인다', ro.n===0 && /발견 2026-09-20/.test(ro.txt) && /완료 2026-09-25/.test(ro.txt), ro.txt.slice(0,200));
+ T('오류가 없다', errs.length===0, errs);
+ await br.close(); server.close(); console.log('\n합계: '+ok+'개 통과 / '+bad+'개 실패'); process.exit(bad?1:0); })();

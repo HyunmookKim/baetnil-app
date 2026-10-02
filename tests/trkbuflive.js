@@ -54,7 +54,7 @@ T('★★★ 앱을 다시 볼 때 곧바로 가져온다', /trkBufDrain\(\)/.te
   const dr = grabAsync('trkBufDrain');
   // ★ 5.4 — 이제 trkPush 를 거치지 않는다. 지나간 점을 뒤에 붙이면 50m 문과 속도 문이
   //   시간을 거슬러 걸려 버려지기 때문이다. 대신 **같은 거르개**를 여기서 직접 건다.
-  T('★ 가져온 점에도 기지국 거르개를 건다 (TRK_GPS_ACC)', /TRK_GPS_ACC/.test(dr));
+  T('★ 가져온 점에도 기지국 거르개를 건다 (5.32 trkSatPt — 위성 점만)', /if\(!trkSatPt\(q, ac\)\)/.test(dr));
   T('★ 가져온 점에도 흐림 거르개를 건다 (TRK_ACC)', /TRK_ACC/.test(dr));
   T('★ 가져온 점에도 50m 문을 건다 (TRK_DIST)', /TRK_DIST/.test(dr));
   T('★ 가져온 점에도 속도 문을 건다 (trkTooFast)', /trkTooFast\(/.test(dr));
