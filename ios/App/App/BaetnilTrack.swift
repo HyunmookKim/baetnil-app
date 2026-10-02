@@ -16,6 +16,7 @@
 //   (속도·방향은 음수면 모르는 것이라 안 적는다.)
 
 import Foundation
+import UIKit
 import Capacitor
 import CoreLocation
 
@@ -51,6 +52,16 @@ public class BaetnilTrack: CAPPlugin, CAPBridgedPlugin, CLLocationManagerDelegat
                 // ★ 권한이 없으면 켜지 않는다. 권한은 앱의 다른 자리에서 이미 받는다.
                 call.resolve(["started": false, "why": "no-permission"]); return
             }
+            // ★★★ 5.32 — 「정확한 위치」 가 꺼져 있으면(iOS 14 부터) 위성 위치를 못 받는다.
+            //   대략적인 위치(수 km)로는 항적이 안 되므로 켜지 않고 까닭을 돌려준다 (사장님 결정, 2026-10-02).
+            if #available(iOS 14.0, *) {
+                if CLLocationManager().accuracyAuthorization == .reducedAccuracy {
+                    call.resolve(["started": false, "why": "coarse"]); return
+                }
+            }
+            // ★ 5.32 — 아이패드는 위성 장치가 있는지 알 수 없다 (애플 개발자 포럼: 공개 API 가 없다).
+            //   아이폰은 모두 GPS 가 있다. 그래서 아이패드인지만 알려 주고, 앱이 실제로 위성 점이 들어오는지 본다.
+            let pad = UIDevice.current.userInterfaceIdiom == .pad
             if self.lm == nil {
                 let m = CLLocationManager()
                 m.delegate = self
@@ -64,7 +75,7 @@ public class BaetnilTrack: CAPPlugin, CAPBridgedPlugin, CLLocationManagerDelegat
             }
             self.lm?.startUpdatingLocation()
             self.running = true
-            call.resolve(["started": true])
+            call.resolve(["started": true, "pad": pad])
         }
     }
 
