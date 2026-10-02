@@ -44,6 +44,24 @@ public class BaetnilTrack extends Plugin {
                    != PackageManager.PERMISSION_GRANTED;
     }
 
+    /** 위성 위치를 받을 수 없는 까닭. 받을 수 있으면 null */
+    private String noSatellite() {
+        Context c = getContext();
+        try {
+            if (!c.getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS)) return "no-gps";
+        } catch (Exception ignored) {}
+        if (ContextCompat.checkSelfPermission(c, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) return "coarse";
+        try {
+            android.location.LocationManager lm =
+                (android.location.LocationManager) c.getSystemService(Context.LOCATION_SERVICE);
+            if (lm == null) return "no-gps";
+            if (!lm.getAllProviders().contains(android.location.LocationManager.GPS_PROVIDER)) return "no-gps";
+            if (!lm.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) return "gps-off";
+        } catch (Exception ignored) {}
+        return null;
+    }
+
     /** 기록을 켠다 — 사람이 앱 안에서 [기록 시작] 을 눌렀을 때만 불린다 */
     @PluginMethod
     public void start(PluginCall call) {
@@ -51,6 +69,16 @@ public class BaetnilTrack extends Plugin {
         if (noPermission()) {
             // ★ 권한이 없으면 켜지 않는다. 켜 봐야 안드로이드가 곧 죽인다.
             r.put("started", false); r.put("why", "no-permission");
+            call.resolve(r); return;
+        }
+        // ★★★ 5.32 — 위성 위치를 받을 수 없으면 켜지 않고 까닭을 돌려준다 (사장님 결정, 2026-10-02:
+        //   「안된다고 안내해야지 그건 아예 원래 안되는거니까」). 앱이 사람 말로 바꿔 알려 준다.
+        //   · no-gps  — 위성 위치 장치가 없는 기기 (안드로이드 공식: FEATURE_LOCATION_GPS)
+        //   · coarse  — 「대략적인 위치」 만 허락됨. GPS_PROVIDER 는 정확한 위치 권한이 있어야 쓸 수 있다
+        //   · gps-off — 위치 설정에서 GPS 공급원이 꺼져 있음
+        String sat = noSatellite();
+        if (sat != null) {
+            r.put("started", false); r.put("why", sat);
             call.resolve(r); return;
         }
         try {

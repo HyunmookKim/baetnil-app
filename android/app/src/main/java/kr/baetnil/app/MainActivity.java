@@ -21,6 +21,12 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(BaetnilTrack.class);
         super.onCreate(savedInstanceState);
 
+        // ★★★ 5.32 — 사진을 폰에 챙겨 두고 그것부터 쓴다 (BaetnilWebViewClient 머리말 참조).
+        //   캐퍼시터가 쓰는 웹뷰 처리기를 이어받은 것이라, 앱 파일(localhost)은 예전 그대로 캐퍼시터가 준다.
+        try {
+            if (getBridge() != null) getBridge().setWebViewClient(new BaetnilWebViewClient(getBridge()));
+        } catch (Exception ignored) {}
+
         // ★★★ 5.21 — 안드로이드 14 이하에서 머리줄이 시계·배터리 줄 밑으로 들어가던 것 (5.20 에서 생김).
         //   5.20 에 넣은 시계 줄 부품(@capacitor/status-bar)은 켜질 때 기본값으로 「웹 화면을 시계 줄 밑까지 깐다」
         //   (overlaysWebView 기본 true). 안드로이드 15 이상은 원래 그렇게 그리고 웹 화면이 시계 줄 높이만큼 비워 두지만,
