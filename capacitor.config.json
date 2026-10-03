@@ -4,7 +4,18 @@
   "webDir": "www",
   "appendUserAgent": "baetnil-app (+https://baetnil.com)",
   "android": {
-    "useLegacyBridge": true
+    "useLegacyBridge": true,
+    "includePlugins": [
+      "@capacitor-community/background-geolocation",
+      "@capacitor-firebase/authentication",
+      "@capacitor-firebase/messaging",
+      "@capacitor/app",
+      "@capacitor/filesystem",
+      "@capacitor/haptics",
+      "@capacitor/local-notifications",
+      "@capacitor/share",
+      "@ebarooni/capacitor-calendar"
+    ]
   },
   "ios": {
     "contentInset": "always"
