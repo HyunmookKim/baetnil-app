@@ -71,8 +71,16 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // ★★★ 5.33 — 플레이 콘솔 「DEX 코드 최적화가 기준점 미만입니다 · 난독화(3%) · 해결 기한 2027년 2월」.
+            //   R8 을 켠다(안드로이드 개발자 문서 「Enable app optimization with R8」, 캡고 「Fix Google Play Obfuscation Below 25%
+            //   in Capacitor Apps」). 캐퍼시터는 3.2.3 부터 부품(@CapacitorPlugin·@PluginMethod·Plugin 상속)을 지키는 규칙을
+            //   스스로 넣어 준다(consumerProguardFiles) — 우리 부품 BaetnilWake·BaetnilTrack·BaetnilBars 도 그 규칙에 걸린다.
+            //   ★ 자원 줄이기(shrinkResources)는 켜지 않는다 — 알림 아이콘·소리를 이름으로 찾는 부품(local-notifications
+            //     AssetUtil.getResourceID)이 있어, 쓰지 않는 듯 보이는 자원을 지우면 알림 아이콘이 사라질 수 있다.
+            //   ★ R8 이 정리한 이름표(mapping)는 AAB 안에 들어가 플레이가 오류 보고를 원래 이름으로 풀어 준다.
+            minifyEnabled true
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             // ★ 열쇠가 있을 때만 붙인다. 없으면 서명 없이 지어진다(스토어에는 못 낸다).
             if (서명가능) { signingConfig signingConfigs.release }
         }
