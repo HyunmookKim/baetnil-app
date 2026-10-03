@@ -44,7 +44,7 @@ function build(saved, langs, total){
   // 자동 감지는 이름이 무엇이든 langNow 안에서 일어나야 한다.
   // 도우미가 따로 있으면 같이 떼어 온다.
   const helper = grab(js, 'langFromDevice') || '';
-  const fns = ['langNow','t','langCoverage','langReady'].map(n => grab(js, n)).join('\n');
+  const fns = 'const I18N_N = null;\n' + ['langNow','t','langCoverage','langReady','i18nDict'].map(n => grab(js, n)).join('\n');  // 5.35 i18nDict
   const f = new Function('localStorage', 'navigator',
     parts2 + '\n' + dict + '\n' + helper + '\n' + fns
     + '\n return { langNow, t, langReady, LANGS };');

@@ -14,7 +14,9 @@ T('시간 주기 코드가 있다', from > 0 && to > from);
 const blk = src.slice(from, to);
 
 const 하루 = 864e5;
-const 날 = d => { const x = new Date(Date.now() + d*하루); return x.toISOString().slice(0,10); };
+// ★ 5.35 — 앱은 그 나라 시각(로컬) 날짜로 센다. toISOString(세계 표준시)로 날짜를 만들면
+//   한국 0~9시에는 하루 앞 날짜가 나와 「오늘」 검사가 저절로 틀렸다(10/4 00:55 에 runall 에서 실패).
+const 날 = d => { const x = new Date(Date.now() + d*하루); return x.getFullYear() + '-' + String(x.getMonth()+1).padStart(2,'0') + '-' + String(x.getDate()).padStart(2,'0'); };
 // ★ 5.29 — 엔진 시간은 「마지막 날 뒤 가동시간」 으로 센다. 가동 기록(runs)·항해일지(voyage)를 넣어 준다.
 //   R: [[며칠 전, 시간], …] 엔진 가동 기록. H: 앱 총 가동시간(옛 셈에만 쓰던 값).
 const F = (H, R, V) => new Function('H', 'runs', 'voyage', `

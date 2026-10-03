@@ -37,7 +37,7 @@ try{
   const dict = (js.match(/const I18N = \{[\s\S]*?\n\};/) || [''])[0];
   // ★ 4.94 — langNow 가 langFromDevice 를 부른다. 담아 두는 칸까지 같이 떼어 온다.
   const auto = (js.match(/let langAuto = [^\n]*\n/) || [''])[0];
-  const fns = auto + ['langFromDevice','langNow','t','langCoverage','langReady']
+  const fns = auto + 'const I18N_N = null;\n' + ['langFromDevice','langNow','t','langCoverage','langReady','i18nDict']  // 5.35 i18nDict
     .map(n => grab(js, n)).filter(Boolean).join('\n');
   // ★ 4.94 부터 안 골랐으면 폰 말을 따른다. Node 에도 navigator 가 있어(영어)
   //   안 끼우면 여기서 영어판을 보게 된다. 이 검사는 한국어판을 재는 곳이다.

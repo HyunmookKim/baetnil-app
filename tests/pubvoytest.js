@@ -74,7 +74,7 @@ T('★★ 날것의 좌표를 그대로 담는 자리가 없다',
   globalThis.VOY_LEVELS = globalThis.PUB_LEVELS;
 
   globalThis.tsub = (m2,o)=>String(m2).replace(/\{(\w+)\}/g,(a2,k)=>(o&&o[k]!=null)?o[k]:a2);
-  for(const f of ['pubOn','isPublic','buildPublic',
+  for(const f of ['pubOn','isPublic','buildPublic','ciList',
                   'trkHideNm','nmBetween','trkAnchors','trkInHide','trkPublicLine','trkPublicLogPos',
                   'posLv','seaName','posPublic','legPublic','trkPublicLogArea',
                   'maintRows',

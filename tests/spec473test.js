@@ -44,7 +44,8 @@ T('★★★ 제원 화면 맨 위에 공개 줄이 있다', /body = specPubRow\
 T('★★ 공개설정 화면도 같은 표를 쓴다', /SPEC_LEVELS\.map/.test(grab(src,'openPublish')));
 
 // ── ③ 연락처 — 켜고 끄는 것이 있으면 적는 곳도 있다
-T('★★★ 전화번호를 적는 칸이 있다', /boatField\('phone',this\.value\)/.test(src));
+// ★ 5.35 — 연락처 여러 개: 기본정보의 [연락처 수정] → 고치는 화면(openCiEdit). 대표 전화는 b.phone 에도 넣는다.
+T('★★★ 전화번호를 적는 칸이 있다', /onclick="openCiEdit\(\)"/.test(src) && /b\.phone = tel \? tel\.v : ''/.test(src));
 T('★★★ 전화번호가 클라우드에 올라간다 (BOAT_FIELDS)',
   /'phone','trkHide'/.test(src));
 T('★★ 기본정보를 고치면 밖 사본도 다시 만든다', /pubRefresh\(\)/.test(grab(src,'boatField')));

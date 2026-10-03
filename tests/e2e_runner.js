@@ -426,8 +426,15 @@
     var st = null; try{ st = await P.status(); }catch(_){}
     log('INFO 다시 켠 뒤 기록 장치 running=' + (st && st.running) + ' relaunch=' + (st && st.relaunch));
     if(!(st && st.relaunch)) throw new Error('앱이 켜질 때 기록 장치가 스스로 이어 붙지 않음');
+    // ★ 5.35 — 5.34 검사(#36)에서 아이폰 16e·아이패드가 여기서 실패했다. 기록 장치는 되살아났는데(relaunch=true),
+    //   아이폰이 앱을 **뒤에서** 깨운 그 순간(끈 지 150초가 되기 전)에 이 단계가 돌아,
+    //   「끈 뒤 150초 넘은 점」 을 60초만 기다리다 끝났다(바깥 손은 그때 아직 자고 있었다 — 줄이 한꺼번에 읽힘).
+    //   그래서 먼저 150초가 지나 앱이 앞으로 나올 때까지 기다린 뒤 새 점을 본다.
+    var bgWoke = document.visibilityState !== 'visible';
+    log('INFO 이 단계가 시작된 때: 끈 뒤 ' + Math.round((Date.now() - S.killAt) / 1000) + '초 · ' + (bgWoke ? '뒤에서(아이폰이 깨움)' : '앞에서'));
+    await until(function(){ return Date.now() > S.killAt + 152000 && document.visibilityState === 'visible'; }, 240000, '앱이 앞으로 나옴');
     await until(function(){ return trkNow && trkNow.pts && trkNow.pts.some(function(p){ return Date.parse(p.t) > S.killAt + 150000; }); },
-      60000, '다시 켠 뒤 새 점');
+      90000, '다시 켠 뒤 새 점');
     var during = trkNow.pts.filter(function(p){ var t = Date.parse(p.t); return t > S.killAt + 5000 && t < S.killAt + 145000; }).length;
     log('INFO 꺼져 있던 150초 동안 쌓인 점 ' + during + ' · 끄기 전 ' + S.killPts + ' · 지금 ' + trkNow.pts.length
         + ' · 거짓 위치로 버린 수 +' + ((Number(trkNow.mock) || 0) - (S.killMock || 0)));

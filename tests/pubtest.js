@@ -41,7 +41,7 @@ globalThis.VOY_LEVELS = globalThis.PUB_LEVELS;
 { const m = src.match(/const TRK_HIDE_DEF = [^;]+;/); if(m) eval(m[0].replace('const TRK_HIDE_DEF','globalThis.TRK_HIDE_DEF')); }
 
 const need = ['mkPerms','seedRanks','rankList','rankOf','myRank','myPos','permOf','can',
-              'pubOn','isPublic','buildPublic','setPub',
+              'pubOn','isPublic','buildPublic','setPub','ciList',   // 5.35 — 연락처 여러 개
               'pubLvOf','voyLv','mlogLv','rvLv','specLv',
               'pubPlain','wxPublic',                          // 4.74 — 나가는 칸 표
               'howSteps','howPublic',   // 4.54 — 정비 절차
