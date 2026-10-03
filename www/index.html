@@ -21909,11 +21909,11 @@ async function openPerson(uid){
 
   const permBox = owner
     ? `<div class="mrnone" style="text-align:left">
-        <b>${esc(t('최고 운영자입니다.'))}</b> ${esc(t('앱 소유자이므로 앱에서 권한을 변경하거나 지정을 해제할 수 없습니다.'))}</div>`
+        <b>${esc(t('최고 운영자입니다.'))}</b> ${esc(t('이 앱의 주인이라 앱에서는 권한을 바꾸거나 지정을 해제할 수 없습니다.'))}</div>`
     : canAppoint
       ? `<div class="mrnone" style="text-align:left">${a
-          ? t('할 수 있는 일을 켜거나 끕니다. 모두 끄면 운영자 지정이 해제됩니다.')
-          : t('아직 맡은 업무가 없습니다. 아래에서 맡길 업무를 켜 주세요.')}</div>
+          ? t('할 수 있는 일을 켜고 끕니다. 모두 끄면 운영자에서 내립니다.')
+          : t('아직 아무 일도 맡지 않았습니다. 아래에서 할 수 있는 일을 켜 주세요.')}</div>
         <div class="fchips" style="padding:0 12px 10px">`
         + ADMIN_PERMS.map(pm=>
             `<button class="tchip${perms[pm.k]?' on':''}"
@@ -21926,7 +21926,7 @@ async function openPerson(uid){
     ? (owner
         ? ''
         : `<div class="mrrow"><span class="mrlbl">${esc(t('글쓰기'))}</span>
-            <b class="mrv" style="flex:1">${ban?t('차단되어 있습니다'):t('쓸 수 있습니다')}</b>
+            <b class="mrv" style="flex:1">${ban?t('막혀 있습니다'):t('쓸 수 있습니다')}</b>
             ${ban
               ? `<button class="minib grn" onclick="personUnban('${jsq(String(uid))}')">${esc(t('차단 해제'))}</button>`
               : `<button class="minib red" onclick="personBan('${jsq(String(uid))}')">${esc(t('차단'))}</button>`}</div>`
@@ -21976,9 +21976,9 @@ async function personAppoint(uid, key){
   if(why){ tell(t(why)); return; }
   const nm = (personCur && String(personCur.uid) === String(uid) && personCur.name) || '';
   const pm = ADMIN_PERMS.find(x=>x.k===key);
-  if(!await ask(tsub('{name} 님을 운영자로 지정합니다.', {name:nm||uid}) + '\n\n'
+  if(!await ask(tsub('{name} 님을 운영자로 세웁니다.', {name:nm||uid}) + '\n\n'
       + tsub('할 수 있는 일: {what}', {what:(pm&&pm.name)||key}) + '\n'
-      + t('지정한 후에 다른 권한도 켜고 끌 수 있습니다.\n계속할까요?'), { ok: t('지정') })) return;
+      + t('지정한 뒤에 다른 일도 켜고 끌 수 있습니다.\n계속할까요?'), { ok: t('지정') })) return;
   const perms = {}; perms[key] = true;
   window.__admin.set(uid, { name:nm, perms })
     .then(()=>openPerson(uid))
@@ -21998,23 +21998,23 @@ function personBan(uid){
   const nm = (personCur && String(personCur.uid) === String(uid) && personCur.name) || uid;
   openForm({
     title:'글쓰기 차단',
-    sub: tsub('{name} 님은 글과 댓글을 쓸 수 없게 됩니다. 읽기는 가능합니다.', { name: nm }),
+    sub: tsub('{name} 님이 글과 댓글을 못 쓰게 합니다. 읽기는 됩니다.', { name: nm }),
     okText:'차단',
-    fields:[ { key:'why', label:'사유', value:'', placeholder:'나중에 차단 이유를 확인할 수 있도록' } ],
+    fields:[ { key:'why', label:'사유', value:'', placeholder:'나중에 왜 막았는지 알 수 있게' } ],
     onOk: v => {
       window.__bans.set(uid, {
         uid:String(uid), why:String(v.why||'').trim(),
         by: adminMyUid(), byName: meName ? meName() : '', ts: new Date().toISOString()
       }).then(()=>openPerson(uid))
-        .catch(e=>tell(t('차단하지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
+        .catch(e=>tell(t('막지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
     }
   });
 }
 async function personUnban(uid){
-  if(!isAdmin('userBan')){ tell(t('사용자를 차단할 권한이 없습니다')); return; }
+  if(!isAdmin('userBan')){ tell(t('사람을 막을 권한이 없습니다')); return; }
   if(!await ask(t('차단을 해제할까요?\n\n다시 글과 댓글을 쓸 수 있게 됩니다.'), { ok: t('차단 해제') })) return;
   window.__bans.remove(uid).then(()=>openPerson(uid))
-    .catch(e=>tell(t('차단을 해제하지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
+    .catch(e=>tell(t('풀지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
 }
 
 // ── 운영자 목록
@@ -22026,7 +22026,7 @@ async function adminAdmins(){
   //   글을 세 토막으로 나눠 붙이던 것도 그만둔다 — 붙으면 띄어쓰기가 사라지고
   //   (화면에 「켜고 끕니다.사람 칸에서」 로 나왔다), 다른 말로 옮길 때도 뜻이 깨진다.
   return `<div class="mrnone" style="text-align:left">${
-    esc(tsub('사람을 눌러 권한을 켜고 끕니다. {tab}에서 이름으로 찾아 지정할 수도 있습니다.',
+    esc(tsub('사람을 눌러 권한을 켜고 끕니다. {tab} 칸에서 이름으로 찾아 세울 수도 있습니다.',
              { tab: t('회원') }))}</div>`
     + list.map(a=>{
         const perms = a.perms || {};
@@ -22047,15 +22047,15 @@ function adminAdd(){
   if(why){ tell(t(why)); return; }
   openForm({
     title:'운영자 지정',
-    sub:'상대방의 계정 번호를 붙여넣으세요',
+    sub:'그 사람의 계정 번호를 붙여넣으세요',
     okText:'지정',
     fields:[
       { key:'uid',  label:'계정 번호', value:'', placeholder:'상대가 복사해 준 번호' },
-      { key:'name', label:'이름',     value:'', placeholder:'다른 사람이 알아볼 수 있는 이름' }
+      { key:'name', label:'이름',     value:'', placeholder:'누구인지 알아볼 이름' }
     ],
     onOk: v => {
       const uid = String(v.uid || '').trim();
-      if(!uid) return formErr('uid', '계정 번호를 입력해 주세요');
+      if(!uid) return formErr('uid', '계정 번호를 넣어 주세요');
       if(adminRows.some(a=>String(a.uid)===uid)){ tell(t('이미 운영자입니다')); return false; }
       window.__admin.set(uid, { name:String(v.name||'').trim(), perms:{ postDel:true } })
         .then(()=>openPerson(uid))
@@ -22212,7 +22212,7 @@ function exploreRowsHtml(){
     .map(x=>`<div class="fleet" onclick="openBoatPage('${jsq(x.id)}')">
       <div class="fmain"><div class="fname">${esc(boatShowName(x) || t('이름 없음'))}
         <span class="chip">${esc(t(x.typeName||''))}</span>
-        ${x.adminHidden?`<span class="chip notice">${esc(t('숨김'))}</span>`:''}
+        ${x.adminHidden?`<span class="chip notice">${esc(t('감춤'))}</span>`:''}
         ${x.biz?`<span class="chip notice">${esc(t('영업'))}</span>`:''}</div>
         <div class="fsub">${esc([boatShowPort(x), x.maker, x.model].filter(Boolean).join(' · ') || '')}</div>
       </div></div>`).join('');
@@ -22230,13 +22230,13 @@ function expRowsHtml(){
                   maint:  t('아직 공개된 정비수첩이 없습니다'),
                   review: t('아직 공개된 제품 리뷰가 없습니다'),
                   boatrv: t('아직 공개된 배 리뷰가 없습니다') };
-    return `<div class="mrnone">${esc(expQ ? t('검색 결과가 없습니다') : (why[kind] || ''))}</div>`
+    return `<div class="mrnone">${esc(expQ ? t('찾는 것이 없습니다') : (why[kind] || ''))}</div>`
       + (expQ ? '' : `<div class="mrnone" style="text-align:left;color:#7b8794">${
           kind === 'maint'
-            ? esc(t('내 정비 기록에 「정비 절차」를 입력하고 공개를 켜면 여기에 표시됩니다.'))
+            ? esc(t('내 정비 기록에 「정비 절차」를 적고 공개를 켜면 여기에 실립니다.'))
             : ((kind === 'review' || kind === 'boatrv')
-                ? esc(t('위에 있는 쓰기 버튼으로 첫 리뷰를 남겨 보세요. 배 공개 설정에서 「제품 리뷰」를 켜면 여기에 표시됩니다.'))
-                : esc(t('배 공개 설정에서 「항해일지」를 켜면 여기에 표시됩니다.')))}</div>`);
+                ? esc(t('위에 있는 쓰기 버튼으로 첫 리뷰를 남겨 보세요. 배 공개 설정에서 「제품 리뷰」를 켜면 여기에 실립니다.'))
+                : esc(t('배 공개 설정에서 「항해일지」를 켜면 여기에 실립니다.')))}</div>`);
   }
   // ★ 4.70 — 목록 제목부터 옮긴다 (사장님이 정하신 것).
   //   「그게 뭔 줄 알고 사용자가 번역을 할지 말지를 하냐」 — 제목을 못 읽으면 들어갈지도 못 정한다.
@@ -22264,7 +22264,7 @@ function expRowsHtml(){
     if(kind === 'maint'){
       const sub = [r.gear || [r.maker, r.model].filter(Boolean).join(' '),
                    r.kind && t(r.kind), r.date,
-                   r.work && tsub('소요 시간 {v}', { v: durText(r.work) || r.work })]
+                   r.work && tsub('걸린 시간 {v}', { v: durText(r.work) || r.work })]
                   .filter(Boolean).join(' · ');
       return `<div class="fleet" onclick="expOpen('${jsq(b.id)}','maint','${jsq(String(r.id))}')">
         <div class="fmain"><div class="fname">${esc(trIn(r._old ? 'maint' : 'mlog', r.id, 'title', r.title||'', b.id))}
@@ -22275,8 +22275,8 @@ function expRowsHtml(){
     const tags = [];
     if(r.year) tags.push(tsub('{n}년식', { n: r.year }));
     if(r.used) tags.push(rvUsedName(r.used));
-    if(r.again === true) tags.push(t('재구매 의사 있음'));
-    if(r.again === false) tags.push(t('재구매 의사 없음'));
+    if(r.again === true) tags.push(t('재구매 함'));
+    if(r.again === false) tags.push(t('재구매 안 함'));
     if(r.price != null) tags.push(Number(r.price).toLocaleString() + t(r.cur || '원'));
     return `<div class="fleet" onclick="expOpen('${jsq(b.id)}','review','${jsq(String(r.id))}')">
       <div class="fmain"><div class="fname">${esc(trIn('review', r.id, 'title', r.title || r.kind || '', b.id))}
@@ -22323,13 +22323,13 @@ function pubHowBody(m, backName){
   const gname = m.gear || [m.maker, m.model].filter(Boolean).join(' ');
   return `<div class="mrrow"><button class="mrbtn" onclick="pubHowBack()">${esc(backName)}</button></div>
     <div class="mrsubtit">${esc(trIn('mlog', m.id, 'title', m.title||''))}</div>
-    ${row('완료일',     m.date)}
+    ${row('한 날',     m.date)}
     ${row('장비',     gname)}
     ${row('부품 종류', (m.kind && m.kind !== gname) ? t(m.kind) : '')}
     ${row('계통',     m.sys && t(m.sys))}
     ${row('난이도',   m.hard ? howHardText(m.hard) : '')}
     ${row('걸린 시간', m.work ? (durText(m.work) || String(m.work)) : '')}
-    ${row('비용',    m.cost ? (Number(String(m.cost).replace(/[^0-9.]/g,'')||0).toLocaleString() + curOf(m)) : '')}
+    ${row('든 돈',    m.cost ? (Number(String(m.cost).replace(/[^0-9.]/g,'')||0).toLocaleString() + curOf(m)) : '')}
     ${row('부품·공구', m.used)}
     <div class="secl" style="margin-top:16px">${esc(t('정비 절차'))}</div>
     ${(m.how||[]).map((st2,i)=>`<div class="howstep">
@@ -22411,7 +22411,7 @@ function pubTrkBox(v){
   if(line.length < 2) return '';
   return mapBox('pubTrkMap', '260px')
     + `<div class="wxfoot" style="padding:2px 2px 10px">${esc(
-        t('계류 위치 주변은 가려져 있습니다.'))}</div>`;
+        t('배가 매인 위치 둘레는 가려져 있습니다.'))}</div>`;
 }
 // 화면이 그려진 뒤에 켠다 (크기를 알아야 축척이 정해진다)
 function pubTrkPaint(){
@@ -22514,7 +22514,7 @@ function boatPageBody(x, k){
           <b class="mrv" style="flex:1">${esc(String(sp[kk]))}${
             d.unit ? ' ' + esc(t(d.unit)) : ''}</b></div>`; }).join('');
     return (head ? `<div class="postbody">${esc(head)}</div>` : '')
-      + (rows || (head ? '' : `<div class="mrnone">${esc(t('아직 입력한 제원이 없습니다.'))}</div>`));
+      + (rows || (head ? '' : `<div class="mrnone">${esc(t('아직 적어 둔 제원이 없습니다.'))}</div>`));
   }
   if(k === 'voyage'){
     // ★ 눌러 들어가면 그 항해의 기록을 다 보여 준다.
@@ -22621,7 +22621,7 @@ function boatPageBody(x, k){
     return rows.map(m=>{
       const n = (m.how||[]).length;
       const sub = [m.gear || [m.maker, m.model].filter(Boolean).join(' '), m.date,
-                   m.work && tsub('소요 시간 {v}', { v: durText(m.work) || m.work })]
+                   m.work && tsub('걸린 시간 {v}', { v: durText(m.work) || m.work })]
                   .filter(Boolean).join(' · ');
       return `<div class="mr" onclick="pubHowOpen('${jsq(String(m.id))}')">
         <div class="ct"><div class="cn">${esc(trIn('mlog', m.id, 'title', m.title||''))}</div>
@@ -22671,11 +22671,11 @@ function boatPageBody(x, k){
           ${row('종류', r.kind && t(r.kind))}
           ${row('계통', r.sys && t(r.sys))}
           ${row('연식', r.year)}
-          ${row('작성일', r.date ? String(r.date).slice(0,10) : '')}
-          ${row(isB ? '승선 기간' : '사용 기간', r.used ? rvUsedName(r.used) : '')}
-          ${row('재구매 의사', r.again === true ? t('재구매 의사 있음') : r.again === false ? t('재구매 의사 없음') : '')}
-          ${row('구입 가격', r.price != null ? Number(r.price).toLocaleString() + t(r.cur || '원') : '')}
-          ${r.text?`<div class="mrrow"><span class="mrlbl">${esc(t(isB ? '승선 후기' : '사용 후기'))}</span></div>
+          ${row('적은 날', r.date ? String(r.date).slice(0,10) : '')}
+          ${row(isB ? '탄 기간' : '사용 기간', r.used ? rvUsedName(r.used) : '')}
+          ${row('또 살까', r.again === true ? t('재구매 함') : r.again === false ? t('재구매 안 함') : '')}
+          ${row('산 값', r.price != null ? Number(r.price).toLocaleString() + t(r.cur || '원') : '')}
+          ${r.text?`<div class="mrrow"><span class="mrlbl">${esc(t(isB ? '타 보니' : '사용해 보니'))}</span></div>
              <div class="postbody">${esc(trIn('review', r.id, 'text', r.text)).replace(/\n/g,'<br>')}</div>`:''}
           ${r.bad?`<div class="mrrow"><span class="mrlbl">${esc(t('아쉬운 점'))}</span></div>
              <div class="postbody" style="color:#C9A227">${esc(trIn('review', r.id, 'bad', r.bad)).replace(/\n/g,'<br>')}</div>`:''}
@@ -22691,11 +22691,11 @@ function boatPageBody(x, k){
   if(k === 'gear')   return (x.gear||[]).map(g=>
       `<div class="mrrow"><b class="mrv" style="flex:1">${esc(g.name||'')}</b>${
         (Number(g.qty)||1) > 1 ? `<span class="chip">${esc(String(g.qty))}</span>` : ''}</div>`).join('')
-      || `<div class="mrnone">${esc(t('아직 입력한 내용이 없습니다.'))}</div>`;
+      || `<div class="mrnone">${esc(t('아직 적어 둔 것이 없습니다.'))}</div>`;
   if(k === 'roster') return (x.roster||[]).map(r=>
       `<div class="mrrow"><b class="mrv" style="flex:1">${esc(r.name||'')}</b>${
         r.rank ? `<span class="chip">${esc(t(r.rank))}</span>` : ''}</div>`).join('')
-      || `<div class="mrnone">${esc(t('아직 입력한 내용이 없습니다.'))}</div>`;
+      || `<div class="mrnone">${esc(t('아직 적어 둔 것이 없습니다.'))}</div>`;
   // ★★★ 4.123 — 남이 볼 때도 **적은 그대로** 보인다 (사장님 지적).
   //   여태 p.body(맨 글자)만 그려서 사진·표·글씨 모양이 다 사라졌다.
   //   말머리와 글쓴이도 내 화면에는 있는데 여기만 없었다.
@@ -22805,20 +22805,20 @@ function openPublish(){
       <button class="tab" onclick="openBoat('info')">${esc(t('← 계류장'))}</button></div>
     <div class="mrnone" style="text-align:left">
       ${isPublic(b) ? `<b>${esc(t('지금 공개 중입니다.'))}</b> ${esc(t('배 이름과 선종은 항상 함께 보입니다.'))}`
-                    : `<b>${esc(t('지금은 비공개입니다.'))}</b> ${esc(t('하나라도 켜면 배 둘러보기에 표시됩니다.'))}`}<br>${t('물품 위치, 좌표, 회비, 개인 메모는 <b>켜도 공개되지 않습니다.</b>')}</div>`
+                    : `<b>${esc(t('지금은 비공개입니다.'))}</b> ${esc(t('하나라도 켜면 배 둘러보기에 실립니다.'))}`}<br>${t('물품 위치, 좌표, 회비, 개인 메모는 <b>켜도 공개되지 않습니다.</b>')}</div>`
     + rows
     + (pubOn(b,'voyage') ? trkHideRows(b) : '')
     + `<div class="mrrow" style="justify-content:center;padding:14px 12px">
-        <button class="mrbtn big" onclick="openIntro()">${esc(t('소개 페이지 작성'))}</button></div>`;
+        <button class="mrbtn big" onclick="openIntro()">${esc(t('소개 페이지 쓰기'))}</button></div>`;
   showPanel(P); boatKeepTabs('publish');
 }
 // 가리개 넓이 — 항이 넓은 곳도 있고 좁은 곳도 있다. 배 주인이 고른다.
 function trkHideRows(b){
   const cur = trkHideNm(b);
   return `<div class="notilbl">${esc(t('항적 가리기'))}</div>`
-    + `<div class="mrrow optrow lkro"><span class="lbl">${esc(t('가림 반경'))}</span>`
+    + `<div class="mrrow optrow lkro"><span class="lbl">${esc(t('둘레 가림'))}</span>`
     + TRK_HIDE.map(v=>`<button class="optb${cur===v?' on':''}" onclick="setTrkHide(${v})">${
-        esc(v > 0 ? tsub('{n}해리', {n:String(v)}) : t('가리지 않음'))}</button>`).join('')
+        esc(v > 0 ? tsub('{n}해리', {n:String(v)}) : t('안 가림'))}</button>`).join('')
     + `</div>`
     + `<div class="mrnone" style="text-align:left">${esc(
         t('항적을 켠 항해는 출발·도착 지점에서 이 반경 안의 항적을 잘라내고 표시합니다. 배의 계류 위치를 가리기 위한 것입니다.'))}</div>`;
