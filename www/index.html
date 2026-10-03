@@ -252,9 +252,6 @@ body.locked .pm, body.locked .pe, body.locked .pd, body.locked .pg{display:none}
   font-weight:200 700;
   font-display:swap;
 }
-/* ★ 5.30 — 입력 칸만 다른 글꼴로 나왔다(메모·날짜 칸은 고정폭 글꼴, 나머지 칸은 Arial). 브라우저 기본값이 앱 글꼴을 물려받지 않는다.
-   다른 웹 앱이 다 하는 대로(normalize.css) 입력 칸·단추도 앱 글꼴을 따르게 한다 */
-input,textarea,select,button{font-family:inherit}
 body{background:#0a1628;color:#e8eef5;min-height:100vh;
   font-family:'Pretendard','Apple SD Gothic Neo','Segoe UI',sans-serif;
   font-optical-sizing:auto;letter-spacing:-.012em;
@@ -456,7 +453,7 @@ input[type=text]{width:100%;background:#0c1e30;border:1px solid #1e4060;border-r
    「단위」가 「단!」, 「적어도」가 「적어!」 로 잘려 보였다 (사장님 폰 화면).
    글자 몫은 네 나라 말 중 가장 긴 것에 맞춘다 — 러시아어 「Кол-во」(3.3em) · 「Мин. кол-во」(5.7em).
    비고는 자리가 모자라면 다음 줄로 내려간다. */
-.row .q{width:calc(3.6em + 26px)}/* ★ 5.30 — 단위 칸은 목록(datalist) 화살표가 안쪽 자리를 먹어 「단위」 가 「단!」 로 잘렸다. 화살표 몫(18px)을 더한다 */.row .u{width:calc(2.6em + 44px)}.row .m{width:calc(6em + 26px)}.row .n{flex:1 1 8em;min-width:0}
+.row .q{width:calc(3.6em + 26px)}.row .u{width:calc(2.6em + 26px)}.row .m{width:calc(6em + 26px)}.row .n{flex:1 1 8em;min-width:0}
 .chk{display:flex;align-items:center;gap:6px;font-size:12px;color:#d8b878;margin:6px 0;cursor:pointer;user-select:none}
 .chk input{accent-color:#b58a3a;width:15px;height:15px}
 .bp{flex:1;background:#1a4a7a;border:1px solid #2a6aa0;border-radius:5px;color:#8ac8f0;padding:8px 0;font-size:13px;cursor:pointer;font-weight:600}
@@ -616,9 +613,6 @@ body.kbdrs #tabbar{display:none!important}
      · 한 화면에 하나. 할 일이 둘 이상이면 **확장형**(눌러서 펼침), 셋 이하
      · 지우기·정리에는 안 쓴다
    ★ 탭줄 높이는 기기마다 다르다(안전 영역). 재서 --tabh 에 넣는다 — 숫자를 박지 않는다. */
-/* ★ 5.30 — + 단추가 목록 맨 아래 줄(「남음 0일」·「일부 공개」·금액)을 가렸다. 맨 아래까지 내려도 가렸다.
-   단추가 떠 있는 화면은 아래에 단추 높이(56)+여백만큼 더 비워 둔다 (안드로이드 머티리얼: FAB 가 마지막 항목을 가리지 않게) */
-body.hasfab{padding-bottom:calc(var(--tabh,62px) + 88px)}
 .fab{position:fixed;right:16px;bottom:calc(var(--tabh,62px) + 16px);
   width:56px;height:56px;border-radius:28px;border:none;
   background:var(--ac,#8ec5f0);color:var(--acd,#08131F);
@@ -899,7 +893,6 @@ h1{font-size:20px;font-weight:800;color:var(--th);letter-spacing:-.02em}
 .mrm{font-size:12px;color:var(--tm);margin-top:5px;padding-left:0;line-height:1.5}
 .seedb{font-size:9px;color:var(--yel);border:1px solid #6E5622;border-radius:4px;padding:0 4px;vertical-align:1px}
 .mrnone{color:#7C93A8;font-size:12.5px;text-align:center;margin-top:26px;line-height:1.7}
-#newsList > .mrnone{padding-left:20px;padding-right:20px}
 .hcard.ins{border-color:#2f6c96;background:#0f1d29}
 .hcard.intro{border-color:#8AA0B4}
 .introl{display:flex;gap:10px;align-items:baseline;padding:7px 0;line-height:1.55}
@@ -919,9 +912,6 @@ h1{font-size:20px;font-weight:800;color:var(--th);letter-spacing:-.02em}
 .tcnt.good,.tnum.good{background:#143a2a;color:#8ee6b4}
 .imgfail{min-width:120px;min-height:70px;border:1px dashed #4a5568;border-radius:8px;
   background:#161a1f;color:#8a97a8;font-size:11.5px;padding:8px;object-fit:contain}
-/* ★ 5.30 — 목록의 작은 사진(34px)이 못 불러오면 120×70 상자로 커져 이름이 「파워/뱅크」 처럼 세로로 접혔다.
-   작은 칸은 크기를 지키고 점선 테두리만 남긴다 (글은 너무 작아 읽히지 않으므로 뺀다) */
-.imgfail.sm{min-width:0;min-height:0;padding:0;font-size:0;color:transparent}
 .mrnone2{font-size:11px;color:#7C93A8}
 .mrbtn{background:var(--sf2);border:1px solid var(--bd);border-radius:999px;color:#C4C8CD;padding:8px 13px;font-size:12.5px;font-weight:700;cursor:pointer}
 .mrbtn.ok{background:var(--ac);border-color:var(--ac);color:var(--acd)}
@@ -1177,10 +1167,6 @@ body.pnsc #mrPanel .mrhead::before, body.pnsc #mrPanel > .mrtop::before{opacity:
 .mrv{color:var(--th);font-weight:650}
 .mrv2{font-size:11.5px;color:var(--tm)}
 .mhist{font-size:11px;color:var(--tm);margin:4px 0}
-/* ★ 5.30 — 기록 창의 「이력」 줄과 「촬영·앨범」 단추가 칸 밖(왼쪽 끝)에 붙어 칸 안 글과 줄이 안 맞았다.
-   이력은 칸 안 글과 같은 15px 들여쓰고, 촬영·앨범은 「도면」 칸처럼 사진 칸 안에 넣는다 */
-#mrPanel.full .mhist{padding:0 15px}
-.mrphbtn{flex:1 1 100%;display:flex;gap:8px;padding-left:70px}
 #pinBanner{background:#2A1F12;border:1px solid #6E5622;color:#E8C87A;border-radius:12px}
 .mpin{border-color:rgba(255,255,255,.95)}
 #tabbar{background:#0B0D0F;border-top:1px solid #1A1D21;padding:7px 8px 12px}
@@ -1477,8 +1463,6 @@ body.pnsc #mrPanel .mrhead::before, body.pnsc #mrPanel > .mrtop::before{opacity:
   letter-spacing:-.03em;line-height:1.05;font-variant-numeric:tabular-nums}
 .stat span{display:block;margin-top:7px;font-size:9.5px;font-weight:600;color:var(--td);
   letter-spacing:.16em}
-.stat b small{font-size:.48em;font-weight:500;letter-spacing:0;margin:0 3px 0 1px}
-.stat b.sl{font-size:24px;white-space:nowrap}
 
 /* 줄 — 이름은 가볍게, 곁글은 더 흐리게 */
 .mr{margin:0 20px;padding:16px 2px}
@@ -1593,10 +1577,7 @@ main,#views,body>div{position:relative}
    배와 물에 비친 배(그림자)만 뺐다. 해와 빛길은 그대로다.
    수평선은 맨 윗줄 바로 아래에 둔다 — 아래쪽이 어두운 바다여야 글이 읽힌다.
    그림 파일이 아니라 그림 명령(SVG)이라 어떤 화면 크기에서도 안 뭉갠다. */
-/* ★ 5.30 — 수평선의 밝은 띠가 맨 윗줄 바로 아래(첫 목록 줄 자리)에 있어 그 위 글씨가 안 읽혔다
-   (「인터넷에 연결된 상태에서만 볼 수 있습니다」·장비 묶음 이름·로그인 안내 등). 띠 자리만 한 겹 어둡게 덮는다 — 그림 위 글씨에 까는 그늘(스크림).
-   띠는 그림 높이의 131/780 자리 = 화면 폭의 약 36% 아래 (그림은 폭에 맞춰 늘어난다) */
-body{background:linear-gradient(to bottom,rgba(4,12,21,0) 26vw,rgba(4,12,21,.66) 33vw,rgba(4,12,21,.6) 50vw,rgba(4,12,21,0) 78vw) no-repeat fixed 0 0/100% 100%,url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='360' height='780' viewBox='0 0 360 780' preserveAspectRatio='xMidYMin slice'><defs><linearGradient id='s' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%23122a44'/><stop offset='0.1063' stop-color='%232c5f86'/><stop offset='0.1530' stop-color='%237fa8c0'/><stop offset='0.1670' stop-color='%23e6b48f'/><stop offset='0.1706' stop-color='%2310304c'/><stop offset='0.32' stop-color='%230C2437'/><stop offset='0.56' stop-color='%2308192A'/><stop offset='0.80' stop-color='%2306121F'/><stop offset='1' stop-color='%23040C15'/></linearGradient><radialGradient id='u' cx='.5' cy='.5' r='.5'><stop offset='0' stop-color='%23ffd9a8' stop-opacity='.95'/><stop offset='.45' stop-color='%23f0a463' stop-opacity='.45'/><stop offset='1' stop-color='%23f0a463' stop-opacity='0'/></radialGradient></defs><rect width='360' height='780' fill='url(%23s)'/><ellipse cx='126' cy='131' rx='166' ry='66' fill='url(%23u)' opacity='.62'/><rect x='95' y='143' width='61' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.15'/><rect x='85' y='147' width='96' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.13'/><rect x='90' y='153' width='45' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.11'/><rect x='82' y='159' width='128' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.10'/><rect x='65' y='164' width='69' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.085'/><rect x='79' y='170' width='160' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.07'/><rect x='39' y='177' width='94' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.06'/><rect x='79' y='185' width='187' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.04'/><rect x='12' y='193' width='120' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.03'/></svg>") no-repeat fixed 0 0/cover, #040C15}
+body{background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='360' height='780' viewBox='0 0 360 780' preserveAspectRatio='xMidYMin slice'><defs><linearGradient id='s' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%23122a44'/><stop offset='0.1063' stop-color='%232c5f86'/><stop offset='0.1530' stop-color='%237fa8c0'/><stop offset='0.1670' stop-color='%23e6b48f'/><stop offset='0.1706' stop-color='%2310304c'/><stop offset='0.32' stop-color='%230C2437'/><stop offset='0.56' stop-color='%2308192A'/><stop offset='0.80' stop-color='%2306121F'/><stop offset='1' stop-color='%23040C15'/></linearGradient><radialGradient id='u' cx='.5' cy='.5' r='.5'><stop offset='0' stop-color='%23ffd9a8' stop-opacity='.95'/><stop offset='.45' stop-color='%23f0a463' stop-opacity='.45'/><stop offset='1' stop-color='%23f0a463' stop-opacity='0'/></radialGradient></defs><rect width='360' height='780' fill='url(%23s)'/><ellipse cx='126' cy='131' rx='166' ry='66' fill='url(%23u)' opacity='.62'/><rect x='95' y='143' width='61' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.15'/><rect x='85' y='147' width='96' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.13'/><rect x='90' y='153' width='45' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.11'/><rect x='82' y='159' width='128' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.10'/><rect x='65' y='164' width='69' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.085'/><rect x='79' y='170' width='160' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.07'/><rect x='39' y='177' width='94' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.06'/><rect x='79' y='185' width='187' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.04'/><rect x='12' y='193' width='120' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.03'/></svg>") no-repeat fixed 0 0/cover, #040C15}
 body::before{display:none}
 /* ★ 맨 윗줄은 하늘 그대로의 색으로 채운다.
    비워 두면 수평선의 밝은 띠가 하위 탭 글씨를 잡아먹는다. */
@@ -1646,10 +1627,6 @@ header{background:linear-gradient(to bottom,#122a44 0%,#1a3c5c 100%);
 /* 맨 윗줄 — 하늘이 그대로 비치게 (수평선은 그 아래에 있다) */
 header{background:linear-gradient(to bottom,rgba(10,24,40,.55),rgba(16,40,64,.18));
   backdrop-filter:blur(10px);border-bottom:none}
-/* ★ 5.30 — 목록을 올리면 글이 맨 윗줄(탭 이름) 밑으로 비쳐 탭 이름과 겹쳤다.
-   아이폰·안드로이드 앱처럼 밑으로 무언가 지나갈 때만 윗줄에 바탕을 깐다 (iOS scrollEdgeAppearance) */
-body.scrolled header{background:linear-gradient(to bottom,rgba(10,24,40,.96),rgba(14,34,54,.93));
-  border-bottom:1px solid rgba(255,255,255,.06)}
 
 /* 빈 목록 안내 — 4.66. #0E1620 짜리 검은 상자라 바다 위에 판때기가 얹혀 있었다. */
 .emptybox{background:rgba(255,255,255,.05);backdrop-filter:blur(14px);
@@ -1936,7 +1913,7 @@ body.picking #pitems{padding-bottom:96px}
 #hatPanelOv #hatPanelBody,
 #trashView .trashBox,
 #helpOv .helpbox{
-  background:linear-gradient(to bottom,rgba(4,12,21,0) 26vw,rgba(4,12,21,.66) 33vw,rgba(4,12,21,.6) 50vw,rgba(4,12,21,0) 78vw) no-repeat fixed 0 0/100% 100%,url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='360' height='780' viewBox='0 0 360 780' preserveAspectRatio='xMidYMin slice'><defs><linearGradient id='s' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%23122a44'/><stop offset='0.1063' stop-color='%232c5f86'/><stop offset='0.1530' stop-color='%237fa8c0'/><stop offset='0.1670' stop-color='%23e6b48f'/><stop offset='0.1706' stop-color='%2310304c'/><stop offset='0.32' stop-color='%230C2437'/><stop offset='0.56' stop-color='%2308192A'/><stop offset='0.80' stop-color='%2306121F'/><stop offset='1' stop-color='%23040C15'/></linearGradient><radialGradient id='u' cx='.5' cy='.5' r='.5'><stop offset='0' stop-color='%23ffd9a8' stop-opacity='.95'/><stop offset='.45' stop-color='%23f0a463' stop-opacity='.45'/><stop offset='1' stop-color='%23f0a463' stop-opacity='0'/></radialGradient></defs><rect width='360' height='780' fill='url(%23s)'/><ellipse cx='126' cy='131' rx='166' ry='66' fill='url(%23u)' opacity='.62'/><rect x='95' y='143' width='61' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.15'/><rect x='85' y='147' width='96' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.13'/><rect x='90' y='153' width='45' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.11'/><rect x='82' y='159' width='128' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.10'/><rect x='65' y='164' width='69' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.085'/><rect x='79' y='170' width='160' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.07'/><rect x='39' y='177' width='94' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.06'/><rect x='79' y='185' width='187' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.04'/><rect x='12' y='193' width='120' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.03'/></svg>") no-repeat fixed 0 0/cover, #040C15;
+  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='360' height='780' viewBox='0 0 360 780' preserveAspectRatio='xMidYMin slice'><defs><linearGradient id='s' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%23122a44'/><stop offset='0.1063' stop-color='%232c5f86'/><stop offset='0.1530' stop-color='%237fa8c0'/><stop offset='0.1670' stop-color='%23e6b48f'/><stop offset='0.1706' stop-color='%2310304c'/><stop offset='0.32' stop-color='%230C2437'/><stop offset='0.56' stop-color='%2308192A'/><stop offset='0.80' stop-color='%2306121F'/><stop offset='1' stop-color='%23040C15'/></linearGradient><radialGradient id='u' cx='.5' cy='.5' r='.5'><stop offset='0' stop-color='%23ffd9a8' stop-opacity='.95'/><stop offset='.45' stop-color='%23f0a463' stop-opacity='.45'/><stop offset='1' stop-color='%23f0a463' stop-opacity='0'/></radialGradient></defs><rect width='360' height='780' fill='url(%23s)'/><ellipse cx='126' cy='131' rx='166' ry='66' fill='url(%23u)' opacity='.62'/><rect x='95' y='143' width='61' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.15'/><rect x='85' y='147' width='96' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.13'/><rect x='90' y='153' width='45' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.11'/><rect x='82' y='159' width='128' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.10'/><rect x='65' y='164' width='69' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.085'/><rect x='79' y='170' width='160' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.07'/><rect x='39' y='177' width='94' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.06'/><rect x='79' y='185' width='187' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.04'/><rect x='12' y='193' width='120' height='4' rx='2.5' fill='%23ffe0bd' opacity='0.03'/></svg>") no-repeat fixed 0 0/cover, #040C15;
 }
 
 /* 화면 이름이 머리줄에 이미 떠 있으면 화면 안에서는 감춘다 (두 번 안 보이게) */
@@ -2178,16 +2155,6 @@ body.panelfull header > *:not(.hrow):not(#hNav){display:none!important}
 #mrPanel input[type=checkbox],#panel input[type=checkbox],
 #mrPanel.full input[type=checkbox]{
   min-height:0;flex:0 0 auto;width:22px;height:22px;min-width:22px;margin:0}
-/* ★ 5.30 — 어두운 화면에서 체크 칸만 흰 네모로 떠 있었다(「만탱크」·「상자/공구함」). 화면 색에 맞춘다 */
-html:not([data-bt-theme="light"]) input[type=checkbox]{color-scheme:dark}
-/* ★ 5.31 — 사장님 지적: 흰색 화면에서 적재표 도면이 안 보였다. 「다른 것도 다 그러고 앞으로 사람들이 자기 도면 넣으면 계속 문제」
-   바탕이 투명한 선 그림은 선 색이 바탕과 같으면 사라진다. 그림 하나하나를 실제로 재서(dgTone) 갈래를 붙인다.
-   · dgline  = 투명 바탕 + 밝은 선 (앱 기본 도면) → 흰색 화면에서만 뒤집는다
-   · dgdark  = 투명 바탕 + 짙은 선 (흰 종이용 그림)  → 노을·검정 화면에서만 뒤집는다
-   · 바탕이 꽉 찬 그림(사진·스캔·JPEG)은 제 바탕을 갖고 있어 어느 화면에서나 보인다 — 건드리지 않는다 */
-html[data-bt-theme="light"] img.dgline{filter:invert(1) hue-rotate(180deg) !important}
-html:not([data-bt-theme="light"]) img.dgdark{filter:invert(1) hue-rotate(180deg) !important}
-input[type=checkbox]{accent-color:#5FB894}
 #mrPanel textarea,#panel textarea,#mrPanel.full textarea{min-height:72px}
 
 /* 중간 기록 한 줄 — 시각·종류는 제 폭을 갖고, 내용은 아랫줄로 내린다 */
@@ -2218,13 +2185,6 @@ input[type=checkbox]{accent-color:#5FB894}
 .hmsay{font-size:11px;color:#7b8794;text-align:center;padding:3px 0 0;
   line-height:1.2;min-height:14px;white-space:nowrap}
 .hmsay:empty{display:none}
-/* ★ 5.30 — 기록 창에서 시각만 가운데로 붙어 다른 칸 값(왼쪽 정렬)과 줄이 안 맞았다. 기록 창 한 줄의 시각은 왼쪽에 맞춘다 */
-#mrPanel .mrrow > .hmwrap .tin,#mrPanel.full .mrrow > .hmwrap .tin{text-align:left;padding-left:12px}
-#mrPanel .mrrow > .hmwrap .hmsay{text-align:left;padding-left:12px}
-/* ★ 5.30 — 알림 「야간 알림 끄기」 시각이 「22:00 ~」 다음 줄에 「06:00」 으로 흩어졌다. 두 칸이 한 줄에 들게 좁힌다 */
-#mrPanel .notirow .hmwrap{flex:0 0 92px;min-width:92px}
-#mrPanel .notirow .hmwrap .tin{text-align:center;padding-left:0}
-#mrPanel .notirow .hmwrap .hmsay{text-align:center;padding-left:0}
 /* 날짜 칸 — 「마지막 07/14/2」 처럼 해가 잘려 나왔다 (옆에 남은 날짜까지 한 줄에 든다) */
 #mrPanel input[type=date],#mrPanel.full input[type=date]{flex:0 0 auto;min-width:142px}
 #mrPanel .logkind,#mrPanel.full .logkind{flex:0 0 136px;min-width:136px}
