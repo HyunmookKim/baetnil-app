@@ -77,7 +77,9 @@ globalThis.tideAt = () => 0.55;
 // 4.03 — 저장된 숫자로 글을 다시 짓는다. wxLine 이 이것을 부른다.
 globalThis.dirName = d => ['북','북북동','북동','동북동','동','동남동','남동','남남동',
   '남','남남서','남서','서남서','서','서북서','북서','북북서'][Math.round(((d%360)/22.5))%16];
-for(const f of ['posOf','posPut','wxText','wxLine']) eval('globalThis.' + f + ' = ' + grab(f));
+// 5.33 — 기록 창이 떠 있나는 mrShown 한 곳에서 본다(본체 그대로 가져온다)
+globalThis.document = globalThis.document || { getElementById: () => null };
+for(const f of ['posOf','posPut','wxText','wxLine','mrShown']) eval('globalThis.' + f + ' = ' + grab(f));
 eval('globalThis.wxCapture = ' + grab('wxCapture'));
 
 const IT = () => ({
