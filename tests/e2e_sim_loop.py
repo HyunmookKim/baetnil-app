@@ -4,6 +4,7 @@
 #     SHOT <이름>   → 화면 사진
 #     BG <초>       → 앱을 뒤로 보냈다가(설정 앱을 켬) <초> 뒤 다시 앞으로
 #     NATIVE <이름> → 6초 뒤 사진, 그리고 앱을 껐다 다시 켠다(네이티브 창을 닫는 길)
+#     KILL <초>     → 앱을 끄고(시스템이 끈 것처럼) <초> 뒤, 아이폰이 뒤에서 다시 켰으면 앞으로 부르고 아니면 켠다 (5.34)
 #     DONE          → 끝
 #   4분 넘게 아무 줄이 없으면 멈춘 것으로 보고 사진을 찍고 다시 켠다(두 번까지).
 import os, subprocess, time, re, sys
@@ -92,6 +93,19 @@ while time.time() - t0 < LIMIT:
             time.sleep(2); shot('bg-away')
             time.sleep(sec)
             foreground(); time.sleep(2); shot('bg-back')
+        elif m.startswith('KILL '):
+            sec = int(re.findall(r'\d+', m)[0])
+            r = sh('xcrun', 'simctl', 'terminate', DEV, BID)
+            print('  앱 끔: %s %s' % (r.returncode, r.stderr.strip()[:200]), flush=True)
+            time.sleep(2); shot('kill-away')
+            time.sleep(sec)
+            ps = sh('xcrun', 'simctl', 'spawn', DEV, 'launchctl', 'list').stdout
+            back = ('UIKitApplication:' + BID) in ps
+            results.append('INFO 앱을 끈 %d초 동안 아이폰이 뒤에서 다시 켰나: %s' % (sec, '예' if back else '아니오'))
+            print('  뒤에서 다시 켜짐: %s' % back, flush=True)
+            if back: foreground()
+            else: launch()
+            time.sleep(2); shot('kill-back'); last = time.time()
         elif m.startswith('NATIVE '):
             nm = m[7:].strip()
             time.sleep(6); shot('native-' + nm)

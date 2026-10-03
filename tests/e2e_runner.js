@@ -209,20 +209,38 @@
       log('TAP ' + Math.round(rr.left + rr.width / 2) + ' ' + Math.round(rr.top + rr.height / 2) + ' ' + (window.devicePixelRatio || 1) + ' ' + window.innerWidth + ' ' + window.innerHeight);
     }
     await sleep(1500);
+    // ★ 5.34 — 안드로이드 14 에뮬레이터: 손가락 누름이 바로 위 칸(suPw)에 잡히고 그 사이 키보드가 떠 화면이 줄었다(#90).
+    //   두 번째 누름도 빗나가면, 키보드는 이미 떠 있으므로 칸만 앱 안에서 잡아 「키보드가 칸을 가리나」 를 본다.
+    if(document.activeElement !== el){
+      log('INFO ' + id + ' — 누름이 ' + ((document.activeElement && document.activeElement.id) || '다른 곳') + ' 에 잡힘, 칸을 앱 안에서 잡음');
+      try{ el.focus(); }catch(_){}
+      await sleep(1200);
+    }
     var t0 = Date.now();
-    while(Date.now() - t0 < 12000 && !((window.__kbdH || 0) > 100)) await sleep(300);
+    // ★ 5.34 — 안드로이드 14 이하는 키보드가 뜨면 화면(웹뷰)이 줄어든다(MainActivity 5.27 — 그래야 칸이 안 가려짐).
+    //   그때는 앱 껍데기가 키보드 높이를 0 으로 준다. 「줄어든 만큼」 이 키보드 높이다.
+    while(Date.now() - t0 < 12000 && !((window.__kbdH || 0) > 100) && !(h0 - window.innerHeight > 100)) await sleep(300);
     await sleep(900);
-    var kb = window.__kbdH || 0;
     var h1 = window.innerHeight;
+    var andVer = parseInt((navigator.userAgent.match(/Android (\d+)/) || [])[1] || '0', 10);
+    // 화면이 줄어드는 방식은 안드로이드 14 이하에서만 맞다. 15 이상에서 줄면 예전처럼 실패로 본다.
+    var rsMode = andVer > 0 && andVer <= 14 && (h0 - h1 > 100) && !((window.__kbdH || 0) > 100);
+    var kb = rsMode ? 0 : (window.__kbdH || 0);
     var kbTop = h1 - kb;
     var r2 = el.getBoundingClientRect();
     var tb1 = tb ? Math.round(tb.getBoundingClientRect().bottom) : -1;
     log('INFO 키보드(' + id + ') — 눌린 칸=' + (document.activeElement && document.activeElement.id) + ' 키보드 높이=' + Math.round(kb) + ' 화면 높이=' + h1 + '/' + h0 + ' 칸 아래끝=' + Math.round(r2.bottom) + ' 키보드 윗줄=' + Math.round(kbTop) + ' 탭 줄 아래끝=' + tb0 + '→' + tb1);
     await shot(shotName);
     if(!document.activeElement || document.activeElement.id !== id) throw new Error(id + ' 칸을 눌렀는데 입력칸이 안 잡힘');
-    if(!(kb > 100)) throw new Error('키보드가 떴는데 앱이 키보드 높이를 못 받음 (' + Math.round(kb) + ')');
-    if(Math.abs(h1 - h0) > 2) throw new Error('키보드가 뜨니 화면이 줄었음 (' + h0 + ' → ' + h1 + ') — 줄이지 말고 스크롤해야 함');
-    if(tb && Math.abs(tb1 - tb0) > 2) throw new Error('아래 탭 줄이 키보드를 따라 움직였음 (' + tb0 + ' → ' + tb1 + ')');
+    if(rsMode){
+      // 안드로이드 14 이하 — 화면이 줄었다. 탭 줄은 감춰져야 한다(키보드 위로 따라 올라오지 않게 — 5.26 kbdrs).
+      log('INFO 키보드(' + id + ') — 화면이 줄어드는 방식(안드로이드 14 이하) ' + h0 + ' → ' + h1);
+      if(tb && tb.getBoundingClientRect().height > 0) throw new Error('화면이 줄었는데 아래 탭 줄이 키보드 위에 보임');
+    }else{
+      if(!(kb > 100)) throw new Error('키보드가 떴는데 앱이 키보드 높이를 못 받음 (' + Math.round(kb) + ')');
+      if(Math.abs(h1 - h0) > 2) throw new Error('키보드가 뜨니 화면이 줄었음 (' + h0 + ' → ' + h1 + ') — 줄이지 말고 스크롤해야 함');
+      if(tb && Math.abs(tb1 - tb0) > 2) throw new Error('아래 탭 줄이 키보드를 따라 움직였음 (' + tb0 + ' → ' + tb1 + ')');
+    }
     if(r2.bottom > kbTop + 2) throw new Error('키보드가 ' + id + ' 칸을 가림 (칸 아래끝 ' + Math.round(r2.bottom) + ' > 키보드 윗줄 ' + Math.round(kbTop) + ')');
     var hdb = hd ? hd.getBoundingClientRect().bottom : 0;
     if(r2.top < hdb - 2) throw new Error(id + ' 칸이 머리줄 밑으로 올라가 숨었음 (칸 윗끝 ' + Math.round(r2.top) + ' < 머리줄 아래끝 ' + Math.round(hdb) + ')');
@@ -240,6 +258,23 @@
     log('INFO 키보드 내린 뒤 — 키보드 높이=' + Math.round(window.__kbdH || 0) + ' 덧붙인 여백=' + (spc ? spc.style.height : '없음'));
     if(spc && parseFloat(spc.style.height) > 0) throw new Error('키보드를 내렸는데 스크롤용 여백이 남음 (' + spc.style.height + ')');
   }
+  // ★★★ 5.34 — 안드로이드: 아래 탭 줄이 내비게이션 줄(세 단추·제스처 막대) 밑으로 들어가지 않는가.
+  //   14 이하도 화면 끝까지 그리게 바꿨다(EdgeToEdge.enable). 앱이 내비게이션 줄 높이를 웹에 알려 줘야 탭 줄이 비켜 간다.
+  step('아래 탭 줄이 내비게이션 줄을 비키는가', async function(){
+    if(PLAT !== 'android'){ log('INFO 아래 탭 줄 — 안드로이드만'); return; }
+    switchTab('home'); await sleep(800);
+    var t0 = Date.now();
+    while(Date.now() - t0 < 8000 && !document.documentElement.classList.contains('sabn')) await sleep(300);
+    var sab = parseFloat(document.documentElement.style.getPropertyValue('--sabn')) || 0;
+    var tb = document.getElementById('tabbar');
+    var bs = tb ? tb.querySelectorAll('button') : [];
+    var lowest = 0; for(var i = 0; i < bs.length; i++){ var r = bs[i].getBoundingClientRect(); if(r.height > 0) lowest = Math.max(lowest, r.bottom); }
+    var H = window.innerHeight;
+    log('INFO 아래 내비게이션 줄 ' + sab + ' · 탭 단추 아래끝 ' + Math.round(lowest) + ' · 화면 높이 ' + H + ' · 탭 줄 아래끝 ' + (tb ? Math.round(tb.getBoundingClientRect().bottom) : -1));
+    await shot('02b-tabbar-bottom');
+    if(!(sab > 0)) throw new Error('앱이 내비게이션 줄 높이를 웹에 안 알려 줌');
+    if(lowest > H - sab + 1) throw new Error('탭 단추가 내비게이션 줄 밑으로 들어감 (단추 아래끝 ' + Math.round(lowest) + ' > ' + Math.round(H - sab) + ')');
+  });
   step('회원가입·로그인 화면 — 키보드가 칸을 가리지 않는가', async function(){
     openAccount(); await sleep(400);
     tapBtn('회원가입');
@@ -372,6 +407,31 @@
     var grew = trkNow.pts.length - p0;
     log('INFO 거짓 위치 버린 수 ' + ((Number(trkNow.mock)||0) - m0) + ' · 그동안 늘어난 점 ' + grew);
     if(grew > 1) throw new Error('거짓 위치인데 점이 ' + grew + '개 늘었음');
+  });
+  // ★★★ 5.34 — 아이폰이 기록 중에 앱을 꺼도 기록 장치가 다시 살아나는가 (사장님: 「아이폰 똑바로 되는 거 맞아?」)
+  //   깃허브 맥이 앱을 끄고(simctl terminate) 150초 기다린다. 그동안 위치는 계속 움직인다(초속 5m → 750m).
+  //   ① 앱이 켜질 때 기록 장치가 웹 화면보다 먼저 스스로 이어 붙었는가(relaunch) — 꼭 되어야 한다.
+  //   ② 꺼져 있던 동안 아이폰이 앱을 뒤에서 다시 깨워 점을 쌓았는가 — 시뮬레이터가 큰 위치 변화 알림을
+  //      실제 폰처럼 주는지는 알 수 없어 숫자만 남긴다(실제 폰 확인 필요).
+  step('항해 — 아이폰이 앱을 꺼도 기록 장치가 다시 켜지는가 (끔)', async function(){
+    if(PLAT !== 'ios'){ log('INFO 앱 끄기 — 아이폰 시뮬레이터에서만 (안드로이드는 START_STICKY)'); return; }
+    S.killAt = Date.now(); S.killPts = trkNow.pts.length; S.killMock = Number(trkNow.mock) || 0;
+    S.i++; keep(S);
+    log('KILL 150');
+    await sleep(240000);
+  }, { reloads:true });
+  step('항해 — 다시 켠 뒤 항적이 이어지는가', async function(){
+    if(PLAT !== 'ios' || !S.killAt) return;
+    var P = window.Capacitor.Plugins.BaetnilTrack;
+    var st = null; try{ st = await P.status(); }catch(_){}
+    log('INFO 다시 켠 뒤 기록 장치 running=' + (st && st.running) + ' relaunch=' + (st && st.relaunch));
+    if(!(st && st.relaunch)) throw new Error('앱이 켜질 때 기록 장치가 스스로 이어 붙지 않음');
+    await until(function(){ return trkNow && trkNow.pts && trkNow.pts.some(function(p){ return Date.parse(p.t) > S.killAt + 150000; }); },
+      60000, '다시 켠 뒤 새 점');
+    var during = trkNow.pts.filter(function(p){ var t = Date.parse(p.t); return t > S.killAt + 5000 && t < S.killAt + 145000; }).length;
+    log('INFO 꺼져 있던 150초 동안 쌓인 점 ' + during + ' · 끄기 전 ' + S.killPts + ' · 지금 ' + trkNow.pts.length
+        + ' · 거짓 위치로 버린 수 +' + ((Number(trkNow.mock) || 0) - (S.killMock || 0)));
+    await shot('14b-track-after-kill');
   });
   step('항해 — 입항하면 항적이 멈추고 남는가', async function(){
     openMR('voyage', S.voy); await sleep(400);

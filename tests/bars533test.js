@@ -26,7 +26,9 @@ const code = s => s.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');  
 const B = code(rd('android/app/src/main/java/kr/baetnil/app/BaetnilBars.java'));
 const M = code(rd('android/app/src/main/java/kr/baetnil/app/MainActivity.java'));
 T('BaetnilBars — 캐퍼시터 8 SystemBars 와 같은 길(setAppearanceLightStatusBars)', /setAppearanceLightStatusBars\(light\)/.test(B));
-T('BaetnilBars — 시계 줄 바탕색은 안드로이드 14 이하에서만 (15 부터 지원 중단)', /Build\.VERSION\.SDK_INT < 35 && color != null/.test(B));
+// ★ 5.34 — 14 이하도 화면 끝까지 그린다(EdgeToEdge.enable). 시계 줄 바탕색을 아예 안 칠한다 — 지원 중단 API 를 안 부른다.
+T('BaetnilBars — 지원 중단된 setStatusBarColor 를 부르지 않는다 (5.34)', !/\.setStatusBarColor\(/.test(B));
+T('BaetnilBars — 아래 내비게이션 줄 아이콘 색도 같이 맞춘다 (5.34)', /setAppearanceLightNavigationBars\(light\)/.test(B));
 T('BaetnilBars — getStatusBarColor 를 부르지 않는다', !/getStatusBarColor/.test(B) && !/getStatusBarColor/.test(M));
 T('MainActivity — BaetnilBars 를 super.onCreate 앞에서 등록한다',
   M.indexOf('registerPlugin(BaetnilBars.class);') > 0 && M.indexOf('registerPlugin(BaetnilBars.class);') < M.indexOf('super.onCreate(savedInstanceState);'));

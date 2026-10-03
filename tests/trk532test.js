@@ -54,7 +54,7 @@ T('기록이 안 켜지면 까닭을 사람에게 말한다', /return trkAttachW
 // ── 실제로 돌려 본다
 function harness(){
   const env = `
-    const TRK_ACC=${C('TRK_ACC')}, TRK_GPS_ACC=${C('TRK_GPS_ACC')}, TRK_DIST=${C('TRK_DIST')}, TRK_LOST=${C('TRK_LOST')},
+    const TRK_BEFORE_MS=${C('TRK_BEFORE_MS')}, TRK_ACC=${C('TRK_ACC')}, TRK_GPS_ACC=${C('TRK_GPS_ACC')}, TRK_DIST=${C('TRK_DIST')}, TRK_LOST=${C('TRK_LOST')},
           TRK_MAX=99999, TRK_TOL=1, TRK_FLUSH=99999, TRK_STILL_MS=${C('TRK_STILL_MS')}, TRK_SOON_MS=1;
     ${require('./trkspd_pre.js')(src)}
     ${grab(src, 'trkTooFast')}
