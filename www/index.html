@@ -30426,9 +30426,7 @@ function paintFab(){
       Math.round(tb.getBoundingClientRect().height) + 'px');
   }catch(_){}
   const acts = fabActs();
-  const 단추 = !!acts.length && !fabBlocked();
-  try{ document.body.classList.toggle('hasfab', 단추); }catch(_){}
-  if(!단추){ host.innerHTML = ''; fabOpen = false; return; }
+  if(!acts.length || fabBlocked()){ host.innerHTML = ''; fabOpen = false; return; }
   const 펼침 = fabOpen && acts.length > 1;
   host.innerHTML =
       (펼침 ? `<div class="fabscrim" onclick="fabClose()"></div>` : '')
