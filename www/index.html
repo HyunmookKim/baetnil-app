@@ -20043,7 +20043,7 @@ async function mutePersonUI(uid, name){
       + '\n\n' + t('언제든 해제할 수 있습니다. 설정 › 차단한 사람'), { ok: t('차단하기') })) return;
   mutedNameKeep(uid, name);
   mutePerson(uid);
-  tell(t('이제 이 사람의 글이 표시되지 않습니다.'), { kind:'good' });
+  tell(t('이제 이 사람의 글이 안 보입니다.'), { kind:'good' });
   try{ if(typeof backToTalk === 'function') backToTalk(); else renderTalk(); }catch(_){}
 }
 // 차단한 사람 목록 — 되돌릴 길이 없으면 막는 기능을 아무도 안 쓴다
@@ -20122,15 +20122,15 @@ function reportBoat(id){
     fields: [
       { key:'reason', label:'사유', type:'pick', value:'spam',
         options: REPORT_REASONS.map(r=>({ v:r.v, name:r.name, sub:r.sub })) },
-      { key:'note', type:'multi', rows:3, label:'설명 (선택)', value:'',
-        placeholder:'상황 설명' }
+      { key:'note', type:'multi', rows:3, label:'설명 (없어도 됩니다)', value:'',
+        placeholder:'무슨 일이 있었는지' }
     ],
     onOk: v => {
       const body = reportBody('boat', id, v.reason, v.note);
-      if(!body){ tell(t('신고를 접수하지 못했습니다'), { kind:'bad' }); return false; }
+      if(!body){ tell(t('신고를 만들지 못했습니다'), { kind:'bad' }); return false; }
       if(window.__report){
         window.__report.send(body)
-          .then(()=>tell(t('신고했습니다.\n확인 후 조치하겠습니다.'), { kind:'good' }))
+          .then(()=>tell(t('신고했습니다.\n살펴본 뒤 조치하겠습니다.'), { kind:'good' }))
           .catch(e=>tell(t('보내지 못했습니다: ') + ((e && e.message) || e), { kind:'bad' }));
       } else {
         tell(t('인터넷에 연결된 상태에서만 신고할 수 있습니다'));
@@ -20154,19 +20154,19 @@ function reportBoatPost(postId){
     fields: [
       { key:'reason', label:'사유', type:'pick', value:'abuse',
         options: REPORT_REASONS.map(r=>({ v:r.v, name:r.name, sub:r.sub })) },
-      { key:'note', type:'multi', rows:3, label:'설명 (선택)', value:'',
-        placeholder:'상황 설명' }
+      { key:'note', type:'multi', rows:3, label:'설명 (없어도 됩니다)', value:'',
+        placeholder:'무슨 일이 있었는지' }
     ],
     onOk: v => {
       const body = reportBody('boatPost', b.id, v.reason, v.note);
-      if(!body){ tell(t('신고를 접수하지 못했습니다'), { kind:'bad' }); return false; }
+      if(!body){ tell(t('신고를 만들지 못했습니다'), { kind:'bad' }); return false; }
       body.postId = String(p.id);
       body.boatName = String(b.name || '');
       body.snap = { title: String(p.title || '').slice(0, 200), body: String(p.body || '').slice(0, 3000),
                     by: String(p.by || ''), byName: String(p.byName || ''), ts: String(p.ts || '') };
       if(!window.__report){ tell(t('인터넷에 연결된 상태에서만 신고할 수 있습니다')); return false; }
       window.__report.send(body)
-        .then(()=>tell(t('신고했습니다.\n확인 후 조치하겠습니다.') + '\n\n'
+        .then(()=>tell(t('신고했습니다.\n살펴본 뒤 조치하겠습니다.') + '\n\n'
           + t('운영자에게는 신고하신 이 글만 전해집니다.'), { kind:'good' }))
         .catch(e=>tell(t('보내지 못했습니다: ') + ((e && e.message) || e), { kind:'bad' }));
     }
@@ -20197,7 +20197,7 @@ async function ensureBoatIndex(){
 }
 // 이 기기에서 안 보이게 하기
 async function hideBoatUI(id){
-  if(!await ask(t('이 배를 목록에서 숨길까요?\n\n이 기기에서만 숨겨집니다.\n언제든 다시 볼 수 있습니다.'), { ok: t('숨기기') })) return;
+  if(!await ask(t('이 배를 목록에서 안 보이게 할까요?\n\n이 기기에서만 숨겨집니다.\n언제든 다시 볼 수 있습니다.'), { ok: t('숨기기') })) return;
   hideBoat(id);
   openExplore(exploreBiz);
 }
@@ -20216,7 +20216,7 @@ async function openHidden(){
     let x = null;
     try{ x = await window.__pub.one(id); }catch(_){}
     rows.push(`<div class="fleet">
-      <div class="fmain"><div class="fname">${esc((x && x.name) || t('(삭제된 배)'))}</div>
+      <div class="fmain"><div class="fname">${esc((x && x.name) || t('(사라진 배)'))}</div>
         <div class="fsub">${esc(t((x && x.typeName) || ''))}</div></div>
       <div class="fbtns"><button class="minib blu" onclick="unhideBoatUI('${jsq(id)}')">${esc(t('다시 보기'))}</button></div>
     </div>`);
@@ -20245,7 +20245,7 @@ function backToExplore(){
 // 로그인한 사람은 누구나 읽고 쓴다. 글에는 어느 배 사람인지가 따라붙는다 —
 // 익명이면 장난글이 는다.
 const TALK_KINDS = [
-  { v:'ask',   name:t('질문'),   sub:t('질문') },
+  { v:'ask',   name:t('질문'),   sub:t('몰라서 묻는 것') },
   // '정비' 와 '장비' 가 헷갈린다는 말을 들었다. 경계를 또렷하게 적는다.
   { v:'maint', name:t('정비'),   sub:t('내 배를 고친 이야기 · 고장·수리') },
   { v:'trip',  name:t('항해기'), sub:t('다녀온 곳') },
@@ -20263,22 +20263,22 @@ const TALK_KINDS = [
 //   그래서 이 앱에는 금액 칸을 아예 만들지 않는다.
 //   금액 칸을 만드는 순간 앱이 무등록 영업을 거들어 준 자리가 된다.
 const RIDE_TRIP = [
-  { v:'air',  name:'근거리 항해',    sub:'가볍게 한 바퀴' },
+  { v:'air',  name:'바람 쐬기',    sub:'가볍게 한 바퀴' },
   { v:'fish', name:'낚시 · 출조',  sub:'' },
-  { v:'long', name:'장거리 항해',      sub:'1박 이상' },
+  { v:'long', name:'먼 거리',      sub:'1박 이상' },
   { v:'race', name:'시합 · 레이스', sub:'' },
-  { v:'move', name:'배 이동',    sub:'회항 · 이동' }
+  { v:'move', name:'배 옮기기',    sub:'회항 · 이동' }
 ];
 const RIDE_WANT = [
   { v:'new',   name:'처음이어도 괜찮습니다', sub:'' },
-  { v:'exp',   name:'승선 경험 있는 분',        sub:'' },
+  { v:'exp',   name:'배 타보신 분',        sub:'' },
   { v:'lic',   name:'면허 있는 분',         sub:'' },
-  { v:'watch', name:'야간 당직 가능한 분',      sub:'' },
+  { v:'watch', name:'밤 당직 서실 분',      sub:'' },
   { v:'gear',  name:'낚시 장비 있으신 분',   sub:'' }
 ];
 const RIDE_COST = [
   { v:'none',  name:'없습니다',    sub:'제가 냅니다' },
-  { v:'share', name:'유류비 분담',  sub:'유류비 · 입출항비를 분담합니다' }
+  { v:'share', name:'기름값 나눔',  sub:'기름값 · 입출항비를 나눕니다' }
 ];
 const RIDE_CLOSE = [
   { v:'3', name:t('출항 3일 전까지'), sub:'' },
@@ -20286,7 +20286,7 @@ const RIDE_CLOSE = [
   { v:'0', name:t('출항 당일까지'),   sub:'' }
 ];
 const RIDE_LAW = '돈을 받고 사람을 태우려면 낚시어선업 신고나 마리나선박 대여업 등록이 있어야 합니다. '
-               + '유류비 분담 정도까지만 입력해 주세요. 금액은 입력할 수 없습니다.';
+               + '기름값을 나누는 정도까지만 적어 주세요. 금액은 적을 수 없습니다.';
 // ★ 사전은 여기 한 곳에서 거친다. 부르는 자리마다 t() 를 붙이면 한 군데는 빠뜨린다.
 const rideName = (arr, v) => {
   const n = (arr.find(x => x.v === String(v)) || {}).name || '';
@@ -20369,7 +20369,7 @@ let talkOpenId = null;
 const ADMIN_PERMS = [
   { k:'postDel', name:t('글 삭제'),       sub:t('신고된 글 삭제 · 숨김 해제') },
   { k:'boatMod', name:t('배 숨기기·삭제'), sub:t('둘러보기에 올라온 배') },
-  { k:'userBan', name:t('사용자 차단'),       sub:t('글·댓글 쓰기 차단') },
+  { k:'userBan', name:t('사람 차단'),       sub:t('글·댓글 쓰기 차단') },
   { k:'admin',   name:t('운영자 지정'),      sub:t('다른 사람을 운영자로 지정') },
   { k:'series',  name:t('연재 글 올리기'),   sub:t('뉴스 ▸ 연재에 옮긴 글 올리기') }
 ];
@@ -20397,7 +20397,7 @@ async function loadMyBan(){
 function banNotice(){
   // 사유는 사람이 적은 글이라 옮기지 않는다. 나머지만 옮긴다.
   const why = (myBan && myBan.why) ? '\n\n' + t('사유:') + ' ' + myBan.why : '';
-  return t('글쓰기가 차단되었습니다.') + why + '\n\n' + t('글은 계속 읽으실 수 있습니다.');
+  return t('글쓰기가 막혀 있습니다.') + why + '\n\n' + t('읽기는 계속 하실 수 있습니다.');
 }
 let adminMe = null;     // { uid, name, perms:{...} } · 아니면 null
 async function loadAdmin(){
@@ -20468,7 +20468,7 @@ function canDelTalk(t){
 }
 
 // 글에 붙는 배 정보. 어느 배 사람이 쓴 글인지 보여 준다.
-// 새 글에는 반응 숫자 자리를 0으로 둔다 — 없으면 '도움이 된 순' 으로 못 줄 세운다
+// 새 글에는 반응 숫자 자리를 0으로 둔다 — 없으면 '도움된 순' 으로 못 줄 세운다
 function talkBody(v, blocks){
   const b = (typeof curBoat === 'function') ? curBoat() : null;
   const photos = blocks.filter(x => x.t === 'photo').map(x => x.v);
@@ -20619,7 +20619,7 @@ async function renderTalk(){
 
   const sorts = `<div class="tfilt">`
     + `<button class="tchip${talkSort==='ts'?' on':''}" onclick="setTalkSort('ts')">${esc(t('새 글 순'))}</button>`
-    + `<button class="tchip${talkSort==='likeN'?' on':''}" onclick="setTalkSort('likeN')">${esc(t('도움이 된 순'))}</button>`
+    + `<button class="tchip${talkSort==='likeN'?' on':''}" onclick="setTalkSort('likeN')">${esc(t('도움된 순'))}</button>`
     + `</div>`;
   const qbox = `<div class="qbox"><input id="talkQ" value="${esc(talkQ)}"
       placeholder="${esc(t('제목 · 올린 사람으로 찾기'))}"
@@ -20638,7 +20638,7 @@ async function renderTalk(){
   }
   W.innerHTML = qbox + kinds + regs + sorts
     + (talkSort === 'likeN'
-        ? `<div class="mrnone" style="text-align:left">${esc(t('「도움됐어요」를 많이 받은 순서입니다. 아주 오래된 글은 여기에 표시되지 않을 수 있습니다.'))}</div>` : '')
+        ? `<div class="mrnone" style="text-align:left">${esc(t('도움됐어요가 눌린 순서입니다. 아주 오래된 글은 여기 안 나올 수 있습니다.'))}</div>` : '')
     + `<div class="mrrow" style="justify-content:flex-end;padding:8px 12px">
         <button class="mrbtn ok edt" onclick="writeTalk()">${esc(t('글쓰기'))}</button></div>`
     + (rows || `<div class="mrnone">${esc(t('아직 글이 없습니다. 첫 글을 써 보세요.'))}</div>`)
@@ -20668,7 +20668,7 @@ function talkPickRecord(rid){
                     + (r.pin ? ' · ' + t('도면 위치') : '')
                     + (r.photos && r.photos.length ? ' · ' + tsub('사진 {n}', { n: r.photos.length }) : '') });
   });
-  if(!rows.length){ tell(t('추가할 정비·수리 기록이 없습니다.\n\n정기점검을 완료 처리하거나 수리 항목을 추가하면 여기에 표시됩니다.'), { big:true }); return; }
+  if(!rows.length){ tell(t('추가할 정비·수리 기록이 없습니다.\n\n정기점검을 완료 처리하거나 수리 항목을 남기면 여기에 나옵니다.'), { big:true }); return; }
   recPickTarget = rid;
   const B = document.getElementById('recPickBody');
   B.innerHTML = rows.map(x=>`<div class="fleet" onclick="recPickTake('${jsq(x.v)}')">
@@ -20693,7 +20693,7 @@ async function recPickTake(v){
   const photos = blocks.filter(b=>b.t==='photo').map(b=>b.v);
   const bud = photoBudget(photos);
   if(!bud.ok){
-    tell(tsub('사진이 너무 많아 {n}장은 추가하지 못했습니다.', { n: bud.dropped })
+    tell(tsub('사진이 많아 {n}장은 넣지 못합니다.', { n: bud.dropped })
       + '\n\n' + t('글을 올린 뒤 따로 올려 주세요.'), { big:true });
   }
   // 편집기 안 커서 자리에 넣는다
@@ -20909,7 +20909,7 @@ function installCard(){
       <button class="minib" onclick="hideInstall()">${esc(t('나중에'))}</button></div>${why}
     <div class="mrrow" style="padding:10px 0 2px">
       <button class="mrbtn ok" style="width:100%" onclick="openInstall()">${
-        esc(isIOS() ? t('방법 보기') : t('지금 추가하기'))}</button></div></div>`;
+        esc(isIOS() ? t('하는 법 보기') : t('지금 추가하기'))}</button></div></div>`;
 }
 async function openInstall(){
   // 안드로이드·크롬 — 브라우저가 물어 온 것을 그대로 띄운다
@@ -20931,17 +20931,17 @@ function installHowTo(){
   if(!P) return;
   // ★ 한 걸음이 한 문장이다. 낱말로 쪼개면 말 차례가 다른 말에서 뒤죽박죽이 된다.
   const ios = `<div class="insstep"><span class="insno">1</span><span class="instx">${
-      t('화면 <b>아래쪽 가운데</b>의 <b>공유</b> 버튼<span class="insico">⬆︎</span>을 누릅니다 (네모 위로 화살표가 나온 아이콘)')}</span></div>
-    <div class="insstep"><span class="insno">2</span><span class="instx">${t('목록을 <b>아래로 내려</b> <b>[홈 화면에 추가]</b>를 누릅니다')}</span></div>
-    <div class="insstep"><span class="insno">3</span><span class="instx">${t('오른쪽 위 <b>[추가]</b>를 누릅니다')}</span></div>
+      t('화면 <b>아래쪽 가운데</b>의 <b>공유</b> 버튼<span class="insico">⬆︎</span>을 누릅니다 (네모에서 화살표가 위로 나온 그림)')}</span></div>
+    <div class="insstep"><span class="insno">2</span><span class="instx">${t('목록을 <b>아래로 내려</b> <b>[홈 화면에 추가]</b> 를 누릅니다')}</span></div>
+    <div class="insstep"><span class="insno">3</span><span class="instx">${t('오른쪽 위 <b>[추가]</b> 를 누릅니다')}</span></div>
     <div class="mrnone" style="text-align:left">${esc(t('사파리에서만 됩니다. 크롬이나 카카오톡·인스타그램 안에서 열었다면 먼저 사파리로 열어 주세요.'))}<br>${
       t('(주소창 옆 <b>···</b> → <b>Safari로 열기</b>)')}</div>`;
   const etc = `<div class="insstep"><span class="insno">1</span><span class="instx">${
-      t('주소창 옆 <b>⋮</b>(점 세 개)를 누릅니다')}</span></div>
+      t('주소창 옆 <b>⋮</b> (점 세 개)를 누릅니다')}</span></div>
     <div class="insstep"><span class="insno">2</span><span class="instx">${
-      t('<b>[앱 설치]</b> 또는 <b>[홈 화면에 추가]</b>를 누릅니다')}</span></div>
+      t('<b>[앱 설치]</b> 또는 <b>[홈 화면에 추가]</b> 를 누릅니다')}</span></div>
     <div class="insstep"><span class="insno">3</span><span class="instx">${
-      t('<b>[설치]</b>를 누릅니다')}</span></div>
+      t('<b>[설치]</b> 를 누릅니다')}</span></div>
     <div class="mrnone" style="text-align:left">${esc(t('카카오톡·인스타그램 안에서 열었다면 먼저 크롬으로 열어 주세요.'))}<br>${
       t('(오른쪽 위 <b>⋮</b> → <b>다른 브라우저로 열기</b>)')}</div>`;
   // ★ 아이폰은 「하면 좋은 것」이 아니라 「안 하면 기록이 지워지는 것」이다.
@@ -20950,11 +20950,11 @@ function installHowTo(){
   //   좋은 점만 말하고 이것을 안 말하면 그것이 조용한 거짓말이다.
   const 경고 = isIOS()
     ? `<div class="mrnone" style="text-align:left;border-left:3px solid var(--yel);padding-left:12px">${
-        esc(t('아이폰에서 사파리로만 사용하면, 7일 넘게 앱을 열지 않았을 때 기록이 삭제됩니다. 애플의 정책입니다.'))}<br>${
-        esc(t('홈 화면에 추가하면 이 정책이 적용되지 않아 기록이 그대로 남습니다.'))}</div>`
+        esc(t('아이폰은 사파리로만 사용하면 7일 넘게 앱을 안 열었을 때 기록을 지웁니다. 애플이 정해 둔 규칙입니다.'))}<br>${
+        esc(t('홈 화면에 두면 이 규칙에서 빠집니다. 기록이 그대로 남습니다.'))}</div>`
     : '';
   P.innerHTML = `<div class="mrhead"><b>${esc(t('홈 화면에 추가하기'))}</b><span style="flex:1"></span></div>
-    <div class="mrnone" style="text-align:left">${esc(t('홈 화면에 추가하면 아이콘으로 바로 열립니다. 전체 화면으로 열리고, 배 위에서 인터넷이 없어도 기록·도면·사진을 볼 수 있습니다.'))}</div>`
+    <div class="mrnone" style="text-align:left">${esc(t('홈 화면에 두면 아이콘으로 바로 열립니다. 전체 화면으로 뜨고, 배 위에서 인터넷이 없어도 기록·도면·사진을 볼 수 있습니다.'))}</div>`
     + 경고 + (isIOS() ? ios : etc);
   showPanel(P);
   setHeadTitle('홈 화면에 추가');
@@ -21124,7 +21124,7 @@ async function fixOldDrawings(){
   return n;
 }
 // 내가 올린 옛 글에 반응 숫자 자리를 채운다.
-// ★ 이것이 없으면 '도움이 된 순' 으로 줄 세울 때 그 칸이 없는 글이 통째로 빠진다.
+// ★ 이것이 없으면 '도움된 순' 으로 줄 세울 때 그 칸이 없는 글이 통째로 빠진다.
 async function fixOldLikes(){
   if(!window.__user) return 0;
   const me2 = meUid();
@@ -21232,10 +21232,10 @@ async function toggleLike(kind, id){
     row.likeN = before;
     likedMark(kind, id, was);
     likeRepaint(kind, id, before);
-    tell(t('반영하지 못했습니다.\n\n') + ((e && e.message) || e), { kind:'bad' });
+    tell(t('누르지 못했습니다.\n\n') + ((e && e.message) || e), { kind:'bad' });
   }
 }
-// ★ '도움이 된 순' 은 파이어스토어가 그 칸으로 줄을 세운다.
+// ★ '도움된 순' 은 파이어스토어가 그 칸으로 줄을 세운다.
 //   그런데 그 칸이 없는 문서는 아예 안 나온다 — 옛 글이 통째로 사라진다.
 //   그래서 켤 때 내 옛 글에 0 을 채워 두고(fixOldLikes), 그 뒤에 쓴다.
 //   남이 쓴 옛 글은 내가 못 고치므로, 고를 때 그 사실을 적어 준다.
@@ -21278,7 +21278,7 @@ function setTalkRegion(v){ talkRegion = v; renderTalk(); }
 //   돌려주는 값이 true 면 '막았다' 는 뜻이다 — 부른 쪽은 그냥 돌아서면 된다.
 function needLogin(msg){
   if(window.__user) return false;
-  tell(t(msg || '로그인이 필요합니다'));
+  tell(t(msg || '로그인해야 하실 수 있습니다'));
   try{ openAccount(); }catch(_){}
   return true;
 }
@@ -21295,7 +21295,7 @@ function writeTalk(id){
     // ★★★ 4.103 — 「올리면 누구나 본다」 를 **올리기 전에** 말한다.
     //   러시아 개인정보법 제10.1조는 공개 배포에 **따로** 알리고 동의를 받으라고 한다.
     //   그 나라 법 때문만은 아니다 — 이름과 전화번호를 적어 올리는 사람이 실제로 있다.
-    sub: '올린 글은 누구나 볼 수 있습니다. 이름·연락처를 입력하시면 함께 공개됩니다. 올린 뒤에도 직접 삭제할 수 있습니다.',
+    sub: '올리면 누구나 볼 수 있습니다. 이름·연락처를 적으시면 그것도 함께 보입니다. 올린 뒤에도 본인이 지울 수 있습니다.',
     okText: po ? '저장' : '올리기',
     filter: true,
     fields: [
@@ -21307,7 +21307,7 @@ function writeTalk(id){
         options: REGIONS.map(r=>({ v:r, name:r })) },
       { key:'title', label:'제목', value: po ? po.title : '', placeholder:'제목' },
       { key:'doc', type:'rich', label:'내용',
-        value: po ? (po.blocks || []) : [], placeholder:'내용을 입력해 주세요',
+        value: po ? (po.blocks || []) : [], placeholder:'내용을 적어 주세요',
         // 정비 이야기를 쓸 때 내 배의 정기점검·수리 기록을 그대로 붙일 수 있다.
         // 손으로 옮겨 적으면 틀리고 번거롭다.
         // 칸 번호를 손으로 적으면 칸 순서가 바뀔 때 엉뚱한 곳에 넣는다.
@@ -21320,7 +21320,7 @@ function writeTalk(id){
       if(!v.title) return formErr('title', '제목을 넣어 주세요');
       const blocks = Array.isArray(v.doc) ? v.doc : [];
       const photos = blocks.filter(x=>x.t==='photo').map(x=>x.v);
-      if(!blocks.length) return formErr('doc', '내용을 입력해 주세요');
+      if(!blocks.length) return formErr('doc', '내용을 넣어 주세요');
       pSet('bt_talkreg', v.region);
       // ★ 사진을 창고로 보내고 주소만 남긴다.
       //   글 안의 사진 자리(blocks)와 사진 목록(photos)이 같은 것을 가리켜야 하므로
