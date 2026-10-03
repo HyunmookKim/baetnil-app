@@ -1,0 +1,21 @@
+Starting: Intent { cmp=kr.baetnil.app/.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: kr.baetnil.app/.MainActivity
+TotalTime: 2008
+WaitTime: 2024
+Complete
+Starting: Intent { cmp=kr.baetnil.app/.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: kr.baetnil.app/.MainActivity
+TotalTime: 2373
+WaitTime: 2423
+Complete
+Starting: Intent { cmp=kr.baetnil.app/.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: kr.baetnil.app/.MainActivity
+TotalTime: 4271
+WaitTime: 4398
+Complete
