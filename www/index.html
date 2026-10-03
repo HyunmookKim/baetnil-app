@@ -37713,7 +37713,7 @@ async function adminSupport(){
     });
   if(!rows.length)
     return bar + `<div class="mrnone">${esc(supTab === 'new'
-      ? t('새로 들어온 것이 없습니다') : t('확인한 항목이 없습니다'))}</div>`;
+      ? t('새로 들어온 것이 없습니다') : t('확인한 것이 없습니다'))}</div>`;
   return bar + rows.map(s=>{
     const kn = (SUPPORT_KINDS.find(x=>x.v===s.kind) || {}).name || t('문의');
     // 연재자 신청은 답장이 아니라 '권한을 켜 주는 일' 이라 눈에 띄게 둔다
@@ -37725,21 +37725,18 @@ async function adminSupport(){
       <div class="fsub" style="color:#5a7a9a;word-break:break-all">${esc(s.info||'')}</div>
       ${(() => {
         // ★ 본문은 접어 둔다. 메일은 길다 — 다 펼치면 목록이 아니라 두루마리가 된다.
-        // ★ 5.30 — 메일 본문에 빈 줄이 수십 개 들어 있으면(표로 된 메일) 「확인함」 단추가 한참 아래로 밀렸다
-        //   (사장님: 「아무것도 클릭이 안되냐」 → 「존나 아래로 내리니까 확인함 탭 있긴하다」). 보여 줄 때만 빈 줄을 줄인다 — 저장된 글은 그대로.
-        const full = String(s.text || '').split('\n').map(l => /^[\s|\u00a0\u200b\u200c\u200d\ufeff]*$/.test(l) ? '' : l.replace(/\s+$/, ''))
-          .join('\n').replace(/\n{3,}/g, '\n\n').trim();
+        const full = String(s.text || '');
         const 짧다 = full.length <= 160 && full.split('\n').length <= 3;
         const 폈다 = 짧다 || !!supOpen[s.id];
         const 볼것 = 폈다 ? full : full.slice(0, 160).replace(/\s+\S*$/, '') + '…';
         return `<div class="postbody" style="padding:6px 0">${esc(볼것).replace(/\n/g,'<br>')}</div>`
           + (짧다 ? '' : `<button class="tchip" onclick="supToggle('${jsq(s.id)}')">${
-               esc(폈다 ? t('접기') : t('자세히'))}</button>`);
+               esc(폈다 ? t('줄이기') : t('자세히'))}</button>`);
       })()}
-      ${sr && s.by ? `<div class="mrnone" style="text-align:left;margin:6px 0">${t('허용하려면 <b>[보낸 사람]</b> → <b>연재 글 올리기</b>를 켜 주세요. 연재자는 운영자가 아니므로 운영자 화면은 열리지 않습니다.')}</div>` : ''}
+      ${sr && s.by ? `<div class="mrnone" style="text-align:left;margin:6px 0">${t('켜 주시려면 <b>[보낸 사람]</b> → <b>연재 글 올리기</b> 를 켜면 됩니다. 연재자는 운영자가 아닙니다 — 운영자 화면은 안 열립니다.')}</div>` : ''}
       <div class="fchips" style="margin-top:6px">
         ${(s.by && s.kind !== 'mail')?`<button class="tchip${sr?' on':''}" onclick="openPerson('${jsq(s.by)}')">${esc(t('보낸 사람'))}</button>`:''}
-        <button class="tchip${s.done?' on':''}" onclick="supportDone('${jsq(s.id)}',${s.done?'false':'true'})">${s.done?t('읽지 않음으로 표시'):t('확인함')}</button>
+        <button class="tchip${s.done?' on':''}" onclick="supportDone('${jsq(s.id)}',${s.done?'false':'true'})">${s.done?t('다시 새 글로'):t('확인함')}</button>
         ${s.email ? `<a class="tchip" href="mailto:${esc(s.email)}?subject=${
             esc(encodeURIComponent('Re: ' + String(s.text||'').split('\n')[0].slice(0,60)))}">${esc(t('답장'))}</a>` : ''}
       </div></div></div>`;
@@ -37799,7 +37796,7 @@ function canEditItem(m){ return canDelItem(m); }
 function marketNotice(){
   return `<div class="mrnone" style="text-align:left;border-top:1px solid #12283e;margin-top:10px">
     <b>${esc(t('뱃일은 거래의 당사자가 아닙니다.'))}</b><br>
-    ${esc(t('뱃일은 장터 공간만 제공하는 중개자이며, 물건과 거래에 관한 책임은 판매자와 구매자에게 있습니다. 물건 정보와 거래 조건은 반드시 직접 확인해 주세요.'))}</div>`;
+    ${esc(t('뱃일은 장터 자리를 빌려주는 중개자일 뿐이며, 물건과 거래에 관한 책임은 파는 사람(판매자)과 사는 사람(구매자)에게 있습니다. 물건 정보와 거래 조건은 반드시 직접 확인해 주세요.'))}</div>`;
 }
 // ★ 선입금이 사기의 거의 전부다. 물건 화면에 늘 붙인다.
 function marketSafety(){
@@ -37817,7 +37814,7 @@ function marketFirstNotice(){
   if(seen) return;
   tell(t('중고 장터를 여시기 전에 알려 드립니다.\n\n')
     + t('뱃일은 거래의 당사자가 아닙니다. 자리를 빌려줄 뿐이고,\n')
-    + t('물건과 거래에 대한 책임은 판매자와 구매자에게 있습니다.\n\n')
+    + t('물건과 거래에 대한 책임은 파는 분과 사는 분에게 있습니다.\n\n')
     + t('물건을 보기 전에 돈부터 보내지 마세요.\n')
     + t('배·엔진은 직접 가서 시운전까지 보고 판단하세요.\n\n')
     + t('이상한 글은 신고해 주세요. 신고가 쌓이면 자동으로 내려갑니다.'), { big:true });
@@ -37893,9 +37890,9 @@ function marketRowsHtml(){
         </div></div>`;
     }).join('');
   const busy = marketQ.trim() && marketFinding
-    ? `<div class="mrnone">${esc(t('서버에서도 검색하는 중…'))}</div>` : '';
+    ? `<div class="mrnone">${esc(t('서버에서도 찾는 중…'))}</div>` : '';
   return busy + (rows || `<div class="mrnone">${marketQ
-      ? (marketFinding ? '' : esc(t('검색된 물건이 없습니다. 물건 이름과 올린 사람으로 검색합니다.')))
+      ? (marketFinding ? '' : esc(t('찾은 물건이 없습니다. 물건 이름과 올린 사람에서 찾습니다.')))
       : t('아직 올라온 물건이 없습니다.')}</div>`)
     + listFoot('market', 'marketMore')
     + marketNotice();
@@ -37973,12 +37970,12 @@ async function openItem(id){
       · ${esc(String(m.ts||'').slice(0,10))}
       ${mine?`<button class="minib blu edt" style="margin-left:auto" onclick="writeItem('${jsq(m.id)}')">${esc(t('수정'))}</button>`:''}</div>
     ${trBar('market', m.id, (m.title||'') + ' ' + (m.note||''))}
-    ${m.hidden?`<div class="hwarn">${esc(t('신고가 누적되어 목록에서 숨겨진 글입니다.'))}</div>`:''}
+    ${m.hidden?`<div class="hwarn">${esc(t('신고가 쌓여 목록에서 내려간 글입니다.'))}</div>`:''}
     <div class="mrrow"><span class="mrlbl">${esc(t('가격'))}</span>
       <b class="mrv" style="flex:1;font-size:18px">${esc(priceText(m) || t('가격 미정'))}</b></div>
     ${row(t('연식'), m.year)}
     ${row(t('사용 시간'), m.hours ? m.hours + t('시간') : '')}
-    ${row(t('위치'), m.place)}
+    ${row(t('있는 곳'), m.place)}
     ${row(t('연락'), m.contact)}
     ${(m.photos||[]).map(u=>`<div class="introrow"><img loading="lazy" src="${esc(u)}" style="max-width:100%;border-radius:8px;display:block"></div>`).join('')}
     ${m.note ? `<div class="ghead"><b>${esc(t('설명'))}</b></div><div class="postbody">${esc(trPick(tv,'note',m.note)).replace(/\n/g,'<br>')}</div>` : ''}
@@ -37995,12 +37992,12 @@ async function openItem(id){
 
 // ── 올리기·고치기
 function writeItem(id){
-  if(guardEdit('장터에 물건을 올리거나 수정합니다.', ()=>writeItem(id))) return;
+  if(guardEdit('장터에 물건을 올리거나 고칩니다.', ()=>writeItem(id))) return;
   if(!window.__user){ tell(t('로그인해야 올릴 수 있습니다')); return; }
   if(myBan){ tell(banNotice()); return; }
   const m = id ? itemOf(id) : null;
   if(id && !m) return;
-  if(m && !canEditItem(m)){ tell(t('작성자와 운영자만 수정할 수 있습니다')); return; }
+  if(m && !canEditItem(m)){ tell(t('올린 분과 운영자만 고칠 수 있습니다')); return; }
   // ★ 4.102 — 올릴 때 그 사람 나라의 화폐 단위를 함께 담는다. 안 담으면 볼 때 알 길이 없다.
   marketDraft = m ? JSON.parse(JSON.stringify(m)) : { cat:'etc', state:'sale', cur: curNow() };
   itemForm();
@@ -38008,10 +38005,10 @@ function writeItem(id){
 function itemForm(){
   const d = marketDraft || {};
   const P = document.getElementById('mrPanel');
-  P.innerHTML = `<div class="mrhead"><b>${marketDraft && marketDraft.id ? t('물건 수정') : t('판매 글 올리기')}</b><span style="flex:1"></span>
+  P.innerHTML = `<div class="mrhead"><b>${marketDraft && marketDraft.id ? t('물건 수정') : t('팔 물건 올리기')}</b><span style="flex:1"></span>
       <button class="tab" onclick="backToMarket()">${esc(t('취소'))}</button>
       <button class="tab on" onclick="itemSave()">${esc(t('올리기'))}</button></div>
-    <div class="fhint" style="padding:8px 12px 0">${esc(t('올린 글은 누구나 볼 수 있습니다. 이름·연락처를 입력하시면 함께 공개됩니다. 올린 뒤에도 직접 삭제할 수 있습니다.'))}</div>
+    <div class="fhint" style="padding:8px 12px 0">${esc(t('올리면 누구나 볼 수 있습니다. 이름·연락처를 적으시면 그것도 함께 보입니다. 올린 뒤에도 본인이 지울 수 있습니다.'))}</div>
     <div class="mrrow"><span class="mrlbl">${esc(t('제목'))}</span>
       <input id="mkTitle" style="flex:1" placeholder="${esc(t('예: 야마하 9.9마력 선외기'))}" value="${esc(d.title||'')}"></div>
     <div class="mrrow"><span class="mrlbl">${esc(t('품목'))}</span></div>
@@ -38030,14 +38027,14 @@ function itemForm(){
         placeholder="${esc(t('예: 2015'))}" value="${esc(String(d.year||''))}">${esc(t('년'))}<span class="mrlbl" style="width:auto;margin-left:10px">${esc(t('사용 시간'))}</span>
       <input id="mkHours" type="number" inputmode="numeric" style="width:100px"
         placeholder="${esc(t('예: 450'))}" value="${esc(String(d.hours||''))}"> h</div>
-    <div class="mrnone" style="text-align:left">${esc(t('배와 엔진은 연식과 사용 시간이 가격을 좌우합니다. 아는 만큼 입력해 주세요.'))}</div>
+    <div class="mrnone" style="text-align:left">${esc(t('배와 엔진은 연식과 사용 시간이 값을 가릅니다. 아는 대로 적어 주세요.'))}</div>
 
-    <div class="mrrow"><span class="mrlbl">${esc(t('위치'))}</span>
+    <div class="mrrow"><span class="mrlbl">${esc(t('있는 곳'))}</span>
       <input id="mkPlace" style="flex:1" placeholder="${esc(t('예: 여수 원형마리나'))}" value="${esc(d.place||'')}"></div>
     <div class="mrrow"><span class="mrlbl">${esc(t('연락'))}</span>
       <input id="mkContact" style="flex:1" placeholder="${esc(t('예: 010-0000-0000 / 게시판 쪽지'))}" value="${esc(d.contact||'')}"></div>
     <div class="frow" style="padding:0 12px"><label>${esc(t('설명'))}</label>
-      <textarea id="mkNote" rows="5" placeholder="${esc(t('상태·수리 이력·구성품 등을 입력해 주세요'))}">${esc(d.note||'')}</textarea></div>
+      <textarea id="mkNote" rows="5" placeholder="${esc(t('상태·수리 이력·같이 주는 것 등을 적어 주세요'))}">${esc(d.note||'')}</textarea></div>
     <div class="fchips" style="padding:0 12px 8px">
       <button class="fchip" onclick="itemPhoto()">${esc(tsub('+ 사진 추가 ({n}장)',{n:(d.photos||[]).length}))}</button></div>
     ${marketSafety()}`;
@@ -38080,7 +38077,7 @@ async function itemSave(){
   const title = String(d.title||'').trim();
   if(!title){ fieldErr('mkTitle', '제목을 넣어 주세요'); return; }
   if(!d.free && !d.offer && !(Number(d.price) > 0)){
-    fieldErr('mkPrice', '가격을 입력해 주세요.\n\n무료로 나눔하시거나 가격을 정하지 않으셨다면\n[무료 나눔] 또는 [가격 제안 받기]를 눌러 주세요.');
+    fieldErr('mkPrice', '가격을 넣어 주세요.\n\n무료로 주시거나 값을 정하지 않으셨다면\n[무료 나눔] 또는 [가격 제안 받기]를 눌러 주세요.');
     return;
   }
   // ★ 이 화면은 openForm 을 안 쓴다 — formOk 의 거르기가 안 지난다. 여기서 거른다.
@@ -38118,20 +38115,20 @@ async function itemSave(){
 // 팔렸는지 표시 — 올린 사람만
 function setItemState(id, st){
   const m = itemOf(id); if(!m) return;
-  if(!canEditItem(m)){ tell(t('작성자만 변경할 수 있습니다')); return; }
+  if(!canEditItem(m)){ tell(t('올린 분만 바꿀 수 있습니다')); return; }
   window.__market.edit(id, { state: st })
     .then(()=>{ m.state = st; openItem(id); })
     .catch(e=>tell(t('바꾸지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
 }
 async function delItem(id){
-  if(guardEdit('장터 글을 삭제합니다.', ()=>delItem(id))) return;
+  if(guardEdit('장터 글을 지웁니다.', ()=>delItem(id))) return;
   const m = itemOf(id); if(!m) return;
-  if(!canDelItem(m)){ tell(t('작성자와 운영자만 삭제할 수 있습니다')); return; }
+  if(!canDelItem(m)){ tell(t('올린 분과 운영자만 지울 수 있습니다')); return; }
   if(!await ask(tsub("'{name}' 을 지울까요?", {name:m.title}) + '\n\n' + t('되돌릴 수 없습니다.'), { ok: t('삭제'), warn: true })) return;
   window.__market.del(id)
     .then(()=>{ dropPhotosOf(m);
                 marketList = marketList.filter(x=>String(x.id)!==String(id)); backToMarket(); })
-    .catch(e=>tell(t('삭제하지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
+    .catch(e=>tell(t('지우지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
 }
 function reportItem(id){
   const m = itemOf(id); if(!m) return;
@@ -38667,7 +38664,7 @@ const BORDER = {
 function borderLine(cc){
   const b = BORDER[cc];
   if(!b) return '';
-  return `<div class="wxwarn">${esc(t('다른 국가에서 배로 입국할 때는 지정된 항구로만 입항할 수 있습니다.'))} `
+  return `<div class="wxwarn">${esc(t('다른 국가에서 배로 들어올 때는 정해진 항으로만 들어올 수 있습니다.'))} `
     + helpBtn('border_' + cc) + `</div>`;
 }
 // 도움말 본문 — HELP 에 직접 넣지 않고 openHelp 가 불러 간다 (제원 도움말과 같은 결)
@@ -38676,12 +38673,12 @@ function borderHelp(cc){
   if(!b) return null;
   const list = b.ports.map(x=>esc(x)).join(' · ');
   return [ b.name,
-    esc(t('다른 국가에서 배로 입국할 때는 지정된 항구로만 입항할 수 있습니다.')) + '<br><br>'
-    + '<b>' + esc(tsub('입항 가능한 항구 {n}곳', { n: b.ports.length })) + '</b><br>'
+    esc(t('다른 국가에서 배로 들어올 때는 정해진 항으로만 들어올 수 있습니다.')) + '<br><br>'
+    + '<b>' + esc(tsub('들어올 수 있는 항 {n}곳', { n: b.ports.length })) + '</b><br>'
     + list + '<br><br>'
-    + esc(t('목록에 없는 항구로 입항하려면 미리 세관의 허가를 받아야 합니다.')) + '<br><br>'
+    + esc(t('여기 없는 항으로 들어오려면 미리 세관의 허가를 받아야 합니다.')) + '<br><br>'
     + '<span style="color:#7b8794">' + esc(t('근거')) + ' — ' + esc(b.law) + '<br>'
-    + esc(t('※ 법이 바뀔 수 있습니다. 출항 전에 반드시 다시 확인해 주세요.')) + '</span>' ];
+    + esc(t('※ 법이 바뀔 수 있습니다. 떠나기 전에 반드시 다시 확인해 주세요.')) + '</span>' ];
 }
 function spotCcBar(){
   const cs = countriesIn(spotsForList());
@@ -38744,7 +38741,7 @@ function bpSocial(boatId, recId){
   }).join('');
   return `<div class="mrrow" style="padding:10px 14px">${likeBtn('bp', key, bpN(key,'likeN'))}</div>
     <div class="ghead"><b>${esc(t('댓글'))}</b><span class="gcnt">${all.length}</span></div>
-    ${cs || `<div class="mrnone" style="text-align:left">${esc(t('아직 댓글이 없습니다. 해 보셨다면 경험을 남겨 주세요.'))}</div>`}
+    ${cs || `<div class="mrnone" style="text-align:left">${esc(t('아직 없습니다. 해 보셨으면 어땠는지 남겨 주세요.'))}</div>`}
     <div class="mrrow edt" style="padding:12px">
       <button class="mrbtn big" style="width:100%" onclick="bpWriteComment('${jsq(boatId)}','${jsq(recId)}')">${esc(t('댓글 남기기'))}</button></div>`;
 }
@@ -38756,11 +38753,11 @@ function bpWriteComment(boatId, recId){
   const key = bpKey(boatId, recId);
   openForm({
     filter: true,     // ★ 밖으로 나가는 글 — formOk 에서 거른다
-    title:'댓글', okText:'등록',
-    sub:'해 보셨거나 가 보셨다면 경험을 남겨 주세요',
+    title:'댓글', okText:'남기기',
+    sub:'해 보셨거나 가 보셨으면 어땠는지 남겨 주세요',
     fields:[{ key:'text', type:'multi', rows:4, label:'내용', value:'' }],
     onOk: v => {
-      if(!v.text) return formErr('text', '내용을 입력해 주세요');
+      if(!v.text) return formErr('text', '내용을 넣어 주세요');
       const c = { id:newId(), by:meUid()||'', byName:meName(),
                   boat:String(boatId), rec:String(recId),
                   text:v.text, ts:new Date().toISOString() };
@@ -38770,20 +38767,20 @@ function bpWriteComment(boatId, recId){
           bpMeta[key] = Object.assign({}, bpMeta[key], { cmtN: bpN(key,'cmtN') + 1 });
           try{ paintBoatPage(); }catch(_){}
         })
-        .catch(e=>tell(t('등록하지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
+        .catch(e=>tell(t('남기지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
     }
   });
 }
 async function bpDelComment(boatId, recId, cid){
-  if(guardEdit('댓글을 삭제합니다.', ()=>bpDelComment(boatId, recId, cid))) return;
-  if(!await ask(t('이 댓글을 삭제합니다.'), { ok: t('삭제') })) return;
+  if(guardEdit('댓글을 지웁니다.', ()=>bpDelComment(boatId, recId, cid))) return;
+  if(!await ask(t('이 댓글을 지웁니다.'), { ok: t('삭제') })) return;
   const key = bpKey(boatId, recId);
   try{
     await window.__cmt.del(BP_COLL, key, cid);
     bpCmts[key] = (bpCmts[key] || []).filter(c => String(c.id) !== String(cid));
     bpMeta[key] = Object.assign({}, bpMeta[key], { cmtN: Math.max(0, bpN(key,'cmtN') - 1) });
     try{ paintBoatPage(); }catch(_){}
-  }catch(e){ tell(t('삭제하지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }); }
+  }catch(e){ tell(t('지우지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }); }
 }
 
 // ── 자료 출처 한 줄 (13번)
@@ -38851,8 +38848,8 @@ function spotOverSeed(s){
 function spotDisclaimer(){
   return `<div class="hwarn" style="text-align:left">`
        + `<b>${esc(t('뱃일은 항해용 앱이 아닙니다.'))}</b><br>`
-       + esc(t('여기에 나온 위치 · 수심 · 요금 · 연락처는 공개 자료와 이용자가 올린 정보로, 정확하지 않을 수 있습니다.')) + '<br>'
-       + esc(t('실제 항해와 접안 전에는 반드시 공식 해도와 해당 시설에 확인하십시오.')) + '</div>';
+       + esc(t('여기 실린 위치 · 수심 · 요금 · 연락처는 공개 자료와 이용자가 올린 것이며 틀릴 수 있습니다.')) + '<br>'
+       + esc(t('실제 항해와 접안은 반드시 공식 해도와 해당 시설에 확인하고 하십시오.')) + '</div>';
 }
 // 지울 수 있는 사람 — 올린 본인과 운영자
 function canDelSpot(s){
@@ -38906,8 +38903,8 @@ function canMoveSpot(s){
 function spotShelterText(s){
   const open = (s && s.open) || [];
   if(!open.length) return '';
-  if(open.length >= 8) return t('사방이 트여 있습니다. 바람이 불면 위험합니다');
-  return tsub('{dirs} 바람에 노출되어 있습니다',
+  if(open.length >= 8) return t('사방이 트여 있습니다 — 바람이 불면 위험합니다');
+  return tsub('{dirs} 바람에 트여 있습니다',
               {dirs: open.map(d=>SPOT_DIR_KO[d] || d).join('·')});
 }
 function spotDepthText(s){
@@ -38915,9 +38912,9 @@ function spotDepthText(s){
   const f = s && s.depthFrom;
   // ★ 환산한 값은 근거를 달고 다녀야 한다. 어디서 나온 숫자인지 모르면 못 믿는다.
   if(f && f.raw != null && f.tide != null)
-    return tsub('{d}m (저조위 기준 · 측정값 {r}m − 측정 시 조위 {t}m)',
+    return tsub('{d}m (저조위 기준 · 잰 값 {r}m − 그때 조위 {t}m)',
                 {d:s.depth, r:f.raw, t:f.tide});
-  return s.depth + 'm' + (s.lowTide ? ' ' + t('(저조위 기준)') : ' ' + t('(기준 미상, 물때를 확인하세요)'));
+  return s.depth + 'm' + (s.lowTide ? ' ' + t('(저조위 기준)') : ' ' + t('(기준 미상 — 물때를 확인하세요)'));
 }
 
 // ★ 인터넷이 없어도 열린다.
@@ -39058,11 +39055,11 @@ function spotMapFoot(){
     .filter(s => spotMatch(s, spotQ))
     .filter(s => s.lat != null && s.lon != null).length;
   const n = Math.min(all, SPOT_MAP_MAX);
-  if(!all) return `<div class="mrnone">${esc(t('지도에 표시할 장소가 없습니다.'))}</div>`;
+  if(!all) return `<div class="mrnone">${esc(t('지도에 찍을 위치가 없습니다.'))}</div>`;
   return `<div class="mrnone" style="text-align:left">${
     esc(all > n
-      ? tsub('가까운 {n}곳만 표시했습니다 (전체 {a}곳). 검색이나 위쪽 필터로 범위를 좁히면 해당 장소가 표시됩니다.', { n:String(n), a:String(all) })
-      : tsub('{n}곳. 핀을 누르면 해당 장소가 열립니다.', { n:String(n) }))}</div>`
+      ? tsub('가까운 {n}곳만 찍었습니다 (모두 {a}곳). 찾기 칸이나 위 띠로 좁히면 그 자리들이 나옵니다.', { n:String(n), a:String(all) })
+      : tsub('{n}곳. 핀을 누르면 그 자리가 열립니다.', { n:String(n) }))}</div>`
     // ★ 4.102 — 겹쳐서 가린 이름표 수. 지도를 그린 뒤에 채워진다 (mapPaint).
     + `<div class="mrnone" id="mapHidLbl" style="text-align:left"></div>`
     + spotFromLine();
@@ -39153,13 +39150,13 @@ function spotRowsHtml(){
       </div></div>`;
     }).join('');
   const busy = spotQ.trim() && spotFinding
-    ? `<div class="mrnone">${esc(t('서버에서도 검색하는 중…'))}</div>` : '';
+    ? `<div class="mrnone">${esc(t('서버에서도 찾는 중…'))}</div>` : '';
   return busy + (out || `<div class="mrnone" style="text-align:left">${spotQ
-      ? (spotFinding ? '' : esc(t('검색된 정박지가 없습니다. 이름과 올린 사람으로 검색합니다.')))
+      ? (spotFinding ? '' : esc(t('찾은 정박지가 없습니다. 이름과 올린 사람에서 찾습니다.')))
       : `<b>${esc(t('아직 올라온 정박지가 없습니다.'))}</b><br><br>
-         ${esc(t('다녀오신 마리나·항구·묘박지를 한 곳이라도 올려 주세요.'))}<br>
-         ${esc(t('이름과 위치만 입력해도 됩니다. 수심·요금·연락처는 아는 만큼만 입력해 주세요.'))}<br><br>
-         ${esc(t('나중에 오는 사람이 이 내용을 보고 배를 댑니다.'))}`}</div>`)
+         ${esc(t('다녀오신 마리나·항구·묘박지를 하나만 올려 주세요.'))}<br>
+         ${esc(t('이름과 위치만 찍어도 됩니다. 수심·요금·연락처는 아는 만큼만.'))}<br><br>
+         ${esc(t('뒤에 오는 사람이 그걸 보고 댑니다.'))}`}</div>`)
     + listFoot('spots', 'spotMore')
     + spotFromLine();     // ★ 출처 표기 (ODbL). 지우지 마십시오. (지도 쪽은 spotMapFoot 이 붙인다)
 }
@@ -39277,7 +39274,7 @@ async function revKeep(id, body, memo){
 async function openSpotRevs(id){
   const s = spotOf(id); if(!s) return;
   const P = document.getElementById('mrPanel');
-  P.innerHTML = `<div class="mrhead"><b>${esc(t('수정 기록'))}</b><span style="flex:1"></span>
+  P.innerHTML = `<div class="mrhead"><b>${esc(t('고친 이야기'))}</b><span style="flex:1"></span>
       <button class="tab" onclick="openSpot('${jsq(id)}')">${esc(t('돌아가기'))}</button></div>
     <div class="mrnone" style="text-align:left">${esc(t('불러오는 중…'))}</div>`;
   showPanel(P);
@@ -39290,18 +39287,18 @@ async function openSpotRevs(id){
     const 펼침 = String(spotRevOpen) === String(r.id);
     const 같나 = revDiff(r, 지금).length === 0;
     return `<div class="cmt">
-      <div class="cmthead"><b>${esc(tsub('{n}번째 버전', { n: i + 1 }))}</b>
+      <div class="cmthead"><b>${esc(tsub('{n}판', { n: i + 1 }))}</b>
         ${esc(r.byName || '')}
         <span>${esc(String(r.ts || '').slice(0, 10))}</span>
         ${같나 ? `<span class="chip">${esc(t('최신 버전'))}</span>` : ''}</div>
       <div class="cmtbody">${
         i === 0 ? esc(t('처음 올린 버전입니다.'))
-        : (바뀜.length ? esc(tsub('변경된 부분: {what}', { what: 바뀜.join(' · ') }))
-                       : esc(t('글은 변경되지 않았습니다.')))}${
+        : (바뀜.length ? esc(tsub('바뀐 곳 — {what}', { what: 바뀜.join(' · ') }))
+                       : esc(t('글은 그대로입니다.')))}${
         r.memo ? '<br>' + esc(t(r.memo)) : ''}</div>
       <div class="mrrow" style="gap:8px;padding:6px 12px 10px">
         <button class="minib blu" onclick="spotRevPeek('${jsq(id)}','${jsq(r.id)}')">${
-          esc(펼침 ? t('접기') : t('자세히'))}</button>
+          esc(펼침 ? t('줄이기') : t('자세히'))}</button>
         ${같나 ? '' : `<button class="minib edt" onclick="spotRevBack('${jsq(id)}','${jsq(r.id)}')">${
           esc(t('이 버전 복원하기'))}</button>`}
       </div>
@@ -39318,13 +39315,13 @@ async function openSpotRevs(id){
           }).join('')}</div>` : ''}
     </div>`;
   }).join('');
-  P.innerHTML = `<div class="mrhead"><b>${esc(t('수정 기록'))}</b><span style="flex:1"></span>
+  P.innerHTML = `<div class="mrhead"><b>${esc(t('고친 이야기'))}</b><span style="flex:1"></span>
       <button class="tab" onclick="openSpot('${jsq(id)}')">${esc(t('돌아가기'))}</button></div>
     <div class="mrnone" style="text-align:left">${
-      esc(t('수정할 때마다 버전이 하나씩 저장됩니다. 어느 버전으로든 되돌릴 수 있습니다.'))}<br>${
-      esc(t('글만 되돌립니다. 사진과 위치는 그대로 유지됩니다.'))}</div>
+      esc(t('고칠 때마다 버전이 하나씩 쌓입니다. 어느 버전으로든 되돌릴 수 있습니다.'))}<br>${
+      esc(t('되돌리는 것은 글자뿐입니다 — 사진과 위치는 그대로 남습니다.'))}</div>
     ${rows || `<div class="mrnone" style="text-align:left">${
-      esc(t('아직 수정된 적이 없습니다.'))}</div>`}`;
+      esc(t('아직 고친 적이 없습니다.'))}</div>`}`;
   showPanel(P);
 }
 function spotRevPeek(id, rid){
@@ -39341,9 +39338,9 @@ async function spotRevBack(id, rid){
   const r = list.find(x => String(x.id) === String(rid)); if(!r) return;
   const 몇 = list.slice().sort((a,b)=>String(a.ts||'').localeCompare(String(b.ts||'')))
                  .findIndex(x => String(x.id) === String(rid)) + 1;
-  if(!await ask(tsub('{n}번째 버전으로 되돌릴까요?', { n: 몇 }) + '\n\n'
-      + t('글만 되돌립니다. 사진과 위치는 그대로 유지됩니다.')
-      + '\n' + t('되돌린 내용도 새 버전으로 저장됩니다.'),
+  if(!await ask(tsub('{n}판으로 되돌릴까요?', { n: 몇 }) + '\n\n'
+      + t('되돌리는 것은 글자뿐입니다 — 사진과 위치는 그대로 남습니다.')
+      + '\n' + t('되돌린 것도 새 버전으로 남습니다.'),
       { ok: t('되돌리기') })) return;
   // ★ 있는 문서 위에 글자만 얹는다. 자리·사진·임자·신고는 손대지 않는다 —
   //   서버 규칙도 그 칸들만 열어 두었다.
@@ -39354,9 +39351,9 @@ async function spotRevBack(id, rid){
     await window.__spots.put(body);
     const i = spotList.findIndex(x=>String(x.id)===String(body.id));
     if(i >= 0) spotList[i] = body; else spotList.unshift(body);
-    await revKeep(id, body, tsub('{n}번째 버전으로 되돌렸습니다.', { n: 몇 }));
+    await revKeep(id, body, tsub('{n}판으로 되돌렸습니다.', { n: 몇 }));
     trDrop('spots', id);
-    tell(tsub('{n}번째 버전으로 되돌렸습니다.', { n: 몇 }), { kind:'good' });
+    tell(tsub('{n}판으로 되돌렸습니다.', { n: 몇 }), { kind:'good' });
     openSpotRevs(id);
   }catch(e){ tell(t('되돌리지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }); }
 }
@@ -39394,18 +39391,18 @@ async function openSpot(id){
       ${canEditSpot(s)?`<button class="minib blu edt" style="margin-left:auto" onclick="writeSpot('${jsq(s.id)}')">${esc(t('수정'))}</button>`:''}</div>
     ${s.seed ? '' : trBar('spots', s.id, (s.name||'') + ' ' + (s.note||''),
         (spotCmts[String(s.id)]||[]).map(c=>String(c.text||'')).join(' '))}
-    ${s.hidden?`<div class="hwarn">${esc(t('신고가 누적되어 목록에서 숨겨진 자리입니다.'))}</div>`:''}
+    ${s.hidden?`<div class="hwarn">${esc(t('신고가 쌓여 목록에서 내려간 자리입니다.'))}</div>`:''}
     ${spotUnsure(s) ? `<div class="hwarn">
         <b>${esc(t('아직 확인되지 않은 곳입니다.'))}</b><br>
-        ${esc(t('지도 데이터에 「마리나」로 표시되어 있어 추가한 곳입니다. 배를 댈 수 있는지, 위치가 맞는지 아직 아무도 확인하지 않았습니다.'))}<br>
-        ${esc(t('다녀오신 분이 내용을 입력해 주시면 이 표시가 사라집니다.'))}
+        ${esc(t('지도 자료에 「마리나」로 적혀 있어 실었습니다. 배를 댈 수 있는 곳인지, 위치가 맞는지 아직 아무도 확인하지 않았습니다.'))}<br>
+        ${esc(t('다녀오신 분이 내용을 채워 주시면 이 표시가 없어집니다.'))}
       </div>` : ''}
     ${s.seed ? `<div class="mrnone" style="text-align:left">
         <b>${esc(tsub('{src}입니다.', {src: (s.byName && s.byName !== SPOT_SEED_FROM) ? s.byName : t(SPOT_SEED_FROM)}))}</b> ${
           esc(s.byName && s.byName !== SPOT_SEED_FROM ? '' : t('이름과 위치만 들어 있습니다.'))}
-        ${s.plan ? `<br>${t('국가 마리나 <b>계획 단계</b>에 있는 곳입니다. 가시기 전에 확인해 주세요.')}` : ''}
-        <br>${esc(t('다녀오셨다면 수심 · 바닥 · 트인 방향을 입력해 주세요.'))}
-        ${meUid() ? `<div style="margin-top:10px"><button class="mrbtn ok edt" onclick="writeSpot('${jsq(s.id)}')">${esc(t('상세 정보 입력'))}</button></div>` : ''}
+        ${s.plan ? `<br>${t('국가 마리나 <b>계획 단계</b>로 잡힌 곳입니다 — 가시기 전에 확인해 주세요.')}` : ''}
+        <br>${esc(t('다녀오셨으면 수심 · 바닥 · 트인 방향을 채워 주세요.'))}
+        ${meUid() ? `<div style="margin-top:10px"><button class="mrbtn ok edt" onclick="writeSpot('${jsq(s.id)}')">${esc(t('내용 채우기'))}</button></div>` : ''}
       </div>` : ''}
     ${sh ? `<div class="hwarn">${esc(sh)}</div>` : ''}
     ${row(t('수심'), spotDepthText(s))}
@@ -39416,15 +39413,15 @@ async function openSpot(id){
     ${row(t('요금'), s.fee)}
     ${row(t('연락처'), s.tel)}
     ${s.note ? `<div class="ghead"><b>${esc(t('한마디'))}</b></div><div class="postbody">${esc(trPick(tv,'note',s.note)).replace(/\n/g,'<br>')}</div>` : ''}
-    ${(s.photos||[]).length ? `<div class="secl">${esc(t('이곳 사진'))}</div>
+    ${(s.photos||[]).length ? `<div class="secl">${esc(t('이 위치 사진'))}</div>
       <div class="mrm" style="padding:2px 14px 6px;color:#7b8794">${
-        esc(t('수심 · 바닥 · 접안 위치 등 이곳을 알 수 있는 사진'))}</div>` : ''}
+        esc(t('수심 · 바닥 · 접안 위치처럼 위치를 알려 주는 사진'))}</div>` : ''}
     ${(s.photos||[]).map(u=>`<div class="introrow"><img loading="lazy" src="${esc(u)}" style="max-width:100%;border-radius:8px;display:block"></div>`).join('')}
     ${(s.lat!=null && s.lon!=null) ? mapBox('spotMap','40vh') : ''}
     ${s.seed ? '' : `<div class="mrrow" style="gap:8px;padding:12px">
       ${likeBtn('spots', s.id, s.likeN)}
       <span style="flex:1"></span>
-      <button class="mrbtn" onclick="openSpotRevs('${jsq(s.id)}')">${esc(t('수정 기록'))}</button>
+      <button class="mrbtn" onclick="openSpotRevs('${jsq(s.id)}')">${esc(t('고친 이야기'))}</button>
     </div>`}
     ${spotDisclaimer()}
     ${fromPk && fromPk.from ? `<div class="mrnone" style="text-align:left;font-size:11.5px">${esc(fromPk.from)}</div>` : ''}
@@ -39466,7 +39463,7 @@ function spotCmtHtml(s){
            style="max-width:100%;border-radius:8px;display:block"></div>`).join('')}</div>`;
   }).join('');
   return `<div class="ghead"><b>${esc(t('다녀온 이야기'))}</b><span class="gcnt">${all.length}</span></div>
-    ${cs || `<div class="mrnone" style="text-align:left">${esc(t('아직 없습니다. 다녀오셨다면 어땠는지 남겨 주세요.'))}<br>${
+    ${cs || `<div class="mrnone" style="text-align:left">${esc(t('아직 없습니다. 다녀오셨으면 어땠는지 남겨 주세요.'))}<br>${
         esc(t('사진도 함께 올리실 수 있습니다.'))}</div>`}
     <div class="mrrow edt" style="padding:12px">
       <button class="mrbtn big" style="width:100%" onclick="writeSpotComment('${jsq(s.id)}')">${esc(t('글 남기기'))}</button></div>`;
@@ -39488,17 +39485,17 @@ function writeSpotComment(id){
   //   ★ 나중에 누가 그 자리를 채우면 id 가 같으므로 이야기가 그대로 따라온다.
   openForm({
     filter: true,     // ★ 밖으로 나가는 글 — formOk 에서 거른다
-    title:'다녀온 이야기', okText:'등록',
-    sub:'수심 · 바닥 · 접안 상태처럼 다음 사람에게 도움이 될 내용을 남겨 주세요',
+    title:'다녀온 이야기', okText:'남기기',
+    sub:'수심 · 바닥 · 접안 상태처럼 다음 사람에게 도움 될 말을 남겨 주세요',
     fields:[{ key:'text', type:'multi', rows:4, label:'내용', value:'',
-              placeholder:'언제 다녀오셨는지도 함께 입력해 주시면 좋습니다' },
+              placeholder:'언제 다녀오셨는지도 함께 적어 주시면 좋습니다' },
             // ★★★ 4.99 — 다녀온 이야기에도 사진을 단다 (사장님이 정하신 것)
             //   "그냥 자기 다녀와 가지고 재밌었다, 뭐 이런 리뷰 형식으로도 사진을 달 수 있게"
             //   자리를 알려 주는 사진은 본문에, 다녀온 이야기 사진은 그 이야기에 붙는다.
             { key:'photos', type:'photos', label:'사진', value:[] }],
     onOk: v => {
       const shots = Array.isArray(v.photos) ? v.photos.slice(0, CMT_PH_MAX) : [];
-      if(!v.text && !shots.length) return formErr('text', '내용을 입력해 주세요');
+      if(!v.text && !shots.length) return formErr('text', '내용을 넣어 주세요');
       (async ()=>{
         let ph = [], th = [];
         if(shots.length){
@@ -39517,15 +39514,15 @@ function writeSpotComment(id){
             trDrop('spots', s.id);
             openSpot(s.id);
           })
-          .catch(e=>tell(t('등록하지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
+          .catch(e=>tell(t('남기지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
       })();
     }
   });
 }
 async function delSpotComment(id, cid){
-  if(guardEdit('다녀온 이야기를 삭제합니다.', ()=>delSpotComment(id, cid))) return;
+  if(guardEdit('다녀온 이야기를 지웁니다.', ()=>delSpotComment(id, cid))) return;
   const s = spotOf(id); if(!s) return;
-  if(!await ask(t('이 글을 삭제할까요?'), { ok: t('삭제'), warn: true })) return;
+  if(!await ask(t('이 글을 지울까요?'), { ok: t('삭제'), warn: true })) return;
   // ★★★ 4.99 — 이야기에 붙은 사진도 같이 치운다.
   //   안 치우면 창고에 주인 없는 사진이 쌓인다. 그 사진은 아무도 못 보고 값만 든다.
   //   ★ 지우기 전에 미리 챙긴다 — 지운 뒤에는 어떤 사진이었는지 알 길이 없다.
@@ -39540,7 +39537,7 @@ async function delSpotComment(id, cid){
       trDrop('spots', id);
       openSpot(id);
     })
-    .catch(e=>tell(t('삭제하지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
+    .catch(e=>tell(t('지우지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
 }
 function backToSpots(){
   comSub = 'spots';
@@ -39551,7 +39548,7 @@ function backToSpots(){
 // ── 올리기·고치기
 // 자리는 지도에서 찍는다. 위도·경도를 손으로 치게 하지 않는다.
 function writeSpot(id){
-  if(guardEdit('정박지를 올리거나 수정합니다.', ()=>writeSpot(id))) return;
+  if(guardEdit('정박지를 올리거나 고칩니다.', ()=>writeSpot(id))) return;
   if(!window.__user){ tell(t('로그인해야 올릴 수 있습니다')); return; }
   if(myBan){ tell(banNotice()); return; }
   const s = id ? spotOf(id) : null;
@@ -39578,11 +39575,11 @@ function spotPickPlace(){
   const d = (spotPickCtx && spotPickCtx.draft) || null;
   const has = !!(d && d.lat != null);
   const P = document.getElementById('mrPanel');
-  P.innerHTML = `<div class="mrhead"><b>${esc(t('위치 지정'))}</b><span style="flex:1"></span>
+  P.innerHTML = `<div class="mrhead"><b>${esc(t('위치 찍기'))}</b><span style="flex:1"></span>
       <button class="tab" onclick="backToSpots()">${esc(t('취소'))}</button>
       <button class="tab on" onclick="spotPlaceNext()">${esc(t('다음으로'))}</button></div>
     ${mapBox('spotPickMap','48vh')}
-    <div class="mrnone" style="text-align:left">${esc(t('지도를 누르면 그 위치가 지정됩니다 · 끌어서 이동 · 두 손가락으로 확대'))}<br>${esc(t('배를 대는 위치에 최대한 가깝게 표시해 주세요.'))}</div>
+    <div class="mrnone" style="text-align:left">${esc(t('지도를 누르면 그 위치로 정해집니다 · 끌어서 이동 · 두 손가락으로 확대'))}<br>${esc(t('배를 대는 위치에 최대한 가깝게 찍어 주세요.'))}</div>
     <div class="mrrow" style="justify-content:center">
       <button class="mrbtn" onclick="spotUseGPS()">${esc(t('현재 위치로'))}</button></div>`;
   showPanel(P);
@@ -39594,7 +39591,7 @@ function spotPickPlace(){
 }
 function spotUseGPS(quiet){
   if(!navigator.geolocation){ if(!quiet) tell(t('이 기기에서는 위치 기능을 사용할 수 없습니다.')); return; }
-  geoGet('정박지 위치 지정',
+  geoGet('정박지 자리 잡기',
     p=>{
       if(!mapS) return;
       mapS.pick = { lat:+p.coords.latitude.toFixed(5), lon:+p.coords.longitude.toFixed(5) };
@@ -39609,7 +39606,7 @@ function spotUseGPS(quiet){
   );
 }
 function spotPlaceNext(){
-  if(!mapS || !mapS.pick){ tell(t('지도를 눌러 위치를 지정해 주세요')); return; }
+  if(!mapS || !mapS.pick){ tell(t('지도를 탭해서 위치를 찍어 주세요')); return; }
   const d = (spotPickCtx.draft = spotPickCtx.draft || {});
   d.lat = mapS.pick.lat; d.lon = mapS.pick.lon;
   mapS = null;
@@ -39626,16 +39623,16 @@ function spotForm(){
       ${옮김 ? `<button class="tab" onclick="spotPickPlace()">${esc(t('← 위치'))}</button>` : ''}
       <button class="tab" onclick="backToSpots()">${esc(t('취소'))}</button>
       <button class="tab on" onclick="spotSave()">${esc(t('올리기'))}</button></div>
-    <div class="fhint" style="padding:8px 12px 0">${esc(t('올린 글은 누구나 볼 수 있습니다. 이름·연락처를 입력하시면 함께 공개됩니다. 올린 뒤에도 직접 삭제할 수 있습니다.'))}</div>
+    <div class="fhint" style="padding:8px 12px 0">${esc(t('올리면 누구나 볼 수 있습니다. 이름·연락처를 적으시면 그것도 함께 보입니다. 올린 뒤에도 본인이 지울 수 있습니다.'))}</div>
     ${옮김 ? '' : `<div class="mrnone" style="text-align:left">${
-        esc(t('위치(핀)는 운영자만 옮길 수 있습니다. 위치가 틀렸다면 다녀온 이야기로 알려 주세요.'))}</div>`}
+        esc(t('위치(핀)는 운영자만 옮깁니다. 위치가 틀렸으면 다녀온 이야기로 알려 주세요.'))}</div>`}
     <div class="mrrow"><span class="mrlbl">${esc(t('이름'))}</span>
       <input id="spName" style="flex:1" placeholder="${esc(t('예: 안도항 물양장'))}" value="${esc(d.name||'')}"></div>
     <div class="mrrow"><span class="mrlbl">${esc(t('종류'))}</span></div>
     <div class="fchips" style="padding:0 12px 8px">${
       SPOT_KINDS.map(k=>`<button class="tchip${(d.kind||'port')===k.v?' on':''}" onclick="spotSet('kind','${k.v}')">${k.name}</button>`).join('')}</div>
 
-    <div class="ghead"><b>${esc(t('바람막이'))}</b></div>
+    <div class="ghead"><b>${esc(t('바람이 막히나'))}</b></div>
     <div class="mrnone" style="text-align:left">${t('여기서 <b>트여 있는</b> 방향을 눌러 주세요. 그 방향에서 바람이 불면 배가 흔들리거나 위험합니다.')}</div>
     <div class="fchips" style="padding:0 12px 10px">${
       SPOT_DIRS.map(x=>`<button class="tchip${d.open.includes(x)?' on':''}" onclick="spotDir('${x}')">${SPOT_DIR_KO[x]}</button>`).join('')}</div>
@@ -39644,9 +39641,9 @@ function spotForm(){
     <div class="mrrow"><span class="mrlbl">${esc(t('수심'))}</span>
       <input id="spDepth" type="number" inputmode="decimal" style="width:90px" value="${esc(String(d.depth||''))}"> m
       <button class="tchip${d.lowTide?' on':''}" style="margin-left:8px" onclick="spotSet('lowTide',${d.lowTide?'false':'true'})">${esc(t('저조위 기준'))}</button></div>
-    <div class="mrrow"><button class="mrbtn" style="flex:1" onclick="spotDepthCalc()">${esc(t('수심계로 측정한 값을 입력하면 저조위 기준으로 환산합니다'))}</button></div>
-    ${ d.depthFrom ? `<div class="mrnone" style="text-align:left;color:#46B87C">${esc(tsub('측정값 {raw}m에서 당시 조위 {tide}m를 뺐습니다 · {spot} 조위 기준', { raw: d.depthFrom.raw, tide: d.depthFrom.tide, spot: String(d.depthFrom.spot||'') }))}</div>`
-      : `<div class="mrnone" style="text-align:left">${t('우리나라 바다는 조차가 큽니다. 수심계 값은 <b>측정한 시점</b> 기준이라 그대로 입력하면 저조 때 좌초할 수 있습니다.')}<br>${esc(t('해도에서 저조위 기준 수심을 이미 알고 계시면 그 값을 입력하고 칩을 켜 주세요.'))}</div>` }
+    <div class="mrrow"><button class="mrbtn" style="flex:1" onclick="spotDepthCalc()">${esc(t('수심계로 잰 값 입력 — 저조위 기준으로 바꿔 드립니다'))}</button></div>
+    ${ d.depthFrom ? `<div class="mrnone" style="text-align:left;color:#46B87C">${esc(tsub('잰 값 {raw}m에서 그때 조위 {tide}m를 뺐습니다 · {spot} 조위 기준', { raw: d.depthFrom.raw, tide: d.depthFrom.tide, spot: String(d.depthFrom.spot||'') }))}</div>`
+      : `<div class="mrnone" style="text-align:left">${t('우리 바다는 물때 차가 큽니다. 수심계 값은 <b>잰 그때</b> 기준이라 그대로 적으면 저조 때 얹힙니다.')}<br>${esc(t('해도를 보고 저조위 수심을 이미 아시면 그 값을 적고 칩을 켜 주세요.'))}</div>` }
     <div class="mrrow"><span class="mrlbl">${esc(t('바닥'))}</span></div>
     <div class="fchips" style="padding:0 12px 8px">${
       SPOT_BOTTOM.map(x=>`<button class="tchip${d.bottom===x?' on':''}" onclick="spotSet('bottom','${x}')">${esc(t(x))}</button>`).join('')}</div>
@@ -39666,7 +39663,7 @@ function spotForm(){
     <div class="fchips" style="padding:0 12px 16px">
       ${canPhotoSpot(spotPickCtx.id ? spotOf(spotPickCtx.id) : null)
         ? `<button class="fchip" onclick="spotPhoto()">${esc(tsub('+ 사진 추가 ({n}장)',{n:(d.photos||[]).length}))}</button>`
-        : `<span class="mrm" style="color:#7b8794">${esc(t('사진은 올린 분과 운영자만 변경할 수 있습니다.'))}</span>`}</div>`;
+        : `<span class="mrm" style="color:#7b8794">${esc(t('사진은 올린 분과 운영자만 바꿉니다.'))}</span>`}</div>`;
   showPanel(P);
   setHeadTitle('정박지');
 }
@@ -39675,7 +39672,7 @@ function spotForm(){
 async function spotDepthCalc(){
   spotKeep();
   const d = (spotPickCtx && spotPickCtx.draft) || null;
-  if(!d || d.lat == null){ tell(t('위치를 먼저 지정해 주세요')); return; }
+  if(!d || d.lat == null){ tell(t('위치를 먼저 찍어 주세요')); return; }
   if(!spotDepthCtx){
     const cur = Number(String(d.depth||'').trim());
     spotDepthCtx = { raw: (isFinite(cur) && cur > 0) ? cur : 3, ts: Date.now() };
@@ -39699,29 +39696,29 @@ async function spotDepthCalc(){
   P.innerHTML = `<div class="mrhead"><b>${esc(t('수심 환산'))}</b><span style="flex:1"></span>
       <button class="tab" onclick="spotDepthCancel()">${esc(t('취소'))}</button>
       <button class="tab${low == null ? '' : ' on'}" onclick="spotDepthApply()">${esc(t('적용'))}</button></div>
-    <div class="mrnone" style="text-align:left">${t('수심계 값은 <b>측정한 시점의 수위 기준</b>입니다. 만조 때 측정한 값을 그대로 입력하면 저조 때 좌초할 수 있습니다.')}<br>${esc(t('측정값과 측정 시각을 입력하면 그 시각'))}<b>${esc(t('조위를 빼서'))}</b> ${esc(t('저조위 기준으로 환산합니다.'))}</div>
+    <div class="mrnone" style="text-align:left">${t('수심계 값은 <b>잰 그때 물 높이 기준</b>입니다. 만조에 재고 그대로 적으면 저조 때 배가 얹힙니다.')}<br>${esc(t('잰 값과 잰 시각을 넣으면 그 시각'))}<b>${esc(t('조위를 빼서'))}</b> ${esc(t('저조위 기준으로 바꿔 드립니다.'))}</div>
 
-    <div class="ghead"><b>${esc(t('수심계 표시값'))}</b></div>
+    <div class="ghead"><b>${esc(t('수심계에 나온 값'))}</b></div>
     <div class="mrrow" style="justify-content:center;gap:6px">
       ${B('−1', 'spotDepthAdj(-1)')}${B('−0.1', 'spotDepthAdj(-0.1)')}
       <b style="min-width:88px;text-align:center;font-size:26px">${c.raw.toFixed(1)}m</b>
       ${B('+0.1', 'spotDepthAdj(0.1)')}${B('+1', 'spotDepthAdj(1)')}</div>
 
-    <div class="ghead"><b>${esc(t('측정 시각'))}</b></div>
+    <div class="ghead"><b>${esc(t('잰 시각'))}</b></div>
     <div class="mrrow" style="justify-content:center;gap:6px">
       ${B(t('−1시간'), 'spotDepthTime(-60)')}${B(t('−10분'), 'spotDepthTime(-10)')}
       <b style="min-width:88px;text-align:center;white-space:nowrap">${wtxt}</b>
       ${B(t('+10분'), 'spotDepthTime(10)')}${B(t('+1시간'), 'spotDepthTime(60)')}</div>
     <div class="mrrow" style="justify-content:center">
-      <button class="mrbtn" onclick="spotDepthNow()">${esc(t('현재 시각'))}</button></div>
+      <button class="mrbtn" onclick="spotDepthNow()">${esc(t('지금으로'))}</button></div>
 
     <div class="ghead"><b>${esc(t('환산'))}</b></div>
-    ${ TA ? `<div class="mrnone" style="text-align:left">${esc(t('가까운 조위관측소'))}<b>${esc(nameFor(TA.spot.name||''))}</b> · ${TA.dist.toFixed(0)}km<br>${esc(tsub('측정값 {raw}m에서 그 시각의 조위 {v}m를 뺍니다.', { v: TA.v.toFixed(2), raw: c.raw.toFixed(1) }))}</div>
+    ${ TA ? `<div class="mrnone" style="text-align:left">${esc(t('가까운 조위관측소'))}<b>${esc(nameFor(TA.spot.name||''))}</b> · ${TA.dist.toFixed(0)}km<br>${esc(tsub('그 시각 조위 {v}m를 잰 값 {raw}m에서 뺍니다.', { v: TA.v.toFixed(2), raw: c.raw.toFixed(1) }))}</div>
       ${ TA.dist > 50 ? `<div class="mrnone" style="text-align:left;color:#E8B33C">${esc(tsub('가장 가까운 조위관측소가 {km}km 떨어져 있습니다. 해도 수심과 함께 확인해 주세요.', { km: TA.dist.toFixed(0) }))}</div>` : '' }
       <div class="mrrow" style="justify-content:center">
         <b style="font-size:30px;color:${col}">${esc(tsub('저조위 기준 {v}', { v: low == null ? '—' : low.toFixed(1) + 'm' }))}</b></div>
-      ${ (low != null && low < 0) ? `<div class="mrnone" style="color:#F05B52">${esc(t('계산 결과가 0보다 작습니다. 측정값이나 측정 시각을 다시 확인해 주세요.'))}</div>` : '' }`
-      : `<div class="mrnone" style="text-align:left;color:#F05B52">${t('이 위치·이 시각은 조위 자료가 없어 <b>환산할 수 없습니다</b>.')}<br>${esc(t('관측소 자료가 없는 해역이거나, 측정 시각이 자료 기간을 벗어났습니다. 임의의 값을 넣으면 좌초 위험이 있어 비워 둡니다.'))}<br>${esc(t('수심을 직접 입력하고, 기준을 아시면 \'저조위 기준\'을 눌러 주세요.'))}</div>` }
+      ${ (low != null && low < 0) ? `<div class="mrnone" style="color:#F05B52">${esc(t('계산이 0보다 작습니다. 잰 값이나 잰 시각을 다시 봐 주세요.'))}</div>` : '' }`
+      : `<div class="mrnone" style="text-align:left;color:#F05B52">${t('이 위치·이 시각은 조위 자료가 없어 <b>환산할 수 없습니다</b>.')}<br>${esc(t('관측소 자료가 닿지 않는 바다이거나, 잰 시각이 자료 기간 밖입니다. 없는 숫자를 지어내면 배가 얹히므로 그냥 두겠습니다.'))}<br>${esc(t('수심을 손으로 적고, 기준을 아시면 \'저조위 기준\' 을 눌러 주세요.'))}</div>` }
     <div style="height:24px"></div>`;
   showPanel(P);
   setHeadTitle('정박지');
@@ -39750,8 +39747,8 @@ function spotDepthApply(){
   if(!d || !c) return;
   const TA = tideAtPlace(d.lat, d.lon, c.ts);
   const low = TA ? lowTideDepth(c.raw, TA.v) : null;
-  if(low == null){ tell(t('조위 자료가 없어 환산할 수 없습니다.\n\n수심을 직접 입력해 주세요.')); return; }
-  if(low < 0){ tell(t('환산값이 0보다 작습니다.\n\n측정값이나 측정 시각을 다시 확인해 주세요.')); return; }
+  if(low == null){ tell(t('조위 자료가 없어 환산할 수 없습니다.\n\n수심을 손으로 적어 주세요.')); return; }
+  if(low < 0){ tell(t('환산값이 0보다 작습니다.\n\n잰 값이나 잰 시각을 다시 봐 주세요.')); return; }
   d.depth = String(low);
   d.lowTide = true;
   d.depthFrom = { raw: c.raw, tide: Math.round(TA.v * 100) / 100,
@@ -39810,8 +39807,8 @@ async function spotSave(){
   spotKeep();
   const d = spotPickCtx.draft || {};
   const name = String(d.name||'').trim();
-  if(!name){ fieldErr('spName', '이름을 입력해 주세요'); return; }
-  if(d.lat == null || d.lon == null){ tell(t('위치를 먼저 지정해 주세요')); return; }
+  if(!name){ fieldErr('spName', '이름을 넣어 주세요'); return; }
+  if(d.lat == null || d.lon == null){ tell(t('위치를 먼저 찍어 주세요')); return; }
   // ★ 이 화면도 openForm 을 안 쓴다. 여기서 거른다.
   if(!badOk(name, d.note, d.tip)) return;
   const me2 = meUid();
@@ -39860,7 +39857,7 @@ async function spotSave(){
   try{
     await window.__spots.put(body);
     // ★ 좌표가 남에게 나간다 — 수집이 아니라 제공이다.
-    try{ lgAdd('제공', '정박지 위치를 커뮤니티에 올림'); }catch(e){}
+    try{ lgAdd('제공', '정박지 자리를 커뮤니티에 올림'); }catch(e){}
     const i = spotList.findIndex(x=>String(x.id)===String(body.id));
     if(i >= 0) spotList[i] = body; else spotList.unshift(body);
     // ★★★ 4.99 — 손질한 결과를 판으로 남긴다 (사장님이 정하신 것).
@@ -39882,28 +39879,28 @@ function regionOfPoint(lat, lon){
   return best;
 }
 async function delSpot(id){
-  if(guardEdit('정박지를 삭제합니다.', ()=>delSpot(id))) return;
+  if(guardEdit('정박지를 지웁니다.', ()=>delSpot(id))) return;
   const s = spotOf(id); if(!s) return;
-  if(!canDelSpot(s)){ tell(t('작성자와 운영자만 삭제할 수 있습니다')); return; }
+  if(!canDelSpot(s)){ tell(t('올린 분과 운영자만 지울 수 있습니다')); return; }
   // ★ 관 자료 위에 덧댄 것이면 「지우기」가 아니라 「되돌리기」다. 자리가 없어지지 않는다.
   //   묻는 말도 그렇게 적는다 — 여기서만 바르게 적고 물음이 옛말이면 소용없다.
   const 덧댐 = spotOverSeed(s);
   if(!await ask(
       (덧댐 ? tsub("'{name}'을 공공 자료로 되돌릴까요?", {name:s.name}) + '\n\n'
-              + t('입력하신 내용은 삭제되고, 공공 자료의 이름과 위치만 남습니다.')
+              + t('채워 넣으신 내용이 없어지고, 공공 자료에 있는 이름과 위치만 남습니다.')
             : tsub("'{name}' 을 지울까요?", {name:s.name}) + '\n\n' + t('되돌릴 수 없습니다.')),
       { ok: 덧댐 ? t('되돌리기') : t('삭제'), warn: true })) return;
   window.__spots.del(id)
     .then(()=>{ dropPhotosOf(s);
                 spotList = spotList.filter(x=>String(x.id)!==String(id)); backToSpots(); })
-    .catch(e=>tell(t('삭제하지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
+    .catch(e=>tell(t('지우지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
 }
 function reportSpot(id){
   const s = spotOf(id); if(!s) return;
   const me2 = meUid();
   if(!me2){ tell(t('신고하려면 로그인이 필요합니다')); return; }
   const reports = Object.assign({}, s.reports || {});
-  if(reports[me2]){ tell(t('이미 신고하신 장소입니다')); return; }
+  if(reports[me2]){ tell(t('이미 신고하신 자리입니다')); return; }
   openForm({
     title:'정박지 신고', sub:'무엇이 잘못됐나요?', okText:'신고',
     fields:[ { key:'why', label:'사유', type:'pick', value:REPORT_REASONS[0].v,
@@ -40060,7 +40057,7 @@ function tideRow(it){
              <button class="tchip${st==='west'?' on':''}" onclick="setTideStyle('west')">${esc(t('서해식'))}</button>
              <button class="tchip${st==='south'?' on':''}" onclick="setTideStyle('south')">${esc(t('남해식'))}</button>
              <button class="tchip${st==='jp'?' on':''}" onclick="setTideStyle('jp')">${esc(t('일본식'))}</button></div>
-           <div class="mrm" style="padding:0 0 8px 74px;color:#7b8794">${esc(t('지역마다 부르는 법이 다릅니다. 서해는 조금 다음이 무시, 남해는 바로 1물입니다.'))}<br>${esc(t('일본은 大潮·中潮·小潮·長潮·若潮 다섯 가지로 부릅니다. 공식 기준표가 없어 자료마다 하루쯤 다를 수 있습니다.'))}<br>${esc(t('음력 날짜는 달의 삭(朔) 시각으로 계산합니다.'))}</div>`
+           <div class="mrm" style="padding:0 0 8px 74px;color:#7b8794">${esc(t('지역마다 부르는 법이 다릅니다. 서해는 조금 다음이 무시, 남해는 바로 1물입니다.'))}<br>${esc(t('일본은 大潮·中潮·小潮·長潮·若潮 다섯 가지로 부릅니다. 공식으로 정해 둔 표가 없어 자료마다 하루쯤 다를 수 있습니다.'))}<br>${esc(t('달의 삭 시각으로 음력일을 구해 정합니다.'))}</div>`
         : '');
 }
 
@@ -40103,7 +40100,7 @@ const CAL_KINDS = {
   maintDone:  { c:'#6E8F76', n:'지난 정비' },
   mlog:       { c:'#5FB894', n:'정비수첩' },
   repair:     { c:'#E4756A', n:'고장' },
-  repairDone: { c:'#5FB894', n:'수리일' },
+  repairDone: { c:'#5FB894', n:'고친 날' },
   vdoc:       { c:'#C4574B', n:'문서' },
   // ★ 5.27 — 사장님: 「달력에 기름 넣은건 안나오네」 → 「주유만 넣어라」. 잔량 확인·엔진 가동은 안 올린다.
   fuel:       { c:'#A98BD6', n:'주유' }
@@ -40384,7 +40381,7 @@ async function calExport(){
   const txt = calIcs(ym + '-01', ym + '-' + String(last).padStart(2, '0'));
   const err = await saveFile('baetnil-' + ym + '.ics', 'text/calendar', txt);
   if(err) tell(t('파일로 저장하지 못했습니다.') + '\n\n' + err, { kind:'bad' });
-  else tell(t('구글 · 아이폰 캘린더에 추가할 수 있습니다'), { kind:'good' });
+  else tell(t('구글 · 아이폰 달력에 넣으실 수 있습니다'), { kind:'good' });
 }
 
 // ★ 요일 이름은 사전에 안 태운다 — '일'·'월'·'수'·'금' 은 다른 뜻으로 이미 쓰이는 낱말이라
@@ -40493,7 +40490,7 @@ function renderCal(){
   // ★ 내보내기는 머리줄에 두면 좁은 화면에서 달 이름 위로 겹쳐 올라앉는다. 표 아래 제 줄에 둔다.
   h += `<div class="calout">
       <button class="tab" onclick="calExport()">${esc(t('달력 파일 내보내기'))}</button>
-      <span class="calouth">${esc(t('구글 · 아이폰 캘린더에 추가할 수 있습니다'))}</span>
+      <span class="calouth">${esc(t('구글 · 아이폰 달력에 넣으실 수 있습니다'))}</span>
     </div>`;
 
   // 고른 날 — 그 날 것을 다 펼치고, 새로 만드는 길을 둔다
@@ -40518,7 +40515,7 @@ function renderCal(){
              <button class="cdcal"
                onclick="event.stopPropagation();calPhone(${rows.indexOf(r)})">${
                esc(t('달력에 추가'))}</button></div>`).join('')
-      : `<div class="cdnone">${esc(t('이 날짜에 추가'))}</div>`;
+      : `<div class="cdnone">${esc(t('이 날에 만들기'))}</div>`;
     if(typeof unlocked !== 'undefined' && unlocked){
       h += `<div class="cdadd">
           <button class="tab edt" onclick="calAdd('plan')">${esc(t('+ 예정'))}</button>
@@ -40573,9 +40570,9 @@ function catchAdd(lid, sp){
   };
   if(sp === '기타'){
     // 목록에 없는 어종 — 직접 넣는다 (prompt 는 배 위에서 못 쓴다)
-    openForm({ title:'어종 직접 입력', sub:'목록에 없는 항목을 직접 입력해 주세요', okText:'추가',
+    openForm({ title:'어종 직접 입력', sub:'목록에 없는 것을 적어 주세요', okText:'추가',
       fields:[ { key:'sp', label:'어종', value:'', placeholder:'예: 열기' } ],
-      onOk: v => { if(!String(v.sp||'').trim()) return formErr('sp', '어종을 입력해 주세요'); put(v.sp); } });
+      onOk: v => { if(!String(v.sp||'').trim()) return formErr('sp', '어종을 적어 주세요'); put(v.sp); } });
     return;
   }
   put(sp);
@@ -40646,7 +40643,7 @@ function fishRows(g){
       <div class="mrrow"><span class="mrlbl">${esc(t('채비'))}</span></div>
       <div class="fchips" style="padding:0 12px 6px">${chips(FISH_RIGS,'rig')}</div>
       <div class="mrrow"><span class="mrlbl">${esc(t('조과'))}</span>
-        <span class="mrm" style="flex:1;color:#7b8794">${esc(t('어종을 누르면 한 마리씩 추가 · 오른쪽 칸은 가장 큰 것의 길이(cm)'))}</span></div>
+        <span class="mrm" style="flex:1;color:#7b8794">${esc(t('어종을 누르면 한 마리씩 · 오른쪽 칸은 가장 큰 것 cm'))}</span></div>
       <div class="fchips" style="padding:0 12px 6px">${
         FISH_SPECIES.map(x=>`<button class="tchip" onclick="catchAdd('${g.id}','${jsq(x)}')">${esc(t(x))}${x==='기타'?' '+esc(t('직접')):''}</button>`).join('')}</div>
       ${f.catches.map(c=>`<div class="catchrow">
@@ -40666,9 +40663,9 @@ function catchBox(it){
   if(!tot.length)
     return `<div class="mrrow"><span class="mrlbl">${esc(t('조과'))}</span>
       <span class="mrm" style="flex:1;color:#7b8794">${
-        unlocked ? t('포인트에서 어종을 누르면 여기에 표시됩니다') : t('기록 없음')}</span></div>`;
+        unlocked ? t('포인트에서 어종을 누르면 여기에 모입니다') : t('기록 없음')}</span></div>`;
   return `<div class="mrrow"><span class="mrlbl">${esc(t('조과'))}</span>
-      <b class="mrv">${esc(tsub('총 {n}마리',{n:catchCount(it)}))}</b>
+      <b class="mrv">${esc(tsub('모두 {n}마리',{n:catchCount(it)}))}</b>
       <span class="mrv2">${esc(tsub('{n}종',{n:tot.length}))}</span></div>`
     + `<div class="fchips" style="padding:0 12px 10px">`
     + tot.map(x=>`<span class="chip">${esc(t(x.sp))} ${esc(tsub('{n}마리',{n:x.n}))}${x.cm?' · '+esc(t('최대'))+' '+x.cm+'cm':''}</span>`).join('')
@@ -40800,7 +40797,7 @@ function wxText(w){
 }
 function wxLine(w, refetch){
   const btn = (refetch && unlocked)
-    ? `<button class="minib grn" onclick="${refetch}">${(w&&w.text)?t('새로고침'):t('날씨 불러오기')}</button>` : '';
+    ? `<button class="minib grn" onclick="${refetch}">${(w&&w.text)?t('갱신'):t('날씨 받기')}</button>` : '';
   if(!w || !w.text)
     return `<div class="posrow"><span style="color:#7b8794">${esc(t('날씨 —'))}</span>${btn}</div>`;
   // ★ 여기에 그냥 이름만 찍어서 '배가 그 자리에 있었다' 로 읽혔다. 어디 예보인지 밝힌다.
@@ -40945,7 +40942,7 @@ async function voyArrived(it, quiet){
   if(잘림){
     try{ saveMR(); }catch(_){}
     try{ schedulePush(); }catch(_){}
-    if(!quiet) try{ tell(tsub('도착 후에 기록된 점 {n}개를 제외했습니다.', { n: 잘림 }), { kind:'good' }); }catch(_){}
+    if(!quiet) try{ tell(tsub('도착 뒤에 찍힌 점 {n}개를 뺐습니다.', { n: 잘림 }), { kind:'good' }); }catch(_){}
   }
   return 잘림;
 }
@@ -40968,7 +40965,7 @@ function arriveNow(){
   const eh = engineHoursFromLogs(it); if(eh !== null) it.engineH = eh;
   it.seed = false; saveMR();
   if(sh !== null && eh !== null)
-    try{ tell(tsub('항해 {a} · 엔진 {b}을 입력했습니다. 다르면 아래 칸에서 수정해 주세요.',
+    try{ tell(tsub('항해 {a} · 엔진 {b}을 넣었습니다. 다르면 아래 칸에서 고쳐 주세요.',
                    { a: durText(sh) || '0분', b: durText(eh) || '0분' }), { kind:'good' }); }catch(_){}
   posHere('wxIn', it.id, true, () => wxCapture('wxIn', it.id));
   // ★ 입항을 찍으면 항적도 끝내고, 도착 뒤 점도 잘라낸다 (문 하나).
@@ -41068,7 +41065,7 @@ function hmRow(label, val, set, tail){
 // 시각 칸이 바뀌었을 때 — 읽고, 다듬어 칸에 도로 넣고, 넘긴다.
 function hmChange(el, fn){
   const v = hmParse(el.value);
-  if(v === null){ fieldErr(el, '시각은 0000~2359 사이로 입력해 주세요.'); el.value = '';
+  if(v === null){ fieldErr(el, '시각을 0000~2359 사이로 넣어 주세요.'); el.value = '';
                   try{ hmSayUp(el); }catch(_){} return; }
   el.value = v;
   // ★★★ 4.128 — 다 치고 나갔을 때도 되비친다.
@@ -41206,17 +41203,17 @@ function engineHoursMultiDay(it){
 function fillSailHours(){
   const it = getMR('voyage', mrOpenId); if(!it) return;
   const h = sailHours(it);
-  if(h === null){ tell(t('출발 시각과 도착 시각을 먼저 입력해 주세요')); return; }
+  if(h === null){ tell(t('출발 시각과 도착 시각을 먼저 넣어 주세요')); return; }
   mrField('hours', h);
 }
 async function fillEngineHours(){
   const it = getMR('voyage', mrOpenId); if(!it) return;
   const h = engineHoursFromLogs(it);
-  if(h === null){ tell(t('출발 시각과 도착 시각을 먼저 입력해 주세요')); return; }
+  if(h === null){ tell(t('출발 시각과 도착 시각을 먼저 넣어 주세요')); return; }
   const n = (it.logs||[]).filter(g => SAIL_ENGINE[g.kind] || g.kind==='엔진ON' || g.kind==='엔진OFF').length;
   if(!n && !await ask(t('중간 기록에 엔진을 끄고 켠 기록이 없습니다.\n\n')
-    + tsub('항해 내내 엔진을 켠 것으로 간주하고 {h}시간으로 입력할까요?', { h: h }) + '\n'
-    + t('세일링을 하셨다면 중간 기록에 "세일 올림"을 먼저 추가해 주세요.'), { ok: t('추가') })) return;
+    + tsub('항해 내내 엔진을 켠 것으로 보고 {h}시간으로 넣을까요?', { h: h }) + '\n'
+    + t('세일로 가셨다면 중간 기록에 "세일 올림"을 먼저 넣어 주세요.'), { ok: t('추가') })) return;
   mrField('engineH', h);
 }
 // ── 중간 기록
@@ -41326,7 +41323,7 @@ function vphFilePick(ev){
   const ty = mrOpenType, id = mrOpenId, slot = vphSlot;
   const it = getMR(ty, id); if(!it) return;
   if(vphAt(it, slot).length + files.length > VPH_MAX){
-    tell(tsub('사진은 한 곳에 최대 {n}장까지 추가할 수 있습니다.', { n: VPH_MAX })); return;
+    tell(tsub('사진은 한 자리에 {n}장까지입니다.', { n: VPH_MAX })); return;
   }
   files.forEach(f=>{
     resizePhoto(f, async url=>{
@@ -41951,7 +41948,7 @@ function mapPaint(full){
   try{ S.가린이름 = 가린이름; }catch(_){}
   try{ const F = document.getElementById('mapHidLbl');
        if(F) F.textContent = 가린이름
-         ? tsub('이름표 {n}개는 겹쳐서 숨겼습니다. 확대하면 보입니다.', { n: 가린이름 }) : ''; }catch(_){}
+         ? tsub('이름표 {n}개는 겹쳐서 가렸습니다. 확대하면 나옵니다.', { n: 가린이름 }) : ''; }catch(_){}
   // 고른 자리로 돌아가는 띠 — 겹침층 밖에 둔다(층은 끌 때마다 통째로 밀린다)
   const HB = el.querySelector('.mhotbar');
   if(HB) HB.innerHTML = mapHotBar();
@@ -42207,7 +42204,7 @@ function posPick(key){
   const near = trkPoints(it).filter(p=>p.key!==key);
   mapS.mode = 'pick';
   mapS.pick = cur || (near[0] ? { lat:near[0].lat, lon:near[0].lon } : null);
-  mapBar(t('지도를 눌러 위치를 지정해 주세요'),
+  mapBar(t('어디인지 지도를 눌러 주세요'),
     `<button onclick="posPickCancel()">${esc(t('취소'))}</button>`
     + `<button class="ok" id="pickSave" onclick="posPickSave()" ${mapS.pick?'':'disabled'}>${esc(t('저장'))}</button>`);
   mapPaint(true);
@@ -42348,8 +42345,8 @@ function suggestRow(it, kind){
     if(!d || d.from === 'typed') return '';
     const v = d.nm.toFixed(1);
     return `<div class="posrow"><span style="color:#7b8794">${esc(d.from === 'track'
-        ? tsub('항적 {p}개로 측정한 {v} NM', { p: d.pts, v: v })
-        : tsub('위치 {p}개를 직선으로 이은 거리 {v} NM · 실제 항로보다 짧음', { p: d.pts, v: v }))}</span>`
+        ? tsub('항적 {p}개에서 잰 {v} NM', { p: d.pts, v: v })
+        : tsub('위치 {p}개 직선 합 {v} NM · 실제 항로보다 짧다', { p: d.pts, v: v }))}</span>`
          + `<button class="minib grn" onclick="navFill('nm','${v}')">${esc(t('적용'))}</button></div>`;
   }
   if(String(it.engineH||'').trim()) return '';
@@ -42358,7 +42355,7 @@ function suggestRow(it, kind){
   const v = e.h.toFixed(1);
   return `<div class="posrow"><span style="color:#7b8794">${esc(tsub('출발~도착 기준 {v} 시간', { v: v }))}${
       e.marks ? ' · ' + esc(tsub('엔진 표시 {n}개 반영', { n: e.marks }))
-              : ' · ' + esc(t('계속 켜 둔 것으로 처리'))}</span>`
+              : ' · ' + esc(t('계속 켜둔 것으로 봄'))}</span>`
      + `<button class="minib grn" onclick="navFill('engineH','${v}')">${esc(t('적용'))}</button></div>`;
 }
 function navFill(k, v){
@@ -42436,7 +42433,7 @@ function posHere(key, vid, quiet, done){
       // 그 시각의 날씨도 받아 둔다 — 사람이 또 「받기」 를 누르지 않게 한다
       if(넣은){
         try{ wxCapture(key, id); }catch(_){}
-        try{ tell(tsub('{what} 시각도 {t}로 함께 입력했습니다.',
+        try{ tell(tsub('{what} 시각도 {t}로 함께 넣었습니다.',
                        { what: posWhatName(key), t: 넣은 }), { kind:'good' }); }catch(_){}
       }
       // ★★★ 4.99 — 도착 자리를 찍은 것도 도착이다 (문 하나).
@@ -42568,7 +42565,7 @@ async function wxCapture(key, vid){
           pos: src.pos, lat: src.lat, lon: src.lon,
           dir, kt, gust, wave, tide, temp, tideSpot: tspot });
   }catch(e){
-    put({ text: tsub('받지 못함: {why}', {why: e.message || t('인터넷 확인')}), at:'', spot:'' });
+    put({ text: tsub('못 받음 — {why}', {why: e.message || t('인터넷 확인')}), at:'', spot:'' });
   }
   saveMR(); renderVoyage();
   if(mrOpenType==='voyage' && String(mrOpenId)===String(id)) openMR('voyage', id);
@@ -42937,19 +42934,19 @@ function fuelLevelAdd(n, extra){
 // 눌러서 고치는 창 넷
 function fuelEditLph(){
   if(!needEdit || typeof needEdit !== 'function') return;
-  needEdit('연료 소비량을 수정합니다.', ()=>{
+  needEdit('연료 소비량을 고칩니다.', ()=>{
     const r = fuelRate();
     openForm({
       title: 'L/시간',
-      sub: r ? tsub('앱 계산값은 {v} L/h입니다 (구간 {n}개). 실제 값이 다르면 여기에 입력해 주세요.',
+      sub: r ? tsub('앱이 셈한 값은 {v} L/h 입니다 (구간 {n}개). 다르게 알고 계시면 여기에 적어 주세요.',
                     { v: r.avg.toFixed(1), n: r.n })
-             : t('만탱크 주유 기록이 2회 이상 있으면 자동으로 계산됩니다. 그 전에는 여기에 입력해 주세요.'),
+             : t('만탱크 주유가 두 번 쌓이면 앱이 스스로 셈합니다. 그 전에는 여기에 적어 주세요.'),
       okText: '저장',
       fields: [ { key:'lph', label:'L/시간', value: (fuelLphSet() || ''), type:'number',
                   placeholder: r ? r.avg.toFixed(1) : '3.0' } ],
       onOk: v => {
         const n = parseFloat(v.lph);
-        if(v.lph !== '' && (!isFinite(n) || n <= 0)) return formErr('lph', '0보다 큰 값을 입력해 주세요.');
+        if(v.lph !== '' && (!isFinite(n) || n <= 0)) return formErr('lph', '0보다 큰 수를 적어 주세요.');
         fuelSetPut({ lph: (v.lph === '' ? null : n) });
       }
     });
@@ -42958,7 +42955,7 @@ function fuelEditLph(){
 function fuelClearLph(){ fuelSetPut({ lph: null }); }
 function fuelEditLeft(){
   if(!needEdit || typeof needEdit !== 'function') return;
-  needEdit('현재 잔량을 입력합니다.', ()=>{
+  needEdit('지금 잔량을 적습니다.', ()=>{
     const TANK = boatSpec('fuelTank');
     const now = fuelLeft();
     // ★ 5.24 — 오늘 넣은 기름이 있으면 그것까지 합친 양인지 밝힌다.
@@ -42969,22 +42966,22 @@ function fuelEditLeft(){
       .sort((a, b) => fuelKey(b).localeCompare(fuelKey(a)))[0];
     const 게이지 = fuelHow() === 'gauge' && TANK > 0;
     openForm({
-      title: '현재 잔량',
-      sub: t('연료계나 눈으로 확인한 현재 연료 잔량을 입력해 주세요. 이후 잔량은 이 값을 기준으로 계산됩니다.')
+      title: '지금 잔량',
+      sub: t('계기판이나 눈으로 본 지금 남은 양을 적어 주세요. 이 값을 기준으로 앞으로를 셈합니다.')
          + (TANK > 0 ? ' ' + tsub('탱크 {L}L.', { L: Math.round(TANK) }) : '')
-         + (오늘 ? ' ' + tsub('오늘 {t}에 주유하신 {L}L를 포함한 현재 잔량을 입력해 주세요.',
+         + (오늘 ? ' ' + tsub('오늘 {t} 넣으신 {L}L까지 합친 지금 양을 적어 주세요.',
                              { t: hm(오늘.time || '') || '—', L: fmtNumF(parseFloat(오늘.liters)) }) : ''),
       okText: '저장',
       fields: (게이지 ? [ { key:'g', label:'연료 게이지', type:'pick', value:'',
                            options: FUEL_GAUGE.map(([g, fr]) => ({ v: g, name: fuelGaugeShow(g),
                              sub: Math.round(TANK * fr) + ' L' })) } ] : [])
-        .concat([ { key:'left', label:'연료 잔량 (L)', value: (now && !게이지) ? Math.round(now.left) : '', type:'number',
+        .concat([ { key:'left', label:'남은 양 (L)', value: (now && !게이지) ? Math.round(now.left) : '', type:'number',
                   placeholder: TANK > 0 ? String(Math.round(TANK)) : '' } ]),
       onOk: v => {
         const g = 게이지 ? String(v.g || '') : '';
         const fr = (FUEL_GAUGE.find(x => x[0] === g) || [])[1];
         const n = (fr != null && String(v.left || '').trim() === '') ? Math.round(TANK * fr) : parseFloat(v.left);
-        if(!isFinite(n) || n < 0) return formErr('left', '0 이상의 값을 입력해 주세요.');
+        if(!isFinite(n) || n < 0) return formErr('left', '0 이상의 수를 적어 주세요.');
         if(TANK > 0 && n > TANK) return formErr('left', tsub('탱크 용량({L}L)보다 많습니다.', { L: Math.round(TANK) }));
         // ★ 5.24 — 배 설정 하나에 덮어쓰지 않고 「잔량 확인」 으로 쌓는다.
         //   쌓여야 확인과 확인 사이에 실제로 쓴 양으로 소비율을 다시 잴 수 있다.
@@ -43013,7 +43010,7 @@ function fuelLevelField(v){
   const it = getMR('fuel', mrOpenId); if(!it) return;
   const TANK = boatSpec('fuelTank');
   let n = parseFloat(v);
-  if(!isFinite(n) || n < 0){ tell(t('0 이상의 값을 입력해 주세요.'), { kind:'bad' }); openMR('fuel', mrOpenId); return; }
+  if(!isFinite(n) || n < 0){ tell(t('0 이상의 수를 적어 주세요.'), { kind:'bad' }); openMR('fuel', mrOpenId); return; }
   if(TANK > 0 && n > TANK) n = TANK;
   it.level = n; it.gauge = '';
   saveMR(); renderFuel(); openMR('fuel', mrOpenId);
@@ -43084,11 +43081,6 @@ function fuelHoursLeft(){
   if(!M.left || !(M.safe > 0)) return null;
   return M.left.left / M.safe;
 }
-// ★ 5.30 — 숫자 칸의 「55시간 41분」 이 두 줄로 접히며 아래 이름을 가렸다.
-//   계기판처럼 숫자는 크게, 단위(시간·분·h·m)는 작게 붙여 한 줄에 들어가게 한다.
-function statDur(txt){
-  return esc(String(txt || '')).replace(/(\d+(?:\.\d+)?)\s*([^\d\s.][^\d\s]*)/g, '$1<small>$2</small>');
-}
 function renderFuel(){
   const L = document.getElementById('fuelList');
   const st = fuelStats(), eh = engineHours(), rate = fuelRate(), left = fuelLeft();
@@ -43103,7 +43095,7 @@ function renderFuel(){
   //   ③ 사람이 적은 값이면 그렇다고 밝힌다. 어느 쪽 숫자를 보고 있는지 모르면 안 된다.
   const 내lph = fuelLphSet(), 내잔 = fuelMark();
   const lphShow = 내lph || (rate ? rate.avg : null);
-  const 손 = on => on ? `<i class="mine">${esc(t('직접 입력'))}</i>` : '';
+  const 손 = on => on ? `<i class="mine">${esc(t('내가 적음'))}</i>` : '';
   // ★ 4.120 — 배를 띄우기 전에 쓰는 수만 남겼다. 까닭은 fuelSinceFull 위의 글에 적었다.
   const 만탱 = fuelSinceFull(), 갈시간 = fuelHoursLeft();
   // ★ 5.24 G — 계기판 게이지를 보는 배는 추정 칸 대신 마지막으로 본 눈금을 보여 준다.
@@ -43117,29 +43109,29 @@ function renderFuel(){
         ? `<div class="stat tapstat" onclick="fuelEditLeft()"><b>${esc(눈금)}</b>
              <span>${esc(t('연료 게이지'))}</span></div>`
         : `<div class="stat tapstat" onclick="fuelEditLeft()"><b>${left? Math.round(left.left) : '—'}</b>
-             <span>${esc(t('추정 잔량 L'))}${손(!!내잔)}</span></div>
-           <div class="stat"><b class="sl">${갈시간 != null ? statDur(durText(갈시간)) : '—'}</b>
-             <span>${esc(t('항해 가능 시간'))}</span></div>`}
+             <span>${esc(t('잔량 추정 L'))}${손(!!내잔)}</span></div>
+           <div class="stat"><b>${갈시간 != null ? durText(갈시간) : '—'}</b>
+             <span>${esc(t('더 갈 수 있는 시간'))}</span></div>`}
       <div class="stat tapstat" onclick="fuelEditLph()"><b>${lphShow? lphShow.toFixed(1) : '—'}</b>
         <span>${esc(t('L/시간'))}${손(!!내lph)}</span></div>
     </div>
     <div class="statrow">
-      <div class="stat"><b>${만탱 ? statDur(durText(만탱.h)) : '—'}</b><span>${esc(t('만탱크 후 가동'))}</span></div>
-      <div class="stat"><b>${statDur(durText(eh.total) || '0분')}</b><span>${esc(t('총 가동시간'))}</span></div>
+      <div class="stat"><b>${만탱 ? durText(만탱.h) : '—'}</b><span>${esc(t('만탱크 뒤 가동'))}</span></div>
+      <div class="stat"><b>${esc(durText(eh.total) || '0분')}</b><span>${esc(t('총 가동시간'))}</span></div>
     </div>
     <div class="mrnone edt" style="text-align:left;padding-top:0">${
-      esc(t('L/시간과 잔량은 눌러서 수정할 수 있습니다.'))}</div>
+      esc(t('L/시간과 잔량은 눌러서 고칠 수 있습니다.'))}</div>
     <div class="mrrow edt"><span class="mrlbl">${esc(t('잔량 확인 방법'))}</span>
       <button class="minib ${게이지 ? '' : 'grn'}" onclick="fuelHowSet('est')">${esc(t('앱 추정'))}</button>
       <button class="minib ${게이지 ? 'grn' : ''}" onclick="fuelHowSet('gauge')">${esc(t('연료 게이지'))}</button></div>`;
 
   const notes = [];
   if(eh.total > 0)
-    notes.push(esc(tsub('항해 {v}h · 엔진만 사용 {r}h', { v: eh.voyage.toFixed(1), r: eh.run.toFixed(1) })));
+    notes.push(esc(tsub('항해 {v}h · 단독가동 {r}h', { v: eh.voyage.toFixed(1), r: eh.run.toFixed(1) })));
   // ★ 4.120 — 만탱크 뒤에 더 넣은 기름이 있으면 밝힌다. 안 밝히면
   //   「만탱크 뒤 8시간인데 왜 잔량이 늘었지?」 가 된다.
   if(만탱 && 만탱.added > 0)
-    notes.push(esc(tsub('{d} 만탱크 이후 {L}L를 추가 주유하셨습니다.',
+    notes.push(esc(tsub('{d} 만탱크 뒤로 {L}L를 더 넣으셨습니다.',
       { d: 만탱.date, L: fmtNum(만탱.added) })));
   // ★★★ 5.24 E — 진짜 양을 알게 된 때, 앱이 보던 양과 크게 다르면 그렇다고 말한다.
   //   말하지 않으면 사람은 앱이 늘 맞는 줄 안다. 9/29 에 앱은 140L 라고 했고 실제는 0 이었다.
@@ -43152,8 +43144,8 @@ function renderFuel(){
         // ★ 실제가 더 많으면(넣은 기록 없이 늘었다) 소비율을 잴 수 없다 — 그렇게 말한다.
         //   「다시 셈했습니다」 라고 하면 거짓말이 된다.
         notes.push(`<b style="color:#E8B33C">${esc(tsub(끝.lph != null
-            ? '{d} {what} 때 추정 잔량은 {p}L, 실제 잔량은 {a}L였습니다. 이 차이를 반영해 연료 소비량을 다시 계산했습니다.'
-            : '{d} {what} 때 추정 잔량은 {p}L, 실제 잔량은 {a}L였습니다. 그 사이의 주유 기록이 누락되었을 수 있습니다.',
+            ? '{d} {what} 때 앱은 {p}L 남았다고 봤는데 실제는 {a}L였습니다. 이 차이로 소비량을 다시 셈했습니다.'
+            : '{d} {what} 때 앱은 {p}L 남았다고 봤는데 실제는 {a}L였습니다. 그 사이 넣은 기름이 기록에서 빠졌을 수 있습니다.',
           { d: 끝.to.date || '—', what: t(끝.to.kind === 'full' ? '만탱크 주유' : '잔량 확인'),
             p: Math.round(끝.pred), a: Math.round(끝.before) }))}</b>`);
         const 빈 = (Array.isArray(voyage) ? voyage : []).filter(v => {
@@ -43162,52 +43154,52 @@ function renderFuel(){
           const x = fuelAt(v.date, v.timeOut, '23:59');
           return x != null && x > 끝.from.ms && x <= 끝.to.ms;
         }).length;
-        if(빈) notes.push(esc(tsub('그 사이에 엔진 시간이 입력되지 않은 항해가 {n}개 있습니다. 항해일지에서 입력해 주세요.', { n: 빈 })));
+        if(빈) notes.push(esc(tsub('그 사이에 엔진 시간이 빈 항해가 {n}개 있습니다. 항해일지에서 채워 주세요.', { n: 빈 })));
       }
     }
   }catch(_){}
   // ★ 「1/3 은 남기고 돌아온다」 — 배 타는 사람들이 널리 쓰는 어림이다.
   //   칸으로 만들면 자리만 먹는다. 갈 수 있는 시간이 나올 때만 한 줄로 적는다.
   if(!게이지 && 갈시간 != null && 갈시간 > 0)
-    notes.push(esc(tsub('연료 1/3을 남기려면 {h} 안에 귀항하는 것이 좋습니다(1/3 규칙).',
+    notes.push(esc(tsub('1/3을 남기려면 {h} 안에 돌아오시는 것이 좋습니다 — 뱃사람들이 사용하는 대략의 기준입니다.',
       { h: durText(갈시간 * 2 / 3) })));
   if(내lph)
-    notes.push(esc(tsub('L/시간을 {v}로 입력하셨습니다.', { v: 내lph.toFixed(1) }))
-      + (rate ? ' ' + esc(tsub('앱 계산값은 {v}입니다.', { v: rate.avg.toFixed(1) })) : '')
+    notes.push(esc(tsub('L/시간은 {v}로 적어 두셨습니다.', { v: 내lph.toFixed(1) }))
+      + (rate ? ' ' + esc(tsub('앱이 셈한 값은 {v} 입니다.', { v: rate.avg.toFixed(1) })) : '')
       + ` <button class="minib blu" style="vertical-align:middle" onclick="fuelClearLph()">${
-          esc(t('계산값으로 되돌리기'))}</button>`);
+          esc(t('앱이 셈한 값으로'))}</button>`);
   else if(rate){
-    notes.push(esc(tsub('만탱크 주유·잔량 확인 사이에 실제로 사용한 연료를 그 기간의 엔진 가동 시간으로 나눈 값입니다. 최근 {n}개 구간: {v} L/h.',
+    notes.push(esc(tsub('만탱크·잔량 확인 사이에 실제로 쓴 기름을 그 사이 엔진 가동시간으로 나눈 값입니다. 최근 구간 {n}개 {v} L/h.',
       { n: rate.n, v: rate.avg.toFixed(1) })));
     // ★ 5.24 H — 충전(공회전)과 항해를 가를 만큼 쌓였으면 따로 보여 준다
     if(rate.split)
-      notes.push(esc(tsub('충전과 항해를 따로 계산합니다. 항해 {a} L/h · 충전 {b} L/h.',
+      notes.push(esc(tsub('충전과 항해를 따로 셈합니다 — 항해 {a} L/h · 충전 {b} L/h.',
         { a: rate.split.voy.toFixed(1), b: rate.split.idle.toFixed(1) })));
     // ★ 5.24 F — 더 갈 수 있는 시간은 넉넉하게(많이 쓴 쪽으로) 셈했음을 밝힌다
     if(!게이지 && 갈시간 != null && rate.safe > rate.avg + 0.05)
-      notes.push(esc(tsub('항해 가능 시간은 최근 구간 중 소비량이 가장 많았던 {v} L/h로 계산했습니다.',
+      notes.push(esc(tsub('더 갈 수 있는 시간은 최근 구간 가운데 가장 많이 쓴 {v} L/h로 셈했습니다.',
         { v: rate.safe.toFixed(1) })));
   }
   else
     notes.push(esc(t('연료 소비량은 만탱크 주유나 잔량 확인이 두 번 이상 있고 그 사이에 엔진을 돌린 기록이 있어야 계산됩니다. 부분 주유만으로는 얼마나 사용했는지 알 수 없습니다.')));
   if(게이지)
-    notes.push(esc(t('이 배는 연료 게이지로 확인하도록 설정되어 있습니다. 출항·입항 때 게이지 눈금을 눌러 주세요.')));
+    notes.push(esc(t('연료 게이지를 보는 배로 정해 두셨습니다. 출항·입항 때 게이지 눈금을 눌러 주세요.')));
   else if(left && left.mine)
     // ★ 5.24 — 그 뒤 넣은 기름이 있으면 그것도 밝힌다. 「0L 에서 0.8시간을 뺐는데 왜 95L?」 가 안 되게.
     notes.push(esc(tsub(left.added > 0
-          ? '잔량은 {d}에 입력하신 {L}L에 이후 주유량 {a}L를 더하고, {h}시간 가동한 사용량을 뺀 값입니다.'
-          : '잔량은 {d}에 입력하신 {L}L에서 이후 {h}시간 가동한 사용량을 뺀 값입니다.',
+          ? '잔량은 {d}에 적어 두신 {L}L에 그 뒤 넣은 {a}L를 더하고 {h}시간 가동을 뺀 값입니다.'
+          : '잔량은 {d}에 적어 두신 {L}L에서 그 뒤 {h}시간 가동을 뺀 값입니다.',
         { d: ((left.from || '—') + (left.time ? ' ' + left.time : '')), L: Math.round(내잔 ? 내잔.left : 0),
           a: fmtNum(left.added || 0), h: left.since.toFixed(1) }))
       + ` <button class="minib blu" style="vertical-align:middle" onclick="fuelClearMark()">${
-          esc(t('계산값으로 되돌리기'))}</button>`);
+          esc(t('앱이 셈한 값으로'))}</button>`);
   else if(left)
-    notes.push(esc(tsub('잔량은 {d} 만탱크 이후 {h}시간 가동을 기준으로 추정한 값입니다. 실제 잔량은 연료 게이지로 확인해 주세요.',
+    notes.push(esc(tsub('잔량은 {d} 만탱크 이후 {h}시간 가동 기준 추정입니다. 실제 잔량은 탱크 게이지로 확인해 주세요.',
       { d: left.from, h: left.since.toFixed(1) })));
   else
     notes.push(boatSpec('fuelTank') > 0
-      ? t('[만탱크] 주유 기록이 두 번 이상 있어야 잔량 추정이 계산됩니다.')
-      : t('연료 탱크 용량을 입력하면 잔량을 추정합니다.') + ' '
+      ? t('잔량 추정은 [만탱크] 주유가 두 번 이상 쌓이면 계산됩니다.')
+      : t('연료 탱크 용량을 넣으면 잔량을 추정합니다.') + ' '
         + `<button class="minib blu" style="vertical-align:middle" onclick="openBoat('spec')">${esc(t('연료 탱크 입력'))}</button>`);
   const sub = `<div class="mrnone" style="text-align:left">${notes.join('<br>')}</div>`;
 
@@ -43228,14 +43220,14 @@ function renderFuel(){
     : x.k==='fuel'
     ? `<div class="mr" onclick="openMR('fuel','${x.o.id}')">
         <div class="ct"><div class="cn">⛽ ${x.o.liters?fmtNum(parseFloat(x.o.liters))+' L':'—'}${x.o.full?` <span class="chip">${esc(t('만탱크'))}</span>`:''}</div>
-        ${Number(x.o.cost) > 0 ? `<span class="chip nchip">${Number(x.o.cost).toLocaleString()+esc(curOf(x.o))}</span>` : ''}</div>
+        <span class="chip nchip">${x.o.cost?Number(x.o.cost).toLocaleString()+esc(curOf(x.o)):''}</span></div>
         <div class="mrm">${x.o.date||'—'}${x.o.time?' '+esc(hm(x.o.time)):''}${x.o.note?' · '+esc(x.o.note).slice(0,40):''}</div>
       </div>`
     : `<div class="mr" onclick="openMR('run','${x.o.id}')">
         <div class="ct"><div class="cn">⚙ ${runOn(x.o)
             ? esc(durText((runMins(x.o) || 0) / 60) || '0분')
             : (x.o.hours ? esc(durText(x.o.hours) || (x.o.hours + ' ' + t('시간'))) : '—')}</div>
-        ${runOn(x.o) ? `<span class="chip warn">${esc(t('가동 중'))}</span>` : ''}
+        ${runOn(x.o) ? `<span class="chip warn">${esc(t('돌고 있음'))}</span>` : ''}
         <span class="chip">${esc(keyShow(x.o.purpose) || t('기타'))}</span></div>
         <div class="mrm">${x.o.date||'—'}${x.o.time?' '+esc(hm(x.o.time)):''}${
           x.o.endTime?' → '+esc(hm(x.o.endTime)):''}${x.o.note?' · '+esc(x.o.note).slice(0,40):''}</div>
@@ -43321,7 +43313,7 @@ function runStop(id){
   renderFuel();
   openMR('run', it.id);
   const m = runMins(it);
-  if(m != null) tell(tsub('엔진을 껐습니다. 가동 시간 {v}', { v: durText(m / 60) }), { kind:'good' });
+  if(m != null) tell(tsub('엔진을 껐습니다 — {v} 돌렸습니다', { v: durText(m / 60) }), { kind:'good' });
 }
 // 다시 켜기 — 잘못 껐을 때
 function runResume(id){
@@ -43354,11 +43346,11 @@ function runOnBox(it){
   const 오래 = 분 != null && 분 > RUN_MAXH * 60;
   const 안내 = tsub('{d} {t}부터', { d: it.date || '', t: hm(it.time || '') });
   let h = '<div class="runon">';
-  h += '<div class="runlab">' + esc(t('엔진 가동 중')) + '</div>';
+  h += '<div class="runlab">' + esc(t('엔진이 돌고 있습니다')) + '</div>';
   h += '<div class="runbig">' + esc(분 != null ? (durText(분 / 60) || '0분') : '—') + '</div>';
   h += '<div class="runsub">' + esc(안내) + '</div>';
   if(오래) h += '<div class="runwarn">'
-              + esc(tsub('{h}시간이 넘었습니다. 엔진 끄는 것을 잊으셨다면 시각을 수정해 주세요.', { h: RUN_MAXH })) + '</div>';
+              + esc(t('하루가 넘었습니다. 끄는 것을 잊으셨다면 시각을 고쳐 주세요.')) + '</div>';
   h += '<button class="mrbtn ok runstop edt" onclick="runStopUI(\'' + esc(it.id) + '\')">'
      + esc(t('지금 껐습니다')) + '</button>';
   h += '</div>';
@@ -43574,7 +43566,7 @@ function gearState(id){
   const open = gearRepair(id).filter(r => r && r.status !== 'done').length;
   if(open) return { k:'late', label: tsub('고장 {n}', { n: open }) };
   if(late) return { k:'late', label: tsub('지남 {n}', { n: late }) };
-  if(soon) return { k:'soon', label: tsub('임박 {n}', { n: soon }) };
+  if(soon) return { k:'soon', label: tsub('곧 {n}', { n: soon }) };
   return { k:'none', label:'' };
 }
 // 접기는 정비 목록과 따로 기억한다 — '전기' 를 정비에서 접었다고 장비까지 접히면 안 된다
@@ -43596,10 +43588,10 @@ async function gearReplace(){
   const 수리 = gearRepair(old.id).length;
   if(!await ask(
       tsub('"{name}" 을(를) 새것으로 교체합니다.', { name: gearLabel(old) }) + '\n\n'
-    + t('기존 장비는 삭제되지 않고 「교체 이력」에 남습니다.') + '\n\n'
-    + tsub('새 장비로 옮겨지는 항목: 정기점검 {a}건 · 부품 {b}개 · 계통 · 종류 · 도면 핀',
+    + t('지난 장비는 지우지 않고 「교체 이력」에 남습니다.') + '\n\n'
+    + tsub('새 장비로 옮겨 가는 것 — 정기점검 {a}건 · 부품 {b}개 · 계통 · 종류 · 도면 핀',
            { a: 점검, b: 부품 }) + '\n'
-    + tsub('기존 장비에 남는 항목: 수리 {n}건 · 제조사 · 모델 · 일련번호 · 사진', { n: 수리 }),
+    + tsub('지난 장비에 남는 것 — 수리 {n}건 · 제조사 · 모델 · 일련번호 · 사진', { n: 수리 }),
       { ok: t('교체') })) return;
 
   // ① 새것을 만든다 — 자리를 물려받는다(계통·종류·핀), 물건은 안 물려받는다
@@ -43631,10 +43623,10 @@ function renderGear(){
   if(!rows.length){
     L.innerHTML = `<div class="emptybox">
       <b>${esc(t('장비'))}</b>
-      <div>${t('배에 <b>설치된 장비</b>(엔진, 윈치, 플로터, 빌지펌프 등)를 기록하는 곳입니다.')}<br>
-        ${esc(t('제조사와 모델, 일련번호를 한 번 입력해 두면 부품을 살 때나 수리를 맡길 때 다시 찾지 않아도 됩니다.'))}</div>
-      <div class="emptysub">${esc(t('장비마다 정비·수리 기록이 연결되고, 도면에 위치를 표시할 수 있습니다.'))}</div>
-      <button class="mrbtn" onclick="needEdit('장비를 추가합니다.', addGear)">${esc(t('+ 장비'))}</button>
+      <div>${t('배에 <b>설치된 장비</b>를 적어 두는 곳입니다 — 엔진, 윈치, 플로터, 빌지펌프.')}<br>
+        ${esc(t('제조사와 모델, 일련번호를 한 번 적어 두면 부품을 살 때도 수리를 맡길 때도 다시 안 찾아도 됩니다.'))}</div>
+      <div class="emptysub">${esc(t('장비마다 정비·수리 기록이 연결되고, 도면에 위치를 찍어 둘 수 있습니다.'))}</div>
+      <button class="mrbtn" onclick="needEdit('장비를 넣습니다.', addGear)">${esc(t('+ 장비'))}</button>
     </div>`;
     return;
   }
@@ -43670,7 +43662,7 @@ function renderGear(){
         <div class="ct"><div class="cn">${esc(gearLabel(g))}</div>
           ${g.kind && g.kind !== gearLabel(g) ? `<span class="chip">${esc(t(g.kind))}</span>` : ''}
           ${st.label ? `<span class="st ${st.k}">${esc(st.label)}</span>` : ''}</div>
-        <div class="mrm">${sub ? esc(sub) : `<span style="color:#7b8794">${esc(t('제조사·모델을 입력하세요'))}</span>`}${
+        <div class="mrm">${sub ? esc(sub) : `<span style="color:#7b8794">${esc(t('제조사·모델을 적어 두세요'))}</span>`}${
           tags.length ? ' · ' + esc(tags.join(' · ')) : ''}</div>
       </div>`;
     }).join('');
@@ -44094,7 +44086,7 @@ function gearFindBlock(g, 뺄것){
   if(!열림) return 머리;
   return 머리
     + `<div class="mrrow"><input id="gfindq" style="flex:1" placeholder="${
-         esc(t('제목으로 검색 (부품은 검색어를 입력해야 표시됩니다)'))}" oninput="gearFindFilter(this.value)">
+         esc(t('제목으로 찾기 — 부품은 글자를 쳐야 나옵니다'))}" oninput="gearFindFilter(this.value)">
        <span class="st"><span id="gfindn">${rows.filter(r => r.kind !== 'part').length}</span></span></div>`
     + rows.map(r => `<label class="mrrow gtierow gfindrow" data-kind="${esc(r.kind)}"
          data-q="${esc(gearNorm(r.제목))}"${r.kind === 'part' ? ' hidden' : ''}>
@@ -44259,7 +44251,7 @@ function cvHtml(D){
   const 칸 = (제목, 머리, 몸) => 몸
     ? `<h2>${E(t(제목))}</h2><table class="g"><thead><tr>${
         머리.map(h => `<th>${E(t(h))}</th>`).join('')}</tr></thead><tbody>${몸}</tbody></table>`
-    : `<h2>${E(t(제목))}</h2><p class="none">${E(t('기록이 없습니다.'))}</p>`;
+    : `<h2>${E(t(제목))}</h2><p class="none">${E(t('적어 둔 것이 없습니다.'))}</p>`;
 
   const 배 = D.boat;
   const 이름 = 배.name || t('(이름 없음)');
@@ -44286,7 +44278,7 @@ function cvHtml(D){
 
   const 수리몸 = D.repair.map(r => `<tr>
       <td>${날(r.created)}</td><td><b>${E(r.title)}</b></td><td>${E(r.gear || r.grp)}</td>
-      <td>${r.status === 'done' ? 날(r.done) : E(t('미해결'))}</td></tr>`).join('');
+      <td>${r.status === 'done' ? 날(r.done) : E(t('아직'))}</td></tr>`).join('');
 
   // ★★★ 5.0 — 제원 (적어 두신 것만)
   const 제원몸 = (D.specs || []).map(x => 줄(x.label, x.v)).join('');
@@ -44313,7 +44305,7 @@ function cvHtml(D){
   const 계통몸 = Object.keys(계통표).map(k => {
     const o = 계통표[k];
     return `<tr><td><b>${E(t(k))}</b></td><td>${o.gear || '—'}</td><td>${o.mlog || '—'}</td>
-      <td>${o.rep ? (o.rep + (o.open ? ' (' + t('미해결') + ' ' + o.open + ')' : '')) : '—'}</td>
+      <td>${o.rep ? (o.rep + (o.open ? ' (' + t('아직') + ' ' + o.open + ')' : '')) : '—'}</td>
       <td>${날(o.last)}</td></tr>`;
   }).join('');
 
@@ -44363,7 +44355,7 @@ function cvHtml(D){
 </style></head><body>
 <div class="noprint"><button onclick="window.print()">${E(t('인쇄 · PDF로 저장'))}</button></div>
 <h1>${E(이름)}</h1>
-<div class="meta">${E(t('배 이력서'))} · ${E(t('작성일'))} ${날(D.at)}</div>
+<div class="meta">${E(t('배 이력서'))} · ${E(t('뽑은 날'))} ${날(D.at)}</div>
 
 <h2>${E(t('배'))}</h2>
 <table class="k">
@@ -44388,15 +44380,15 @@ ${계통몸 ? `<h2>${E(t('계통별 요약'))}</h2><table class="g"><thead><tr>$
   }</tr></thead><tbody>${계통몸}</tbody></table>` : ''}
 
 ${칸('장비', ['계통','이름','제조사','모델','일련번호','설치일'], 장비몸)}
-${칸('정기점검', ['계통','항목','주기','마지막 실시일','당시 엔진 시간','이전 이력'], 점검몸)}
-${칸('정비수첩', ['날짜','작업 내용','장비','걸린 시간','비용','사용 부품'], 수첩몸)}
-${칸('수리', ['발생일','고장','장비 · 계통','수리일'], 수리몸)}
+${칸('정기점검', ['계통','항목','주기','마지막 한 날','그때 엔진시간','지난 이력'], 점검몸)}
+${칸('정비수첩', ['날짜','한 일','장비','걸린 시간','비용','쓴 부품'], 수첩몸)}
+${칸('수리', ['생긴 날','고장','장비 · 계통','고친 날'], 수리몸)}
 ${칸('문서', ['종류','이름','만료일'], 문서몸)}
 
 <div class="foot">
-  ${E(t('이 문서에 포함되지 않은 항목: 개인 메모 · 연락처 · 물품 위치 · 좌표 · 크루 이름 · 회비.'))}<br>
-  ${E(t('사진은 포함되지 않습니다. 사진은 앱에서 보실 수 있습니다.'))}<br>
-  ${E(t('뱃일에서 작성했습니다.'))} baetnil.com
+  ${E(t('이 종이에 담지 않은 것: 개인 메모 · 연락처 · 물품 위치 · 좌표 · 크루 이름 · 회비.'))}<br>
+  ${E(t('사진은 담지 않았습니다 — 앱에서 보실 수 있습니다.'))}<br>
+  ${E(t('뱃일에서 뽑았습니다.'))} baetnil.com
 </div>
 </body></html>`;
 }
@@ -44537,13 +44529,13 @@ function crewCvHtml(rows, S){
 </style></head><body>
 <div class="noprint"><button onclick="window.print()">${E(t('인쇄 · PDF로 저장'))}</button></div>
 <h1>${E(이름)}</h1>
-<div class="meta">${E(t('내 승선 이력'))} · ${E(t('작성일'))} ${E(String(new Date().toISOString()).slice(0,10))}</div>
+<div class="meta">${E(t('내 승선 이력'))} · ${E(t('뽑은 날'))} ${E(String(new Date().toISOString()).slice(0,10))}</div>
 <div class="sum">
-  <div><b>${S.days}</b><span>${E(t('항해 일수'))}</span></div>
+  <div><b>${S.days}</b><span>${E(t('바다에 있던 날'))}</span></div>
   <div><b>${E(String(Math.round(S.nm)))}</b><span>${E(t('총 항해거리 NM'))}</span></div>
   <div><b>${E(durText(S.hours) || '0')}</b><span>${E(t('총 항해 시간'))}</span></div>
-  <div><b>${S.boats}</b><span>${E(t('승선한 배'))}</span></div>
-  <div><b>${S.skipper}</b><span>${E(t('선장으로 승선한 항해'))}</span></div>
+  <div><b>${S.boats}</b><span>${E(t('탄 배'))}</span></div>
+  <div><b>${S.skipper}</b><span>${E(t('선장으로 나간 항해'))}</span></div>
   <div><b>${S.night}</b><span>${E(t('야간 항해'))}</span></div>
   <div><b>${S.long}</b><span>${E(t('60해리 넘는 항해'))}</span></div>
 </div>
@@ -44551,23 +44543,23 @@ function crewCvHtml(rows, S){
 ${몸 ? `<table class="g"><thead><tr>${
   ['날짜','배','구간','거리 NM','시간','역할','야간'].map(h => `<th>${E(t(h))}</th>`).join('')
 }</tr></thead><tbody>${몸}</tbody></table>`
-     : `<p class="none">${E(t('기록이 없습니다.'))}</p>`}
+     : `<p class="none">${E(t('적어 둔 것이 없습니다.'))}</p>`}
 <div class="foot">
-  ${E(t('이 기록은 본인이 직접 입력한 것이 아닙니다. 배의 항해일지에서 그대로 가져온 것이며, 「함께 탄 사람」은 각 배에서 선택한 것입니다.'))}<br>
-  ${E(t('야간 항해는 출항 또는 입항 시각이 20시 이후이거나 05시 이전인 항해로 추정한 것입니다. 일출·일몰 시각으로 계산한 것이 아닙니다.'))}<br>
-  ${E(t('자격 심사에 제출하실 때는 그 기관이 정한 서식을 함께 확인해 주세요.'))}<br>
-  ${E(t('뱃일에서 작성했습니다.'))} baetnil.com
+  ${E(t('이 기록은 스스로 적은 것이 아닙니다. 배의 항해일지에서 그대로 가져온 것이고, 「함께 탄 사람」은 그 배에서 선택한 것입니다.'))}<br>
+  ${E(t('야간은 출항이나 입항이 20시 뒤이거나 05시 앞인 항해를 어림잡아 센 것입니다. 해 뜨고 지는 시각으로 계산한 것이 아닙니다.'))}<br>
+  ${E(t('자격 심사에 내실 때는 그 기관이 정한 서식을 함께 확인해 주세요.'))}<br>
+  ${E(t('뱃일에서 뽑았습니다.'))} baetnil.com
 </div>
 </body></html>`;
 }
 async function crewCvExport(){
-  if(!meUid()){ tell(t('내 승선 이력을 출력하려면 먼저 로그인해 주세요.')); return; }
+  if(!meUid()){ tell(t('내 승선 이력을 뽑으려면 먼저 로그인해 주세요.')); return; }
   let rows = [];
   try{ rows = await crewVoys(); }
   catch(e){ tell(t('승선 이력을 만들지 못했습니다.') + '\n\n' + String((e && e.message) || e), { kind:'bad' }); return; }
   // ★ 4.138 — 문단이 나뉜 안내문은 큰 창으로 띄운다. 잠깐 흘리면 3초에 못 읽는다.
-  if(!rows.length){ tell(t('아직 승선한 것으로 기록된 항해가 없습니다.') + '\n\n'
-      + t('선장님이 항해일지의 「함께 탄 사람」에서 선택하시면 여기에 기록됩니다.'), { big:true }); return; }
+  if(!rows.length){ tell(t('아직 탄 것으로 적힌 항해가 없습니다.') + '\n\n'
+      + t('선장님이 항해일지의 「함께 탄 사람」에서 선택하시면 여기에 쌓입니다.'), { big:true }); return; }
   const S = crewSum(rows);
   const 이름 = String(meName()).replace(/[\\/:*?"<>|]/g, '').trim() || 'crew';
   // ★ 4.128 — 배 이력서와 같은 문으로 연다. 보는 길이 둘이면 반드시 갈라진다.
@@ -44612,7 +44604,7 @@ function paperOpen(name, html, saveJs){
     <iframe class="paperfr" sandbox="allow-same-origin" title="${esc(name)}"
       srcdoc="${esc(paperInApp(html))}"></iframe>
     <div class="mrnone" style="text-align:left">${
-      esc(t('종이로 출력하거나 PDF로 만들려면 [파일로 저장]을 누른 뒤, 저장된 파일을 열어 인쇄해 주세요.'))}</div>`;
+      esc(t('종이로 뽑으시려면 [파일로 저장]을 누르고, 받은 파일을 열어 인쇄하시면 PDF가 됩니다.'))}</div>`;
   showPanel(P);
   setHeadTitle(name);
 }
@@ -44677,7 +44669,7 @@ function gearBody(it){
     + `</div>`;
   return `
     <div class="mrrow"><span class="mrlbl">${esc(t('이름'))}</span>${unlocked
-      ? `<input value="${esc(it.name||'')}" placeholder="${esc(t('입력하지 않으면 종류나 모델명이 대신 표시됩니다'))}" style="flex:1" onchange="mrField('name',this.value)">`
+      ? `<input value="${esc(it.name||'')}" placeholder="${esc(t('입력하지 않으면 종류나 모델이 대신 들어갑니다'))}" style="flex:1" onchange="mrField('name',this.value)">`
       : `<b class="mrv">${esc(gearLabel(it))}</b>`}</div>`
     + 상태줄 + `
     <div class="mrrow"><span class="mrlbl">${esc(t('계통'))}</span>${unlocked
@@ -44687,7 +44679,7 @@ function gearBody(it){
       : `<b class="mrv">${esc(it.sys ? t(it.sys) : '—')}</b>`}</div>
     <div class="mrrow"><span class="mrlbl">${esc(t('종류'))}</span>${unlocked
       ? `<input list="gearKindList" value="${esc(it.kind||'')}" style="flex:1" placeholder="${
-           esc(kinds.length ? t('선택하거나 직접 입력하세요') : t('계통을 먼저 선택하면 목록이 표시됩니다'))}" onchange="mrField('kind',this.value.trim())">
+           esc(kinds.length ? t('선택하거나 직접 입력하세요') : t('계통을 먼저 선택하면 목록이 나옵니다'))}" onchange="mrField('kind',this.value.trim())">
          <datalist id="gearKindList">${kinds.map(x => `<option value="${esc(x)}">`).join('')}</datalist>`
       : `<b class="mrv">${esc(it.kind ? t(it.kind) : '—')}</b>`}</div>
     <div class="mrrow"><span class="mrlbl">${esc(t('제조사'))}</span>${unlocked
@@ -44698,13 +44690,13 @@ function gearBody(it){
       ? `<input value="${esc(it.model||'')}" style="flex:1" placeholder="${esc(t('4JH4E, ST60, 40ST …'))}" onchange="mrField('model',this.value.trim())">`
       : `<b class="mrv">${esc(it.model||'—')}</b>`}</div>
     <div class="mrrow"><span class="mrlbl">${esc(t('일련번호'))}</span>${unlocked
-      ? `<input value="${esc(it.sn||'')}" style="flex:1" placeholder="${esc(t('부품 주문 시 필요합니다'))}" onchange="mrField('sn',this.value.trim())">`
+      ? `<input value="${esc(it.sn||'')}" style="flex:1" placeholder="${esc(t('부품 주문할 때 물어봅니다'))}" onchange="mrField('sn',this.value.trim())">`
       : `<b class="mrv">${esc(it.sn||'—')}</b>`}</div>
     <div class="mrrow"><span class="mrlbl">${esc(t('설치일'))}</span>${unlocked
       ? `<input type="date" value="${esc(it.since||'')}" onchange="mrField('since',this.value)">`
       : `<b class="mrv">${esc(it.since||'—')}</b>`}</div>
     <div class="mrrow"><span class="mrlbl">${esc(t('설명서'))}</span>${unlocked
-      ? `<input value="${esc(it.manual||'')}" style="flex:1" placeholder="${esc(t('설명서 PDF 링크 (있으면)'))}" onchange="mrField('manual',this.value.trim())">`
+      ? `<input value="${esc(it.manual||'')}" style="flex:1" placeholder="${esc(t('설명서 PDF 주소 (있으면)'))}" onchange="mrField('manual',this.value.trim())">`
       : (it.manual
           ? `<a class="mrbtn" style="text-decoration:none" href="${esc(it.manual)}" target="_blank" rel="noopener">${esc(t('설명서 열기'))}</a>`
           : `<b class="mrv">—</b>`)}</div>`
@@ -44734,7 +44726,7 @@ function gearBody(it){
     + hung('이 장비의 부품', pts, x => `<div class="mr gitem" onclick="gearGoItem(${x.id})">
           <div class="ct"><div class="cn">${esc(x.name||'')}</div>${
             (typeof stockLow === 'function' && stockLow([x]).length)
-              ? `<span class="chip" style="color:#E8B33C">${esc(t('입력 필요'))}</span>` : ''}</div>
+              ? `<span class="chip" style="color:#E8B33C">${esc(t('채워야 함'))}</span>` : ''}</div>
           <div class="mrm">${esc(String(x.qty||''))}${esc(x.unit||'')}${x.locker?' · '+esc(x.locker):''}</div></div>`)
     + (mts.length || rps.length || pts.length || rvForGear(it.id).length || mlogForGear(it.id).length ? '' :
         `<div class="mrnone" style="text-align:left">${
@@ -44762,7 +44754,7 @@ function gearHistBlock(it){
   if(isRetired(it)){
     out += `<div class="mrnone" style="text-align:left">${
       esc(tsub('{a} ~ {b}에 설치돼 있던 장비입니다.', { a: sp.a || '?', b: sp.b || '?' }))}<br>${
-      esc(t('현재 설치된 장비는 「교체 이력」 위쪽에 있습니다.'))}</div>`;
+      esc(t('지금 설치된 것은 교체 이력 위쪽에 있습니다.'))}</div>`;
   }
 
   // ② 교체 이력 — 거슬러 올라간 줄. 누르면 그 장비가 열린다.
@@ -44897,7 +44889,7 @@ function rvSetPrice(v){
     // ★ 화면을 다시 그리면 붙여 둔 빨간 줄이 날아간다. 그리고 나서 붙인다.
     openMR('review', mrOpenId);
     fieldErr(document.querySelector('[onchange^="rvSetPrice"]'),
-             t('구입 가격') + ' — ' + t('숫자만 입력해 주세요.') + '\n' + t('예: 120000'));
+             t('산 값') + ' — ' + t('숫자만 넣어 주세요.') + '\n' + t('예: 120000'));
     return;
   }
   it.price = raw ? String(rvPrice(raw)) : '';
@@ -44992,9 +44984,9 @@ function renderReviews(){
   if(!rows.length){
     L.innerHTML = `<div class="emptybox">
       <b>${esc(t('리뷰'))}</b>
-      <div>${t('배에서 <b>사용해 본 제품</b>(임펠러, 필터, 로프, 도료 등)의 성능과 내구성을 기록하는 곳입니다.')}<br>
-        ${esc(t('제조사와 모델을 입력하면 그 제품으로 검색할 수 있습니다.'))}</div>
-      <div class="emptysub">${esc(t('장비를 열고 「+ 제품 리뷰」를 누르면 제조사·모델이 자동으로 입력됩니다.'))}</div>
+      <div>${t('배에서 <b>사용해 본 제품</b>의 성능과 내구성을 기록하는 곳입니다 — 임펠러, 필터, 로프, 도료.')}<br>
+        ${esc(t('제조사와 모델을 적으면 그 제품으로 찾을 수 있습니다.'))}</div>
+      <div class="emptysub">${esc(t('장비를 열고 「+ 제품 리뷰」를 누르면 제조사·모델이 그대로 채워집니다.'))}</div>
       <button class="mrbtn" onclick="needEdit('리뷰를 씁니다.', ()=>addReview())">${esc(t('+ 제품 리뷰'))}</button>
       <button class="mrbtn" onclick="needEdit('배 리뷰를 씁니다.', addBoatReview)">${esc(t('+ 내 배 리뷰'))}</button>
     </div>`;
@@ -45012,7 +45004,7 @@ function renderReviews(){
   const head = `<div class="subrow" style="flex-wrap:wrap">
       <button class="tab mflt${cur ? '' : ' on'}" onclick="setRvDoor('')">${esc(t('전체'))} ${d.all}</button>
       ${d.mine ? `<button class="tab mflt${cur === 'mine' ? ' on' : ''}"
-           onclick="setRvDoor('mine',true)">${esc(t('내 배 관련'))} ${d.mine}</button>` : ''}
+           onclick="setRvDoor('mine',true)">${esc(t('내 배와 겹치는 것'))} ${d.mine}</button>` : ''}
       ${['kind','sys','prod'].filter(k => d[k].length).map(k =>
         `<button class="tab mflt${rvOpen === k || cur === k ? ' on' : ''}"
            onclick="rvDoorOpen(${q(k)})">${esc(name[k])} ${d[k].length} ${rvOpen === k ? '&#9652;' : '&#9662;'}</button>`
@@ -45041,8 +45033,8 @@ function renderReviews(){
     const g = r.gearId ? gearOf(r.gearId) : null;
     const tags = [];
     if(r.used) tags.push(rvUsedName(r.used));
-    if(r.again === true)  tags.push(t('재구매 의사 있음'));
-    if(r.again === false) tags.push(t('재구매 의사 없음'));
+    if(r.again === true)  tags.push(t('재구매 함'));
+    if(r.again === false) tags.push(t('재구매 안 함'));
     if(rvPriceText(r)) tags.push(rvPriceText(r));
     if(r.photos && r.photos.length) tags.push(tsub('사진 {n}', { n:r.photos.length }));
     return `<div class="mr gitem" onclick="openMR('review','${r.id}')">
@@ -45050,7 +45042,7 @@ function renderReviews(){
         ${st ? `<span class="rvst">${rvStarText(st)}</span>` : ''}
         ${isBoatRv(r) ? `<span class="chip">${esc(t('배'))}</span>` : ''}
         ${g ? `<span class="chip">${esc(gearLabel(g))}</span>` : ''}</div>
-      <div class="mrm">${r.text ? esc(String(r.text).slice(0, 60)) : `<span style="color:#7b8794">${esc(t('아직 작성하지 않았습니다'))}</span>`}${
+      <div class="mrm">${r.text ? esc(String(r.text).slice(0, 60)) : `<span style="color:#7b8794">${esc(t('아직 안 썼습니다'))}</span>`}${
         tags.length ? '<br>' + esc(tags.join(' · ')) : ''}</div>
     </div>`;
   }).join('');
@@ -45066,7 +45058,7 @@ function rvBody(it){
   const star = n => `<button class="rvsb${(Number(it.stars)||0) >= n ? ' on' : ''}" onclick="mrField('stars',${n})">★</button>`;
   return `
     ${pubLvRow('review', it, 'review',
-       '입력하신 메모도 함께 공개됩니다. 구입 가격은 따로 켜야 공개됩니다.')}
+       '적어 두신 메모도 함께 나갑니다. 산 값만 따로 켜야 나갑니다.')}
     ${g ? `<div class="mrrow"><span class="mrlbl">${esc(t('장비'))}</span>
         <b class="mrv" style="flex:1">${esc(gearLabel(g))}</b>
         <button class="minib blu" onclick="openMR('gear','${g.id}')">${esc(t('장비 보기'))}</button></div>` : ''}
@@ -45079,7 +45071,7 @@ function rvBody(it){
       : `<b class="mrv">${esc(it.sys ? t(it.sys) : '—')}</b>`}</div>
     <div class="mrrow"><span class="mrlbl">${esc(t('종류'))}</span>${unlocked
       ? `<input list="rvKindList" value="${esc(it.kind||'')}" style="flex:1" placeholder="${
-           esc(kinds.length ? t('선택하거나 직접 입력하세요') : t('계통을 먼저 선택하면 목록이 표시됩니다'))}" onchange="mrField('kind',this.value.trim())">
+           esc(kinds.length ? t('선택하거나 직접 입력하세요') : t('계통을 먼저 선택하면 목록이 나옵니다'))}" onchange="mrField('kind',this.value.trim())">
          <datalist id="rvKindList">${kinds.map(x => `<option value="${esc(x)}">`).join('')}</datalist>`
       : `<b class="mrv">${esc(it.kind ? t(it.kind) : '—')}</b>`}</div>`}
     <div class="mrrow"><span class="mrlbl">${esc(t('제조사'))}</span>${unlocked
@@ -45097,23 +45089,23 @@ function rvBody(it){
         esc(mates ? tsub(isB ? '이 배 리뷰가 {n}건 더 있습니다.' : '이 제품 리뷰가 {n}건 더 있습니다.', { n: mates })
                   : t(isB ? '이 배의 첫 리뷰입니다.' : '이 제품의 첫 리뷰입니다.'))}</div>`
           : `<div class="mrm" style="padding:0 0 8px 74px;color:#7b8794">${
-        esc(t('모델은 입력하지 않아도 됩니다. 종류와 계통으로 검색할 수 있습니다.'))}</div>`}
+        esc(t('모델을 안 적어도 됩니다 — 종류와 계통으로 찾을 수 있습니다.'))}</div>`}
     <div class="mrrow"><span class="mrlbl">${esc(t('별점'))}</span>${unlocked
       ? `<div class="rvstars">${[1,2,3,4,5].map(star).join('')}</div>
          ${Number(it.stars) ? `<button class="minib" onclick="mrField('stars',0)">${esc(t('초기화'))}</button>` : ''}`
       : `<b class="mrv rvst">${Number(it.stars) ? rvStarText(it.stars) : '—'}</b>`}</div>
-    <div class="mrrow"><span class="mrlbl">${esc(t('재구매 의사'))}</span>${unlocked
-      ? `<button class="permb${it.again === true ? ' on' : ''}" onclick="mrField('again',true)">${esc(t('재구매 의사 있음'))}</button>
-         <button class="permb${it.again === false ? ' on' : ''}" onclick="mrField('again',false)">${esc(t('재구매 의사 없음'))}</button>
+    <div class="mrrow"><span class="mrlbl">${esc(t('또 살까'))}</span>${unlocked
+      ? `<button class="permb${it.again === true ? ' on' : ''}" onclick="mrField('again',true)">${esc(t('재구매 함'))}</button>
+         <button class="permb${it.again === false ? ' on' : ''}" onclick="mrField('again',false)">${esc(t('재구매 안 함'))}</button>
          ${it.again != null ? `<button class="minib" onclick="mrField('again',null)">${esc(t('초기화'))}</button>` : ''}`
-      : `<b class="mrv">${esc(it.again === true ? t('재구매 의사 있음') : (it.again === false ? t('재구매 의사 없음') : '—'))}</b>`}</div>
-    <div class="mrrow"><span class="mrlbl">${esc(isB ? t('승선 기간') : t('사용 기간'))}</span>${unlocked
+      : `<b class="mrv">${esc(it.again === true ? t('재구매 함') : (it.again === false ? t('재구매 안 함') : '—'))}</b>`}</div>
+    <div class="mrrow"><span class="mrlbl">${esc(isB ? t('탄 기간') : t('사용 기간'))}</span>${unlocked
       ? `<select style="flex:1" onchange="mrField('used',this.value)">
            <option value=""${it.used ? '' : ' selected'}>${esc(t('선택 안 함'))}</option>${
            RV_USED.map(x => `<option value="${x.k}"${it.used === x.k ? ' selected' : ''}>${
-             esc(t(isB && x.k === 'new' ? '구입한 지 얼마 안 됨' : x.n))}</option>`).join('')}</select>`
+             esc(t(isB && x.k === 'new' ? '갓 샀음' : x.n))}</option>`).join('')}</select>`
       : `<b class="mrv">${esc(rvUsedName(it.used) || '—')}</b>`}</div>
-    <div class="mrrow"><span class="mrlbl">${esc(isB ? t('승선 후기') : t('사용 후기'))}</span>${unlocked
+    <div class="mrrow"><span class="mrlbl">${esc(isB ? t('타 보니') : t('사용해 보니'))}</span>${unlocked
       ? `<textarea rows="4" style="flex:1" placeholder="${esc(isB
            ? t('바다에서 어떤지, 살림은 어떤지, 관리는 어떤지')
            : t('설치는 쉬웠는지, 소리는 어떤지, 얼마나 가는지'))}" onchange="mrField('text',this.value)">${esc(it.text||'')}</textarea>`
@@ -45121,19 +45113,19 @@ function rvBody(it){
     <div class="mrrow"><span class="mrlbl">${esc(t('아쉬운 점'))}</span>${unlocked
       ? `<textarea rows="2" style="flex:1" placeholder="${esc(t('여기가 비어 있으면 광고 글처럼 보입니다'))}" onchange="mrField('bad',this.value)">${esc(it.bad||'')}</textarea>`
       : `<span class="mrv" style="flex:1;white-space:pre-wrap">${esc(it.bad||'—')}</span>`}</div>
-    <div class="mrrow"><span class="mrlbl">${esc(isB ? t('구입 가격(배)') : t('구입 가격'))}</span>${unlocked
+    <div class="mrrow"><span class="mrlbl">${esc(isB ? t('산 값(배)') : t('산 값'))}</span>${unlocked
       ? `<input inputmode="decimal" value="${esc(String(it.price==null?'':it.price))}" style="width:110px" onchange="rvSetPrice(this.value)">
          <select onchange="mrField('cur',this.value)">${
            RV_CURS.map(c => `<option value="${esc(c)}"${(it.cur||'원') === c ? ' selected' : ''}>${esc(t(c))}</option>`).join('')}</select>
          <input type="date" value="${esc(it.bought||'')}" onchange="mrField('bought',this.value)">`
       : `<b class="mrv">${esc(rvPriceText(it) || '—')}${it.bought ? ' · ' + esc(it.bought) : ''}</b>`}</div>
-    <div class="mrrow"><span class="mrlbl">${esc(t('가격 공개'))}</span>${unlocked
+    <div class="mrrow"><span class="mrlbl">${esc(t('값 공개'))}</span>${unlocked
       ? `<button class="permb${it.pubPrice === true ? ' on' : ''}" onclick="mrField('pubPrice',true)">${esc(t('공개'))}</button>
          <button class="permb${it.pubPrice === true ? '' : ' on'}" onclick="mrField('pubPrice',false)">${esc(t('나만 보기'))}</button>`
       : `<b class="mrv">${esc(it.pubPrice === true ? t('공개') : t('나만 보기'))}</b>`}</div>
     <div class="mrm" style="padding:0 0 10px 74px;color:#7b8794">${
-      esc(isB ? t('배 리뷰는 공개됩니다. 구입 가격만 따로 설정할 수 있으며, 기본값은 나만 보기입니다.')
-              : t('리뷰는 공개됩니다. 구입 가격만 따로 설정할 수 있으며, 기본값은 나만 보기입니다.'))}</div>
+      esc(isB ? t('배 리뷰는 공개됩니다. 산 값만 따로 정합니다 — 기본은 나만 보기입니다.')
+              : t('리뷰는 공개됩니다. 산 값만 따로 정합니다 — 기본은 나만 보기입니다.'))}</div>
     ${/* ★ 4.68 — 「공개됩니다」 라고 적어 놓고 배 쪽 스위치가 꺼져 있으면 거짓말이 된다.
           정비수첩과 똑같은 조용한 실패다. 같은 문으로 말하고 그 자리에서 켜게 한다. */''}
     ${pubGateBox('review')}
@@ -45145,13 +45137,13 @@ function rvFullBar(it){
   const n = rvFull(it);
   const miss = [];
   if(!(Number(it.stars) >= 1)) miss.push(t('별점'));
-  if(!it.used) miss.push(t(isB ? '승선 기간' : '사용 기간'));
-  if(String(it.text || '').trim().length < 20) miss.push(t(isB ? '승선 후기' : '사용 후기'));
+  if(!it.used) miss.push(t(isB ? '탄 기간' : '사용 기간'));
+  if(String(it.text || '').trim().length < 20) miss.push(t(isB ? '타 보니' : '사용해 보니'));
   if(!String(it.bad || '').trim()) miss.push(t('아쉬운 점'));
   if(!(it.photos && it.photos.length)) miss.push(t('사진'));
-  return `<div class="rvbar"><b>${esc(tsub('완성도 {n}/5', { n:n }))}</b>${
-    miss.length ? ' · ' + esc(tsub('추가하면 좋은 항목: {what}', { what: miss.join(' · ') }))
-                : ' · ' + esc(t('모두 입력하셨습니다.'))}</div>`;
+  return `<div class="rvbar"><b>${esc(tsub('채움 {n}/5', { n:n }))}</b>${
+    miss.length ? ' · ' + esc(tsub('더 있으면 좋은 것: {what}', { what: miss.join(' · ') }))
+                : ' · ' + esc(t('다 채우셨습니다.'))}</div>`;
 }
 
 // ── 밖으로 나가는 정비수첩 한 건
@@ -45371,7 +45363,7 @@ function renderMLog(){
   if(!rows.length){
     L.innerHTML = `<div class="emptybox">
       <b>${esc(t('정비수첩'))}</b>
-      <div>${t('<b>작업 한 번에 한 건</b>입니다. 오늘 무엇을 어떻게 했는지 사진과 함께 기록합니다.')}<br>
+      <div>${t('<b>한 번 작업하면 한 건</b>입니다. 오늘 무엇을 어떻게 했는지 사진과 함께 남깁니다.')}<br>
         ${esc(t('다음에 같은 일을 할 때 그대로 보고 따라 하면 됩니다.'))}</div>
       <div class="emptysub">${esc(t('정기점검·수리 화면의 「+ 정비수첩」을 누르면 그 항목과 연결된 채로 시작합니다.'))}</div>
       <button class="mrbtn" onclick="needEdit('정비수첩을 씁니다.', ()=>addMlog())">${esc(t('+ 정비수첩'))}</button>
@@ -45701,7 +45693,7 @@ function howBlock(it){
   let h = `<div class="secl" style="margin-top:16px">${esc(t('정비 절차'))}${
     typeof helpBtn === 'function' ? '' : ''}</div>`
     + `<div class="mrm" style="padding:0 14px 8px;color:#7b8794">${
-        esc(t('한 단계 = 사진 한 장 + 설명 한 줄. 다음에 같은 작업을 할 때나 같은 배를 타는 다른 사람이 참고할 수 있습니다.'))}</div>`;
+        esc(t('한 단계 = 사진 한 장 + 설명 한 줄. 다음에 같은 일을 할 때, 그리고 같은 배를 타는 다른 사람에게 그대로 사용됩니다.'))}</div>`;
   // 머리 — 난이도 · 걸린 시간 · 든 돈 · 쓴 것
   h += `<div class="mrrow"><span class="mrlbl">${esc(t('난이도'))}</span>${unlocked
       ? `<select onchange="mrField('hard',parseInt(this.value,10)||0)" style="flex:1">
@@ -45710,7 +45702,7 @@ function howBlock(it){
          }</select>`
       : `<b class="mrv">${it.hard ? howHardText(it.hard) : '—'}</b>`}</div>`;
   h += durRow('걸린 시간', 'work', it.work);
-  h += `<div class="mrrow"><span class="mrlbl">${esc(t('비용'))}</span>${unlocked
+  h += `<div class="mrrow"><span class="mrlbl">${esc(t('든 돈'))}</span>${unlocked
       ? `<input type="text" inputmode="numeric" value="${esc(String(it.cost||''))}" style="width:120px" onchange="mrField('cost',this.value)"> ${esc(curNow())}`
       : `<b class="mrv">${it.cost ? esc(String(it.cost)) + esc(curOf(it)) : '—'}</b>`}</div>`;
   h += `<div class="mrrow"><span class="mrlbl">${esc(t('부품·공구'))}</span>${unlocked
@@ -45723,22 +45715,22 @@ function howBlock(it){
     //   눌렀을 때 needEdit 이 물어보고, 예 하면 그대로 이어서 한다.
     const pic = x.p
       ? `<img src="${esc(x.p)}" onclick="pvOpen([${JSON.stringify(x.p)}],0)">`
-        + `<button class="mrbtn warn edt" style="margin-top:6px" onclick="needEdit('이 단계의 사진을 삭제합니다.', ()=>howPhotoDel(${i}))">${esc(t('사진 삭제'))}</button>`
-      : `<button class="mrbtn edt" onclick="needEdit('이 단계에 사진을 추가합니다.', ()=>howPhoto(${i}))">${esc(t('사진 추가'))}</button>`;
+        + `<button class="mrbtn warn edt" style="margin-top:6px" onclick="needEdit('이 단계의 사진을 뺍니다.', ()=>howPhotoDel(${i}))">${esc(t('사진 삭제'))}</button>`
+      : `<button class="mrbtn edt" onclick="needEdit('이 단계에 사진을 넣습니다.', ()=>howPhoto(${i}))">${esc(t('사진 추가'))}</button>`;
     return `<div class="howstep">
       <div class="hownum">${i + 1}</div>
       <div class="howbody">
         ${pic}
-        <textarea rows="2" placeholder="${esc(t('이 단계의 작업 내용'))}"${
+        <textarea rows="2" placeholder="${esc(t('이 단계에서 무엇을 하는지'))}"${
           unlocked ? '' : ' readonly'} onchange="howText(${i}, this.value)">${esc(x.v||'')}</textarea>
         <div class="howbtns">
           <button class="minib edt" onclick="needEdit('단계 순서를 바꿉니다.', ()=>howMove(${i},-1))">↑</button>
           <button class="minib edt" onclick="needEdit('단계 순서를 바꿉니다.', ()=>howMove(${i},1))">↓</button>
-          <button class="minib warn edt" onclick="needEdit('이 단계를 삭제합니다.', ()=>howDel(${i}))">${esc(t('삭제'))}</button>
+          <button class="minib warn edt" onclick="needEdit('이 단계를 뺍니다.', ()=>howDel(${i}))">${esc(t('삭제'))}</button>
         </div>
       </div></div>`;
   }).join('');
-  h += `<div class="mrrow edt"><button class="mrbtn edt" onclick="needEdit('정비 절차에 단계를 추가합니다.', howAdd)">${
+  h += `<div class="mrrow edt"><button class="mrbtn edt" onclick="needEdit('정비 절차에 단계를 더합니다.', howAdd)">${
     esc(tsub('+ 단계 추가 ({n}/{m})', { n: steps.length, m: HOW_MAX }))}</button></div>`;
   // ★ 4.69 — 고치는 단추에는 edt 를 단다 (보기 전용일 때 사라진다).
   //   이 앱의 규칙은 이렇게 갈린다 —
@@ -45761,7 +45753,7 @@ function howPubRow(it){
   const steps = howSteps(it);
   if(!steps.length) return '';
   return pubLvRow('mlog', it, 'maint',
-    '절차·사진·난이도·걸린 시간·비용·메모가 함께 공개됩니다. 전화번호처럼 다른 사람에게 보이면 안 되는 내용은 메모에 쓰지 마세요.');
+    '절차·사진·난이도·걸린 시간·든 돈·메모가 함께 나갑니다. 메모에 전화번호처럼 남에게 보이면 안 되는 것은 적지 마세요.');
 }
 // 옛 이름 — 켬/끔 두 갈래였을 때 쓰던 것. 이제 단계는 pubLvSet 하나가 정한다.
 function howPubToggle(){
@@ -45934,7 +45926,7 @@ function mobPaint(){
       `<div class="mobbig">${esc(시각)}</div>`
     + `<div class="mobpos">${esc(자리)}</div>`
     + (방향 ? `<div class="mobdir">${esc(방향)}</div>` : '')
-    + `<div class="mobhint">${esc(t('이 위치를 확인하면서 돌아가세요. 익수자에게서 눈을 떼지 마세요.'))}</div>`;
+    + `<div class="mobhint">${esc(t('이 위치를 계속 보면서 돌아가세요. 사람을 눈에서 놓치지 마세요.'))}</div>`;
 }
 
 // ===== 예비품 최소 수량 =====
@@ -45994,13 +45986,12 @@ function durJoin(H, M){
   return Math.round((a + b / 60) * 100) / 100;
 }
 // 기록 창의 시·분 두 칸
-// ★ 5.30 — 기록 창 칸은 flex:1 로 늘어나서 「0 ……… 시간 27 ……… 분」 처럼 숫자와 단위가 떨어져 있었다. 칸 폭을 고정한다
 function durRow(label, key, val, extra){
   const p = durParts(val);
   const idh = 'dur_' + key + '_h', idm = 'dur_' + key + '_m';
   return `<div class="mrrow"><span class="mrlbl">${esc(t(label))}</span>${unlocked
-    ? `<input id="${idh}" type="number" min="0" max="9999" inputmode="numeric" value="${esc(String(p.h))}" style="flex:0 0 62px;width:62px" onchange="durSet('${key}')"> ${esc(t('시간'))}
-       <input id="${idm}" type="number" min="0" max="59" inputmode="numeric" value="${esc(String(p.m))}" style="flex:0 0 56px;width:56px" onchange="durSet('${key}')"> ${esc(t('분'))}`
+    ? `<input id="${idh}" type="number" min="0" max="9999" inputmode="numeric" value="${esc(String(p.h))}" style="width:62px" onchange="durSet('${key}')"> ${esc(t('시간'))}
+       <input id="${idm}" type="number" min="0" max="59" inputmode="numeric" value="${esc(String(p.m))}" style="width:56px" onchange="durSet('${key}')"> ${esc(t('분'))}`
     : `<b class="mrv">${esc(durText(val) || '—')}</b>`}${extra || ''}</div>`;
 }
 function durSet(key){
@@ -46043,7 +46034,7 @@ const VDOC_BEFORE = 90;
 //   일본 操縦免許証 갱신   — 国土交通省 https://www.mlit.go.jp/maritime/maritime_tk10_000011.html
 const DOC_CYCLE = {
   ja: {
-    '선박검사증서': '정기검사(定期検査)는 6년마다입니다. 그 사이에 중간검사(中間検査)를 한 번 받습니다. 정기검사는 만료 3개월 전, 중간검사는 6개월 전부터 받을 수 있고, 그 기간에 받으면 다음 검사일이 앞당겨지지 않습니다.',
+    '선박검사증서': '정기검사(定期検査)는 6년마다입니다. 그 사이에 중간검사(中間検査)를 한 번 받습니다. 정기검사는 만료 3개월 전, 중간검사는 6개월 전부터 받을 수 있고, 그 안에 받으면 다음 차례가 당겨지지 않습니다.',
     '조종면허':     '소형선박조종면허증(小型船舶操縦免許証)은 5년마다 갱신합니다. 만료일 1년 전부터 갱신할 수 있습니다. 갱신 없이 만료되면 면허증이 실효되어 선장으로 탈 수 없습니다.'
   }
 };
@@ -46151,9 +46142,10 @@ function docBar(){
   return `<div class="tfilt" style="align-items:center">` + DOC_SUBS.map(x =>
       `<button class="tchip${x.k === docSub ? ' on' : ''}" onclick="setDocSub('${x.k}')">${
         esc(t(x.n))}${x.k === 'docs' ? docDueTag() : ''}</button>`).join('')
-    // ★ 5.30 — 위에 「+ 추가」 와 아래 + 단추가 같은 일을 하는 단추로 둘 있었다.
-    //   새로 쓰는 것은 어느 화면에서나 오른쪽 아래 + 한 자리에서 (4.134 사장님이 정하신 것) — 위 단추를 뺀다
-    + `</div>`;
+    + `<span style="flex:1"></span>`
+    + (docSub === 'papers' ? ''      // ★ 이력은 **뽑는 것**이라 더할 것이 없다
+        : `<button class="tab edt" onclick="${docSub === 'contact' ? 'addContact()' : 'addVdoc()'}">${
+            esc(t('+ 추가'))}</button>`) + `</div>`;
 }
 // 기한이 지났거나 다가온 문서가 있으면 갈래 이름 옆에 수를 붙인다.
 // ★ 안 그러면 연락처를 보고 있는 동안 만료된 선박검사증이 안 보인다.
@@ -46176,7 +46168,7 @@ function renderContacts(){
         ${c.phone?`<a class="mrbtn callb" href="tel:${esc(c.phone)}" onclick="event.stopPropagation()">${esc(t('전화 걸기'))}</a>`:''}
         ${c.email?`<a class="mrbtn callb" href="mailto:${esc(c.email)}" onclick="event.stopPropagation()">${esc(t('메일'))}</a>`:''}
         ${c.site?`<a class="mrbtn callb" href="${esc(c.site)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(t('사이트'))}</a>`:''}
-      </div>`).join('') || `<div class="mrnone">${esc(t('마리나 · VTS · 해경 · 보험 · 부품상 번호를 저장해 두세요'))}</div>`);
+      </div>`).join('') || `<div class="mrnone">${esc(t('마리나 · VTS · 해경 · 보험 · 부품상 번호를 넣어 두세요'))}</div>`);
     return;
   }
   // ══════════════════════════════════════════════════════════════
@@ -46189,18 +46181,18 @@ function renderContacts(){
   if(docSub === 'papers'){
     L.innerHTML = docBar()
       + `<div class="mr" onclick="cvExport()">
-          <div class="ct"><div class="cn">${esc(t('배 이력서 만들기'))}</div>
+          <div class="ct"><div class="cn">${esc(t('배 이력서 뽑기'))}</div>
             <span class="chip">${esc(t('한 장'))}</span></div>
-          <div class="mrm">${esc(t('장비 · 정비 · 수리 · 항해를 한 장으로 정리합니다. 배를 팔거나 넘길 때 그대로 건네면 됩니다.'))}</div>
+          <div class="mrm">${esc(t('장비 · 정비 · 수리 · 항해를 한 장으로 뽑습니다. 배를 팔거나 넘길 때 그대로 드리면 됩니다.'))}</div>
         </div>`
       // ★ 배 이력서는 **배**의 종이고, 승선 이력은 **사람**의 종이다. 짝이라 나란히 둔다.
       + `<div class="mr" onclick="crewCvExport()">
-          <div class="ct"><div class="cn">${esc(t('내 승선 이력 출력'))}</div>
+          <div class="ct"><div class="cn">${esc(t('내 승선 이력 뽑기'))}</div>
             <span class="chip">${esc(t('한 장'))}</span></div>
-          <div class="mrm">${esc(t('언제, 어느 배로, 몇 해리를 항해했는지 한 장으로 출력합니다. 직접 입력하는 것이 아니라 배의 항해일지에서 그대로 가져옵니다.'))}</div>
+          <div class="mrm">${esc(t('내가 언제 어느 배를 타고 몇 해리를 갔는지 한 장으로 뽑습니다. 스스로 적는 것이 아니라 배의 항해일지에서 그대로 가져옵니다.'))}</div>
         </div>`
       + `<div class="mrnone" style="text-align:left">${
-          esc(t('여기 있는 문서는 보관용 서류가 아니라 앱이 만들어 주는 문서입니다. 기록이 쌓일수록 내용이 채워집니다.'))}</div>`;
+          esc(t('여기 있는 것은 넣어 두는 서류가 아니라 앱이 만들어 주는 종이입니다. 적어 두신 것이 쌓일수록 내용이 채워집니다.'))}</div>`;
     return;
   }
   L.innerHTML = docBar() +
@@ -46211,7 +46203,7 @@ function renderContacts(){
         : ''}${d.photos&&d.photos.length?`<span class="chip nchip">${esc(t('사진'))} ${d.photos.length}</span>`:''}</div>
         ${d.dkind?`<div class="mrm">${esc(t(d.dkind))}${d.expiry?' · '+esc(d.expiry):''}</div>`
                  :(d.note?`<div class="mrm">${esc(d.note).slice(0,50)}</div>`:'')}
-      </div>`; }).join('') || `<div class="mrnone">${esc(t('보험증서 · 선박검사증 · 면허 사진을 보관할 수 있습니다. 인터넷이 없어도 볼 수 있습니다.'))}</div>`);
+      </div>`; }).join('') || `<div class="mrnone">${esc(t('보험증서 · 선박검사증 · 면허 사진을 보관할 수 있습니다. 인터넷이 없어도 열람됩니다.'))}</div>`);
 }
 function addContact(){
   if(!unlocked) return;   // 잠금 시 버튼이 숨겨져 있다 — 조용히 무시
@@ -46238,7 +46230,7 @@ function addVdoc(){
 // 배열을 따로 만들면 그 경로를 열두 곳 넘게 고쳐야 하고, 한 곳만 빠뜨려도
 // 기록이 조용히 사라진다.
 
-const CK_CYCLES = { d:t('날마다 초기화'), w:t('주마다 초기화'), n:t('수동 초기화') };
+const CK_CYCLES = { d:t('날마다 초기화'), w:t('주마다 초기화'), n:t('직접 초기화') };
 
 function ckLists(){
   // ★ 받아오기가 줄 차례를 뒤섞는다. 기기마다 같은 차례로 보이게 한다.
@@ -46435,9 +46427,9 @@ function addCheckList(){
     fields: [
       { key:'name',  label:'목록 이름', value:'', placeholder:'예: 출항 전 점검' },
       { key:'cycle', label:'초기화 주기', type:'pick', value:'d',
-        options: [{v:'d', name:'날마다', sub:'출항 전 점검처럼 출항할 때마다 하는 것'},
+        options: [{v:'d', name:'날마다', sub:'출항 전 점검처럼 나갈 때마다 하는 것'},
        {v:'w', name:'주마다', sub:'정박 중 점검처럼 주 단위로 하는 것'},
-       {v:'n', name:'수동 초기화', sub:'내가 누를 때까지 그대로 두기'}] }
+       {v:'n', name:'직접 초기화', sub:'내가 누를 때까지 그대로 둔다'}] }
     ],
     onOk: v => {
       if(!v.name) return formErr('name', '목록 이름을 넣어 주세요');
@@ -46456,9 +46448,9 @@ function renameCheckList(id){
     fields: [
       { key:'name',  label:'목록 이름', value:l.name, placeholder:'예: 출항 전 점검' },
       { key:'cycle', label:'초기화 주기', type:'pick', value:l.cycle || 'd',
-        options: [{v:'d', name:'날마다', sub:'출항 전 점검처럼 출항할 때마다 하는 것'},
+        options: [{v:'d', name:'날마다', sub:'출항 전 점검처럼 나갈 때마다 하는 것'},
        {v:'w', name:'주마다', sub:'정박 중 점검처럼 주 단위로 하는 것'},
-       {v:'n', name:'수동 초기화', sub:'내가 누를 때까지 그대로 두기'}] }
+       {v:'n', name:'직접 초기화', sub:'내가 누를 때까지 그대로 둔다'}] }
     ],
     del: { text:'목록 삭제', run: ()=>delCheckList(id) },
     onOk: v => {
@@ -46475,7 +46467,7 @@ function cycleCheckList(id){
 async function delCheckList(id){
   if(!unlocked) return;
   const ls = ckLists();
-  if(ls.length < 2){ tell(t('마지막 남은 목록은 삭제할 수 없습니다.')); return; }
+  if(ls.length < 2){ tell(t('마지막 남은 목록은 지울 수 없습니다.')); return; }
   const l = ls.find(x=>String(x.id)===String(id)); if(!l) return;
   const its = ckItems(id);
   if(!await ask(tsub('"{name}" 목록을 항목 {n}개와 함께 휴지통으로 옮길까요?', {name:l.name, n:its.length}), { ok: t('휴지통으로') })) return;
@@ -46501,7 +46493,7 @@ function addCheckItem(){
       { key:'url',   label:'링크 (없으면 비워 두세요)', value:'', placeholder:'https://' }
     ],
     onOk: v => {
-      if(!v.label) return formErr('label', '점검 항목을 입력해 주세요');
+      if(!v.label) return formErr('label', '점검 항목을 넣어 주세요');
       checkt.push({ id:newId(), label:v.label, url:v.url, list:String(cur) });
       saveMR(); renderCheck();
     }
@@ -46519,7 +46511,7 @@ function editCheckItem(id){
     ],
     del: { text:'항목 삭제', run: ()=>delCheckItem(id) },
     onOk: v => {
-      if(!v.label) return formErr('label', '점검 항목을 입력해 주세요');
+      if(!v.label) return formErr('label', '점검 항목을 넣어 주세요');
       it.label = v.label;
       it.url = v.url;
       saveMR(); renderCheck();
@@ -46540,11 +46532,11 @@ function ckRowMenu(id){
   openForm({
     title: '이 항목',
     sub: it.label,
-    okText: '실행',
+    okText: '하기',
     fields: [
       { key:'what', label:'무엇을 할까요', type:'pick', value:'edit', options:[
         { v:'edit',   name:t('수정'),  sub:t('이름·바로가기 주소') },
-        { v:'assign', name:t('담당자 지정'),  sub:t('담당자') },
+        { v:'assign', name:t('담당자 지정'),  sub:t('이 일을 맡을 사람') },
         { v:'move',   name:t('옮기기'),  sub:t('다른 목록으로') },
         { v:'del',    name:t('삭제'),    sub:t('휴지통으로 옮깁니다') }
       ]}
@@ -46563,11 +46555,11 @@ function ckListMenu(id){
   openForm({
     title: '이 목록',
     sub: l.name,
-    okText: '실행',
+    okText: '하기',
     fields: [
       { key:'what', label:'무엇을 할까요', type:'pick', value:'rename', options:[
         { v:'rename', name:t('이름 바꾸기'), sub:'' },
-        { v:'cycle',  name:t('초기화 주기'), sub:t('매일 · 매주 · 직접') },
+        { v:'cycle',  name:t('초기화 주기'), sub:t('날마다 · 주마다 · 직접') },
         { v:'del',    name:t('목록 삭제'),   sub:'' }
       ]}
     ],
@@ -46590,7 +46582,7 @@ function moveCheckItem(id){
     fields: [
       { key:'list', label:'옮길 목록', type:'pick', value:String(it.list),
         options: ls.map(l=>({ v:String(l.id), name:l.name,
-          sub: l.cycle==='w' ? '주마다 초기화' : l.cycle==='n' ? '수동 초기화' : '날마다 초기화' })) }
+          sub: l.cycle==='w' ? '주마다 초기화' : l.cycle==='n' ? '직접 초기화' : '날마다 초기화' })) }
     ],
     onOk: v => {
       if(!v.list) return false;
@@ -46659,13 +46651,13 @@ function myWarnings(){
   //   여기 특보는 기상청이 한국 해역에 내는 것이다. 일본에 댄 배에 그것을 보여 주면
   //   「내 해역 특보」 로 읽힌다. 못 보여 주는 것은 못 보여 준다고 말한다.
   if(!re && (typeof boatOutsideKR === 'function') && boatOutsideKR())
-    return { active: [], region:'', summary: t('대한민국 해역 밖이라 기상청 해상 특보가 제공되지 않습니다'),
+    return { active: [], region:'', summary: t('대한민국 해역 밖입니다 — 기상청 해상 특보가 닿지 않습니다'),
              note: t('해당 국가의 기상 기관에서 확인해 주세요') };
   // ★ 배 자리를 모르면 전국을 보여 준다. 조용히 '특보 없음' 이라고 하면 안 된다.
   if(!re)
     return { active: warnLines(wx.zones).slice(0,6),
              summary: wx.zones.length ? '' : t('발효 중인 해상 특보 없음'),
-             region:'', note:t('배 위치를 알 수 없어 전국 특보를 표시합니다. 내 배 > 기본 정보에서 홈포트를 지정해 주세요') };
+             region:'', note:t('배 위치를 몰라 전국 특보를 보여 드립니다 — 내 배 > 기본 정보에서 홈포트를 찍어 주세요') };
   const mine = wx.zones.filter(z => re.test(z.reg));
   // ★★★ 2026-09-04 — **육상 특보도 같이 본다** (사장님 지적)
   //   그날 기상청에는 「강풍주의보 : 전라남도(여수 …)」 가 떠 있었다. 배가 마리나에 매여 있어도
@@ -46687,7 +46679,7 @@ function myWarnings(){
   const 깨진것 = wx.zones.filter(z => !/[가-힣]/.test(String(z.reg || '')));
   if(깨진것.length)
     return { active: [], region, note: t('기상청 실시간 확인'),
-             summary: t('특보 정보를 제대로 불러오지 못했습니다. 기상청에서 확인해 주세요'), 못읽음: true };
+             summary: t('특보를 제대로 못 읽었습니다 — 기상청에서 확인해 주세요'), 못읽음: true };
   return { active: [], region, note:'',
            summary: wx.zones.length
              ? tsub('{r} 해역은 특보 없음 · 다른 해역 {n}구역 발효 중',
@@ -47312,13 +47304,13 @@ function jwAlertBox(){
   const w = jwCache;
   const foot = `<a href="https://www.jma.go.jp/bosai/seawarning/" target="_blank" rel="noopener">${
       esc(t('일본 기상청에서 실시간 확인'))}</a>`;
-  const src  = `<div class="wxfoot">${esc(t('출처: 일본 기상청(気象庁) 해상경보 · 해역 경계는 기상청 예보구 자료'))}</div>`;
+  const src  = `<div class="wxfoot">${esc(t('출처 — 일본 기상청(気象庁) 해상경보 · 해역 경계는 기상청 예보구 자료'))}</div>`;
   // ★ 「해상 특보」 는 우리 기상청 말이다. 여기 것은 気象庁 해상경보다 — 이름을 섞지 않는다.
   const 해역 = jwSeaName(area.n);
   // ★ 못 받았으면 못 받았다고 말한다. 「경보 없음」 이라고 하면 그 말을 믿고 나간다.
   if(!w || !w.ok){
     return `<div class="wxbox"><b>${esc(t('일본 해상경보'))} · ${esc(해역)}</b>
-      <div>${esc(t('일본 기상청 해상경보를 가져오지 못했습니다. 아래에서 직접 확인해 주세요'))}</div>
+      <div>${esc(t('일본 기상청 해상경보를 지금 못 받았습니다 — 아래에서 직접 확인해 주세요'))}</div>
       <div class="wxfoot">${foot}</div>${src}</div>`;
   }
   const mine = jwMineZones(w, area);
@@ -47335,7 +47327,7 @@ function jwAlertBox(){
     //   내 배가 어느 해역인지는 아랫줄에 한 번만 밝힌다.
     return `<div class="wxbox warn"><b>${esc(t('일본 해상경보 발효 중'))}</b>${
       mine.map(z => jwLine(z)).join('')}
-      <div class="wxfoot">${esc(tsub(here.byWx ? '날씨 지점 {r}' : '내 배 위치 {r}', { r: 해역 }))} · ${esc(t('읽음'))} ${esc(when)} · ${foot}</div>${src}</div>`;
+      <div class="wxfoot">${esc(tsub(here.byWx ? '날씨 지점 {r}' : '내 배 자리 {r}', { r: 해역 }))} · ${esc(t('읽음'))} ${esc(when)} · ${foot}</div>${src}</div>`;
   }
   return `<div class="wxbox"><b>${esc(t('일본 해상경보'))} · ${esc(해역)}</b>
     <div>${esc(t('이 해역에 발효 중인 일본 해상경보 없음'))}${
@@ -47407,7 +47399,7 @@ function mwAlertBox(){
   const src = `<div class="wxfoot">${esc(t('출처 — WMO METAREA XI 먼바다 경보 (일본 기상청 발표 WWJP90)'))}</div>`;
   if(!W || !W.ok){
     return `<div class="wxbox"><b>${esc(t('먼바다 해상경보'))}</b>
-      <div>${esc(t('먼바다 해상경보를 불러오지 못했습니다. 아래에서 직접 확인해 주세요'))}</div>
+      <div>${esc(t('먼바다 해상경보를 지금 못 받았습니다 — 아래에서 직접 확인해 주세요'))}</div>
       <div class="wxfoot">${foot}</div>${src}</div>`;
   }
   const mine = mwFor(Number(wxCur.lat), Number(wxCur.lon));
@@ -47421,7 +47413,7 @@ function mwAlertBox(){
       <div class="wxfoot">${esc(t('읽음'))} ${esc(when)}${W.stale ? ' · ' + esc(t('저장해 둔 자료')) : ''} · ${foot}</div>${src}</div>`;
   }
   return `<div class="wxbox"><b>${esc(t('먼바다 해상경보'))}</b>
-    <div>${esc(t('이 지점에 발효 중인 먼바다 경보는 없습니다'))}</div>
+    <div>${esc(t('이 지점에 걸린 먼바다 경보는 없습니다'))}</div>
     <div class="wxfoot">${esc(t('읽음'))} ${esc(when)}${W.stale ? ' · ' + esc(t('저장해 둔 자료')) : ''} · ${foot}</div>${src}</div>`;
 }
 function wxAlertBox(){
@@ -47572,7 +47564,7 @@ function setNewsSub(k){
   renderNews();
   if(typeof paintFab === 'function') paintFab();
 }
-// 마지막으로 뉴스를 본 시각 — 그 뒤에 올라온 것에 '신규' 를 붙인다
+// 마지막으로 뉴스를 본 시각 — 그 뒤에 올라온 것에 '새로' 를 붙인다
 function newsSeenAt(){
   try{ return localStorage.getItem('bt_newsat') || ''; }catch(_){ return ''; }
 }
@@ -47596,7 +47588,7 @@ function newsByDay(rows, draw){
   const name = d => d === today ? t('오늘') : d === yest ? t('어제') : d;
   return [...days.keys()].sort().reverse().map(d=>{
     const n = days.get(d).filter(newsIsNew).length;
-    return `<div class="secl">${esc(name(d))}${n?` <span class="chip">${esc(tsub('신규 {n}',{n:n}))}</span>`:''}</div>`
+    return `<div class="secl">${esc(name(d))}${n?` <span class="chip">${esc(tsub('새로 {n}',{n:n}))}</span>`:''}</div>`
          + days.get(d).map(draw).join('');
   }).join('');
 }
@@ -47643,7 +47635,7 @@ function newsTrBar(rows){
   if(!바뀐것) return '';
   return `<div class="trbar"><span>${esc(t('자동 번역된 글입니다'))}</span>
     <span style="flex:1"></span>
-    <button class="minib" onclick="newsTrOff()">${esc(t('원문 보기'))}</button></div>`;
+    <button class="minib" onclick="newsTrOff()">${esc(t('원어로 보기'))}</button></div>`;
 }
 // 「원어로 보기」 를 누른 사람에게는 다시 안 옮긴다 (그 화면에 있는 동안)
 let newsTrSkip = false;
@@ -47691,13 +47683,13 @@ async function newsTrAuto(rows){
 
 function krRow(n){
   return `<div class="mr newsr">
-    <div class="cn" style="font-size:14px">${newsIsNew(n)?`<span class="chip">${esc(t('신규'))}</span> `:''}${esc(newsShow(newsTitle(n)))}</div>
+    <div class="cn" style="font-size:14px">${newsIsNew(n)?`<span class="chip">${esc(t('새로'))}</span> `:''}${esc(newsShow(newsTitle(n)))}</div>
     <div class="newsm"><span>${esc(n.source||'')}${n.press?' · '+esc(n.press):''}</span>
     <a class="mrbtn" href="${esc(n.link||'#')}" target="_blank" rel="noopener">${esc(t('원문'))}</a></div></div>`;
 }
 function wwRow(n){
   return `<div class="mr newsr">
-    <div class="ct"><div class="cn">${newsIsNew(n)?`<span class="chip">${esc(t('신규'))}</span> `:''}${esc(newsShow(newsTitle(n)))}</div>
+    <div class="ct"><div class="cn">${newsIsNew(n)?`<span class="chip">${esc(t('새로'))}</span> `:''}${esc(newsShow(newsTitle(n)))}</div>
       ${n.cat?`<span class="chip nchip">${esc(n.cat)}</span>`:''}</div>
     ${newsSum(n)?`<div class="newss">${esc(newsShow(newsSum(n)))}</div>`:''}
     <div class="newsm"><span>${esc(n.source||'')}</span>
@@ -47722,7 +47714,7 @@ async function loadSeries(force){
   return seriesList;
 }
 // ★ 이 글이 어느 연재에 속하는가 — 읽는 문은 이것 하나다.
-//   옛 글에는 이름이 없다. 그때는 빈 글자를 돌려주고 '연재에 포함되지 않은 글' 로 모은다.
+//   옛 글에는 이름이 없다. 그때는 빈 글자를 돌려주고 '묶지 않은 글' 로 모은다.
 function seriesName(x){
   return String((x && x.sname) || '').trim();
 }
@@ -47788,7 +47780,7 @@ async function seriesHtml(){
   //   묶음 안은 1편부터 — 연재는 차례대로 읽는 것이다.
   return add + seriesGroups(rows).map(g=>
     `<div class="srgrp"><div class="srghead">
-       <b>${esc(seriesShowName(g) || t('연재에 포함되지 않은 글'))}</b>
+       <b>${esc(seriesShowName(g) || t('묶지 않은 글'))}</b>
        <span class="srgn">${esc(tsub('{n}편', { n: g.items.length }))}</span>
        ${notiSubBtn(g.name, 'news')}</div>`
     + g.items.map(x=>`<div class="mr" onclick="openSeries('${jsq(x.id)}')">
@@ -47812,19 +47804,19 @@ function seriesApplyHtml(){
   if(asked){
     return `<div class="mrnone" style="text-align:left">
       <b>${esc(t('연재자 신청을 보냈습니다.'))}</b> (${esc(asked.slice(0,10))})<br>
-      ${esc(t('운영자가 확인 후 권한을 켜 드리면 여기에 글쓰기 버튼이 표시됩니다.'))}
+      ${esc(t('운영자가 보고 켜 드리면 여기에 글 올리는 버튼이 생깁니다.'))}
       <div class="fchips" style="margin-top:8px">
         <button class="tchip" onclick="applySeries()">${esc(t('다시 보내기'))}</button></div></div>`;
   }
   return `<div class="mrnone" style="text-align:left">
-    ${t('연재는 <b>허락받은 분만</b> 올릴 수 있습니다. 다른 사람의 글을 옮겨 싣는 공간이기 때문입니다.')}<br>
-    ${esc(t('직접 쓰신 항해기나 허락을 받아 전재할 글이 있으면 신청해 주세요.'))}
+    ${t('연재는 <b>허락받은 분만</b> 올릴 수 있습니다. 남의 글을 옮겨 싣는 자리라서 그렇습니다.')}<br>
+    ${esc(t('직접 쓰신 항해기나, 허락을 받아 옮기실 글이 있으면 신청해 주세요.'))}
     <div class="fchips" style="margin-top:8px">
       <button class="tchip" onclick="applySeries()">${esc(t('연재자 신청'))}</button></div></div>`;
 }
 function applySeries(){
   if(!meUid() || !window.__user){
-    tell(t('연재자 신청은 로그인 후 하실 수 있습니다.'));
+    tell(t('연재자 신청은 로그인하고 하실 수 있습니다.'));
     if(typeof openAccount === 'function') openAccount();
     return;
   }
@@ -47832,12 +47824,12 @@ function applySeries(){
   openForm({
     title: '연재자 신청',
     okText: '보내기',
-    sub: '운영자가 확인한 후 켜 드립니다. 켜지면 뉴스 ▸ 연재에 글쓰기 버튼이 나타납니다.',
+    sub: '운영자가 보고 켜 드립니다. 켜지면 뉴스 ▸ 연재에 글 올리는 버튼이 생깁니다.',
     fields: [
       { key:'mine', label:'글 종류', type:'pick', value:'1',
         options:[ { v:'1', name:'직접 쓴 글', sub:'항해기 · 정비기 · 기고' },
-                  { v:'0', name:'옮긴 글',   sub:'원작자 허락을 받아 옮긴 글' } ] },
-      { key:'about', type:'multi', rows:5, label:'작성할 글 소개',
+                  { v:'0', name:'옮긴 글',   sub:'남의 글을 허락받아 옮김' } ] },
+      { key:'about', type:'multi', rows:5, label:'쓰실 글 소개',
         placeholder:'무엇을 얼마나 쓰실 생각인지 적어 주세요' },
       { key:'link', label:'그동안 쓰신 글 (선택)', placeholder:'https://…' }
     ],
@@ -47847,8 +47839,8 @@ function applySeries(){
       const mine = String(v.mine) === '1';
       // ★ 옮긴 글은 허락이 조건이다. 신청 단계에서 미리 알려 둔다 —
       //   켜 준 뒤에 몰랐다고 하면 그때는 이미 남의 글이 올라가 있다.
-      if(!mine && !await ask(t('옮긴 글은 저자·매체·원문 링크가 모두 있어야 등록됩니다.\n')
-        + t('저작권자의 허락도 미리 받으셔야 합니다.\n\n확인하셨으면 신청하시겠습니까?'), { ok: t('신청하기') })) return false;
+      if(!mine && !await ask(t('옮긴 글은 저자·매체·원문 링크가 모두 있어야 올라갑니다.\n')
+        + t('저작권자 허락도 미리 받으셔야 합니다.\n\n알겠습니다, 신청할까요?'), { ok: t('신청하기') })) return false;
       const lines = [
         mine ? '직접 쓴 글' : '옮긴 글 (허락 필요)',
         about,
@@ -47893,7 +47885,7 @@ function seriesAlso(x){
   const g = seriesGroups().find(z => z.name === name);
   const items = (g && g.items) || [];
   if(items.length < 2) return '';         // 혼자면 붙일 것이 없다
-  return `<div class="sralso"><b>${esc(name || t('연재에 포함되지 않은 글'))}</b>`
+  return `<div class="sralso"><b>${esc(name || t('묶지 않은 글'))}</b>`
     + items.map(z=>{
         const now = String(z.id) === String(x.id);
         return `<div class="srrow${now?' srnow':''}"`
@@ -47924,17 +47916,17 @@ async function openSeries(id){
     ${seriesMine(x) ? '' : `<div class="wxbox"><b>${esc(t('원문'))}</b>
       ${x.origTitle?`<div>${esc(x.origTitle)}</div>`:''}
       ${x.link?`<div class="wxfoot"><a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.link)}</a></div>`:''}
-      <div class="wxfoot">${esc(t('저작권자의 허락을 받아 게재했습니다. 무단 전재를 금합니다.'))}</div></div>`}
+      <div class="wxfoot">${esc(t('저작권자 허락을 받아 옮겼습니다. 무단 전재를 금합니다.'))}</div></div>`}
     ${renderBlocks(tv ? trBlocks(seriesBody(x), tv.body) : seriesBody(x), `seriesPhotos('${esc(x.id)}')`)}
     ${seriesAlso(x)}`;
   showPanel(P);
 }
 function writeSeries(id){
-  if(guardEdit('연재 글을 올리거나 수정합니다.', ()=>writeSeries(id))) return;
+  if(guardEdit('연재 글을 올리거나 고칩니다.', ()=>writeSeries(id))) return;
   if(!canSeries()){ tell(t('연재 글을 올릴 권한이 없습니다')); return; }
   const x = id ? (seriesList||[]).find(r=>String(r.id)===String(id)) : null;
   // 남이 올린 연재는 고치지 못한다 (규칙에서도 막혀 있다)
-  if(x && !canEditSeries(x)){ tell(t('다른 사람이 올린 연재는 수정할 수 없습니다.\n\n작성자만 수정할 수 있습니다.')); return; }
+  if(x && !canEditSeries(x)){ tell(t('남이 올린 연재는 고칠 수 없습니다.\n\n올린 사람만 고칠 수 있습니다.')); return; }
   openForm({
     filter: true,     // ★ 밖으로 나가는 글 — formOk 에서 거른다
     title: x ? '연재 수정' : '연재 글 올리기',
@@ -47944,7 +47936,7 @@ function writeSeries(id){
       { key:'mine', label:'글 종류', type:'pick',
         value: (x ? (seriesMine(x) ? '1' : '0') : '1'),
         options:[ { v:'1', name:'직접 쓴 글', sub:'기고 · 연재' },
-                  { v:'0', name:'옮긴 글',   sub:'원작자 허락을 받아 옮긴 글' } ] },
+                  { v:'0', name:'옮긴 글',   sub:'남의 글을 허락받아 옮김' } ] },
       // ★ 어느 연재에 속하는가. 이미 있는 이름은 단추로 준다 —
       //   손으로 다시 적으면 한 글자만 달라도 딴 묶음이 되어 흩어진다.
       { key:'sname',     label:'연재 이름', value: x ? (x.sname||'') : '',
@@ -47963,15 +47955,15 @@ function writeSeries(id){
       if(!v.author) return formErr('author', '저자를 넣어 주세요');
       // ★ 옮긴 글일 때만 매체·원문 링크가 필수다. 그것이 허락 조건이다.
       if(!mine){
-        if(!v.source) return formErr('source', '매체 이름을 입력해 주세요.\n\n매체 이름 표기가 전재 허락 조건이므로 생략할 수 없습니다.');
+        if(!v.source) return formErr('source', '매체 이름을 넣어 주세요.\n\n옮긴 글은 허락 조건이라 빠지면 안 됩니다.');
         if(!/^https?:\/\//i.test(String(v.link||'').trim()))
-          return formErr('link', '원문 링크를 입력해 주세요 (https://로 시작).\n\n옮긴 글은 원문 링크가 게재 허락 조건이므로 반드시 있어야 합니다.');
+          return formErr('link', '원문 링크를 넣어 주세요 (https:// 로 시작).\n\n옮긴 글은 허락 조건이라 빠지면 안 됩니다.');
       }
       // 편집기는 블록을 그대로 돌려준다. 사진은 그 안에 섞여 있다.
       const blocks = Array.isArray(v.body) ? v.body : [];
       const plain  = blocksText(blocks);
       const photos = blocks.filter(z=>z.t==='photo').map(z=>z.v);
-      if(!plain.trim() && !photos.length) return formErr('doc', '본문을 입력해 주세요');
+      if(!plain.trim() && !photos.length) return formErr('doc', '본문을 넣어 주세요');
       (async ()=>{
         try{
           // ★ 사진을 창고로 보내고 주소만 남긴다. 문서 안에 담으면
@@ -48008,13 +48000,13 @@ function writeSeries(id){
   });
 }
 async function delSeries(id){
-  if(guardEdit('연재 글을 삭제합니다.', ()=>delSeries(id))) return;
+  if(guardEdit('연재 글을 지웁니다.', ()=>delSeries(id))) return;
   const x = (seriesList||[]).find(r=>String(r.id)===String(id));
   if(!canDelSeries(x)) return;
-  if(!await ask(t('이 연재 글을 삭제할까요?'), { ok: t('삭제'), warn: true })) return;
+  if(!await ask(t('이 연재 글을 지울까요?'), { ok: t('삭제'), warn: true })) return;
   window.__series.del(id)
     .then(async ()=>{ await loadSeries(true); closeBoat(); newsSub='sr'; renderNews(); })
-    .catch(e=>tell(t('삭제하지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
+    .catch(e=>tell(t('지우지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
 }
 // ★ 첫 칸 이름 — 보는 사람 말이 곧 그 나라다. 이름을 고르는 곳은 여기 하나다.
 //   ★ 「내 나라 소식」 처럼 두루뭉술하게 적지 않는다. 어느 나라 것인지 그대로 적는다 —
@@ -48049,8 +48041,7 @@ async function renderNews(force){
   // ★ 걸러 보는 단추가 아니다. 「알림을 어디서 켜나」를 여기 두는 것이다.
   //   목록을 거르는 것으로 읽히지 않게 말을 「고르기」로 두고 소식 위가 아니라 오른쪽에 둔다.
   const nCat = notiGet().krCats.length + notiGet().wwCats.length;
-  // ★ 5.30 — 단추와 빈 화면 글이 화면 끝에 붙어 있었다. 다른 줄처럼 양옆 20px
-  const catBar = `<div class="mrrow" style="justify-content:flex-end;padding:6px 20px">
+  const catBar = `<div class="mrrow" style="justify-content:flex-end;padding:6px 0">
       <button class="mrbtn subbtn" onclick="openNotiCats()">${esc(t('관심 분야 선택'))}${
         nCat ? ` <span class="chip">${esc(String(nCat))}</span>` : ''}</button></div>`;
   let html = tabs;
@@ -48061,7 +48052,7 @@ async function renderNews(force){
     const 줄 = (내말 === 'ko') ? krRow : wwRow;
     html += 내소식.length ? newsTrBar(내소식) + newsByDay(내소식, 줄)
       : `<div class="mrnone" style="text-align:left">${esc(t('아직 수집된 소식이 없습니다.'))}<br><br>${
-          esc(t('이 언어로 소식을 제공하는 곳이 아직 많지 않습니다. 「세계 소식」은 자동으로 번역해 드립니다.'))}</div>`;
+          esc(t('이 언어로 소식을 내는 곳이 아직 적습니다. 「세계 소식」을 보시면 그쪽은 자동으로 번역해 드립니다.'))}</div>`;
   } else if(newsSub === 'ww'){
     html += catBar;
     const up = newsCache && newsCache.updated ? new Date(newsCache.updated) : null;
@@ -48652,7 +48643,7 @@ function tideInput(){
         const m = x.match(/(\d{1,2})\s*[:시]\s*(\d{1,2}).*?(-?\d{2,4})/);
         return m ? { time: String(m[1]).padStart(2,'0')+':'+String(m[2]).padStart(2,'0'), cm: Number(m[3]) } : null;
       }).filter(Boolean);
-      if(rows.length < 2) return formErr('rows', '만조와 간조를 각각 하나 이상 입력해 주세요.');
+      if(rows.length < 2) return formErr('rows', '만조와 간조를 각각 하나 이상 넣어 주세요.');
       wxSet('bt_tide', { date: today(), rows });
       renderWeather();
     }
@@ -48665,7 +48656,7 @@ function wxUseGPS(){
   if(!navigator.geolocation){ tell(t('이 기기에서는 위치 기능을 사용할 수 없습니다.')); return; }
   const st = document.getElementById('wxStatus');
   if(st) st.textContent = t('현재 위치 확인 중…');
-  geoGet('현재 위치 날씨·물때',
+  geoGet('지금 있는 곳 날씨·물때',
     p=>{
       wxCur = { id:'gps', name:t('현재 위치'), lat:p.coords.latitude, lon:p.coords.longitude, region: wxNearestRegion(p.coords.latitude, p.coords.longitude) };
       wxSet(pKey('bt_wxcur'), wxCur); wxData=null; renderWeather();
@@ -48724,10 +48715,10 @@ function wxSpotList(){
   const P = document.getElementById('mrPanel');
   P.innerHTML = `<div class="mrhead"><b>${esc(t('날씨 지점'))}</b><span style="flex:1"></span>
       <button class="tab" onclick="closeBoat();switchTab('home')">${esc(t('← 오늘'))}</button></div>
-    <div class="mrnone" style="text-align:left">${esc(t('자주 보는 위치를 지도에서 지정해 두면 눌러서 바로 볼 수 있습니다.'))}</div>
+    <div class="mrnone" style="text-align:left">${esc(t('자주 보는 위치를 지도에서 찍어 두면 눌러서 바로 볼 수 있습니다.'))}</div>
     ${wxSpotRows() || `<div class="mrnone">${esc(t('아직 지점이 없습니다'))}</div>`}
     <div class="mrrow" style="justify-content:center;padding:14px">
-      <button class="mrbtn ok" onclick="wxAddSpot()">${esc(t('+ 지도에서 선택해 추가'))}</button></div>`;
+      <button class="mrbtn ok" onclick="wxAddSpot()">${esc(t('+ 지도에서 찍어 추가'))}</button></div>`;
   showPanel(P);
   setHeadTitle('날씨 지점');
 }
@@ -48739,7 +48730,7 @@ function wxEditSpot(id){
   const s2 = wxSpots.find(x=>String(x.id)===String(id));
   if(!s2){ tell(t('그 지점을 찾지 못했습니다'), { kind:'bad' }); return; }
   if(String(id).startsWith('port@')){
-    tell(t('홈포트에서 자동으로 만들어진 지점입니다.\n\n내 배 > 기본 정보에서 홈포트를 수정하면 함께 바뀝니다.'), { big:true });
+    tell(t('홈포트에서 자동으로 만들어진 지점입니다.\n\n내 배 > 기본 정보에서 홈포트를 고치면 함께 바뀝니다.'), { big:true });
     return;
   }
   wxSpotCtx = { id };
@@ -48756,7 +48747,7 @@ function wxSpotPick(cur){
       <input id="wxSpotName" style="flex:1" placeholder="${esc(t('예: 안도항'))}" autocomplete="off"
         value="${cur?esc(cur.name):''}"></div>
     ${mapBox('wxSpotMap','48vh')}
-    <div class="mrnone" style="text-align:left">${esc(t('지도를 누르면 그 위치가 지정됩니다 · 끌어서 이동 · 두 손가락으로 확대'))}</div>
+    <div class="mrnone" style="text-align:left">${esc(t('지도를 누르면 그 위치로 정해집니다 · 끌어서 이동 · 두 손가락으로 확대'))}</div>
     <div class="mrrow" style="justify-content:center">
       <button class="mrbtn" onclick="wxSpotGPS()">${esc(t('현재 위치로'))}</button></div>`;
   showPanel(P);
@@ -48768,7 +48759,7 @@ function wxSpotPick(cur){
 }
 function wxSpotGPS(quiet){
   if(!navigator.geolocation){ if(!quiet) tell(t('이 기기에서는 위치 기능을 사용할 수 없습니다.')); return; }
-  geoGet('날씨 지점 지정',
+  geoGet('날씨 지점 잡기',
     p=>{
       if(!mapS) return;
       mapS.pick = { lat:+p.coords.latitude.toFixed(5), lon:+p.coords.longitude.toFixed(5) };
@@ -48785,8 +48776,8 @@ function wxSpotGPS(quiet){
 function wxSpotSave(){
   const el = document.getElementById('wxSpotName');
   const name = String((el && el.value) || '').trim();
-  if(!name){ fieldErr('wxSpotName', '지점 이름을 입력해 주세요'); return; }
-  if(!mapS || !mapS.pick){ tell(t('지도를 눌러 위치를 지정해 주세요')); return; }
+  if(!name){ fieldErr('wxSpotName', '지점 이름을 넣어 주세요'); return; }
+  if(!mapS || !mapS.pick){ tell(t('지도를 탭해서 위치를 찍어 주세요')); return; }
   const lat = mapS.pick.lat, lon = mapS.pick.lon;
   if(wxSpotCtx){
     const s2 = wxSpots.find(x=>String(x.id)===String(wxSpotCtx.id));
@@ -48805,12 +48796,12 @@ async function wxDelSpot(id){
   const s2 = wxSpots.find(x=>String(x.id)===String(id));
   if(!s2) return;
   if(String(id).startsWith('port@')){
-    tell(t('홈포트에서 자동으로 만들어진 지점입니다.\n\n삭제해도 배를 열면 다시 생깁니다.\n')
-      + t('삭제하시려면 내 배 > 기본 정보에서 홈포트 위치를 비워 주세요.'), { big:true });
+    tell(t('홈포트에서 자동으로 만들어진 지점입니다.\n\n지워도 배를 열면 다시 생깁니다.\n')
+      + t('없애시려면 내 배 > 기본 정보에서 홈포트 위치를 비워 주세요.'), { big:true });
     return;
   }
   if(!await ask(tsub("'{name}' 지점을 지울까요?", {name:s2.name}) + '\n\n'
-      + t('날씨 기록은 삭제되지 않습니다.'), { ok: t('삭제'), warn: true })) return;
+      + t('날씨 기록이 지워지는 것은 아닙니다.'), { ok: t('삭제'), warn: true })) return;
   wxSpots = wxSpots.filter(x=>String(x.id)!==String(id));
   wxSet(pKey('bt_spots'), wxSpots); try{ wxPrefPush(); }catch(_){}
   // 보던 지점을 지웠으면 다른 곳으로 옮긴다 (빈 화면이 되면 안 된다)
@@ -48909,7 +48900,7 @@ function hatPanel(){
   const P = document.getElementById('hatPanelBody');
   P.innerHTML = `
     <div class="mrtop"><b>${esc(t('기준값 (약최고고조위 HAT)'))}</b><button class="mrbtn" onclick="hatClose()">${esc(t('닫기'))}</button></div>
-    <div class="hexp">${esc(t('해도의 교량 높이는 이 기준면을 기준으로 표기됩니다. 통과 높이 = 해도 높이 + (기준값 − 조위). 기준값은 지역마다 다르므로 항해하는 지역에 맞게 선택해 주세요.'))}</div>
+    <div class="hexp">${esc(t('해도의 교량 높이는 이 기준면을 기준으로 표기됩니다. 통과높이 = 해도높이 + (기준값 − 조위) 지역마다 다르므로 항해하는 지역에 맞게 선택해 주세요.'))}</div>
     <div class="hrowi"><label><input type="radio" name="hatsel" ${sel.mode==='auto'?'checked':''}
       onchange="hatPick(null)"> <b>${esc(t('자동'))}</b> ${esc(tsub('— 현재 위치에서 가장 가까운 지역 (지금: {n} {v})', { n: cur.name, v: cur.hat.toFixed(2) }))}</label></div>
     ${rows}
@@ -48940,9 +48931,9 @@ function hatAddOne(){
       { key:'hat',  label:'약최고고조위 (m)', value:'', placeholder:'3.62', mode:'decimal' }
     ],
     onOk: v => {
-      if(!v.name) return formErr('name', '지역 이름을 입력해 주세요');
+      if(!v.name) return formErr('name', '지역 이름을 넣어 주세요');
       const n = parseFloat(v.hat);
-      if(!(n > 0)) return formErr('hat', '약최고고조위를 미터 단위 숫자로 입력해 주세요');
+      if(!(n > 0)) return formErr('hat', '약최고고조위를 미터 단위 숫자로 넣어 주세요');
       if(hatList().some(x=>x.name===v.name)) return formErr('name', '이미 등록된 이름입니다.');
       const custom = wxLS('bt_hatlist', []);
       custom.push({ name:v.name, hat:n, lat: wxCur?wxCur.lat:null, lon: wxCur?wxCur.lon:null });
@@ -48963,7 +48954,7 @@ function hatEditOne(name){
     ],
     onOk: v => {
       const n = parseFloat(v.hat);
-      if(!(n > 0)) return formErr('hat', '미터 단위 숫자로 입력해 주세요');
+      if(!(n > 0)) return formErr('hat', '미터 단위 숫자로 넣어 주세요');
       if(x.builtin){ const ov = wxLS('bt_hat', {}); ov[name]=n; wxSet('bt_hat', ov); }
       else { const c = wxLS('bt_hatlist', []); const f=c.find(i=>i.name===name); if(f){ f.hat=n; wxSet('bt_hatlist', c); } }
       hatPanel(); renderWeather();
@@ -49614,7 +49605,7 @@ async function renderWeather(){
     const wxNoIn  = (typeof locSignedIn === 'function') && !locSignedIn();
     const wxNoYes = !wxNoIn && (typeof locOK === 'function') && !locOK();
     const 말 = wxNoIn
-      ? esc(t('현재 위치는 로그인하신 분만 사용할 수 있습니다.')) + '<br>'
+      ? esc(t('현재 위치는 로그인하신 분에게만 받습니다.')) + '<br>'
         + esc(t('로그인하시거나, 지점을 직접 추가해 주세요.'))
       : wxNoYes
       ? esc(t('위치정보 이용에 아직 동의하지 않으셨습니다.')) + '<br>'
@@ -49661,7 +49652,7 @@ async function renderWeather(){
 
   try{
     const W = wxData.w, M = wxData.m;
-    if(!W || !W.hourly || !W.hourly.time) throw new Error(t('날씨 정보를 불러오지 못했습니다'));
+    if(!W || !W.hourly || !W.hourly.time) throw new Error(t('날씨를 받지 못했습니다'));
     const H = W.hourly, times = H.time;
     const N = times.length;
     const t0 = wxTs(times[0], wxData);
@@ -49781,14 +49772,14 @@ async function renderWeather(){
                 +'T'+String(bd.getHours()).padStart(2,'0')+':'+String(bd.getMinutes()).padStart(2,'0');
     let bridgeResult = '';
     if(quickClr>0 && !(ad>0)){
-      bridgeResult = `<div class="qres"><div class="qsub" style="color:#D9AE63">${t('배 높이(공기흘수)를 먼저 입력해 주세요. 아래 <b>변경</b>에서 안테나 끝까지의 실측값을 입력합니다.')}<br>${esc(t('입력하지 않으면 통과 여부를 계산할 수 없습니다.'))}</div></div>`;
+      bridgeResult = `<div class="qres"><div class="qsub" style="color:#D9AE63">${t('배 높이(공기흘수)를 먼저 입력해 주세요. 아래 <b>변경</b>에서 안테나 끝까지의 실측값을 넣습니다.')}<br>${esc(t('입력하지 않으면 통과 여부를 계산할 수 없습니다.'))}</div></div>`;
     }
     else if(quickClr>0 && TA && (TA.est || (TA.hc && !TA.safe))){
       // ★ 5.0 — 참고용 물때에는 기본수준면이 없다. 여기서 숫자를 내면 그것을 믿고 배가 들어간다.
       // ★ 5.2 — 조화상수 물때에는 기준면이 있지만, 관측소가 멀면 그 기준면도 이 자리 것이 아니다.
       bridgeResult = `<div class="qres"><div class="qsub" style="color:#D9AE63">${
         TA.est ? esc(t('이 위치는 참고용 물때라 다리 통과를 계산하지 않습니다.'))
-        : TA.model ? esc(t('조석 모형으로 계산한 물때라 다리 통과를 계산하지 않습니다.'))
+        : TA.model ? esc(t('조석 모형으로 셈한 물때라 다리 통과를 계산하지 않습니다.'))
                : esc(tsub('가장 가까운 조위관측소가 {km}km 떨어져 있어 다리 통과를 계산하지 않습니다.', { km: Math.round(TA.spot.dist) }))}<br>${
         esc(t(TA.model ? '만조·간조를 직접 입력하시면 계산해 드립니다.' : '참고용 물때에는 기본수준면이 없습니다. 만조·간조를 직접 입력하시면 계산해 드립니다.'))}</div></div>`;
     }
@@ -49800,10 +49791,10 @@ async function renderWeather(){
         const clr = quickClr + (cur.hat - tv) - pad;
         const m = clr - ad;
         const c = m>=mg ? '#5FB894' : m>=0 ? '#D9AE63' : '#E4756A';
-        const verdict = m>=mg ? t('통과 가능') : m>=0 ? t('여유 부족 · 위험') : t('통과 불가');
+        const verdict = m>=mg ? t('통과 가능') : m>=0 ? t('여유 부족 — 위험') : t('통과 불가');
         bridgeResult = `<div class="qres">
           <div class="qbig" style="color:${c}">${clr.toFixed(2)}<i>m</i></div>
-          <div class="qsub">${esc(tsub('해당 시각 조위 {t}cm · 배 높이 {h}m',
+          <div class="qsub">${esc(tsub('그 시각 조위 {t}cm · 배 높이 {h}m',
               {t:(tv*100).toFixed(0), h:ad.toFixed(2)}))} ·
             ${esc(t('여유'))} <b style="color:${c}">${m.toFixed(2)}m</b> — <b style="color:${c}">${esc(verdict)}</b></div>
           <div class="qsub2">${quickClr.toFixed(1)} + (${cur.hat.toFixed(2)} − ${tv.toFixed(2)})${pad ? ' − ' + pad.toFixed(1) : ''} = ${clr.toFixed(2)}</div>
@@ -49827,25 +49818,25 @@ async function renderWeather(){
         <div class="qcfg">${esc(t('배 높이'))} <b>${ad>0?ad.toFixed(2)+'m':t('미입력')}</b><button class="mrbtn edt" onclick="airDraftEdit()">${esc(t('변경'))}</button>${esc(t('· 여유'))}<b>${mg.toFixed(1)}m</b><button class="mrbtn edt" onclick="marginEdit()">${esc(t('변경'))}</button></div>
         ${!TA?`<div class="mrm">${esc(t('물때 자료가 아직 없습니다. 만조·간조를 직접 입력할 수도 있습니다.'))}<button class="mrbtn edt" onclick="tideInput()">${esc(t('직접 입력'))}</button></div>`
           :(TA.manual?`<div class="mrm">${esc(t('직접 입력한 만조·간조 사용 중'))} <button class="mrbtn edt" onclick="tideInput()">${esc(t('수정'))}</button></div>`
-          :(TA.est?`<div class="mrm">${esc(t('참고용 물때를 사용하고 있습니다. 정확한 값을 아시면 직접 입력해 주세요. 입력한 값을 사용합니다.'))} <button class="mrbtn edt" onclick="tideInput()">${esc(t('직접 입력'))}</button></div>`
+          :(TA.est?`<div class="mrm">${esc(t('참고용 물때를 사용하는 중입니다 — 정확한 값을 아시면 직접 입력하시면 그 값을 사용합니다.'))} <button class="mrbtn edt" onclick="tideInput()">${esc(t('직접 입력'))}</button></div>`
           :(TA.hc?`<div class="mrm">${esc(TA.model
-              ? tsub('위성 조석 모형(EOT20)의 {spot} 부근({km}km) 조화상수로 계산한 물때입니다.', { spot: nameFor(TA.spot.name), km: Math.round(TA.spot.dist) })
-              : tsub('{spot} 조위관측소({km}km)의 조화상수로 계산한 물때입니다.', { spot: nameFor(TA.spot.name), km: Math.round(TA.spot.dist) }))} <button class="mrbtn edt" onclick="tideInput()">${esc(t('직접 입력'))}</button></div>`:'')))}
+              ? tsub('위성 조석 모형(EOT20)의 {spot} 부근({km}km) 조화상수로 셈한 물때입니다.', { spot: nameFor(TA.spot.name), km: Math.round(TA.spot.dist) })
+              : tsub('{spot} 조위관측소({km}km)의 조화상수로 셈한 물때입니다.', { spot: nameFor(TA.spot.name), km: Math.round(TA.spot.dist) }))} <button class="mrbtn edt" onclick="tideInput()">${esc(t('직접 입력'))}</button></div>`:'')))}
       </div>`;
 
-    L.innerHTML = head + (wxAgeText() ? `<div class="mrnone" style="text-align:left;margin:4px 0 0">${esc(wxAgeText())}${(wxData && WX_BG[wxData.key]) ? ' · ' + esc(t('최신 예보를 불러오는 중…')) : ''}</div>` : '') + wxAlertBox()
+    L.innerHTML = head + (wxAgeText() ? `<div class="mrnone" style="text-align:left;margin:4px 0 0">${esc(wxAgeText())}${(wxData && WX_BG[wxData.key]) ? ' · ' + esc(t('새 예보를 받는 중…')) : ''}</div>` : '') + wxAlertBox()
       + `<div id="boatWx"></div>`
       + `<div id="wxSelBar" class="selbar"></div>`
       + timeline
       + bridgeCard
       + `<div class="wxwarn">${TA && TA.est && TA.cal
-          ? tsub('이 위치는 가까이에 조위관측소가 없어, 세계 조석 모형 값을 <b>{ref}</b>({km}km)의 조화상수에 맞춰 <b>보정한 참고용</b> 물때입니다 (시각 {lag}분 · 조차 {k}배 보정). 높이는 그 지점의 기본수준면으로 환산한 값이라 이 위치의 기준면과 다를 수 있습니다. <b>다리 통과와 수심 판단에는 사용하지 않습니다.</b>', { ref: esc(nameFor(TA.cal.ref)), km: Math.round(TA.cal.refKm), lag: (TA.cal.lagMin > 0 ? '+' : '') + TA.cal.lagMin, k: TA.cal.k.toFixed(2) })
+          ? tsub('이 위치는 가까이에 조위관측소가 없어, 세계 조석 모형 값을 <b>{ref}</b>({km}km)의 조화상수에 맞춰 <b>보정한 참고용</b> 물때입니다 (시각 {lag}분 · 조차 {k}배 보정). 높이는 그 지점의 기본수준면으로 옮긴 값이라 이 위치의 기준면과 다를 수 있습니다. <b>다리 통과와 수심 판단에는 사용하지 않습니다.</b>', { ref: esc(nameFor(TA.cal.ref)), km: Math.round(TA.cal.refKm), lag: (TA.cal.lagMin > 0 ? '+' : '') + TA.cal.lagMin, k: TA.cal.k.toFixed(2) })
           : TA && TA.est
-          ? t('이 위치는 가까이에 조위관측소가 없어, 세계 조석 모형으로 계산한 <b>참고용</b> 물때입니다. 만조·간조 시각과 높이는 <b>해도나 해당 국가의 조석표에서 확인해 주세요.</b> 높이는 <b>최근 며칠 중 가장 낮은 수위를 0</b>으로 잡은 값이라 기본수준면이 아닙니다. <b>다리 통과와 수심 판단에는 사용하지 마세요.</b>')
+          ? t('이 위치는 가까이에 조위관측소가 없어, 세계 조석 모형으로 낸 <b>참고용</b> 물때입니다. 만조·간조 시각과 높이는 <b>해도나 그 국가 조석표에서 확인해 주세요.</b> 높이는 <b>이 며칠 중 가장 낮은 물을 0</b> 으로 잡은 값이라 기본수준면이 아닙니다. <b>다리 통과와 수심 판단에는 사용하지 마십시오.</b>')
           : (TA && TA.hc && TA.model
-          ? tsub('이 물때는 위성 조석 모형 <b>EOT20</b>에서 추출한 <b>{spot}</b> 부근({km}km)의 <b>조화상수</b>로 계산한 것입니다. 높이는 <b>최저천문조위(LAT)</b> 위 높이입니다. 다리 밑을 지나기 전에는 <b>해도와 VTS로 확인해 주세요.</b>', { spot: nameFor(TA.spot.name), km: Math.round(TA.spot.dist) })
+          ? tsub('이 물때는 위성 조석 모형 <b>EOT20</b>에서 뽑은 <b>{spot}</b> 부근({km}km)의 <b>조화상수</b>로 셈한 것입니다. 높이는 <b>최저천문조위(LAT)</b> 위 높이입니다. 다리 밑을 지나기 전에는 <b>해도와 VTS로 확인해 주세요.</b>', { spot: nameFor(TA.spot.name), km: Math.round(TA.spot.dist) })
           : (TA && TA.hc
-          ? tsub('이 물때는 <b>{spot}</b> 조위관측소({km}km)의 <b>조화상수</b>로 계산한 것입니다. 각국 수로 기관이 조석표를 만들 때와 같은 방식입니다. 높이는 그 관측소의 <b>기본수준면</b> 위 높이입니다. 다리 밑을 지나기 전에는 <b>해도와 VTS로 확인해 주세요.</b>', { spot: nameFor(TA.spot.name), km: Math.round(TA.spot.dist) })
+          ? tsub('이 물때는 <b>{spot}</b> 조위관측소({km}km)의 <b>조화상수</b>로 셈한 것입니다 — 관들이 물때표를 만드는 것과 같은 셈입니다. 높이는 그 관측소의 <b>기본수준면</b> 위 높이입니다. 다리 밑을 지나기 전에는 <b>해도와 VTS로 확인해 주세요.</b>', { spot: nameFor(TA.spot.name), km: Math.round(TA.spot.dist) })
           : t('조위는 국립해양조사원 만조·간조 자료를 보간한 <b>근사값</b>입니다 (오차 ±10~20cm). 실제 교량 통과 전에는 반드시 VTS에 확인하고, 안테나를 포함한 실측 높이로 판단해 주세요.')))}</div>`
       // ★ 4.68 — 나라 물때 자료는 출처를 밝혀야 쓸 수 있다.
       //   일본 기상청 자료는 政府標準利用規約 을 따르고, 그 조건이 「출처 표시」다.
@@ -49976,7 +49967,7 @@ function showErr(msg){
     // 화면에는 앞 한 줄만 — 스택까지 띄우면 화면을 덮는다. 보낼 때는 전부 간다.
     // ★ 5.6 — 'Script error.' 는 사람에게 아무 뜻이 없다. 사실대로 풀어 적는다.
     const 한줄 = errMasked(one)
-      ? errSay('외부에서 불러온 파일에서 발생한 오류입니다. 앱은 계속 사용하실 수 있습니다.')
+      ? errSay('바깥에서 받아 온 파일에서 난 오류입니다. 앱은 계속 사용하실 수 있습니다.')
       : one.split('\n')[0].slice(0, 200);
     errPaint(errSay('오류') + ': ' + 한줄, can);
     clearTimeout(d._t); d._t = setTimeout(()=>{ d.style.display='none'; }, can ? 20000 : 10000);
@@ -50016,7 +50007,7 @@ function errCanApp(){
 async function errSend(){
   const one = errLast;
   if(!one || ERR_SENT.has(one)) return;
-  const 본문 = errSay('앱에서 자동으로 감지한 오류입니다.') + '\n\n' + errBody(one);
+  const 본문 = errSay('앱이 스스로 잡은 오류입니다.') + '\n\n' + errBody(one);
   const d = document.getElementById('errbar');
   if(!errCanApp()){
     // 로그인 전 — 메일로 보낸다. 적을 것은 앱이 다 채워 놓는다.
@@ -50156,8 +50147,7 @@ document.addEventListener('error', e=>{
       if(된다) return;
       if(el.classList.contains('mt')) return;    // 타일은 그냥 빈다
       el.classList.add('imgfail');
-      try{ const w = parseFloat(el.style.width || el.getAttribute('width') || ''); if(w > 0 && w <= 64) el.classList.add('sm'); }catch(_){}
-      el.alt = t('사진을 불러오지 못했습니다. 인터넷 연결을 확인해 주세요');
+      el.alt = t('사진을 불러오지 못했습니다 — 인터넷 연결을 확인해 주세요');
     });
     return;
   }
@@ -50166,8 +50156,7 @@ document.addEventListener('error', e=>{
   //   타일은 원래 안 보이면 그냥 비는 것이 맞다.
   if(el.classList.contains('mt')) return;
   el.classList.add('imgfail');
-      try{ const w = parseFloat(el.style.width || el.getAttribute('width') || ''); if(w > 0 && w <= 64) el.classList.add('sm'); }catch(_){}
-  el.alt = t('사진을 불러오지 못했습니다. 인터넷 연결을 확인해 주세요');
+  el.alt = t('사진을 불러오지 못했습니다 — 인터넷 연결을 확인해 주세요');
 }, true);
 window.addEventListener('online', ()=>{
   try{ keepBoatPhotos(); }catch(_){}
