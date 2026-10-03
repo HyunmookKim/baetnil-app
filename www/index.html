@@ -18480,9 +18480,9 @@ function trkBgSay(초){
   if(말했나) return;
   try{ localStorage.setItem(TRK_BG_SAID, 'done'); }catch(_){}
   const 분 = Math.max(1, Math.round(초 / 60));
-  ask(tsub('화면이 꺼져 있던 {m}분 동안 위치 정보가 한 번도 수신되지 않았습니다.', { m: 분 }) + '\n\n'
-      + t('이 휴대폰이 뱃일을 절전 상태로 전환하고 있습니다. 이대로 두면 화면을 끌 때마다 항적이 끊깁니다.'),
-      { ok: t('해결 방법 보기') })
+  ask(tsub('화면을 끈 {m}분 동안 위치가 한 번도 안 들어왔습니다.', { m: 분 }) + '\n\n'
+      + t('이 폰이 뱃일을 재우고 있습니다. 그대로 두면 화면을 끌 때마다 항적이 끊깁니다.'),
+      { ok: t('고치는 법 보기') })
     .then(yes => { if(yes) trkWakeHelp(); })
     .catch(() => {});
 }
@@ -18492,11 +18492,11 @@ function trkWakeHelpText(){
   if(trkIsIOS()){
     return t('1. 설정 › 뱃일 › 위치 → 「항상」을 선택해 주세요.') + '\n'
          + t('2. 설정 › 뱃일 › 백그라운드 앱 새로 고침 → 켜 주세요.') + '\n'
-         + t('3. 저전력 모드가 켜져 있으면 항해 중에는 꺼 주세요.');
+         + t('3. 저전력 모드가 켜져 있으면 항해 동안은 꺼 주세요.');
   }
   return t('1. 항해 중에 「뱃일 — 항해 기록 중」 알림이 떠 있어야 합니다. 안 보이면 알림이 꺼진 것입니다.') + '\n'
-       + t('2. 설정 › 애플리케이션 › 뱃일 › 배터리 → 「제한 없음」으로 바꿔 주세요. 가장 흔한 원인입니다.') + '\n'
-       + t('3. 삼성 휴대폰이라면 추가로 설정 › 배터리 › 백그라운드 사용 제한 › 「사용하지 않는 앱 절전」 목록에서 뱃일을 제외해 주세요.');
+       + t('2. 설정 › 애플리케이션 › 뱃일 › 배터리 → 「제한 없음」으로 바꿔 주세요. 이것이 제일 흔한 까닭입니다.') + '\n'
+       + t('3. 삼성 폰이면 하나 더 — 설정 › 배터리 › 백그라운드 사용 제한 › 「사용하지 않는 앱 절전」 목록에서 뱃일을 빼 주세요.');
   // ★★★ 4.139 — 여기 있던 4번(「항상 허용」 으로 바꾸세요)을 뺐다.
   //   뱃일에는 ACCESS_BACKGROUND_LOCATION 이 안 들어 있어서 안드로이드 설정에
   //   그 선택지가 **아예 안 나온다.** 없는 것을 찾아 누르라고 적어 둔 것이다 —
@@ -18517,9 +18517,9 @@ function trkBgRow(it){
   if(!b || !(Number(b.n) > 0)) return '';
   const 분 = Math.max(1, Math.round((Number(b.sec) || 0) / 60));
   return `<div class="mrnone" style="text-align:left;color:var(--yel,#D9AE63)">${
-      esc(tsub('화면이 꺼져 있는 동안 위치 정보가 수신되지 않은 경우가 {n}번 있었습니다 (총 {m}분).', { n: b.n, m: 분 }))}
+      esc(tsub('화면을 끈 동안 위치가 안 들어온 적이 {n}번 있습니다 (모두 {m}분).', { n: b.n, m: 분 }))}
       <button class="mrbtn" style="margin-top:8px" onclick="trkWakeHelp()">${
-      esc(t('해결 방법 보기'))}</button></div>`;
+      esc(t('고치는 법 보기'))}</button></div>`;
 }
 
 // ★ 알림 허락. 안드로이드 13+ 에서 이게 없으면 「항해 기록 중」 알림을 못 띄우고,
@@ -18556,19 +18556,19 @@ function trkIsIOS(){
 function trkGuideText(){
   if(trkIsIOS()){
     return t('항적을 기록하려면 두 가지가 필요합니다.') + '\n\n'
-         + t('1. 곧 위치 권한을 묻는 창이 뜹니다. 「앱을 사용하는 동안 허용」을 누르십시오.') + '\n'
+         + t('1. 곧 위치를 물어봅니다 — 「앱을 사용하는 동안 허용」을 누르십시오.') + '\n'
          + t('2. 잠시 뒤 아이폰이 「항상 허용으로 바꿀까요?」라고 다시 물어봅니다. 그때 「항상 허용」을 누르셔야 화면을 꺼도 기록됩니다.');
   }
   // ★★★ 4.124 — 여기에 배터리 이야기가 빠져 있었다 (사장님이 화면을 껐다가 항적을 잃으셨다).
   //   권한만 켜 두어도 삼성·샤오미 폰은 앱을 재운다. 그러면 상시 알림이 있어도 위치가 안 온다.
   //   ★ 미리 말해 주는 것이 내 일이다 — 겪은 뒤에 아는 것은 이미 한 항해를 잃은 뒤다.
   return t('항적을 기록하려면 두 가지가 필요합니다.') + '\n\n'
-       + t('1. 곧 위치 권한을 묻는 창이 뜹니다. 「앱 사용 중에만 허용」을 누르십시오.') + '\n'
-       + t('(이 창에는 「항상 허용」이 표시되지 않습니다. 안드로이드에서 보여 주지 않기 때문이며, 그대로 진행하셔도 됩니다.)') + '\n\n'
+       + t('1. 곧 위치를 물어봅니다 — 「앱 사용 중에만 허용」을 누르십시오.') + '\n'
+       + t('(그 창에 「항상 허용」은 안 나옵니다. 안드로이드가 안 보여 줍니다. 그래도 됩니다.)') + '\n\n'
        + t('2. 「뱃일 — 항해 기록 중」 알림이 뜹니다. 그 알림이 떠 있는 동안 기록됩니다.') + '\n'
-       + t('★ 이 알림을 지우면 기록이 중지됩니다. 입항을 기록할 때까지 그대로 두십시오.') + '\n\n'
+       + t('★ 그 알림을 지우면 기록이 멈춥니다. 입항을 기록할 때까지 두십시오.') + '\n\n'
        + t('3. 설정 › 애플리케이션 › 뱃일 › 배터리 → 「제한 없음」으로 바꿔 주세요.') + '\n'
-       + t('변경하지 않으면 화면이 꺼져 있는 동안 휴대폰이 뱃일을 절전 상태로 전환해 항적이 끊깁니다.');
+       + t('안 바꾸면 화면을 끈 동안 폰이 뱃일을 재워서 항적이 끊깁니다.');
 }
 async function trkGuide(){
   if(!isNative()) return true;
@@ -18584,9 +18584,9 @@ async function trkGuide(){
 //   이제 까닭을 글자로 돌려주고, 부르는 쪽이 사람에게 그대로 말해 준다.
 //   '' 를 돌려주면 잘 켜진 것이다.
 async function trkStart(vid){
-  if(!isNative())   return '웹에서는 항적을 기록하지 않습니다. 앱에서 열어 주세요.';
-  if(!bgGeo())      return '이 버전에는 항적 기능이 없습니다. 앱을 최신 버전으로 업데이트해 주세요.';
-  if(!await locMay(false)) return '항적을 기록하려면 로그인하고 위치 정보 이용에 동의해 주세요.';
+  if(!isNative())   return '웹에서는 항적을 기록하지 않습니다. 앱으로 여셔야 합니다.';
+  if(!bgGeo())      return '이 버전에는 항적 기능이 없습니다. 앱을 새로 받아 주세요.';
+  if(!await locMay(false)) return '로그인하고 위치 이용에 동의하셔야 항적을 기록합니다.';
   if(!await trkGuide()) return '';           // 사람이 그만두겠다고 한 것 — 말 안 한다
   const 알림 = await trkAskNoti();           // 알림이 막혀 있으면 기록이 시작도 안 된다
   if(trkNow && String(trkNow.vid) === String(vid)) return '';
@@ -18597,7 +18597,7 @@ async function trkStart(vid){
   const ok = await trkAttach();
   if(!ok){
     trkNow = null; trkKeep(); mobFabSync();
-    return '위치를 받지 못했습니다. 휴대폰의 위치 서비스가 켜져 있는지 확인해 주세요.';
+    return '위치를 받지 못했습니다. 폰의 위치 기능이 켜져 있는지 확인해 주세요.';
   }
   mobFabSync();
   // ★★★ 4.125 — 여기서 CPU 를 깨워 둔다. 이것이 화면을 꺼도 기록이 이어지게 하는 **그것**이다.
@@ -18609,7 +18609,7 @@ async function trkStart(vid){
   //   여태는 물어만 보고, 거절해도 아무 말 없이 기록을 시작했다. 그러면 화면을 끈
   //   동안 위치가 안 들어오고, 그것을 다녀와서야 안다 — 한 항해를 잃은 뒤다.
   if(알림 === 'denied' && !trkIsIOS()){
-    try{ tell(t('알림이 꺼져 있습니다.\n\n「뱃일 — 항해 기록 중」 알림을 표시할 수 없으면 화면이 꺼져 있는 동안 위치 정보가 수신되지 않습니다.\n\n설정 › 애플리케이션 › 뱃일 › 알림에서 켜 주세요.'), { big:true }); }catch(_){}
+    try{ tell(t('알림이 꺼져 있습니다.\n\n「뱃일 — 항해 기록 중」 알림을 못 띄우면 화면을 끈 동안 위치가 안 들어옵니다.\n\n설정 › 애플리케이션 › 뱃일 › 알림 에서 켜 주세요.'), { big:true }); }catch(_){}
   }
   // ★ 배터리 절전은 **나가기 전에** 짚어 준다. 다녀와서 아는 것은 이미 늦다.
   try{ trkBatteryAsk(); }catch(_){}
@@ -18622,8 +18622,8 @@ async function trkBatteryAsk(){
   try{ if(localStorage.getItem(TRK_BAT_ASKED) === 'done') return; }catch(_){}
   if(await trkBatteryFree()) return;                    // 이미 빠져 있다 — 조용히 둔다
   try{ localStorage.setItem(TRK_BAT_ASKED, 'done'); }catch(_){}
-  const yes = await ask(t('이 휴대폰의 배터리 절전 목록에 뱃일이 들어 있습니다.') + '\n\n'
-    + t('절전 목록에서 제외하면 화면을 꺼도 항적이 더 안정적으로 기록됩니다. 한 번만 설정하시면 됩니다.'),
+  const yes = await ask(t('이 폰의 배터리 절전에 뱃일이 들어 있습니다.') + '\n\n'
+    + t('절전 목록에서 빼 두시면 화면을 꺼도 항적이 더 확실하게 남습니다. 한 번만 해 두시면 됩니다.'),
     { ok: t('설정 열기'), cancel: t('나중에') });
   if(yes) trkOpenBattery();
 }
@@ -18703,7 +18703,7 @@ async function trkStop(){
 async function trkStopFor(vid){
   if(!trkNow || String(trkNow.vid) !== String(vid)) return false;
   try{ await trkStop(); }catch(_){}
-  try{ snack('항적 기록을 중지했습니다'); }catch(_){}
+  try{ snack('항적 기록을 멈췄습니다'); }catch(_){}
   return true;
 }
 async function trkDropIfGone(){
@@ -18714,7 +18714,7 @@ async function trkDropIfGone(){
   const 없다 = !목록.some(v => v && String(v.id) === String(trkNow.vid));
   if(!다른배 && !없다) return false;
   try{ await trkStop(); }catch(_){}
-  try{ snack('기록 중이던 항해를 찾을 수 없어 항적 기록을 중지했습니다', { kind:'bad' }); }catch(_){}
+  try{ snack('기록 중이던 항해가 없어져서 항적 기록을 멈췄습니다', { kind:'bad' }); }catch(_){}
   return true;
 }
 
@@ -18791,7 +18791,7 @@ function setupUseGPS(){
   // ★ 여기도 매개변수 이름이 t 였다. GPS 콜백 안이라 여태 어떤 검사도 안 밟았다.
   const say = msg => { const el = hint(); if(el) el.innerHTML = esc(t(msg)); };
   if(!navigator.geolocation){
-    say('지도를 눌러 홈포트 위치를 지정해 주세요. 날씨·물때가 이 위치를 기준으로 표시됩니다.');
+    say('지도를 눌러 홈포트 위치를 지정해 주세요. 날씨·물때가 이 자리를 기준으로 표시됩니다.');
     return;
   }
   geoGet('배 등록 — 홈포트 위치',
@@ -18803,7 +18803,7 @@ function setupUseGPS(){
       mapS.cx = MERC.x(mapS.pick.lon, mapS.z); mapS.cy = MERC.y(mapS.pick.lat, mapS.z);
       mapS.anchor = { cx:mapS.cx, cy:mapS.cy };
       mapPaint(true);
-      say('현재 위치를 홈포트로 지정했습니다. 다른 곳이면 지도를 눌러 옮겨 주세요.');
+      say('현재 위치를 홈포트로 잡았습니다. 다르면 지도를 눌러 옮겨 주세요.');
     },
     ()=>{ say('위치를 가져오지 못했습니다. 지도를 눌러 홈포트 위치를 지정해 주세요.'); },
     // ★ 화면을 열면 저절로 불린다 — 로그인·동의를 여기서 캐묻지 않는다.
@@ -18883,7 +18883,7 @@ function openPortPick(){
       <button class="tab" onclick="portPickCancel()">${esc(t('취소'))}</button>
       <button class="tab on" id="portSave" onclick="portPickSave()" ${cur?'':'disabled'}>${esc(t('저장'))}</button></div>
     ${mapBox('portMap','52vh')}
-    <div class="mrnone" style="text-align:left">${esc(t('지도를 누르면 위치가 지정됩니다 · 끌어서 이동 · 두 손가락으로 확대'))}<br>${esc(t('정박지나 계류장 위치를 지정해 주세요.'))}</div>
+    <div class="mrnone" style="text-align:left">${esc(t('지도를 누르면 위치가 지정됩니다 · 끌어서 이동 · 두 손가락으로 확대'))}<br>${esc(t('정박지나 계류장 위치를 찍어 두시면 됩니다.'))}</div>
     <div class="mrrow" style="justify-content:center">
       <button class="mrbtn" onclick="portUseGPS()">${esc(t('현재 위치로'))}</button></div>`;
   box.classList.add('open');
@@ -18892,7 +18892,7 @@ function openPortPick(){
 }
 function portUseGPS(quiet){
   if(!navigator.geolocation){ if(!quiet) tell(t('이 기기에서는 위치 기능을 사용할 수 없습니다.')); return; }
-  geoGet('홈포트 위치 지정',
+  geoGet('홈포트 위치 잡기',
     p=>{
       if(!mapS) return;
       mapS.pick = { lat:+p.coords.latitude.toFixed(5), lon:+p.coords.longitude.toFixed(5) };
@@ -18984,14 +18984,14 @@ async function openBoatInfo(id){
 async function askDelBoat(id){
   const b = boats.find(x=>String(x.id)===String(id));
   if(!b) return;
-  if(!canDelBoat(b)){ tell(t('선주만 배를 삭제할 수 있습니다')); return; }
-  if(guardEdit('배를 삭제합니다.', () => askDelBoat(id))) return;
+  if(!canDelBoat(b)){ tell(t('선주만 배를 지울 수 있습니다')); return; }
+  if(guardEdit('배를 지웁니다.', () => askDelBoat(id))) return;
   const mine = String(id) === String(currentBoatId);
   let n = 0;
   try{ n = mine ? items.length : 0; }catch(_){}
   const what = mine ? tsub('물품 {n}개와 정비·수리·항해일지·도면', { n: n }) : t('물품과 정비·수리·항해일지·도면');
   if(!await ask(tsub("'{name}' 을(를) 지울까요?", {name:b.name}) + '\n\n'
-    + tsub('이 배의 {what} 기록이 모두 삭제됩니다.', {what:what}) + '\n'
+    + tsub('이 배의 {what} 기록이 모두 사라집니다.', {what:what}) + '\n'
     + t('되돌릴 수 없습니다.') + '\n\n'
     + t('먼저 파일로 저장해 두시길 권합니다.'), { ok: t('삭제'), warn: true })) return;
   openForm({
@@ -19000,7 +19000,7 @@ async function askDelBoat(id){
     okText: '삭제',
     fields: [ { key:'name', label:'배 이름', value:'', placeholder:b.name } ],
     onOk: v => {
-      if(String(v.name).trim() !== String(b.name).trim()) return formErr('name', '이름이 일치하지 않아 삭제하지 않았습니다');
+      if(String(v.name).trim() !== String(b.name).trim()) return formErr('name', '이름이 달라서 지우지 않았습니다');
       doDelBoat(id, mine);
     }
   });
@@ -19031,7 +19031,7 @@ async function doDelBoat(id, mine){
 const PERM_LEVELS = [
   { v:'none',  name:t('없음'),   sub:t('화면이 보이지 않음') },
   { v:'view',  name:t('보기'),   sub:t('보기만 가능') },
-  { v:'write', name:t('쓰기'),   sub:t('추가·수정 가능') },
+  { v:'write', name:t('쓰기'),   sub:t('넣고 고칠 수 있음') },
   { v:'full',  name:t('전체 권한'), sub:t('삭제까지 가능') }
 ];
 const PERM_ORDER = { none:0, view:1, write:2, full:3 };
@@ -19171,9 +19171,9 @@ function editRank(b, id, patch){
 function delRank(b, id){
   const r = rankOf(b, id);
   if(!r) return null;
-  if(r.owner){ tell(t('선주 등급은 삭제할 수 없습니다')); return null; }
-  if(!canTouchRank(b, id)){ tell(t('이 등급은 삭제할 수 없습니다')); return null; }
-  if(rankList(b).length <= 2){ tell(t('등급은 최소 하나 이상 있어야 합니다.')); return null; }
+  if(r.owner){ tell(t('선주 등급은 지울 수 없습니다')); return null; }
+  if(!canTouchRank(b, id)){ tell(t('이 등급은 지울 수 없습니다')); return null; }
+  if(rankList(b).length <= 2){ tell(t('등급이 너무 적습니다. 하나는 남겨 두세요.')); return null; }
   delete b.ranks[id];
   // 이 등급이던 사람은 맨 아래 등급으로 내린다 — 아무 등급도 없으면 앱이 막힌다
   const ls = rankList(b);
@@ -19200,7 +19200,7 @@ function assignRank(b, uid, rankId){
   if(!r || !b.members || !(uid in b.members)) return null;
   if(!canTouchMember(b, uid)){ tell(t('이 사람의 등급은 바꿀 수 없습니다')); return null; }
   // 나보다 높거나 같은 자리를 남에게 줄 수 없다
-  if(r.pos <= myPos(b)){ tell(t('내 등급보다 높은 등급은 지정할 수 없습니다')); return null; }
+  if(r.pos <= myPos(b)){ tell(t('내 등급보다 높은 자리는 줄 수 없습니다')); return null; }
   const cur = rankOf(b, b.members[uid]);
   // 선주가 한 명뿐인데 그 사람을 내리면 아무도 관리할 수 없게 된다
   if(cur && cur.owner){
@@ -19222,11 +19222,11 @@ const PUB_KEYS = [
   { k:'phone',  name:'연락처',        sub:'전화번호' },
   { k:'board',  name:'게시판 공개 글', sub:'공개로 표시한 글만' },
   { k:'voyage', name:'항해일지',      sub:'기록 내용과 사진 · 동승자는 공개되지 않음 · 항적은 항해마다 따로 켤 수 있음' },
-  { k:'maint',  name:'정비 기록 · 정비수첩', sub:'항목과 날짜 · 정비수첩은 한 건씩 따로 공개할 수 있음 · 입력하신 메모도 함께 공개됨' },
-  { k:'gear',   name:'보유 장비',      sub:'물품 이름만 · 보관 위치는 공개되지 않음' },
-  { k:'review', name:'제품 리뷰 · 배 리뷰', sub:'제품·별점·사용 후기 · 구매 가격은 리뷰마다 따로 공개할 수 있음 · 입력하신 메모도 함께 공개됨' },
-  { k:'roster', name:'회원 명부',      sub:'이름과 등급만 · 회비·부재는 공개되지 않음' },
-  { k:'biz',    name:'영업용',        sub:'영업 탭에 실립니다' }
+  { k:'maint',  name:'정비 기록 · 정비수첩', sub:'항목과 날짜 · 정비수첩은 한 건씩 따로 켤 수 있음 · 적어 두신 메모도 함께 공개됨' },
+  { k:'gear',   name:'보유 장비',      sub:'물품 이름만 · 어느 칸인지는 나가지 않음' },
+  { k:'review', name:'제품 리뷰 · 배 리뷰', sub:'제품·별점·사용해 보니 · 산 값은 리뷰마다 따로 켤 수 있음 · 적어 두신 메모도 함께 공개됨' },
+  { k:'roster', name:'회원 명부',      sub:'이름과 등급만 · 회비·부재는 나가지 않음' },
+  { k:'biz',    name:'영업 배',        sub:'영업 탭에 실립니다' }
 ];
 // ★ 4.68 — 「켰는데 왜 안 나오냐」 를 막는 문 하나.
 //
@@ -19244,7 +19244,7 @@ function pubGateBox(key){
     const it = (PUB_KEYS.find(x => x.k === key) || {});
     const nm = t(it.name || key);
     return `<div class="hwarn" style="margin:0 14px 10px">${
-        esc(tsub('배 공개설정에서 「{name}」이(가) 꺼져 있어 아직 공개되지 않습니다.', { name: nm }))}
+        esc(tsub('배 쪽 공개설정에서 「{name}」이(가) 꺼져 있어 아직 안 올라갑니다.', { name: nm }))}
       ${unlocked ? `<div class="mrrow" style="padding:8px 0 0"><button class="mrbtn ok" onclick="pubGateOn('${jsq(key)}')">${
         esc(tsub('{name} 공개 켜기', { name: nm }))}</button></div>` : ''}</div>`;
   }catch(e){
@@ -19275,9 +19275,9 @@ function pubGateOn(key){
 //     그 사람이 정한 기준이라 밖에 내놓기 껄끄러울 수 있다. 그래서 가운데를 둔다.
 //   ★ 옛 자료 — 켜 두었던 배는 「기본만」 이다. 판을 올렸다고 없던 것이 나가면 안 된다.
 const SPEC_LEVELS = [
-  { k:'none', name:'비공개',   sub:'제원이 공개되지 않습니다.' },
-  { k:'base', name:'기본 정보만',   sub:'제조사·모델·연식·길이·폭만 공개됩니다.' },
-  { k:'full', name:'상세 정보까지', sub:'입력하신 제원을 모두 공개합니다. 출항 한계 풍속·리프 풍속도 포함됩니다.' }
+  { k:'none', name:'비공개',   sub:'제원이 밖으로 안 나갑니다.' },
+  { k:'base', name:'기본만',   sub:'제조사·모델·연식·길이·폭만 나갑니다.' },
+  { k:'full', name:'세부까지', sub:'적어 두신 제원을 다 보여 줍니다. 출항 한계 풍속·리프 풍속도 포함됩니다.' }
 ];
 function specLv(b){
   const v = ((b && b.pub) || {}).spec;
@@ -19449,9 +19449,9 @@ function tripFar(v){
 //     이름은 평균을 낼 수가 없다. 열 번 올려도 「전남 해역」은 「전남 해역」이다.
 //   그래서 우리도 좌표를 흐리는 게 아니라 아예 안 보내고 해역 이름을 보낸다.
 const POS_LEVELS = [
-  { k:'exact', name:'정확한 위치',   sub:'좌표가 그대로 공개됩니다' },
-  { k:'area',  name:'해역만',    sub:'좌표는 공개되지 않고 해역 이름만 공개됩니다' },
-  { k:'none',  name:'위치 비공개',   sub:'사진과 본문만 공개됩니다' }
+  { k:'exact', name:'정확한 위치',   sub:'좌표가 그대로 나갑니다' },
+  { k:'area',  name:'해역까지만',    sub:'좌표는 안 나가고 해역 이름만 나갑니다' },
+  { k:'none',  name:'위치 비공개',   sub:'사진과 이야기만 나갑니다' }
 ];
 const POS_DEF = 'area';      // 망설여지면 숨긴다 (Fishbrain 의 규칙)
 
@@ -19476,11 +19476,11 @@ const POS_DEF = 'area';      // 망설여지면 숨긴다 (Fishbrain 의 규칙)
 //   ★ 항해일지·정비수첩·리뷰가 같은 표를 쓴다. 표가 셋이면 반드시 어긋난다.
 const PUB_LEVELS = [
   { k:'com',  name:'공개',
-    sub:'「남의 배」 목록에 표시됩니다. 누구나 찾아볼 수 있습니다.' },
+    sub:'남의 배 목록에 실립니다. 아무나 찾아봅니다.' },
   { k:'boat', name:'일부 공개',
-    sub:'목록에는 표시되지 않습니다. 내 배 페이지를 연 사람은 가입하지 않아도 볼 수 있습니다.' },
+    sub:'목록에는 안 실립니다. 내 배를 찾아 들어온 사람은 봅니다. 가입도 필요 없습니다.' },
   { k:'none', name:'비공개',
-    sub:'외부에 공개되지 않습니다. 배 안에서는 등급에 따라 표시됩니다.' }
+    sub:'밖으로 안 나갑니다. 배 안에서는 등급대로 보입니다.' }
 ];
 const VOY_LEVELS = PUB_LEVELS;          // 옛 이름 — 부르던 곳이 남아 있다
 
@@ -19728,7 +19728,7 @@ function crewPickRow(it){
     + `<button class="minib blu edt" onclick="openVoyCrew('${jsq(String(it.id))}')">${
           esc(t('선택'))}</button></div>`
     + `<div class="mrm edt" style="padding:0 14px 8px;color:#7b8794">${
-        esc(t('여기서 선택한 사람의 앱 「내 승선 이력」에 이 항해가 기록됩니다. 명부에 없는 손님은 아래 「동승」에 이름을 입력해 주세요.'))}</div>`;
+        esc(t('여기서 선택한 사람은 자기 앱의 「내 승선 이력」에 쌓입니다. 명부에 없는 손님은 아래 「동승」에 이름으로 적어 두세요.'))}</div>`;
 }
 // ── 위치 공개 단계 줄
 //   ★ 이 기능의 급소. 낚시하는 사람은 자리를 안 알려 준다.
@@ -19742,7 +19742,7 @@ function posLvRow(it){
         }</select>`
       : `<b class="mrv">${esc(t(one.name))}</b>`}</div>`
     + `<div class="mrm" style="padding:0 14px 8px;color:#7b8794">${esc(t(one.sub))}${
-        cur !== 'exact' ? '<br>' + esc(t('항적과 중간 기록의 위치도 함께 비공개됩니다. 하나라도 공개되면 나머지 위치를 알 수 있기 때문입니다.')) : ''}</div>`;
+        cur !== 'exact' ? '<br>' + esc(t('항적과 중간 기록의 위치도 함께 막힙니다 — 하나만 새어도 나머지가 드러납니다.')) : ''}</div>`;
 }
 
 // 밖으로 내보낼 자료를 만든다. 여기서 걸러진 것은 어떤 경우에도 나가지 않는다.
@@ -19971,7 +19971,7 @@ function badOk(){
   const w = badWord.apply(null, arguments);
   if(!w) return true;
   tell(tsub('「{w}」 같은 말은 올릴 수 없습니다.', { w: w })
-    + '\n\n' + t('해당 부분을 수정해 주세요.'));
+    + '\n\n' + t('그 부분을 고쳐 주세요.'));
   return false;
 }
 
@@ -19980,12 +19980,12 @@ function badOk(){
 // 신고는 클라우드로 보내 나중에 살펴본다.
 const REPORT_REASONS = [
   { v:'spam',   name:t('광고·도배'),       sub:t('같은 내용을 반복해서 올림') },
-  { v:'abuse',  name:t('욕설·비방'),       sub:t('타인 비방·괴롭힘') },
+  { v:'abuse',  name:t('욕설·비방'),       sub:t('남을 헐뜯거나 괴롭힘') },
   { v:'adult',  name:t('선정적인 내용'),    sub:t('보기 불편한 사진이나 글') },
   { v:'fake',   name:t('거짓 정보'),       sub:t('사실과 다른 영업 정보') },
   // ★ 5.18 — 배가 범죄에 쓰일 수 있다 (사장님 2026-09-27). 그 신고를 따로 받는다.
   { v:'illegal', name:t('불법·범죄'),      sub:t('밀수·불법 조업처럼 법에 어긋나는 일') },
-  { v:'etc',    name:t('기타 사유'),     sub:t('아래에 입력해 주세요') }
+  { v:'etc',    name:t('그 밖의 이유'),     sub:t('아래에 적어 주세요') }
 ];
 // ★ 사람 단위로 안 보기 — 애플 심사규정 1.2 가 요구하는 「못된 이용자를 막는 기능」이다.
 //   배 숨기기와 같은 자리에 같은 방식으로 둔다 — 이 기기에만 저장한다.
@@ -20039,8 +20039,8 @@ function filterMuted(list){
 async function mutePersonUI(uid, name){
   if(!uid){ tell(t('누가 올렸는지 알 수 없습니다')); return; }
   if(String(uid) === String(meUid()||'')){ tell(t('내 글은 숨길 수 없습니다')); return; }
-  if(!await ask(tsub('{name} 님의 글과 댓글을 이 기기에서 숨길까요?', { name: name || t('이 사람') })
-      + '\n\n' + t('언제든 해제할 수 있습니다. 설정 › 차단한 사람'), { ok: t('차단하기') })) return;
+  if(!await ask(tsub('{name} 님의 글과 댓글을 이 기기에서 안 보이게 할까요?', { name: name || t('이 사람') })
+      + '\n\n' + t('언제든 다시 볼 수 있습니다. 설정 › 차단한 사람'), { ok: t('차단하기') })) return;
   mutedNameKeep(uid, name);
   mutePerson(uid);
   tell(t('이제 이 사람의 글이 표시되지 않습니다.'), { kind:'good' });
