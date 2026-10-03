@@ -1,0 +1,45 @@
+⚡️  Loading app at capacitor://localhost...
+[ FirebaseAuthentication ]  <CapacitorFirebaseAuthentication.RuntimeError: 0x104d93be0>
+⚡️  To Native ->  App addListener 110936018
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-app
+⚡️  To Native ->  StatusBar setStyle 110936019
+⚡️  TO JS {}
+⚡️  WebView loaded
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-app
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-firestore
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-firestore
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-auth
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-auth
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-storage
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-storage
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-functions
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-functions
+⚡️  [log] - [baetnil-boot] 시작하기
+⚡️  [log] - [baetnil-boot] 자료방
+⚡️  [log] - [baetnil-boot] 로그인
+⚡️  [log] - [baetnil-boot] 사진창고
+⚡️  [log] - [baetnil-boot] 붙었습니다
+⚡️  To Native ->  BaetnilTrack status 110936020
+⚡️  TO JS {"relaunch":false,"bytes":0,"running":false}
+⚡️  To Native ->  StatusBar setStyle 110936021
+⚡️  TO JS {}
+⚡️  To Native ->  LocalNotifications createChannel 110936022
+ERROR MESSAGE:  {"data":{},"code":"UNIMPLEMENTED","errorMessage":"not implemented","message":"not implemented"}
+⚡️  To Native ->  LocalNotifications createChannel 110936023
+⚡️  [error] - {"data":{},"code":"UNIMPLEMENTED","errorMessage":"not implemented","message":"not implemented"}
+ERROR MESSAGE:  {"errorMessage":"not implemented","message":"not implemented","code":"UNIMPLEMENTED","data":{}}
+⚡️  [error] - {"errorMessage":"not implemented","message":"not implemented","code":"UNIMPLEMENTED","data":{}}
+⚡️  To Native ->  LocalNotifications getPending 110936024
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  To Native ->  StatusBar setStyle 110936025
+⚡️  TO JS {}
+⚡️  [log] - [baetnil-e2e] NATIVE share
+⚡️  To Native ->  Filesystem writeFile 110936026
+⚡️  To Native ->  Filesystem appendFile 110936027
+⚡️  TO JS {"uri":"file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Library\/Caches\/baetnil-e2e.txt"}
+⚡️  To Native ->  Filesystem getUri 110936028
+⚡️  TO JS undefined
+⚡️  TO JS {"uri":"file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Library\/Caches\/baetnil-e2e.txt"}
+⚡️  To Native ->  Share share 110936029

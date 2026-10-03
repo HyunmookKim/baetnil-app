@@ -1,0 +1,41 @@
+⚡️  Loading app at capacitor://localhost...
+[ FirebaseAuthentication ]  <CapacitorFirebaseAuthentication.RuntimeError: 0x102fa3940>
+⚡️  To Native ->  App addListener 12571687
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-app
+⚡️  To Native ->  StatusBar setStyle 12571688
+⚡️  TO JS {}
+⚡️  WebView loaded
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-app
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-firestore
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-firestore
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-auth
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-auth
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-storage
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-storage
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-functions
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-functions
+⚡️  [log] - [baetnil-boot] 시작하기
+⚡️  [log] - [baetnil-boot] 자료방
+⚡️  [log] - [baetnil-boot] 로그인
+⚡️  [log] - [baetnil-boot] 사진창고
+⚡️  [log] - [baetnil-boot] 붙었습니다
+⚡️  To Native ->  BaetnilTrack status 12571689
+⚡️  TO JS {"relaunch":false,"running":false,"bytes":0}
+⚡️  To Native ->  StatusBar setStyle 12571690
+⚡️  TO JS {}
+⚡️  To Native ->  LocalNotifications createChannel 12571691
+ERROR MESSAGE:  {"data":{},"errorMessage":"not implemented","message":"not implemented","code":"UNIMPLEMENTED"}
+⚡️  To Native ->  LocalNotifications createChannel 12571692
+⚡️  [error] - {"data":{},"errorMessage":"not implemented","message":"not implemented","code":"UNIMPLEMENTED"}
+ERROR MESSAGE:  {"data":{},"errorMessage":"not implemented","message":"not implemented","code":"UNIMPLEMENTED"}
+⚡️  To Native ->  LocalNotifications ⚡️  [error] - {"data":{},"errorMessage":"not implemented","message":"not implemented","code":"UNIMPLEMENTED"}
+getPending 12571693
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  To Native ->  StatusBar setStyle 12571694
+⚡️  TO JS {}
+⚡️  To Native ->  CapacitorCalendar createEventWithPrompt 12571695
+⚡️  [log] - [baetnil-e2e] NATIVE calendar
+⚡️  To Native ->  Filesystem appendFile 12571696
+⚡️  TO JS undefined

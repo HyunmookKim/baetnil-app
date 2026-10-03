@@ -1,0 +1,985 @@
+2026-10-03 17:20:56.823 App[73519:201120] DiskCookieStorage changing policy from 2 to 0, cookie file: file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Library/Cookies/kr.baetnil.app.binarycookies
+⚡️  Loading app at capacitor://localhost...
+[ FirebaseAuthentication ]  <CapacitorFirebaseAuthentication.RuntimeError: 0x13114e940>
+⚡️  To Native ->  App addListener 17403992
+⚡️  To Native ->  StatusBar setStyle 17403993
+⚡️  [log] - [baetnil-e2e] ACCOUNTS e2e-musnruw6-a@baetnil.com e2e-musnruw6-b@baetnil.com mode=full
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-app
+⚡️  TO JS {}
+⚡️  WebView loaded
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-app
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-firestore
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-firestore
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-auth
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-auth
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-storage
+⚡️  To Native ->  StatusBar setStyle 17403994
+⚡️  TO JS {}
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-storage
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-functions
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-functions
+⚡️  [log] - [baetnil-boot] 시작하기
+⚡️  [log] - [baetnil-boot] 자료방
+⚡️  [log] - [baetnil-boot] 로그인
+⚡️  [log] - [baetnil-boot] 사진창고
+⚡️  [log] - [baetnil-boot] 붙었습니다
+⚡️  To Native ->  Filesystem appendFile 17403995
+⚡️  [log] - [baetnil-e2e] OK 부팅 — 파이어베이스 붙기
+⚡️  TO JS undefined
+⚡️  To Native ->  BaetnilTrack status 17403996
+⚡️  TO JS {"relaunch":false,"running":false,"bytes":0}
+⚡️  [log] - [baetnil-e2e] SHOT 01-first-setup
+⚡️  To Native ->  Filesystem readFile 17403997
+⚡️  To Native ->  Filesystem appendFile 17403998
+ERROR MESSAGE:  {"errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  TO JS undefined
+⚡️  [error] - {"errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  StatusBar setStyle 17403999
+⚡️  TO JS {}
+⚡️  To Native ->  Filesystem readFile 17404000
+ERROR MESSAGE:  {"errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  LocalNotifications createChannel 17404001
+ERROR MESSAGE:  {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+⚡️  [error] - {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications createChannel 17404002
+ERROR MESSAGE:  {"message":"not implemented","errorMessage":"not implemented","data":{},"code":"UNIMPLEMENTED"}
+⚡️  To Native ->  Filesystem readFile 17404003
+ERROR MESSAGE:  {"message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Docume
+⚡️  To Native ->  LocalNotifications getPending 17404004
+⚡️  [error] - {"message":"not implemented","errorMessage":"not implemented","data":{},"code":"UNIMPLEMENTED"}
+⚡️  [error] - {"message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008"}
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  To Native ->  Filesystem readFile 17404005
+ERROR MESSAGE:  {"message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Docume
+⚡️  [error] - {"message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008"}
+⚡️  To Native ->  Filesystem readFile 17404006
+ERROR MESSAGE:  {"errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404007
+ERROR MESSAGE:  {"message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404008
+ERROR MESSAGE:  {"message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Docume
+⚡️  [error] - {"message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008"}
+⚡️  To Native ->  Filesystem readFile 17404009
+ERROR MESSAGE:  {"errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404010
+ERROR MESSAGE:  {"message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404011
+ERROR MESSAGE:  {"message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404012
+ERROR MESSAGE:  {"errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404013
+ERROR MESSAGE:  {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404014
+ERROR MESSAGE:  {"errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404015
+ERROR MESSAGE:  {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404016
+ERROR MESSAGE:  {"errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404017
+ERROR MESSAGE:  {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404018
+ERROR MESSAGE:  {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404019
+ERROR MESSAGE:  {"message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404020
+ERROR MESSAGE:  {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404021
+ERROR MESSAGE:  {"errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404022
+ERROR MESSAGE:  {"errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404023
+ERROR MESSAGE:  {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404024
+ERROR MESSAGE:  {"errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404025
+ERROR MESSAGE:  {"message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404026
+ERROR MESSAGE:  {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404027
+ERROR MESSAGE:  {"message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404028
+ERROR MESSAGE:  {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404029
+ERROR MESSAGE:  {"message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404030
+ERROR MESSAGE:  {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404031
+ERROR MESSAGE:  {"message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404032
+ERROR MESSAGE:  {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404033
+ERROR MESSAGE:  {"message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404034
+ERROR MESSAGE:  {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404035
+ERROR MESSAGE:  {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404036
+ERROR MESSAGE:  {"message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404037
+ERROR MESSAGE:  {"errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404038
+ERROR MESSAGE:  {"message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404039
+ERROR MESSAGE:  {"errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404040
+ERROR MESSAGE:  {"message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404041
+ERROR MESSAGE:  {"errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404042
+ERROR MESSAGE:  {"message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404043
+ERROR MESSAGE:  {"errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404044
+ERROR MESSAGE:  {"message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404045
+ERROR MESSAGE:  {"errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404046
+ERROR MESSAGE:  {"message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404047
+ERROR MESSAGE:  {"errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404048
+ERROR MESSAGE:  {"message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404049
+ERROR MESSAGE:  {"errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404050
+ERROR MESSAGE:  {"message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404051
+ERROR MESSAGE:  {"errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404052
+ERROR MESSAGE:  {"message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404053
+ERROR MESSAGE:  {"errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404054
+ERROR MESSAGE:  {"message":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-4486-8265-F6EA681A23F0\/Documents\/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:\/\/\/Users\/runner\/Library\/Developer\/CoreSimulator\/Devices\/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1\/data\/Containers\/Data\/Application\/BC9C7E2B-A710-448
+⚡️  [error] - {"message":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist.","code":"OS-PLUG-FILE-0008","errorMessage":"'readFile' failed because file at 'file:///Users/runner/Library/Developer/CoreSimulator/Devices/468B2CC0-4D14-42A4-A7FB-B750EF6E38D1/data/Containers/Data/Application/BC9C7E2B-A710-4486-8265-F6EA681A23F0/Documents/e2e_ack.txt'  does not exist."}
+⚡️  To Native ->  Filesystem readFile 17404055
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  [log] - [baetnil-e2e] OK 첫 설정 화면
+⚡️  To Native ->  Filesystem appendFile 17404056
+⚡️  TO JS undefined
+⚡️  To Native ->  App addListener 104491984
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-app
+⚡️  To Native ->  StatusBar setStyle 104491985
+⚡️  TO JS {}
+⚡️  WebView loaded
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-app
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-firestore
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-firestore
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-auth
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-auth
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-storage
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-storage
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-functions
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-functions
+⚡️  [log] - [baetnil-boot] 시작하기
+⚡️  [log] - [baetnil-boot] 자료방
+⚡️  [log] - [baetnil-boot] 로그인
+⚡️  [log] - [baetnil-boot] 사진창고
+⚡️  [log] - [baetnil-boot] 붙었습니다
+⚡️  To Native ->  BaetnilTrack status 104491986
+⚡️  TO JS {"bytes":0,"relaunch":false,"running":false}
+⚡️  To Native ->  StatusBar setStyle 104491987
+⚡️  TO JS {}
+⚡️  To Native ->  LocalNotifications createChannel 104491988
+ERROR MESSAGE:  {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+⚡️  [error] - {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications createChannel 104491989
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications getPending 104491990
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  To Native ->  StatusBar setStyle 104491991
+⚡️  TO JS {}
+⚡️  To Native ->  Filesystem appendFile 104491992
+⚡️  [log] - [baetnil-e2e] OK 환영 화면 넘기기
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem readFile 104491993
+⚡️  [log] - [baetnil-e2e] SHOT 03-login
+⚡️  To Native ->  Filesystem appendFile 104491994
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem readFile 104491995
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104491996
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104491997
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104491998
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104491999
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492000
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492001
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492002
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492003
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492004
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492005
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492006
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492007
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492008
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492009
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492010
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492011
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492012
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492013
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492014
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492015
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492016
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492017
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492018
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492019
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492020
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492021
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492022
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492023
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492024
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492025
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492026
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492027
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492028
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492029
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492030
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492031
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492032
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492033
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492034
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492035
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492036
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492037
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492038
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492039
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492040
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492041
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492042
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492043
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492044
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492045
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492046
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492047
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492048
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492049
+⚡️  TO JS {"data":"01-first-setup"}
+⚡️  To Native ->  Filesystem readFile 104492050
+⚡️  TO JS {"data":"03-login"}
+⚡️  [log] - [baetnil-e2e] OK 로그인 화면 — 단추가 다 있는가
+⚡️  [log] - [baetnil-e2e] INFO 아래 탭 줄 — 안드로이드만
+⚡️  To Native ->  Filesystem appendFile 104492051
+⚡️  TO JS undefined
+⚡️  [log] - [baetnil-e2e] OK 아래 탭 줄이 내비게이션 줄을 비키는가
+⚡️  To Native ->  Filesystem appendFile 104492052
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem appendFile 104492053
+⚡️  TO JS undefined
+⚡️  [log] - [baetnil-e2e] SHOT 03b-signup
+⚡️  To Native ->  Filesystem readFile 104492054
+⚡️  To Native ->  Filesystem appendFile 104492055
+⚡️  TO JS {"data":"03-login"}
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem readFile 104492056
+⚡️  TO JS {"data":"03-login"}
+⚡️  To Native ->  Filesystem readFile 104492057
+⚡️  TO JS {"data":"03-login"}
+⚡️  To Native ->  Filesystem readFile 104492058
+⚡️  TO JS {"data":"03-login"}
+⚡️  To Native ->  Filesystem readFile 104492059
+⚡️  TO JS {"data":"03-login"}
+⚡️  To Native ->  Filesystem readFile 104492060
+⚡️  TO JS {"data":"03-login"}
+⚡️  To Native ->  Filesystem readFile 104492061
+⚡️  TO JS {"data":"03-login"}
+⚡️  To Native ->  Filesystem readFile 104492062
+⚡️  TO JS {"data":"03-login"}
+⚡️  To Native ->  Filesystem readFile 104492063
+⚡️  TO JS {"data":"03-login"}
+⚡️  To Native ->  Filesystem readFile 104492064
+⚡️  TO JS {"data":"03-login"}
+⚡️  To Native ->  Filesystem readFile 104492065
+⚡️  TO JS {"data":"03-login"}
+⚡️  To Native ->  Filesystem readFile 104492066
+⚡️  TO JS {"data":"03-login"}
+⚡️  To Native ->  Filesystem readFile 104492067
+⚡️  TO JS {"data":"03-login"}
+⚡️  To Native ->  Filesystem readFile 104492068
+⚡️  TO JS {"data":"03-login"}
+⚡️  To Native ->  Filesystem readFile 104492069
+⚡️  TO JS {"data":"03b-signup"}
+⚡️  [log] - [baetnil-e2e] OK 회원가입·로그인 화면 — 키보드가 칸을 가리지 않는가
+⚡️  To Native ->  Filesystem appendFile 104492070
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem readFile 104492071
+⚡️  [log] - [baetnil-e2e] SHOT 04-signed-up
+⚡️  To Native ->  Filesystem appendFile 104492072
+⚡️  TO JS {"data":"03b-signup"}
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem readFile 104492073
+⚡️  TO JS {"data":"03b-signup"}
+⚡️  To Native ->  Filesystem readFile 104492074
+⚡️  TO JS {"data":"03b-signup"}
+⚡️  To Native ->  Filesystem readFile 104492075
+⚡️  TO JS {"data":"03b-signup"}
+⚡️  To Native ->  Filesystem readFile 104492076
+⚡️  TO JS {"data":"03b-signup"}
+⚡️  To Native ->  Filesystem readFile 104492077
+⚡️  TO JS {"data":"03b-signup"}
+⚡️  To Native ->  Filesystem readFile 104492078
+⚡️  TO JS {"data":"03b-signup"}
+⚡️  To Native ->  Filesystem readFile 104492079
+⚡️  TO JS {"data":"03b-signup"}
+⚡️  To Native ->  Filesystem readFile 104492080
+⚡️  TO JS {"data":"03b-signup"}
+⚡️  To Native ->  Filesystem readFile 104492081
+⚡️  TO JS {"data":"04-signed-up"}
+⚡️  [log] - [baetnil-e2e] OK 메일로 회원가입 (A)
+⚡️  To Native ->  Filesystem appendFile 104492082
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem readFile 104492083
+⚡️  [log] - [baetnil-e2e] SHOT 05-signed-out
+⚡️  To Native ->  Filesystem appendFile 104492084
+⚡️  TO JS {"data":"04-signed-up"}
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem readFile 104492085
+⚡️  TO JS {"data":"04-signed-up"}
+⚡️  To Native ->  Filesystem readFile 104492086
+⚡️  TO JS {"data":"04-signed-up"}
+⚡️  To Native ->  Filesystem readFile 104492087
+⚡️  TO JS {"data":"04-signed-up"}
+⚡️  To Native ->  Filesystem readFile 104492088
+⚡️  TO JS {"data":"04-signed-up"}
+⚡️  To Native ->  Filesystem readFile 104492089
+⚡️  TO JS {"data":"04-signed-up"}
+⚡️  To Native ->  Filesystem readFile 104492090
+⚡️  TO JS {"data":"05-signed-out"}
+⚡️  [log] - [baetnil-e2e] OK 로그아웃
+⚡️  To Native ->  Filesystem appendFile 104492091
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem ⚡️  [log] - [baetnil-e2e] OK 비밀번호 찾기 메일
+appendFile 104492092
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem readFile 104492093
+⚡️  To Native ->  Filesystem appendFile 104492094
+⚡️  [log] - [baetnil-e2e] SHOT 06-signed-in
+⚡️  TO JS {"data":"05-signed-out"}
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem readFile 104492095
+⚡️  TO JS {"data":"05-signed-out"}
+⚡️  To Native ->  Filesystem readFile 104492096
+⚡️  TO JS {"data":"05-signed-out"}
+⚡️  To Native ->  Filesystem readFile 104492097
+⚡️  TO JS {"data":"05-signed-out"}
+⚡️  To Native ->  Filesystem readFile 104492098
+⚡️  TO JS {"data":"06-signed-in"}
+⚡️  [log] - [baetnil-e2e] OK 다시 로그인 (A)
+⚡️  To Native ->  Filesystem appendFile 104492099
+⚡️  TO JS undefined
+⚡️  To Native ->  BaetnilTrack once 104492100
+⚡️  TO JS {"lat":34.738924404086035,"acc":5,"sim":true,"spd":5,"hdg":119.8481370524825,"lon":127.74839738741872,"t":1791048127010.7009}
+2026-10-03 17:22:07.432 App[73519:201120] CoreText note: Client requested name ".SFCompact", it will get TimesNewRomanPSMT rather than the intended font. All system UI font access should be through proper APIs such as CTFontCreateUIFontForLanguage() or +[UIFont systemFontOfSize:].
+2026-10-03 17:22:07.432 App[73519:201120] CoreText note: Set a breakpoint on CTFontLogSystemFontNameRequest to debug.
+⚡️  To Native ->  Filesystem ⚡️  [log] - [baetnil-e2e] SHOT 07-boat-setup
+readFile 104492101
+⚡️  To Native ->  Filesystem appendFile 104492102
+⚡️  TO JS {"data":"06-signed-in"}
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem readFile 104492103
+⚡️  TO JS {"data":"06-signed-in"}
+⚡️  To Native ->  Filesystem readFile 104492104
+⚡️  TO JS {"data":"06-signed-in"}
+⚡️  To Native ->  Filesystem readFile 104492105
+⚡️  TO JS {"data":"06-signed-in"}
+⚡️  To Native ->  Filesystem readFile 104492106
+⚡️  TO JS {"data":"07-boat-setup"}
+⚡️  [log] - [baetnil-e2e] OK 배 등록
+⚡️  To Native ->  Filesystem appendFile 104492107
+⚡️  TO JS undefined
+⚡️  [log] - [baetnil-e2e] OK 배 이름 고치기
+⚡️  To Native ->  Filesystem appendFile 104492108
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem readFile ⚡️  [log] - [baetnil-e2e] SHOT 08-stow
+104492109
+⚡️  To Native ->  Filesystem appendFile 104492110
+⚡️  TO JS {"data":"07-boat-setup"}
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem readFile 104492111
+⚡️  TO JS {"data":"07-boat-setup"}
+⚡️  To Native ->  Filesystem readFile 104492112
+⚡️  TO JS {"data":"07-boat-setup"}
+⚡️  To Native ->  LocalNotifications createChannel 104492113
+ERROR MESSAGE:  {"message":"not implemented","code":"UNIMPLEMENTED","data":{},"errorMessage":"not implemented"}
+⚡️  To Native ->  LocalNotifications ⚡️  [error] - {"message":"not implemented","code":"UNIMPLEMENTED","data":{},"errorMessage":"not implemented"}
+createChannel 104492114
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  ⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+LocalNotifications getPending 104492115
+⚡️  To Native ->  Filesystem readFile 104492116
+⚡️  TO JS {"data":"08-stow"}
+⚡️  [log] - [baetnil-e2e] OK 적재표 — 칸 만들기
+⚡️  To Native ->  Filesystem appendFile 104492117
+⚡️  TO JS undefined
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  To Native ->  Filesystem readFile 104492118
+⚡️  [log] - [baetnil-e2e] SHOT 09-item
+⚡️  To Native ->  Filesystem appendFile 104492119
+⚡️  TO JS {"data":"08-stow"}
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem readFile 104492120
+⚡️  TO JS {"data":"08-stow"}
+⚡️  To Native ->  Filesystem readFile 104492121
+⚡️  TO JS {"data":"08-stow"}
+⚡️  To Native ->  LocalNotifications createChannel 104492122
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications createChannel 104492123
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+ERROR MESSAGE:  {"message":"not implemented","errorMessage":"not implemented","data":{},"code":"UNIMPLEMENTED"}
+⚡️  To Native ->  LocalNotifications getPending 104492124
+⚡️  [error] - {"message":"not implemented","errorMessage":"not implemented","data":{},"code":"UNIMPLEMENTED"}
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  To Native ->  Filesystem readFile 104492125
+⚡️  TO JS {"data":"08-stow"}
+⚡️  To Native ->  Filesystem readFile 104492126
+⚡️  TO JS {"data":"08-stow"}
+⚡️  To Native ->  Filesystem readFile 104492127
+⚡️  TO JS {"data":"09-item"}
+⚡️  [log] - [baetnil-e2e] OK 적재표 — 물품 넣기(사진 포함)
+⚡️  To Native ->  Filesystem appendFile 104492128
+⚡️  TO JS undefined
+⚡️  [log] - [baetnil-e2e] OK 적재표 — 물품 지우기·되살리기
+⚡️  To Native ->  Filesystem appendFile 104492129
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem readFile 104492130
+⚡️  To Native ->  Filesystem appendFile 104492131
+⚡️  [log] - [baetnil-e2e] SHOT 10-gear
+⚡️  TO JS {"data":"09-item"}
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem readFile 104492132
+⚡️  TO JS {"data":"09-item"}
+⚡️  To Native ->  Filesystem readFile 104492133
+⚡️  TO JS {"data":"09-item"}
+⚡️  To Native ->  LocalNotifications createChannel 104492134
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications createChannel 104492135
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications getPending 104492136
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  To Native ->  Filesystem readFile 104492137
+⚡️  TO JS {"data":"09-item"}
+⚡️  To Native ->  Filesystem readFile 104492138
+⚡️  TO JS {"data":"10-gear"}
+⚡️  [log] - [baetnil-e2e] OK 장비 넣기
+⚡️  To Native ->  Filesystem appendFile 104492139
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem readFile 104492140
+⚡️  To Native ->  Filesystem appendFile 104492141
+⚡️  [log] - [baetnil-e2e] SHOT 11-mlog
+⚡️  TO JS {"data":"10-gear"}
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem readFile 104492142
+⚡️  TO JS {"data":"10-gear"}
+⚡️  To Native ->  Filesystem readFile 104492143
+⚡️  TO JS {"data":"11-mlog"}
+⚡️  [log] - [baetnil-e2e] OK 정비수첩 쓰기
+⚡️  To Native ->  Filesystem appendFile 104492144
+⚡️  TO JS undefined
+⚡️  To Native ->  LocalNotifications createChannel 104492145
+ERROR MESSAGE:  {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications createChannel ⚡️  [error] - {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+104492146
+ERROR MESSAGE:  {"message":"not implemented","errorMessage":"not implemented","data":{},"code":"UNIMPLEMENTED"}
+⚡️  [error] - {"message":"not implemented","errorMessage":"not implemented","data":{},"code":"UNIMPLEMENTED"}
+⚡️  To Native ->  LocalNotifications getPending 104492147
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  [log] - [baetnil-e2e] OK 수리 적기
+⚡️  To Native ->  Filesystem appendFile 104492148
+⚡️  TO JS undefined
+⚡️  [log] - [baetnil-e2e] SHOT 12-fuel
+⚡️  To Native ->  Filesystem readFile 104492149
+⚡️  TO JS {"data":"11-mlog"}
+⚡️  To Native ->  Filesystem appendFile 104492150
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem readFile 104492151
+⚡️  TO JS {"data":"11-mlog"}
+⚡️  To Native ->  Filesystem readFile 104492152
+⚡️  TO JS {"data":"11-mlog"}
+⚡️  To Native ->  LocalNotifications createChannel 104492153
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  Filesystem readFile 104492154
+⚡️  TO JS {"data":"12-fuel"}
+⚡️  To Native ->  LocalNotifications createChannel 104492155
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+ERROR MESSAGE:  {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+⚡️  [log] - [baetnil-e2e] OK 연료 적기
+⚡️  To Native ->  Filesystem appendFile 104492156
+⚡️  TO JS undefined
+⚡️  To Native ->  LocalNotifications ⚡️  [error] - {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+getPending 104492157
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  To Native ->  Filesystem readFile 104492158
+⚡️  [log] - [baetnil-e2e] SHOT 13-plan
+⚡️  To Native ->  Filesystem appendFile 104492159
+⚡️  TO JS {"data":"12-fuel"}
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem readFile 104492160
+⚡️  TO JS {"data":"12-fuel"}
+⚡️  To Native ->  Filesystem readFile 104492161
+⚡️  TO JS {"data":"12-fuel"}
+⚡️  To Native ->  Filesystem readFile 104492162
+⚡️  TO JS {"data":"13-plan"}
+⚡️  [log] - [baetnil-e2e] OK 도면 열기
+⚡️  To Native ->  Filesystem appendFile 104492163
+⚡️  TO JS undefined
+⚡️  To Native ->  BaetnilTrack once 104492164
+⚡️  TO JS {"t":1791048145878.2781,"acc":5,"spd":5,"lon":127.74929155291818,"lat":34.738472468574265,"hdg":123.40329713135313,"sim":true}
+⚡️  To Native ->  BackgroundGeolocation addWatcher 104492165
+⚡️  To Native ->  BaetnilTrack start 104492166
+⚡️  TO JS {"pad":true,"started":true}
+⚡️  To Native ->  BaetnilTrack drain 104492167
+⚡️  TO JS {"bad":0,"pts":[]}
+⚡️  TO JS {"accuracy":5,"speed":5,"simulated":true,"altitudeAccuracy":-1,"altitude":0,"longitude":127.74933707893626,"latitude":34.738447405586363,"time":1791048146538,"bearing":123.69961395033454}
+⚡️  To Native ->  LocalNotifications createChannel 104492168
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications createChannel 104492169
+ERROR MESSAGE:  {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications getPending 104492170
+⚡️  [error] - {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  TO JS {"accuracy":5,"speed":5,"simulated":true,"altitudeAccuracy":-1,"altitude":0,"longitude":127.74938245854717,"latitude":34.738422123784794,"time":1791048147540,"bearing":124.01542317152025}
+⚡️  TO JS {"accuracy":5,"speed":5,"simulated":true,"altitudeAccuracy":-1,"altitude":0,"longitude":127.74942790623074,"latitude":34.738396479350271,"time":1791048148549,"bearing":124.35476932918019}
+⚡️  To Native ->  BaetnilTrack drain 104492171
+⚡️  TO JS {"bad":0,"pts":[{"pv":"ios","la":34.738472468574265,"br":123.40329713135313,"ac":5,"mk":1,"t":1791048146186,"sp":5,"lo":127.74929155291818},{"sp":5,"ac":5,"pv":"ios","la":34.738447405586363,"lo":127.74933707893626,"br":123.69961395033454,"t":1791048146538,
+⚡️  To Native ->  LocalNotifications createChannel 104492172
+ERROR MESSAGE:  {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+⚡️  [error] - {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+⚡️  To Native ->  LocalNotifications createChannel 104492173
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications getPending 104492174
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  TO JS {"latitude":34.738370699695729,"time":1791048149553,"altitudeAccuracy":-1,"simulated":true,"speed":5,"accuracy":5,"longitude":127.74947296881267,"altitude":0,"bearing":124.72320200834358}
+⚡️  TO JS {"latitude":34.738344665014978,"time":1791048150557,"altitudeAccuracy":-1,"simulated":true,"speed":5,"accuracy":5,"longitude":127.74951780809738,"altitude":0,"bearing":125.1215322748786}
+⚡️  To Native ->  BaetnilTrack drain 104492175
+⚡️  TO JS {"pts":[{"lo":127.74947296881267,"sp":5,"ac":5,"la":34.738370699695729,"t":1791048149553,"br":124.72320200834358,"mk":1,"pv":"ios"},{"lo":127.74951780809738,"la":34.738344665014978,"t":1791048150557,"br":125.1215322748786,"pv":"ios","mk":1,"ac":5,"sp":5}],
+⚡️  TO JS {"altitude":0,"altitudeAccuracy":-1,"simulated":true,"speed":5,"longitude":127.74956252060156,"time":1791048151564,"latitude":34.738318282636286,"bearing":125.55673183509084,"accuracy":5}
+⚡️  To Native ->  Filesystem readFile 104492176
+⚡️  [log] - [baetnil-e2e] SHOT 14-track
+⚡️  To Native ->  Filesystem appendFile 104492177
+⚡️  TO JS {"data":"13-plan"}
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem readFile 104492178
+⚡️  TO JS {"data":"13-plan"}
+⚡️  To Native ->  Filesystem readFile 104492179
+⚡️  TO JS {"data":"13-plan"}
+⚡️  To Native ->  LocalNotifications createChannel 104492180
+ERROR MESSAGE:  {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+⚡️  To Native ->  LocalNotifications createChannel 104492181
+⚡️  [error] - {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications getPending 104492182
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  TO JS {"altitude":0,"altitudeAccuracy":-1,"simulated":true,"speed":5,"longitude":127.74960700740893,"time":1791048152572,"latitude":34.738291565232984,"bearing":126.03729166821131,"accuracy":5}
+⚡️  To Native ->  Filesystem readFile 104492183
+⚡️  TO JS {"data":"14-track"}
+⚡️  [log] - [baetnil-e2e] OK 항해 — 기록 시작과 항적
+⚡️  [log] - [baetnil-e2e] BG 30
+⚡️  To Native ->  Filesystem appendFile 104492184
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem appendFile 104492185
+⚡️  TO JS undefined
+⚡️  To Native ->  BaetnilTrack drain 104492186
+⚡️  TO JS {"altitude":0,"altitudeAccuracy":-1,"simulated":true,"speed":5,"longitude":127.74965290859146,"time":1791048153619,"latitude":34.738263453804549,"bearing":126.57209861882779,"accuracy":5}
+⚡️  TO JS {"pts":[{"lo":127.74956252060156,"la":34.738318282636286,"t":1791048151564,"br":125.55673183509084,"pv":"ios","mk":1,"ac":5,"sp":5},{"lo":127.74960700740893,"sp":5,"ac":5,"la":34.738291565232984,"t":1791048152572,"br":126.03729166821131,"mk":1,"pv":"ios"}]
+⚡️  To Native ->  LocalNotifications createChannel 104492187
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications createChannel 104492188
+ERROR MESSAGE:  {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+⚡️  [error] - {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+⚡️  To Native ->  LocalNotifications getPending 104492189
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  TO JS {"latitude":34.738236196962944,"time":1791048154619,"altitudeAccuracy":-1,"simulated":true,"speed":5,"accuracy":5,"longitude":127.74969641039404,"altitude":0,"bearing":127.19969481356023}
+⚡️  To Native ->  BaetnilTrack drain 104492190
+⚡️  TO JS {"pts":[{"lo":127.74965290859146,"sp":5,"ac":5,"la":34.738263453804549,"t":1791048153619,"br":126.57209861882779,"mk":1,"pv":"ios"},{"lo":127.74969641039404,"la":34.738236196962944,"t":1791048154619,"br":127.19969481356023,"pv":"ios","mk":1,"ac":5,"sp":5},
+⚡️  TO JS {"longitude":127.74974003656,"altitude":0,"bearing":127.8834156549883,"accuracy":5,"altitudeAccuracy":-1,"latitude":34.738208178640797,"simulated":true,"speed":5,"time":1791048155644}
+⚡️  To Native ->  LocalNotifications createChannel 104492191
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications createChannel 104492192
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications getPending 104492193
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  TO JS {"longitude":127.74978279686316,"altitude":0,"bearing":128.68773550440963,"accuracy":5,"altitudeAccuracy":-1,"latitude":34.73817991212136,"simulated":true,"speed":5,"time":1791048156648}
+⚡️  TO JS {"latitude":34.738149317313329,"time":1791048157712,"altitudeAccuracy":-1,"simulated":true,"speed":5,"accuracy":5,"longitude":127.74982754198911,"altitude":0,"bearing":129.63538489041579}
+⚡️  TO JS {"accuracy":5,"bearing":130.88661547070598,"latitude":34.738119426989918,"time":1791048158727,"longitude":127.74986936315666,"altitudeAccuracy":-1,"simulated":true,"speed":5,"altitude":0}
+⚡️  TO JS {"longitude":127.74990987610683,"bearing":132.43326505570346,"altitudeAccuracy":-1,"altitude":0,"accuracy":5,"simulated":true,"speed":5,"latitude":34.738088853969607,"time":1791048159732}
+⚡️  TO JS {"longitude":127.7499488719931,"bearing":134.59346905559616,"altitudeAccuracy":-1,"altitude":0,"accuracy":5,"simulated":true,"speed":5,"latitude":34.738057117153716,"time":1791048160735}
+⚡️  To Native ->  BaetnilTrack drain 104492194
+⚡️  TO JS {"bad":0,"pts":[{"lo":127.74974003656,"sp":5,"ac":5,"la":34.738208178640797,"t":1791048155644,"br":127.8834156549883,"mk":1,"pv":"ios"},{"ac":5,"lo":127.74978279686316,"la":34.73817991212136,"mk":1,"sp":5,"pv":"ios","br":128.68773550440963,"t":179104815664
+2026-10-03 17:22:40.817 App[73519:201120] CoreText note: Client requested name ".SFCompact", it will get TimesNewRomanPSMT rather than the intended font. All system UI font access should be through proper APIs such as CTFontCreateUIFontForLanguage() or +[UIFont systemFontOfSize:].
+⚡️  TO JS {"bearing":138.16691577609606,"altitudeAccuracy":-1,"speed":5,"accuracy":5,"simulated":true,"time":1791048161745,"altitude":0,"latitude":34.738023234286104,"longitude":127.74998561416275}
+⚡️  To Native ->  LocalNotifications createChannel 104492195
+ERROR MESSAGE:  {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+⚡️  [error] - {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+⚡️  To Native ->  LocalNotifications createChannel 104492196
+ERROR MESSAGE:  {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+⚡️  [error] - {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications getPending 104492197
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  To Native ->  BaetnilTrack drain 104492198
+⚡️  TO JS {"bad":0,"pts":[{"br":138.16691577609606,"mk":1,"pv":"ios","ac":5,"sp":5,"t":1791048161745,"lo":127.74998561416275,"la":34.738023234286104}]}
+⚡️  To Native ->  LocalNotifications createChannel 104492199
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications createChannel 104492200
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+ERROR MESSAGE:  {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+⚡️  To Native ->  LocalNotifications getPending 104492201
+⚡️  [error] - {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  TO JS {"bearing":123.69006752596412,"altitudeAccuracy":-1,"speed":5,"accuracy":5,"simulated":true,"time":1791048163761,"altitude":0,"latitude":34.737974841867796,"longitude":127.7500457153435}
+⚡️  TO JS {"bearing":123.72548550735169,"altitudeAccuracy":-1,"speed":5,"accuracy":5,"simulated":true,"time":1791048164761,"altitude":0,"latitude":34.737949814890037,"longitude":127.75009113151056}
+⚡️  To Native ->  BaetnilTrack drain 104492202
+⚡️  TO JS {"bearing":123.76096034111102,"altitudeAccuracy":-1,"speed":5,"accuracy":5,"simulated":true,"time":1791048165765,"altitude":0,"latitude":34.737924683124831,"longitude":127.75013667674152}
+⚡️  TO JS {"pts":[{"ac":5,"t":1791048163761,"br":123.69006752596412,"la":34.737974841867796,"mk":1,"pv":"ios","sp":5,"lo":127.7500457153435},{"t":1791048164761,"lo":127.75009113151056,"sp":5,"la":34.737949814890037,"ac":5,"br":123.72548550735169,"mk":1,"pv":"ios"}],
+⚡️  To Native ->  LocalNotifications createChannel 104492203
+ERROR MESSAGE:  {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+⚡️  [error] - {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications createChannel 104492204
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications getPending 104492205
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  TO JS {"latitude":34.737899602636382,"accuracy":5,"simulated":true,"bearing":123.7968305534019,"time":1791048166766,"altitudeAccuracy":-1,"longitude":127.75018206751302,"altitude":0,"speed":5}
+⚡️  To Native ->  BaetnilTrack drain 104492206
+⚡️  TO JS {"bad":0,"pts":[{"t":1791048165765,"lo":127.75013667674152,"sp":5,"la":34.737924683124831,"ac":5,"br":123.76096034111102,"mk":1,"pv":"ios"},{"ac":5,"t":1791048166766,"br":123.7968305534019,"la":34.737899602636382,"mk":1,"pv":"ios","sp":5,"lo":127.750182067
+⚡️  TO JS {"altitudeAccuracy":-1,"simulated":true,"latitude":34.737874393160453,"altitude":0,"accuracy":5,"bearing":123.8328765656121,"longitude":127.75022762969064,"time":1791048167770,"speed":5}
+⚡️  To Native ->  LocalNotifications createChannel 104492207
+ERROR MESSAGE:  {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+⚡️  To Native ->  LocalNotifications createChannel 104492208
+⚡️  [error] - {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications getPending 104492209
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  TO JS {"altitudeAccuracy":-1,"simulated":true,"latitude":34.737849265010134,"altitude":0,"accuracy":5,"bearing":123.86936296728823,"longitude":127.75027298241181,"time":1791048168771,"speed":5}
+⚡️  TO JS {"altitudeAccuracy":-1,"simulated":true,"latitude":34.737824086935987,"altitude":0,"accuracy":5,"bearing":123.90598828875581,"longitude":127.75031836252207,"time":1791048169772,"speed":5}
+⚡️  To Native ->  BaetnilTrack drain 104492210
+⚡️  TO JS {"pts":[{"ac":5,"t":1791048167770,"br":123.8328765656121,"la":34.737874393160453,"mk":1,"pv":"ios","sp":5,"lo":127.75022762969064},{"t":1791048168771,"lo":127.75027298241181,"sp":5,"la":34.737849265010134,"ac":5,"br":123.86936296728823,"mk":1,"pv":"ios"},{
+⚡️  To Native ->  LocalNotifications createChannel 104492211
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications createChannel 104492212
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+ERROR MESSAGE:  {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+⚡️  To Native ->  LocalNotifications getPending 104492213
+⚡️  [error] - {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  TO JS {"altitude":0,"speed":5,"bearing":123.94294757212566,"time":1791048170784,"longitude":127.75036419162188,"altitudeAccuracy":-1,"accuracy":5,"latitude":34.737798624307679,"simulated":true}
+⚡️  TO JS {"altitude":0,"speed":5,"bearing":123.98059548778076,"time":1791048171795,"longitude":127.75040994601763,"altitudeAccuracy":-1,"accuracy":5,"latitude":34.737773167108813,"simulated":true}
+⚡️  To Native ->  BaetnilTrack drain 104492214
+⚡️  TO JS {"bad":0,"pts":[{"t":1791048170784,"la":34.737798624307679,"mk":1,"pv":"ios","br":123.94294757212566,"lo":127.75036419162188,"ac":5,"sp":5},{"br":123.98059548778076,"lo":127.75040994601763,"pv":"ios","la":34.737773167108813,"t":1791048171795,"mk":1,"ac":5,
+⚡️  TO JS {"altitudeAccuracy":-1,"altitude":0,"simulated":true,"longitude":127.75045566099008,"bearing":124.018509739896,"latitude":34.737747695512269,"accuracy":5,"speed":5,"time":1791048172805}
+⚡️  To Native ->  LocalNotifications createChannel 104492215
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications createChannel 104492216
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications getPending 104492217
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  TO JS {"altitudeAccuracy":-1,"altitude":0,"simulated":true,"longitude":127.75050091266442,"bearing":124.05672394013946,"latitude":34.737722445776328,"accuracy":5,"speed":5,"time":1791048173809}
+⚡️  TO JS {"altitudeAccuracy":-1,"altitude":0,"simulated":true,"longitude":127.75054659926155,"bearing":124.09488261674019,"latitude":34.737696916750586,"accuracy":5,"speed":5,"time":1791048174821}
+⚡️  To Native ->  BaetnilTrack drain 104492218
+⚡️  TO JS {"pts":[{"br":124.018509739896,"lo":127.75045566099008,"pv":"ios","la":34.737747695512269,"t":1791048172805,"mk":1,"ac":5,"sp":5},{"t":1791048173809,"la":34.737722445776328,"mk":1,"pv":"ios","br":124.05672394013946,"lo":127.75050091266442,"ac":5,"sp":5},{"
+⚡️  To Native ->  LocalNotifications createChannel 104492219
+ERROR MESSAGE:  {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+⚡️  [error] - {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+⚡️  To Native ->  LocalNotifications createChannel 104492220
+ERROR MESSAGE:  {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+⚡️  [error] - {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications getPending 104492221
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  TO JS {"bearing":124.13375119735417,"longitude":127.75059184099941,"time":1791048175823,"simulated":true,"accuracy":5,"altitude":0,"latitude":34.737671599344729,"altitudeAccuracy":-1,"speed":5}
+⚡️  To Native ->  BaetnilTrack drain 104492222
+⚡️  TO JS {"bad":0,"pts":[{"t":1791048175823,"pv":"ios","la":34.737671599344729,"br":124.13375119735417,"mk":1,"lo":127.75059184099941,"sp":5,"ac":5}]}
+⚡️  TO JS {"bearing":124.17258432200806,"longitude":127.75063721480527,"time":1791048176827,"simulated":true,"accuracy":5,"altitude":0,"latitude":34.737646170963892,"altitudeAccuracy":-1,"speed":5}
+⚡️  To Native ->  LocalNotifications createChannel 104492223
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications createChannel 104492224
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+ERROR MESSAGE:  {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+⚡️  To Native ->  LocalNotifications getPending 104492225
+⚡️  [error] - {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  TO JS {"bearing":124.21188127089729,"longitude":127.75068260639414,"time":1791048177832,"simulated":true,"accuracy":5,"altitude":0,"latitude":34.73762069505554,"altitudeAccuracy":-1,"speed":5}
+⚡️  To Native ->  BaetnilTrack drain 104492226
+⚡️  TO JS {"bad":0,"pts":[{"t":1791048176827,"pv":"ios","la":34.737646170963892,"br":124.17258432200806,"mk":1,"lo":127.75063721480527,"sp":5,"ac":5},{"t":1791048177832,"la":34.73762069505554,"mk":1,"pv":"ios","br":124.21188127089729,"lo":127.75068260639414,"ac":5,"
+⚡️  TO JS {"altitude":0,"speed":5,"bearing":124.25155056155968,"time":1791048178838,"longitude":127.75072800593641,"altitudeAccuracy":-1,"accuracy":5,"latitude":34.737595176723708,"simulated":true}
+⚡️  To Native ->  LocalNotifications createChannel 104492227
+ERROR MESSAGE:  {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications createChannel 104492228
+⚡️  [error] - {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications getPending 104492229
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  TO JS {"altitude":0,"speed":5,"bearing":124.2915901435405,"time":1791048179840,"longitude":127.75077317672563,"altitudeAccuracy":-1,"accuracy":5,"latitude":34.737569748813115,"simulated":true}
+⚡️  TO JS {"altitude":0,"speed":5,"bearing":124.33179423432981,"time":1791048180842,"longitude":127.75081833161858,"altitudeAccuracy":-1,"accuracy":5,"latitude":34.737544291514027,"simulated":true}
+⚡️  To Native ->  BaetnilTrack drain 104492230
+⚡️  TO JS {"bad":0,"pts":[{"t":1791048178838,"la":34.737595176723708,"mk":1,"pv":"ios","br":124.25155056155968,"lo":127.75072800593641,"ac":5,"sp":5},{"t":1791048179840,"pv":"ios","la":34.737569748813115,"br":124.2915901435405,"mk":1,"lo":127.75077317672563,"sp":5,"
+⚡️  To Native ->  LocalNotifications createChannel 104492231
+ERROR MESSAGE:  {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+⚡️  To Native ->  LocalNotifications createChannel 104492232
+⚡️  [error] - {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+ERROR MESSAGE:  {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications getPending 104492233
+⚡️  [error] - {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  TO JS {"latitude":34.73751854464885,"time":1791048181854,"altitudeAccuracy":-1,"simulated":true,"speed":5,"accuracy":5,"longitude":127.75086393078176,"altitude":0,"bearing":124.3723564791039}
+⚡️  TO JS {"latitude":34.737493008159099,"time":1791048182857,"altitudeAccuracy":-1,"simulated":true,"speed":5,"accuracy":5,"longitude":127.75090908739205,"altitude":0,"bearing":124.41370386737482}
+⚡️  TO JS {"latitude":34.737467252009807,"time":1791048183867,"altitudeAccuracy":-1,"simulated":true,"speed":5,"accuracy":5,"longitude":127.7509545620362,"altitude":0,"bearing":124.4550362856383}
+⚡️  To Native ->  BaetnilTrack drain 104492234
+⚡️  TO JS {"bad":0,"pts":[{"lo":127.75086393078176,"sp":5,"ac":5,"la":34.73751854464885,"t":1791048181854,"br":124.3723564791039,"mk":1,"pv":"ios"},{"t":1791048182857,"pv":"ios","la":34.737493008159099,"br":124.41370386737482,"mk":1,"lo":127.75090908739205,"sp":5,"a
+⚡️  To Native ->  LocalNotifications createChannel 104492235
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications createChannel 104492236
+ERROR MESSAGE:  {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+⚡️  To Native ->  LocalNotifications getPending 104492237
+⚡️  [error] - {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+⚡️  TO JS {"altitude":0,"speed":5,"bearing":124.49705800480949,"time":1791048184869,"longitude":127.75099966333218,"altitudeAccuracy":-1,"accuracy":5,"latitude":34.737441667139144,"simulated":true}
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  TO JS {"altitude":0,"speed":5,"bearing":124.53913431716362,"time":1791048185876,"longitude":127.75104493277982,"altitudeAccuracy":-1,"accuracy":5,"latitude":34.737415946457084,"simulated":true}
+⚡️  To Native ->  BaetnilTrack drain 104492238
+⚡️  TO JS {"pts":[{"t":1791048184869,"la":34.737441667139144,"mk":1,"pv":"ios","br":124.49705800480949,"lo":127.75099966333218,"ac":5,"sp":5},{"t":1791048185876,"pv":"ios","la":34.737415946457084,"br":124.53913431716362,"mk":1,"lo":127.75104493277982,"sp":5,"ac":5}]
+⚡️  TO JS {"bearing":124.58177701065289,"longitude":127.75109008539077,"time":1791048186881,"simulated":true,"accuracy":5,"altitude":0,"latitude":34.737390251254901,"altitudeAccuracy":-1,"speed":5}
+⚡️  To Native ->  LocalNotifications createChannel 104492239
+ERROR MESSAGE:  {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+⚡️  [error] - {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications createChannel 104492240
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications getPending 104492241
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  TO JS {"bearing":124.62472497123065,"longitude":127.75113524776738,"time":1791048187886,"simulated":true,"accuracy":5,"altitude":0,"latitude":34.737364509248103,"altitudeAccuracy":-1,"speed":5}
+⚡️  To Native ->  BaetnilTrack drain 104492242
+⚡️  TO JS {"bad":0,"pts":[{"t":1791048186881,"pv":"ios","la":34.737390251254901,"br":124.58177701065289,"mk":1,"lo":127.75109008539077,"sp":5,"ac":5},{"t":1791048187886,"la":34.737364509248103,"mk":1,"pv":"ios","br":124.62472497123065,"lo":127.75113524776738,"ac":5,
+⚡️  TO JS {"altitude":0,"speed":5,"bearing":124.6681054448816,"time":1791048188887,"longitude":127.7511801890238,"altitudeAccuracy":-1,"accuracy":5,"latitude":34.737338851775341,"simulated":true}
+⚡️  To Native ->  LocalNotifications createChannel 104492243
+ERROR MESSAGE:  {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+⚡️  [error] - {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+⚡️  To Native ->  LocalNotifications createChannel 104492244
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications getPending 104492245
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  TO JS {"altitude":0,"speed":5,"bearing":124.7117008310848,"time":1791048189897,"longitude":127.75122552245685,"altitudeAccuracy":-1,"accuracy":5,"latitude":34.737312928288951,"simulated":true}
+⚡️  To Native ->  BaetnilTrack drain 104492246
+⚡️  TO JS {"bad":0,"pts":[{"t":1791048188887,"la":34.737338851775341,"mk":1,"pv":"ios","br":124.6681054448816,"lo":127.7511801890238,"ac":5,"sp":5},{"t":1791048189897,"pv":"ios","la":34.737312928288951,"br":124.7117008310848,"mk":1,"lo":127.75122552245685,"sp":5,"ac
+⚡️  TO JS {"bearing":124.75611914419744,"longitude":127.75127053326091,"time":1791048190900,"simulated":true,"accuracy":5,"altitude":0,"latitude":34.737287146644306,"altitudeAccuracy":-1,"speed":5}
+⚡️  To Native ->  LocalNotifications createChannel 104492247
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications createChannel 104492248
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+ERROR MESSAGE:  {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+⚡️  To Native ->  LocalNotifications getPending 104492249
+⚡️  [error] - {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  TO JS {"bearing":124.80066681764154,"longitude":127.75131541386935,"time":1791048191902,"simulated":true,"accuracy":5,"altitude":0,"latitude":34.73726139687718,"altitudeAccuracy":-1,"speed":5}
+⚡️  TO JS {"bearing":124.84553697412217,"longitude":127.75136054719138,"time":1791048192909,"simulated":true,"accuracy":5,"altitude":0,"latitude":34.737235458823179,"altitudeAccuracy":-1,"speed":5}
+⚡️  To Native ->  BaetnilTrack drain 104492250
+⚡️  TO JS {"bad":0,"pts":[{"t":1791048190900,"pv":"ios","la":34.737287146644306,"br":124.75611914419744,"mk":1,"lo":127.75127053326091,"sp":5,"ac":5},{"t":1791048191902,"la":34.73726139687718,"mk":1,"pv":"ios","br":124.80066681764154,"lo":127.75131541386935,"ac":5,"
+⚡️  To Native ->  LocalNotifications createChannel 104492251
+ERROR MESSAGE:  {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications createChannel 104492252
+⚡️  [error] - {"message":"not implemented","code":"UNIMPLEMENTED","errorMessage":"not implemented","data":{}}
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications getPending 104492253
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  TO JS {"altitudeAccuracy":-1,"altitude":0,"simulated":true,"longitude":127.75140535566182,"bearing":124.89112478887014,"latitude":34.737209663741865,"accuracy":5,"speed":5,"time":1791048193910}
+⚡️  TO JS {"altitudeAccuracy":-1,"altitude":0,"simulated":true,"longitude":127.75145049295834,"bearing":124.93685260371083,"latitude":34.737183635139601,"accuracy":5,"speed":5,"time":1791048194918}
+⚡️  To Native ->  BaetnilTrack drain 104492254
+⚡️  To Native ->  BaetnilTrack status 104492255
+⚡️  TO JS {"pts":[{"t":1791048193910,"la":34.737209663741865,"mk":1,"pv":"ios","br":124.89112478887014,"lo":127.75140535566182,"ac":5,"sp":5},{"br":124.93685260371083,"lo":127.75145049295834,"pv":"ios","la":34.737183635139601,"t":1791048194918,"mk":1,"ac":5,"sp":5}]
+⚡️  TO JS {"running":true,"relaunch":false,"bytes":0}
+⚡️  TO JS {"altitudeAccuracy":-1,"altitude":0,"simulated":true,"longitude":127.75149568424749,"bearing":124.98339978069241,"latitude":34.737157530281024,"accuracy":5,"speed":5,"time":1791048195929}
+⚡️  To Native ->  LocalNotifications createChannel 104492256
+ERROR MESSAGE:  {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+⚡️  [error] - {"errorMessage":"not implemented","code":"UNIMPLEMENTED","data":{},"message":"not implemented"}
+⚡️  To Native ->  LocalNotifications createChannel 104492257
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+⚡️  To Native ->  LocalNotifications getPending 104492258
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","errorMessage":"not implemented","data":{}}
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  TO JS {"altitudeAccuracy":-1,"altitude":0,"simulated":true,"longitude":127.75154050428915,"bearing":125.03049779981149,"latitude":34.737131594542475,"accuracy":5,"speed":5,"time":1791048196938}
+⚡️  [log] - [baetnil-e2e] OK 항해 — 앱을 뒤로 보냈다가 돌아와도 항적이 이어지는가
+⚡️  To Native ->  Filesystem appendFile 104492259
+⚡️  TO JS undefined
+⚡️  TO JS {"altitudeAccuracy":-1,"altitude":0,"simulated":true,"longitude":127.75158519159201,"bearing":125.07770648372447,"latitude":34.737105690258851,"accuracy":5,"speed":5,"time":1791048197938}
+⚡️  To Native ->  BaetnilTrack drain 104492260
+⚡️  TO JS {"pts":[{"br":124.98339978069241,"lo":127.75149568424749,"pv":"ios","la":34.737157530281024,"t":1791048195929,"mk":1,"ac":5,"sp":5},{"t":1791048196938,"la":34.737131594542475,"mk":1,"pv":"ios","br":125.03049779981149,"lo":127.75154050428915,"ac":5,"sp":5},
+⚡️  To Native ->  Filesystem appendFile 104492261
+⚡️  [log] - [baetnil-e2e] INFO 거짓 위치 버린 수 3 · 그동안 늘어난 점 0
+⚡️  TO JS undefined
+⚡️  [log] - [baetnil-e2e] OK 항해 — 거짓 위치는 버리는가
+⚡️  [log] - [baetnil-e2e] KILL 150
+⚡️  To Native ->  Filesystem appendFile 104492262
+⚡️  TO JS undefined
+⚡️  To Native ->  Filesystem appendFile 104492263
+⚡️  TO JS undefined
+⚡️  TO JS {"latitude":34.73707955363011,"altitudeAccuracy":-1,"simulated":true,"longitude":127.75163020020436,"bearing":125.12527988909517,"speed":5,"time":1791048198946,"accuracy":5,"altitude":0}
+⚡️  TO JS {"latitude":34.737053427839967,"altitudeAccuracy":-1,"simulated":true,"longitude":127.75167510942683,"bearing":125.17371726247585,"speed":5,"time":1791048199952,"accuracy":5,"altitude":0}
