@@ -16540,7 +16540,7 @@ function nameRow(){
         esc(t('저장'))}</button></div>`
     + `<div id="acNameMsg" class="mrnone" style="text-align:left;display:none"></div>`
     + `<div class="mrnone" style="text-align:left">${
-        esc(t('배 명부와 게시판에 이 이름으로 표시됩니다. 비워 두면 계정 이름을 사용합니다.'))}</div>`;
+        esc(t('배 명부와 게시판에 이 이름으로 보입니다. 비워 두면 계정에 있는 이름을 사용합니다.'))}</div>`;
 }
 // 이름을 바꾸면 내가 든 배의 명부에도 그대로 반영한다 — 두 곳에 따로 적으면 갈라진다
 function myNameSave(v, 알림){
@@ -16566,7 +16566,7 @@ function myNameSave(v, 알림){
   // ★ 담겼다고 말해 준다. 말이 없으면 사람은 다시 누른다.
   if(알림){
     const el = document.getElementById('acNameMsg');
-    if(el){ el.innerHTML = esc(t(새이름 ? '이름을 저장했습니다.' : '이름을 삭제했습니다. 계정 이름을 사용합니다.'));
+    if(el){ el.innerHTML = esc(t(새이름 ? '이름을 저장했습니다.' : '이름을 지웠습니다. 계정에 있는 이름을 사용합니다.'));
             el.style.display = 'block'; }
   }
 }
