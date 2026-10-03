@@ -16269,10 +16269,10 @@ const HELP = {
     t('앱에 기본으로 들어 있는 항목입니다. 일반적인 정비 주기를 참고용으로 넣은 것이며, 실제 주기는 배마다 다릅니다.<br><br>') +
     t('설명서를 확인하고 주기와 내용을 배에 맞게 수정해 주세요. 한 번이라도 수정하면 초안 표시가 사라집니다.')],
   model: [t('제조사 · 모델 · 연식'),
-    t('배의 제조사와 모델, 건조 연도입니다. 예를 들어 <b>Beneteau · First 45f5 · 1991</b> 처럼 입력합니다.<br><br>') +
-    t('나중에 정비 문제로 도움을 구할 때, 상대방이 배를 알아야 정확한 답을 받을 수 있습니다. ') +
+    t('배의 제조사와 모델, 건조 연도입니다. 예를 들어 <b>Beneteau · First 45f5 · 1991</b> 처럼 적습니다.<br><br>') +
+    t('나중에 정비 문제로 도움을 구할 때, 상대가 배를 알아야 답이 정확해집니다. ') +
     t('같은 모델을 사용하는 사람의 경험도 그만큼 잘 맞습니다.<br><br>') +
-    t('모르면 비워 두어도 됩니다. 선체나 엔진룸의 명판, 선박검사증에서 확인할 수 있습니다.')],
+    t('모르면 비워 두어도 됩니다. 선체나 엔진룸에 붙은 명판, 선박검사증에서 확인할 수 있습니다.')],
   status: [t('수리 상태'),
     t('<b>고장</b>은 발견했지만 아직 손대지 않은 상태입니다.<br>') +
     t('<b>진행 중</b>은 부품을 주문했거나 작업을 시작한 상태입니다.<br>') +
@@ -16540,7 +16540,7 @@ function nameRow(){
         esc(t('저장'))}</button></div>`
     + `<div id="acNameMsg" class="mrnone" style="text-align:left;display:none"></div>`
     + `<div class="mrnone" style="text-align:left">${
-        esc(t('배 명부와 게시판에 이 이름으로 표시됩니다. 비워 두면 계정 이름을 사용합니다.'))}</div>`;
+        esc(t('배 명부와 게시판에 이 이름으로 보입니다. 비워 두면 계정에 있는 이름을 사용합니다.'))}</div>`;
 }
 // 이름을 바꾸면 내가 든 배의 명부에도 그대로 반영한다 — 두 곳에 따로 적으면 갈라진다
 function myNameSave(v, 알림){
@@ -16566,7 +16566,7 @@ function myNameSave(v, 알림){
   // ★ 담겼다고 말해 준다. 말이 없으면 사람은 다시 누른다.
   if(알림){
     const el = document.getElementById('acNameMsg');
-    if(el){ el.innerHTML = esc(t(새이름 ? '이름을 저장했습니다.' : '이름을 삭제했습니다. 계정 이름을 사용합니다.'));
+    if(el){ el.innerHTML = esc(t(새이름 ? '이름을 저장했습니다.' : '이름을 지웠습니다. 계정에 있는 이름을 사용합니다.'));
             el.style.display = 'block'; }
   }
 }
@@ -16587,11 +16587,11 @@ function myNameSave(v, 알림){
 // ══════════════════════════════════════════════════════════════════════
 const PROF_LEVELS = [
   { k:'com',  name:'공개',
-    sub:'로그인한 회원은 누구나 볼 수 있습니다.' },
+    sub:'로그인한 회원이면 누구나 봅니다.' },
   { k:'boat', name:'같이 타는 사람만',
-    sub:'선택한 배의 구성원만 볼 수 있습니다.' },
+    sub:'선택한 배의 구성원만 봅니다.' },
   { k:'none', name:'비공개',
-    sub:'아무도 볼 수 없습니다. 외부로 전송되지 않습니다.' }
+    sub:'아무도 안 봅니다. 밖으로 나가지 않습니다.' }
 ];
 let profMine = null;            // 내 소개 (받아 둔 것)
 let profCache = {};           // uid → 받아 둔 남의 소개 (한 번 받으면 다시 안 받는다)
@@ -16622,7 +16622,7 @@ function wipeLink(){
   return `<div class="mrrow" style="justify-content:center;padding:14px 12px 4px">`
     + `<button class="wipelink" onclick="openWipe()">${esc(t('계정 삭제'))}</button></div>`
     + `<div class="mrnone" style="text-align:center;padding-top:0">${
-        esc(t('계정을 삭제하면 클라우드 기록과 올린 글이 함께 사라집니다.'))}</div>`;
+        esc(t('계정을 지우면 클라우드 기록과 올린 글이 함께 사라집니다.'))}</div>`;
 }
 // ── 계정 화면의 「내 프로필」 (5.20)
 // ★★★ 사장님 지적: 「이거 저장하는것도 개좆같이 만들어놔서 저게 뭔저장버튼인지 모르겠다」
@@ -16634,9 +16634,9 @@ function wipeLink(){
 // ★ 이 카드는 남이 내 프로필을 눌렀을 때 보는 것과 같은 것을 보여 준다.
 function profLvWho(p){
   const q = p || profBlank();
-  if(q.lv === 'com')  return t('소개·자주 타는 바다·가고 싶은 곳은 로그인한 회원 누구나 볼 수 있습니다.');
-  if(q.lv === 'boat') return t('소개·자주 타는 바다·가고 싶은 곳은 선택한 배의 구성원만 볼 수 있습니다.');
-  return t('소개·자주 타는 바다·가고 싶은 곳은 아무도 볼 수 없습니다.');
+  if(q.lv === 'com')  return t('소개·자주 타는 바다·가고 싶은 곳을 로그인한 회원 누구나 봅니다.');
+  if(q.lv === 'boat') return t('소개·자주 타는 바다·가고 싶은 곳을 선택한 배의 구성원만 봅니다.');
+  return t('소개·자주 타는 바다·가고 싶은 곳을 아무도 못 봅니다.');
 }
 function profCard(){
   const p = profMine || profBlank();
@@ -16681,7 +16681,7 @@ function openProfEdit(){
         <button class="tab on" onclick="profSave()">${esc(t('완료'))}</button></div>
     <div class="mrrow"><span class="mrlbl">${esc(t('이름'))}</span>
       <input id="pfName" style="flex:1" maxlength="20" value="${esc(p.name||'')}" placeholder="${esc(myName())}"></div>
-    <div class="mrm" style="padding:0 0 8px 12px">${esc(t('배 명부와 게시판에 이 이름으로 표시됩니다. 비워 두면 계정 이름을 사용합니다.'))}</div>
+    <div class="mrm" style="padding:0 0 8px 12px">${esc(t('배 명부와 게시판에 이 이름으로 보입니다. 비워 두면 계정에 있는 이름을 사용합니다.'))}</div>
     <div class="mrrow"><span class="mrlbl">${esc(t('소개'))}</span>
       <textarea id="pfIntro" rows="3" style="flex:1" maxlength="200"
         placeholder="${esc(t('어떤 배를 얼마나 탔는지, 무엇을 잘하는지'))}">${esc(p.intro||'')}</textarea></div>
@@ -16780,7 +16780,7 @@ function openAccount(){
       <div class="mrrow"><span class="mrlbl">${esc(t('계정 번호'))}</span>
         <span class="mrm" style="flex:1;word-break:break-all">${esc(meUid()||'—')}</span>
         <button class="minib blu" onclick="copyMyUid()">${esc(t('복사'))}</button></div>
-      <div class="mrnone" style="text-align:left">${esc(t('운영자 지정을 요청할 때 이 번호를 알려 주세요.'))}</div>
+      <div class="mrnone" style="text-align:left">${esc(t('운영자로 세워 달라고 할 때 이 번호를 알려 주시면 됩니다.'))}</div>
       <div class="mrrow" style="justify-content:flex-end">
         <button class="mrbtn warn" onclick="doSignOut()">${esc(t('로그아웃'))}</button></div>
       ${/* ★★★ 4.137 — 「옛 사진」 줄을 뺐다 (사장님 지적, 2026-09-13)
@@ -16797,7 +16797,7 @@ function openAccount(){
       <div class="mrnone" style="text-align:left">${esc(t('로그인하지 않아도 이 기기에서 앱을 모두 사용할 수 있습니다.'))}<br>${esc(t('여러 기기에서 함께 보거나, 다른 사람과 배를 같이 관리하려면 로그인해 주세요.'))}</div>
       ${loginBtns()}
       <div class="mrnone" style="text-align:left">${
-        tsub('로그인하시면 {terms}과 {privacy}에 동의하신 것으로 간주합니다. 만 14세 미만은 가입할 수 없습니다.', {
+        tsub('로그인하시면 {terms}과 {privacy}에 동의하신 것으로 봅니다. 만 14세 미만은 가입할 수 없습니다.', {
           terms:   `<button class="minib blu" onclick="openLegal('terms')">${esc(t('이용약관'))}</button>`,
           privacy: `<button class="minib blu" onclick="openLegal('privacy')">${esc(t('개인정보처리방침'))}</button>`
         })}</div>
@@ -16835,7 +16835,7 @@ function openAccount(){
 //   1. 무엇이 사라지는지 숫자로 먼저 보여 준다 (배 몇 척, 글 몇 개)
 //   2. 백업을 먼저 받게 권한다
 //   3. 정해진 글자를 그대로 적어야 지운다 — 잘못 눌러서 지워지면 안 된다
-const WIPE_WORD = '계정을 삭제합니다';
+const WIPE_WORD = '계정을 지웁니다';
 // 내가 선주인 배만 내 것이다. 남의 배에 얹혀 있는 것은 내가 지울 수 없다.
 function myOwnBoats(){
   return (Array.isArray(boats) ? boats : []).filter(b => canDelBoat(b));
@@ -16844,15 +16844,15 @@ function guestBoats(){
   return (Array.isArray(boats) ? boats : []).filter(b => !canDelBoat(b));
 }
 async function openWipe(){
-  if(!window.__user){ tell(t('로그인한 상태에서만 삭제할 수 있습니다')); return; }
+  if(!window.__user){ tell(t('로그인한 상태에서만 지울 수 있습니다')); return; }
   const P = document.getElementById('mrPanel');
   if(!P) return;
   const mine = myOwnBoats(), guest = guestBoats();
   P.innerHTML = `<div class="mrhead"><b>${esc(t('계정 삭제'))}</b><span style="flex:1"></span></div>
-    <div class="mrnone" style="text-align:left">${esc(t('삭제하면'))} <b>${esc(t('되돌릴 수 없습니다.'))}</b>${esc(t('먼저 파일로 저장해 두시길 권합니다.'))}</div>
+    <div class="mrnone" style="text-align:left">${esc(t('지우면'))} <b>${esc(t('되돌릴 수 없습니다.'))}</b>${esc(t('먼저 파일로 저장해 두시길 권합니다.'))}</div>
     <div class="mrrow" style="justify-content:center;padding:10px 12px">
       <button class="mrbtn big" onclick="backupData()">${esc(t('파일로 먼저 저장하기'))}</button></div>
-    <div class="mrsecthead">${esc(t('삭제되는 항목'))}</div>
+    <div class="mrsecthead">${esc(t('사라지는 것'))}</div>
     <div class="mrrow"><span class="mrlbl">${esc(t('내 배'))}</span>
       <span class="mrm" style="flex:1">${mine.length ? esc(mine.map(b=>b.name).join(', ')) : t('없음')}</span>
       <b class="mrv">${esc(tsub('{n}척', { n: mine.length }))}</b></div>
@@ -16860,19 +16860,19 @@ async function openWipe(){
       <span class="mrm" style="flex:1">${esc(t('물품·정비·수리·항해일지·서류·도면·게시판'))}</span></div>
     <div class="mrrow"><span class="mrlbl">${esc(t('커뮤니티'))}</span>
       <span class="mrm" style="flex:1">${esc(t('내가 올린 정박지·중고 장터'))}</span>
-      <b class="mrv" id="wipeN">${esc(t('집계 중…'))}</b></div>
+      <b class="mrv" id="wipeN">${esc(t('세는 중…'))}</b></div>
     <div class="mrrow"><span class="mrlbl">${esc(t('계정'))}</span>
       <span class="mrm" style="flex:1">${esc((window.__user && window.__user.email) || t('로그인 계정'))}</span></div>
     <div class="mrrow"><span class="mrlbl">${esc(t('이 기기'))}</span>
-      <span class="mrm" style="flex:1">${esc(t('기기에 저장된 기록도 함께 삭제'))}</span></div>`
+      <span class="mrm" style="flex:1">${esc(t('기기에 저장된 기록도 함께 지웁니다'))}</span></div>`
     + (guest.length ? `<div class="mrnone" style="text-align:left">
         ${tsub('<b>남의 배 {n}척</b>에 참여 중입니다 —', { n: guest.length })}
-        ${esc(guest.map(b=>b.name).join(', '))}<br>${esc(t('그 배의 기록은 삭제되지 않습니다. 다만 명부에 이름이 남을 수 있으니, 먼저 그 배의 선주에게 내보내 달라고 요청하시는 것이 좋습니다.'))}</div>` : '')
+        ${esc(guest.map(b=>b.name).join(', '))}<br>${esc(t('그 배의 기록은 지워지지 않습니다. 다만 명부에 제 이름이 남을 수 있으니, 먼저 그 배의 선주에게 내보내 달라고 하시는 편이 깔끔합니다.'))}</div>` : '')
     + `<div class="mrsecthead">${esc(t('남는 것'))}</div>
       <div class="mrrow"><span class="mrlbl">${esc(t('커뮤니티 글·댓글'))}</span>
-        <span class="mrm" style="flex:1">${esc(t('글쓴이는 「탈퇴한 회원」으로 보입니다'))}</span>
-        <b class="mrv" id="wipeKeep">${esc(t('집계 중…'))}</b></div>
-      <div class="mrnone" style="text-align:left">${esc(t('탈퇴해도 커뮤니티에 쓴 글과 댓글은 삭제되지 않습니다. 삭제하고 싶은 글·댓글은 탈퇴하기 전에 직접 삭제해 주세요.'))}</div>
+        <span class="mrm" style="flex:1">${esc(t('글쓴이는 「탈퇴한 회원」 으로 보입니다'))}</span>
+        <b class="mrv" id="wipeKeep">${esc(t('세는 중…'))}</b></div>
+      <div class="mrnone" style="text-align:left">${esc(t('탈퇴해도 커뮤니티에 쓴 글과 댓글은 지워지지 않습니다. 지우고 싶은 글·댓글은 탈퇴하기 전에 직접 지워 주세요.'))}</div>
       <div class="mrnone" style="text-align:left">${esc(t('문의·신고 기록 등은 정한 기간 동안 따로 보관합니다 (개인정보처리방침 참고).'))}</div>
       <div class="mrrow" style="justify-content:center;padding:16px 12px">
         <button class="mrbtn big warn" onclick="askWipe()">${esc(t('계정 삭제'))}</button></div>`;
@@ -16886,18 +16886,18 @@ async function openWipe(){
     const ek = document.getElementById('wipeKeep');
     if(ek) ek.textContent = tsub('글 {a}개 · 댓글 {b}개', { a: r.keep, b: r.cmt });
   }catch(_){
-    ['wipeN','wipeKeep'].forEach(k => { const el = document.getElementById(k); if(el) el.textContent = t('계산 불가'); });
+    ['wipeN','wipeKeep'].forEach(k => { const el = document.getElementById(k); if(el) el.textContent = t('셀 수 없음'); });
   }
 }
 // ★ 정해진 글자를 그대로 적게 한다. 확인 창 한 번으로는 잘못 눌린다.
 function askWipe(){
   openForm({
-    title: '정말 삭제할까요',
-    sub: tsub('되돌릴 수 없습니다. 계속하려면 아래에 «{word}»를 그대로 입력해 주세요.', { word: WIPE_WORD }),
+    title: '정말 지울까요',
+    sub: tsub('되돌릴 수 없습니다. 계속하려면 아래에 «{word}» 를 그대로 적어 주세요.', { word: WIPE_WORD }),
     okText: '삭제',
     fields: [ { key:'word', label:'확인 글자', value:'', placeholder: WIPE_WORD } ],
     onOk: v => {
-      if(String(v.word || '').trim() !== WIPE_WORD) return formErr('word', '입력한 문구가 일치하지 않아 삭제하지 않았습니다.');
+      if(String(v.word || '').trim() !== WIPE_WORD) return formErr('word', '글자가 달라서 지우지 않았습니다.');
       doWipe();
     }
   });
@@ -16908,7 +16908,7 @@ function wipeSay(msg){
     <div class="mrnone" style="text-align:left">${t(msg)}</div>`;
 }
 async function doWipe(){
-  wipeSay('삭제 중입니다. 앱을 닫지 말아 주세요…');
+  wipeSay('지우는 중입니다. 앱을 닫지 말아 주세요…');
   // 0) 전에 지우다 만 배부터 — 계정이 없어지면 다시는 못 지운다
   try{ await retryBoatDels(); }catch(_){}
   // 1) 내가 선주인 배 — 클라우드와 기기 양쪽
@@ -16928,8 +16928,8 @@ async function doWipe(){
   if(r === 'relogin'){
     // ★ 파이어베이스는 오래된 로그인으로는 계정을 못 지우게 한다.
     //   여기서 기기 자료까지 지워 버리면 사람만 붕 뜬다. 그래서 멈추고 알린다.
-    wipeSay(`${t('보안을 위해 <b>다시 로그인한 뒤</b>에 삭제할 수 있습니다.')}<br><br>`
-      + t('클라우드에 저장된 배 기록은 이미 삭제했고, 커뮤니티 글·댓글은 「탈퇴한 회원」으로 표시됩니다.') + '<br>'
+    wipeSay(`${t('보안을 위해 <b>다시 로그인한 뒤</b>에 지울 수 있습니다.')}<br><br>`
+      + t('클라우드에 올려 두었던 배 기록은 이미 지웠고, 커뮤니티 글·댓글은 「탈퇴한 회원」 으로 바꿨습니다.') + '<br>'
       + t('로그아웃했다가 다시 로그인하신 뒤 한 번 더 눌러 주세요.')
       + '<div class="mrrow" style="justify-content:center;padding:16px 0">'
       + `<button class="mrbtn big" onclick="doSignOut()">${esc(t('로그아웃'))}</button></div>`);
@@ -17275,7 +17275,7 @@ function openWelcome(){
     <div class="mrnone" style="text-align:center;padding:6px 0">${esc(t('또는'))}</div>
     <div class="mrrow"><button class="mrbtn big" style="flex:1" onclick="openAccount()">${esc(t('이메일로 시작하기'))}</button></div>
     <div class="mrnone" style="text-align:left">
-      <b>${esc(t('구글(gmail) 계정이 없어도 됩니다.'))}</b> ${esc(t('사용 중인 어떤 이메일로도 가입할 수 있습니다.'))}<br><br>${esc(t('바다에서는 인터넷이 안 될 때가 있습니다. 그럴 때는 로그인 없이 이 기기에서만 사용하다가 나중에 로그인하셔도 됩니다.'))}</div>
+      <b>${esc(t('구글(gmail) 계정이 없어도 됩니다.'))}</b> ${esc(t('사용하시는 아무 이메일로 가입하시면 됩니다.'))}<br><br>${esc(t('바다에서는 인터넷이 안 될 때가 있습니다. 그럴 때는 로그인 없이 이 기기에서만 사용하다가 나중에 로그인하셔도 됩니다.'))}</div>
     <div class="mrrow" style="justify-content:center;padding:4px 12px 16px">
       <button class="minib" onclick="skipWelcome()">${esc(t('나중에 하기'))}</button></div>`;
   showPanel(P);
@@ -17397,7 +17397,7 @@ function openBoatSetup(){
     <div class="mrrow"><span class="mrlbl">${esc(t('모델'))}</span>
       <input id="nbModel" style="flex:1" placeholder="${esc(t('예: First 45f5'))}" autocomplete="off">
       <input id="nbYear" type="number" min="1900" max="2100" style="width:86px" placeholder="${esc(t('연식'))}" autocomplete="off"></div>
-    <div class="mrnone" style="text-align:left">${esc(t('제조사·모델·연식은 나중에 도움을 요청할 때 상대방이 배를 파악하는 데 쓰입니다. 지금 모르시면 나중에 입력하셔도 됩니다.'))}</div>
+    <div class="mrnone" style="text-align:left">${esc(t('제조사·모델·연식은 나중에 도움을 구할 때 상대가 배를 파악하는 데 사용됩니다. 지금 몰라도 되고, 나중에 채워도 됩니다.'))}</div>
     <div class="mrrow" style="justify-content:flex-end">
       <button class="mrbtn ok" onclick="createBoat()">${esc(t('저장'))}</button></div>`;
   showPanel(P);
@@ -17497,7 +17497,7 @@ function lgAdd(k, w, extra){
 function lgTrack(from, to, n){
   return lgAdd('수집', '항해 항적 기록', {
     from: from, to: to, n: n,
-    how: '단말기 GPS · 이어서 기록',
+    how: '단말기 GPS · 이어받기',
     // ★ 확인자료에 적는 「수집주기」는 실제로 위치를 받는 주기여야 한다.
     //   저장은 더 성기게 하지만(TRK_DIST), 수집은 폰에게 요청한 주기(TRK_ASK)로 일어난다.
     every: (typeof TRK_ASK === 'number' ? TRK_ASK : 10) + 'm 이동마다'
@@ -17536,7 +17536,7 @@ function locSet(on){
   const body = Object.assign({}, a || { ver: LEGAL_VER, at: new Date().toISOString() },
                              { loc: !!on, locAt: new Date().toISOString() });
   pSet('bt_agree', JSON.stringify(body));
-  try{ lgAdd('동의·철회', on ? '위치정보 수집에 동의' : '위치정보 수집 동의 철회'); }catch(e){}
+  try{ lgAdd('동의·철회', on ? '위치정보 수집에 동의' : '위치정보 수집 동의를 거둠'); }catch(e){}
   try{ pushAgree(); }catch(e){}
   return !!on;
 }
@@ -17546,7 +17546,7 @@ function locSet(on){
 async function locAsk(quiet){
   if(locOK()) return true;
   if(quiet) return false;
-  const yes = await ask(t('위치정보 이용에 동의하셔야 현재 위치를 확인할 수 있습니다.\n\n동의하시겠습니까?\n(메뉴 › 약관·방침 › 위치정보에서 언제든 켜고 끌 수 있습니다.)'), { ok: t('동의하기') });
+  const yes = await ask(t('위치정보 이용에 동의하셔야 현재 위치를 잡을 수 있습니다.\n\n동의하시겠습니까?\n(서랍 › 약관·방침 › 위치정보 에서 언제든 끄고 켜실 수 있습니다.)'), { ok: t('동의하기') });
   if(!yes) return false;
   locSet(true);
   return true;
@@ -17562,7 +17562,7 @@ function locSignedIn(){
 // 위치를 받아도 되는가 — 로그인과 동의, 둘 다 있어야 한다.
 async function locMay(quiet){
   if(!locSignedIn()){
-    if(!quiet && await ask(t('현재 위치는 로그인하신 분만 사용할 수 있습니다.\n\n로그인하시겠습니까?\n(로그인하지 않아도 지도에서 위치를 직접 지정할 수 있습니다.)'), { ok: t('로그인') })){
+    if(!quiet && await ask(t('현재 위치는 로그인하신 분에게만 받습니다.\n\n로그인하시겠습니까?\n(로그인하지 않으셔도 지도에서 직접 찍으실 수 있습니다.)'), { ok: t('로그인') })){
       try{ openAccount(); }catch(e){}
     }
     return false;
@@ -17787,7 +17787,7 @@ async function trkBufStart(){
   const P = trkP(); if(!P) return false;
   try{
     const r = await P.start({ title: t('뱃일 — 항해 기록 중'),
-                              text:  t('항적을 기록하고 있습니다. 입항을 기록하면 중지됩니다.') });
+                              text:  t('항적을 기록하고 있습니다. 입항을 기록하면 멈춥니다.') });
     return !!(r && r.started);
   }catch(_){ return false; }
 }
@@ -18310,19 +18310,19 @@ function trkCountText(){
   //   이 말이 없으면 사람은 0점을 보고 「기록이 안 되는구나」 하고 껐다 켠다.
   if(!(trkNow.pts || []).length && (Number(trkNow.wait) || 0) > 0
      && trkFirstWait(NaN, Date.parse(trkNow.from))){
-    return t('GPS 신호를 찾고 있습니다. 위치가 정확해지면 첫 점을 기록합니다.');
+    return t('GPS 신호를 찾고 있습니다 — 위치가 정확해지면 첫 점을 기록합니다');
   }
-  let 글 = tsub('{n}개 지점', { n: String((trkNow.pts || []).length) });
+  let 글 = tsub('{n}점', { n: String((trkNow.pts || []).length) });
   // ★★★ 5.4 — 화면을 끈 동안 뒤에서 받아 온 점을 따로 적는다.
   //   이게 0 으로 머물러 있으면 백그라운드 기록이 일을 안 하고 있는 것이다.
   //   배 위에서 그 자리에서 알 수 있어야 한다 — 내려서 백업을 뜯어 봐야 아는 것은 늦다.
   const 뒤 = Number(trkNow.bufAdd) || 0;
-  if(뒤 > 0) 글 += ' · ' + tsub('화면이 꺼진 동안 {n}개 기록', { n: String(뒤) });
+  if(뒤 > 0) 글 += ' · ' + tsub('화면 끈 동안 {n}점', { n: String(뒤) });
   if(trkNow.bufRun === false) 글 += ' · ' + t('백그라운드 기록이 꺼져 있습니다');
   const 조용 = trkQuietFor();
   if(조용 < TRK_QUIET_S) return 글;
   // ★ 몇 분째인지 적는다. 「안 들어옵니다」 만으로는 언제부터인지 몰라 판단을 못 한다.
-  return 글 + ' · ' + tsub('{n}분째 위치를 받지 못하고 있습니다', { n: Math.floor(조용 / 60) });
+  return 글 + ' · ' + tsub('{n}분째 위치가 안 들어옵니다', { n: Math.floor(조용 / 60) });
 }
 function trkSkip(){
   if(!trkNow) return;
@@ -18388,7 +18388,7 @@ async function trkErr(err){
   if(String(err.code) === 'NOT_AUTHORIZED'){
     // ★ 여기까지 왔다는 것은 위치를 아예 안 주셨거나, 폰의 위치 기능이 꺼져 있다는 뜻이다.
     //   「항상 허용」이 아니라서가 아니다 — 그건 이 부품이 요구하지 않는다.
-    if(await ask(t('위치 정보를 가져오지 못해 항적을 기록할 수 없습니다.\n\n휴대폰의 위치 기능이 켜져 있는지, 뱃일에 위치를 허용하셨는지 확인해 주세요.\n\n설정을 여시겠습니까?'), { ok: t('설정 열기') })){
+    if(await ask(t('위치를 받지 못해 항적을 기록할 수 없습니다.\n\n폰의 위치 기능이 켜져 있는지, 뱃일에 위치를 허용하셨는지 확인해 주세요.\n\n설정을 여시겠습니까?'), { ok: t('설정 열기') })){
       const G = bgGeo(); if(G) try{ G.openSettings(); }catch(e){}
     }
   }
@@ -18402,7 +18402,7 @@ async function trkAttach(){
   try{
     trkNow.id = await G.addWatcher({
       backgroundTitle:   t('뱃일 — 항해 기록 중'),
-      backgroundMessage: t('항적을 기록하고 있습니다. 입항을 기록하면 중지됩니다.'),
+      backgroundMessage: t('항적을 기록하고 있습니다. 입항을 기록하면 멈춥니다.'),
       requestPermissions: true,
       stale: false,
       // ★ 폰에게 걸러 달라고 맡기면 안 된다 (4.52).
