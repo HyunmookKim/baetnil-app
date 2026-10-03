@@ -19,6 +19,8 @@ public class MainActivity extends BridgeActivity {
         // ★★★ 5.3 — 항적 점을 자바 쪽에 쌓아 두는 부품 (BaetnilTrackService 머리말 참조).
         //   화면을 꺼서 웹뷰가 얼어도 점이 파일에 쌓이고, 깨어나면 통째로 가져간다.
         registerPlugin(BaetnilTrack.class);
+        // ★★★ 5.33 — 시계 줄 글자 색. 안드로이드에서는 @capacitor/status-bar 를 빼고 이것을 쓴다 (BaetnilBars 머리말 참조).
+        registerPlugin(BaetnilBars.class);
         super.onCreate(savedInstanceState);
 
         // ★★★ 5.32 — 사진을 폰에 챙겨 두고 그것부터 쓴다 (BaetnilWebViewClient 머리말 참조).
