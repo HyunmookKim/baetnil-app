@@ -30411,11 +30411,7 @@ function fabRun(i){
   try{ (new Function(a[1]))(); }catch(e){ try{ console.error(e); }catch(_){} }
 }
 // ★ 5.30 — 밑으로 글이 지나갈 때만 맨 윗줄에 바탕 (위 CSS body.scrolled header)
-(function(){
-  const on = () => { try{ document.body.classList.toggle('scrolled', (window.scrollY || document.documentElement.scrollTop || 0) > 2); }catch(_){} };
-  try{ window.addEventListener('scroll', on, { passive:true }); }catch(_){}
-  try{ document.addEventListener('DOMContentLoaded', on); }catch(_){}
-})();
+
 function paintFab(){
   const host = document.getElementById('fabHost');
   if(!host) return;
