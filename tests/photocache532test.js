@@ -34,8 +34,8 @@ T('새 사진은 1년 보관 설정으로 올린다', /cacheControl: 'public, ma
   T('안드로이드: 우리 사진 창고 주소만 잡는다', /BUCKET_PATH = "\/v0\/b\/baetnil\.firebasestorage\.app\/o\/"/.test(A) && /"media"\.equals\(u\.getQueryParameter\("alt"\)\)/.test(A));
   T('안드로이드: GET 만 잡는다 (올리기·지우기는 손대지 않는다)', /"GET"\.equalsIgnoreCase\(req\.getMethod\(\)\)/.test(A));
   T('안드로이드: 나머지는 캐퍼시터에 그대로 넘긴다', /return super\.shouldInterceptRequest\(view, req\);/.test(A));
-  T('안드로이드: 못 받으면 웹뷰에 맡긴다 (예전 길)', /if \(!download\(url, f\)\) return null;/.test(A));
-  T('안드로이드: 다 받은 뒤에만 넣는다 (반쯤 받은 사진이 안 남게)', /\.part"/.test(A) && /tmp\.renameTo\(to\)/.test(A));
+  T('안드로이드: 없는 사진은 곧바로 돌려주고 읽을 때 받는다 (다른 요청을 기다리게 하지 않게)', /in = new TeeStream\(url, f, this\);/.test(A) && !/static boolean download\(/.test(A));
+  T('안드로이드: 다 받은 뒤에만 파일로 남긴다 (반쯤 받은 사진이 안 남게)', /\.part"\)/.test(A) && /part\.renameTo\(to\)/.test(A) && /if \(!done\) dropPart\(\);/.test(A));
   T('안드로이드: 넘치면 오래 안 본 것부터 버린다 (250MB — Glide 기본값)', /MAX_BYTES = 250L \* 1024 \* 1024/.test(A) && /comparingLong\(File::lastModified\)/.test(A));
   T('안드로이드: 챙겨 둔 것을 줄 때 CORS 를 연다 (keepPhoto 의 fetch 가 받게)', /Access-Control-Allow-Origin", "\*"/.test(A));
 }
