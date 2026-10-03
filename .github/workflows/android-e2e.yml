@@ -86,7 +86,7 @@ jobs:
           arch: x86_64
           profile: pixel_6
           disable-animations: true
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
+          emulator-options: -no-window -gpu swangle_indirect -noaudio -no-boot-anim -no-snapshot
           script: |
             bash tests/e2e_emu_double.sh "$RUNNER_TEMP/e2e.apk" "$RUNNER_TEMP/out/android-${{ inputs.api }}" || echo "DOUBLE_FAIL=1" >> "$GITHUB_ENV"
             bash tests/e2e_emu_run.sh "$RUNNER_TEMP/e2e.apk" "$RUNNER_TEMP/out/android-${{ inputs.api }}"
