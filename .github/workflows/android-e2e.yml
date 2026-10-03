@@ -46,6 +46,15 @@ jobs:
           if head -c 1 /tmp/gs.raw | grep -q '{'; then cp /tmp/gs.raw android/app/google-services.json
           else base64 --decode /tmp/gs.raw > android/app/google-services.json; fi
 
+      - name: 내보내는 화면 파일 만들기 (5.35 — 설명 글·빈칸 빼기, 지금 쓰는 말 사전만 읽기)
+        # 원본 www/index.html 은 저장소에 그대로 두고, 폰에 들어가는 파일만 바꾼다(tools/ship.js 맨 위 설명).
+        # 문제가 생기면 이 단계만 지우면 예전과 똑같이 원본이 들어간다.
+        run: |
+          set -e
+          npm i --no-save esbuild@0.24.0
+          node tools/ship.js www/index.html www/index.html
+          grep -q "const APP_VER = '" www/index.html || { echo "::error::내보낸 파일에 APP_VER 줄이 없습니다"; exit 1; }
+
       - name: cap sync android
         run: npx cap sync android
 

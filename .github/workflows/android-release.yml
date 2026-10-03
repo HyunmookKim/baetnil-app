@@ -97,6 +97,15 @@ jobs:
           fi
           node -e "const d=JSON.parse(require('fs').readFileSync('android/app/google-services.json','utf8'));const h=d.client.flatMap(c=>(c.oauth_client||[]).filter(o=>o.client_type===1).map(o=>o.android_info.certificate_hash));console.log('google-services.json 읽힙니다 — 등록된 열쇠 지문 '+h.length+'개');h.sort().forEach(x=>console.log('  '+x));"
 
+      - name: 내보내는 화면 파일 만들기 (5.35 — 설명 글·빈칸 빼기, 지금 쓰는 말 사전만 읽기)
+        # 원본 www/index.html 은 저장소에 그대로 두고, 폰에 들어가는 파일만 바꾼다(tools/ship.js 맨 위 설명).
+        # 문제가 생기면 이 단계만 지우면 예전과 똑같이 원본이 들어간다.
+        run: |
+          set -e
+          npm i --no-save esbuild@0.24.0
+          node tools/ship.js www/index.html www/index.html
+          grep -q "const APP_VER = '" www/index.html || { echo "::error::내보낸 파일에 APP_VER 줄이 없습니다"; exit 1; }
+
       - name: cap sync android
         run: npx cap sync android
 
