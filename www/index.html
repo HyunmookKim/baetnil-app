@@ -21401,11 +21401,11 @@ async function openTalk(id){
 </div>
     ${trBar('community', po.id, (po.title||'') + ' ' + (po.body||''),
         all.map(c=>String(c.text||'')).join(' '))}
-    ${po.hidden?`<div class="hwarn">${esc(t('신고가 누적되어 목록에서 숨겨진 글입니다.'))}</div>`:''}
+    ${po.hidden?`<div class="hwarn">${esc(t('신고가 쌓여 목록에서 내려간 글입니다.'))}</div>`:''}
     ${rideHead(po)}
     ${renderBlocks(tv ? trBlocks(po.blocks || [], tv.body) : (po.blocks || []), `talkPhotos('${esc(po.id)}')`)}
     ${po.kind === 'ride' ? `<div class="mrnone" style="text-align:left">
-        ${t('승선을 원하시면 아래 <b>댓글</b>로 알려 주세요. 모집자가 보고 결정합니다.')}<br>
+        ${t('타고 싶으시면 아래 <b>댓글</b>로 말씀해 주세요. 태우실 분이 보고 정합니다.')}<br>
         ${esc(RIDE_LAW)}</div>` : ''}
     <div class="mrrow" style="gap:8px;padding:12px">
       ${likeBtn('talk', po.id, po.likeN)}
@@ -21426,10 +21426,10 @@ function rideHead(po){
   return `<div class="wxbox"><b>${esc(dim ? t('마감된 모집입니다') : t('같이 탈 사람을 구합니다'))}</b>
       <div>${esc(tsub('{d} 출항', {d:r.date||''}))} · ${esc(tsub('{n}자리', {n:Number(r.n)||1}))} · ${esc(rideName(RIDE_TRIP, r.trip))}</div>
       ${(r.from||r.to) ? `<div>${esc(r.from||'—')} → ${esc(r.to||'—')}</div>` : ''}
-      <div>${esc(t('모집 대상'))} — ${esc(want)}</div>
+      <div>${esc(t('구하는 분'))} — ${esc(want)}</div>
       <div>${esc(t('비용'))} — ${esc(rideName(RIDE_COST, r.cost))}</div>
       <div class="wxfoot">${esc(r.boatType||'')}${r.port?' · '+esc(r.port):''}</div>
-      ${r.until && !dim ? `<div class="wxfoot">${esc(tsub('{d}까지 모집합니다', {d:r.until}))}</div>` : ''}</div>`;
+      ${r.until && !dim ? `<div class="wxfoot">${esc(tsub('{d}까지 받습니다', {d:r.until}))}</div>` : ''}</div>`;
 }
 function talkPhotos(id){
   const t = talkList.find(x=>String(x.id)===String(id));
@@ -21442,16 +21442,16 @@ function backToTalk(){
   switchTab('community');
 }
 function writeTalkComment(id){
-  if(guardEdit('커뮤니티 글에 댓글을 씁니다.', ()=>writeTalkComment(id))) return;
+  if(guardEdit('커뮤니티 글에 댓글을 답니다.', ()=>writeTalkComment(id))) return;
   const po = talkList.find(x=>String(x.id)===String(id));
   if(!po) return;
   if(needLogin('로그인해야 댓글을 쓸 수 있습니다')) return;
   if(myBan){ tell(banNotice()); return; }
   openForm({
     title:'댓글', okText:'올리기', filter: true,
-    fields:[{ key:'text', type:'multi', rows:4, label:'내용', value:'', placeholder:'댓글을 입력해 주세요' }],
+    fields:[{ key:'text', type:'multi', rows:4, label:'내용', value:'', placeholder:'댓글을 적어 주세요' }],
     onOk: v => {
-      if(!v.text) return formErr('text', '내용을 입력해 주세요');
+      if(!v.text) return formErr('text', '내용을 넣어 주세요');
       const c = { id:newId(), by:meUid()||'', byName:meName(),
                   text:v.text, ts:new Date().toISOString() };
       if(!window.__cmt){ tell(t('인터넷에 연결되어 있지 않습니다')); return; }
@@ -21468,16 +21468,16 @@ function writeTalkComment(id){
   });
 }
 async function delTalkComment(id, cid, isOld){
-  if(guardEdit('댓글을 삭제합니다.', ()=>delTalkComment(id, cid, isOld))) return;
+  if(guardEdit('댓글을 지웁니다.', ()=>delTalkComment(id, cid, isOld))) return;
   const po = talkList.find(x=>String(x.id)===String(id));
   if(!po) return;
-  if(!await ask(t('이 댓글을 삭제할까요?'), { ok: t('삭제'), warn: true })) return;
+  if(!await ask(t('이 댓글을 지울까요?'), { ok: t('삭제'), warn: true })) return;
   // 옛 글에 배열로 남아 있던 댓글은 배열에서 뺀다
   if(isOld){
     const next = (po.comments||[]).filter(c=>String(c.id)!==String(cid));
     window.__talk.edit(po.id, { comments: next })
       .then(()=>{ po.comments = next; trDrop('community', po.id); openTalk(po.id); })
-      .catch(e=>tell(t('삭제하지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
+      .catch(e=>tell(t('지우지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
     return;
   }
   if(!window.__cmt){ tell(t('인터넷에 연결되어 있지 않습니다')); return; }
@@ -21489,7 +21489,7 @@ async function delTalkComment(id, cid, isOld){
       trDrop('community', po.id);
       openTalk(po.id);
     })
-    .catch(e=>tell(t('삭제하지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
+    .catch(e=>tell(t('지우지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
 }
 
 // 신고 — 한 사람이 두 번 세지 않는다. 쌓이면 스스로 내려간다.
@@ -21505,7 +21505,7 @@ function reportTalk(id){
     fields:[
       { key:'why', label:'사유', type:'pick', value:'spam',
         options: REPORT_REASONS.map(r=>({ v:r.v, name:r.name, sub:r.sub })) },
-      { key:'memo', type:'multi', rows:3, label:'추가 내용', value:'', placeholder:'없으면 비워 두세요' }
+      { key:'memo', type:'multi', rows:3, label:'덧붙일 말', value:'', placeholder:'없으면 비워 두세요' }
     ],
     onOk: v => {
       const next = Object.assign({}, reports);
@@ -21515,7 +21515,7 @@ function reportTalk(id){
       window.__talk.edit(po.id, patch).then(()=>{
         Object.assign(po, patch);
         tell(patch.hidden
-          ? t('신고했습니다.\n\n신고가 누적되어 이 글은 목록에서 숨겨졌습니다.')
+          ? t('신고했습니다.\n\n신고가 쌓여 이 글은 목록에서 내려갔습니다.')
           : tsub('신고했습니다. ({n}/{max})', {n:n, max:TALK_HIDE_AT}), { kind:'good' });
         backToTalk();
       }).catch(e=>tell(t('신고하지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
@@ -21523,16 +21523,16 @@ function reportTalk(id){
   });
 }
 async function delTalk(id){
-  if(guardEdit('커뮤니티 글을 삭제합니다.', ()=>delTalk(id))) return;
+  if(guardEdit('커뮤니티 글을 지웁니다.', ()=>delTalk(id))) return;
   const po = talkList.find(x=>String(x.id)===String(id));
   if(!po) return;
-  if(!canDelTalk(po)){ tell(t('이 글은 삭제할 수 없습니다')); return; }
-  if(!await ask(t('이 글을 삭제할까요?\n\n되돌릴 수 없습니다.'), { ok: t('삭제'), warn: true })) return;
+  if(!canDelTalk(po)){ tell(t('이 글은 지울 수 없습니다')); return; }
+  if(!await ask(t('이 글을 지울까요?\n\n되돌릴 수 없습니다.'), { ok: t('삭제'), warn: true })) return;
   window.__talk.del(po.id).then(()=>{
     dropPhotosOf(po);                       // 창고에 남은 사진도 함께 치운다
     talkList = talkList.filter(x=>String(x.id)!==String(po.id));
     backToTalk();
-  }).catch(e=>tell(t('삭제하지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
+  }).catch(e=>tell(t('지우지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
 }
 
 // ===== 운영자 =====
@@ -21587,24 +21587,24 @@ function adminGuard(uid, what, key, on){
   if(!isAdmin('admin')) return '운영자를 지정하거나 해제할 권한이 없습니다';
   if(!adminMyUid()) return '로그인 정보를 확인하지 못했습니다.\n\n앱을 다시 켜고 시도해 주세요.';
   if(isOwnerAdmin(uid))
-    return '최고 운영자는 앱에서 변경할 수 없습니다.\n\n이 앱의 소유자이므로 권한을 변경하거나 지정을 해제할 수 없습니다.';
+    return '최고 운영자는 앱에서 건드릴 수 없습니다.\n\n이 앱의 주인이라 권한을 바꾸거나 지정을 해제할 수 없습니다.';
   if(what === 'remove' && adminIsMe(uid))
-    return '본인의 운영자 지정은 직접 해제할 수 없습니다.\n\n운영자를 지정할 수 있는 사람이 아무도 없게 되는 것을 막기 위해서입니다.\n다른 분에게 지정 권한을 준 뒤 그분이 해제해 주셔야 합니다.';
+    return '내 운영자 지정은 스스로 해제할 수 없습니다.\n\n아무도 운영자를 지정할 수 없게 잠기는 것을 막기 위해서입니다.\n다른 분에게 지정 권한을 준 뒤 그분이 해제해 주셔야 합니다.';
   if(what === 'perm' && key === 'admin' && !on && adminIsMe(uid))
-    return '본인의 지정 권한은 직접 끌 수 없습니다.\n\n끄면 운영자를 지정할 수 있는 사람이 없어 되돌릴 수 없습니다.\n다른 분에게 지정 권한을 준 뒤 그분이 꺼 주셔야 합니다.';
+    return '내 지정 권한은 스스로 끌 수 없습니다.\n\n끄고 나면 아무도 운영자를 지정할 수 없어 되돌릴 수 없습니다.\n다른 분에게 지정 권한을 준 뒤 그분이 꺼 주셔야 합니다.';
   return '';
 }
 // 사람을 막기 전 검사. 위와 같은 이유로 한 곳에 모은다.
 function banGuard(uid){
-  if(!isAdmin('userBan')) return '사용자를 차단할 권한이 없습니다';
+  if(!isAdmin('userBan')) return '사람을 막을 권한이 없습니다';
   if(!adminMyUid()) return '로그인 정보를 확인하지 못했습니다.\n\n앱을 다시 켜고 시도해 주세요.';
-  if(isOwnerAdmin(uid)) return '최고 운영자는 차단할 수 없습니다.\n\n이 앱의 소유자입니다.';
-  if(adminIsMe(uid)) return '본인은 차단할 수 없습니다.';
+  if(isOwnerAdmin(uid)) return '최고 운영자는 막을 수 없습니다.\n\n이 앱의 주인입니다.';
+  if(adminIsMe(uid)) return '나 자신은 막을 수 없습니다.';
   return '';
 }
 // 배를 손대기 전 검사.
 function boatModGuard(){
-  if(!isAdmin('boatMod')) return '배를 숨기거나 삭제할 권한이 없습니다';
+  if(!isAdmin('boatMod')) return '배를 감추거나 지울 권한이 없습니다';
   return '';
 }
 
@@ -21621,7 +21621,7 @@ const ADMIN_TABS = [
   { k:'feat',    name:t('기능 잠금'),  need:'admin'   }
 ];
 function adminFeat(){
-  return `<div class="mrnone" style="text-align:left">${esc(t('문제가 생긴 기능을 즉시 잠글 수 있습니다. 앱을 업데이트하지 않아도 모든 사용자에게 바로 적용됩니다.'))}<br>${esc(t('잠가도 이미 올린 자료는 삭제되지 않습니다. 잠금을 해제하면 그대로 다시 보입니다.'))}</div>`
+  return `<div class="mrnone" style="text-align:left">${esc(t('문제가 생긴 기능을 그 자리에서 잠글 수 있습니다. 앱을 새로 내지 않아도 되고, 모든 사람에게 곧바로 적용됩니다.'))}<br>${esc(t('잠가도 올라와 있던 자료는 지워지지 않습니다. 다시 열면 그대로 돌아옵니다.'))}</div>`
     + FEATURES.map(f=>`<div class="permrow">
         <div class="permname">${esc(f.name)}<div class="permsub">${esc(f.why)}</div></div>
         <div class="permbtns">
@@ -21684,7 +21684,7 @@ async function adminReportBox(){
           ${sn ? `<div class="rptsnap"><b>${esc(sn.title || '')}</b> <span class="mrm">${esc((sn.byName || '') + ' ' + uidTail(sn.by))}</span><br>${esc(sn.body || '').replace(/\n/g,'<br>')}</div>` : ''}
           <div class="fchips" style="margin-top:6px">
             ${x.kind === 'boat' ? `<button class="tchip" onclick="openBoatPage('${jsq(x.target)}')">${esc(t('배 보기'))}</button>` : ''}
-            ${sn && sn.by ? `<button class="tchip" onclick="openPerson('${jsq(sn.by)}')">${esc(t('작성자'))}</button>` : ''}
+            ${sn && sn.by ? `<button class="tchip" onclick="openPerson('${jsq(sn.by)}')">${esc(t('쓴 사람'))}</button>` : ''}
             <button class="tchip${x.status === 'done' ? ' on' : ''}" onclick="adminReportDone('${jsq(x.id)}',${x.status === 'done' ? 'false' : 'true'})">${
               esc(x.status === 'done' ? t('처리 취소') : t('처리 완료'))}</button>
           </div></div></div>`;
@@ -21724,7 +21724,7 @@ async function adminReports(){
         · ${esc(tsub('신고 {n}건', { n: p.reportN||0 }))}${why.length?' · '+esc(why.join(', ')):''}</div>
       <div class="fchips" style="margin-top:6px">
         <button class="tchip" onclick="openTalk('${jsq(p.id)}')">${esc(t('글 보기'))}</button>
-        ${p.by?`<button class="tchip" onclick="openPerson('${jsq(p.by)}')">${esc(t('작성자'))}</button>`:''}
+        ${p.by?`<button class="tchip" onclick="openPerson('${jsq(p.by)}')">${esc(t('쓴 사람'))}</button>`:''}
         ${p.hidden?`<button class="tchip" onclick="adminUnhide('${jsq(p.id)}')">${esc(t('숨김 해제'))}</button>`:''}
         <button class="tchip" onclick="adminDel('${jsq(p.id)}')">${esc(t('삭제'))}</button>
       </div></div></div>`;
@@ -21732,8 +21732,8 @@ async function adminReports(){
 }
 // 신고가 잘못된 것이면 숨김을 푼다
 async function adminUnhide(id){
-  if(!isAdmin('postDel')){ tell(t('글을 관리할 권한이 없습니다')); return; }
-  if(!await ask(t('이 글의 숨김을 해제할까요?\n\n목록에 다시 표시됩니다.'), { ok: t('숨김 해제') })) return;
+  if(!isAdmin('postDel')){ tell(t('글을 다룰 권한이 없습니다')); return; }
+  if(!await ask(t('이 글의 숨김을 풀까요?\n\n다시 목록에 나옵니다.'), { ok: t('숨김 해제') })) return;
   panelMark();
   window.__talk.edit(id, { hidden:false, reports:{}, reportN:0 })
     .then(()=>openAdmin())
@@ -21741,10 +21741,10 @@ async function adminUnhide(id){
 }
 async function adminDel(id){
   if(!isAdmin('postDel')){ tell(t('글을 지울 권한이 없습니다')); return; }
-  if(!await ask(t('이 글을 삭제할까요?\n\n되돌릴 수 없습니다.'), { ok: t('삭제'), warn: true })) return;
+  if(!await ask(t('이 글을 지울까요?\n\n되돌릴 수 없습니다.'), { ok: t('삭제'), warn: true })) return;
   panelMark();
   window.__talk.del(id).then(()=>openAdmin())
-    .catch(e=>tell(t('삭제하지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
+    .catch(e=>tell(t('지우지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
 }
 
 // ── 배 — 둘러보기에 올라온 공개 자료만 다룬다.
@@ -21763,7 +21763,7 @@ async function adminBoats(){
     .sort((p, q) => String(q.createdAt || q.updatedAt || '').localeCompare(String(p.createdAt || p.updatedAt || '')));
   const privHtml = `<div class="notilbl">${esc(tsub('비공개 배 {n}척', { n: priv.length }))}</div>
     <div class="mrnone" style="text-align:left">${esc(t('이름·선종·선주·인원·만든 날만 보입니다. 배의 기록은 운영자도 볼 수 없습니다.'))}<br>${
-      esc(t('구성원이 게시판 글을 신고하면 그 글만 「신고된 글」에 표시됩니다.'))}</div>`
+      esc(t('게시판 글은 구성원이 신고하면 그 글만 「신고된 글」 에 옵니다.'))}</div>`
     + (idx === null ? `<div class="mrnone">${esc(t('불러오지 못했습니다.'))}</div>`
       : priv.map(x => `<div class="fleet"><div class="fmain">
         <div class="fname">${esc(x.name || t('이름 없음'))} <span class="chip">${esc(t(BOAT_TYPES[x.type] || ''))}</span></div>
@@ -21775,9 +21775,9 @@ async function adminBoats(){
           <button class="tchip" onclick="openPerson('${jsq(x.owner)}')">${esc(t('주인'))}</button></div>` : ''}
         </div></div>`).join(''));
   if(!pubRows.length) return `<div class="notilbl">${esc(t('공개된 배'))}</div><div class="mrnone">${esc(t('공개된 배가 없습니다'))}</div>` + privHtml;
-  return `<div class="notilbl">${esc(t('공개된 배'))}</div><div class="mrnone" style="text-align:left">${esc(t('숨기면 둘러보기에 표시되지 않습니다. 배 주인의 물품·정비 기록은 그대로 유지됩니다.'))}</div>`
+  return `<div class="notilbl">${esc(t('공개된 배'))}</div><div class="mrnone" style="text-align:left">${esc(t('감추면 둘러보기에서 내려갑니다. 배 주인의 물품·정비 기록은 그대로입니다.'))}</div>`
     + pubRows.map(x=>`<div class="fleet"><div class="fmain">
-        <div class="fname">${x.adminHidden?`<span class="chip notice">${esc(t('숨김'))}</span> `:''}${esc(x.name||t('이름 없음'))}
+        <div class="fname">${x.adminHidden?`<span class="chip notice">${esc(t('감춤'))}</span> `:''}${esc(x.name||t('이름 없음'))}
           <span class="chip">${esc(t(x.typeName||''))}</span>${x.biz?`<span class="chip notice">${esc(t('영업'))}</span>`:''}</div>
         <div class="fsub">${esc([x.port, x.maker, x.model].filter(Boolean).join(' · ') || '')}</div>
         <div class="fchips" style="margin-top:6px">
@@ -21791,7 +21791,7 @@ async function adminBoatHide(id, on){
   if(!isAdmin('boatMod')){ tell(t(boatModGuard())); return; }
   const val = (on === true || on === 'true');
   const x = pubRows.find(v=>String(v.id)===String(id));
-  if(val && !await ask(tsub('{name}을(를) 둘러보기에서 숨길까요?', {name:(x&&x.name)||t('이 배')}) + '\n\n'
+  if(val && !await ask(tsub('{name}를 둘러보기에서 감출까요?', {name:(x&&x.name)||t('이 배')}) + '\n\n'
       + t('배 주인의 기록은 그대로입니다. 다시 올릴 수 있습니다.'), { ok: t('숨기기') })) return;
   panelMark();
   window.__pub.patch(id, { adminHidden: val })
@@ -21801,12 +21801,12 @@ async function adminBoatHide(id, on){
 async function adminBoatDel(id){
   if(!isAdmin('boatMod')){ tell(t(boatModGuard())); return; }
   const x = pubRows.find(v=>String(v.id)===String(id));
-  if(!await ask(tsub('{name}의 공개 자료를 삭제할까요?', {name:(x&&x.name)||t('이 배')}) + '\n\n'
+  if(!await ask(tsub('{name}의 공개 자료를 지울까요?', {name:(x&&x.name)||t('이 배')}) + '\n\n'
       + t('되돌릴 수 없습니다. 배 주인의 물품·정비 기록은 그대로 남습니다.\n')
-      + t('먼저 숨기기를 사용해 보시길 권합니다.'), { ok: t('삭제'), warn: true })) return;
+      + t('먼저 숨기기를 사용해 보시는 편이 낫습니다.'), { ok: t('삭제'), warn: true })) return;
   panelMark();
   window.__pub.remove(id).then(()=>openAdmin())
-    .catch(e=>tell(t('삭제하지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
+    .catch(e=>tell(t('지우지 못했습니다.\n\n') + ((e&&e.message)||e), { kind:'bad' }));
 }
 
 // ── 사람 명부 — 운영자만 본다 (규칙에서 막혀 있다)
@@ -21865,7 +21865,7 @@ async function adminPeople(){
         placeholder="${esc(t('이름 또는 계정 번호로 찾기'))}"
         oninput="peopleQ=this.value;paintPeopleRows()" autocomplete="off"></div>
     <div class="mrnone" style="text-align:left">${esc(tsub('모두 {n}명.', { n: peopleRows.length }))}
-      ${esc(t('명부는 앱을 열고 로그인할 때 만들어집니다. 오랫동안 접속하지 않은 분은 다음에 앱을 열면 자동으로 표시됩니다.'))}</div>
+      ${esc(t('명부는 앱을 켜서 로그인할 때 만들어집니다. 오래 안 들어온 분은 다음에 앱을 켜면 저절로 올라옵니다.'))}</div>
     <div id="peopleRows">` + peopleRowsHtml(rows, adm, isBan) + `</div>`;
 }
 function peopleRowsHtml(rows, adm, isBan){
@@ -21875,10 +21875,10 @@ function peopleRowsHtml(rows, adm, isBan){
     return `<div class="fleet" onclick="openPerson('${jsq(p.uid)}')"><div class="fmain">
       <div class="fname">${esc(p.name || t('(이름 없음)'))}
         ${roleChip(a)}
-        ${isBan(p.uid) ? `<span class="chip late">${esc(t('차단됨'))}</span>` : ''}</div>
+        ${isBan(p.uid) ? `<span class="chip late">${esc(t('막힘'))}</span>` : ''}</div>
       <div class="fsub">${esc(uidTail(p.uid))}</div>
     </div></div>`;
-  }).join('') + (rows.length > 200 ? `<div class="mrnone">${esc(t('최대 200명까지 표시됩니다. 이름으로 검색해 주세요.'))}</div>` : '');
+  }).join('') + (rows.length > 200 ? `<div class="mrnone">${esc(t('200명까지만 보여 드립니다. 이름으로 찾아 주세요.'))}</div>` : '');
 }
 function paintPeopleRows(){
   const W = document.getElementById('peopleRows');
