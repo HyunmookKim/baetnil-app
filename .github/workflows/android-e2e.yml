@@ -86,7 +86,12 @@ jobs:
           arch: x86_64
           profile: pixel_6
           disable-animations: true
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
+          # ★ 5.33 (2026-10-03) — 그리기를 swiftshader_indirect → swangle_indirect 로.
+          #   5.30~5.32 가 안드로이드 15 에서 가입 직후 에뮬레이터째 굳었다(사진 0바이트·logcat 끊김, 4분 ×4).
+          #   스크립트 2,377곳을 나눠 되돌려 보니 걸리는 것은 로그인 동의 문장 한 줄(「…동의하신 것으로 간주합니다」)의
+          #   길이 — 화면 높이가 한 줄 바뀌는 것만으로 굳었다(5.27 칸 높이 한 줄 때와 같은 모양).
+          #   같은 5.32 를 swangle_indirect 로 돌리면 55 통과·0 실패(#88) → 앱이 아니라 에뮬레이터 소프트웨어 그리기의 탈.
+          emulator-options: -no-window -gpu swangle_indirect -noaudio -no-boot-anim -no-snapshot
           script: |
             bash tests/e2e_emu_double.sh "$RUNNER_TEMP/e2e.apk" "$RUNNER_TEMP/out/android-${{ inputs.api }}" || echo "DOUBLE_FAIL=1" >> "$GITHUB_ENV"
             bash tests/e2e_emu_run.sh "$RUNNER_TEMP/e2e.apk" "$RUNNER_TEMP/out/android-${{ inputs.api }}"
