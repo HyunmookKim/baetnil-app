@@ -36,7 +36,8 @@ import java.util.Map;
  *
  * ★ 사진 주소는 올릴 때마다 새로 짓는다(시각+난수, index.html __photos.put). 같은 주소가 다른 사진이 되는 일이
  *   없으므로 챙겨 둔 것을 다시 확인할 필요가 없다.
- * ★ 안 되면(인터넷 없음·오류) null 을 돌려 웹뷰에 맡긴다 — 그 뒤는 예전 길(imgFromCache)이 그대로 받는다.
+ * ★ 못 받으면(인터넷 없음·오류) 읽는 도중 오류가 나 사진이 실패로 끝난다 — 그 뒤는 예전 길(imgFromCache)이 그대로 받는다.
+ * ★ 끝까지 받은 것만 파일로 남긴다(.part 로 받다가 다 받으면 이름을 바꾼다).
  */
 public class BaetnilWebViewClient extends BridgeWebViewClient {
 
@@ -88,13 +89,16 @@ public class BaetnilWebViewClient extends BridgeWebViewClient {
 
     private WebResourceResponse photo(String url) throws Exception {
         File f = new File(dir(), key(url));
-        if (!f.exists() || f.length() == 0) {
-            if (!download(url, f)) return null;
-            trim();
-        } else {
+        InputStream in;
+        if (f.exists() && f.length() > 0) {
             try { f.setLastModified(System.currentTimeMillis()); } catch (Exception ignored) {}
+            in = new FileInputStream(f);
+        } else {
+            // ★ 여기서 다 받고 나서 돌려주면 안 된다 — 이 자리는 웹뷰가 모든 요청을 물어보는 곳이라,
+            //   사진 한 장을 받는 동안 다른 요청까지 기다리게 될 수 있다.
+            //   그래서 곧바로 돌려주고, 웹뷰가 읽어 갈 때 인터넷에서 받으면서 같은 내용을 파일에도 쓴다.
+            in = new TeeStream(url, f, this);
         }
-        InputStream in = new FileInputStream(f);
         Map<String, String> h = new HashMap<>();
         h.put("Access-Control-Allow-Origin", "*");          // fetch(mode:'cors') 로 챙기는 길(keepPhoto)도 받게
         h.put("Cache-Control", "public, max-age=31536000, immutable");
@@ -102,33 +106,55 @@ public class BaetnilWebViewClient extends BridgeWebViewClient {
         return new WebResourceResponse(type, null, 200, "OK", h, in);
     }
 
-    /** 한 번 받아 챙겨 둔다. 다 받은 뒤에만 이름을 바꿔 넣는다 — 반쯤 받은 사진이 남지 않게. */
-    static boolean download(String url, File to) {
-        HttpURLConnection c = null;
-        File tmp = new File(to.getParentFile(), to.getName() + ".part");
-        try {
+    /** 읽는 쪽(웹뷰)이 읽을 때 인터넷에서 받고, 받은 것을 파일에도 쓴다. 끝까지 받았을 때만 파일로 남긴다. */
+    static final class TeeStream extends InputStream {
+        private final String url; private final File to; private final File part; private final BaetnilWebViewClient owner;
+        private HttpURLConnection c; private InputStream src; private FileOutputStream out; private boolean done;
+        TeeStream(String url, File to, BaetnilWebViewClient owner) {
+            this.url = url; this.to = to; this.part = new File(to.getParentFile(), to.getName() + "." + System.nanoTime() + ".part");
+            this.owner = owner;   // ↑ 이름에 시각을 넣는다 — 같은 사진을 동시에 받아도 서로 안 덮게
+        }
+        private void open() throws java.io.IOException {
+            if (src != null) return;
             c = (HttpURLConnection) new URL(url).openConnection();
-            c.setConnectTimeout(15000);
-            c.setReadTimeout(30000);
-            c.setInstanceFollowRedirects(true);
-            if (c.getResponseCode() != 200) return false;
-            try (InputStream in = c.getInputStream(); FileOutputStream out = new FileOutputStream(tmp)) {
-                byte[] buf = new byte[16384];
-                int n;
-                while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
-            }
-            if (tmp.length() == 0) { tmp.delete(); return false; }
-            return tmp.renameTo(to);
-        } catch (Exception e) {
-            try { tmp.delete(); } catch (Exception ignored) {}
-            return false;
-        } finally {
-            if (c != null) try { c.disconnect(); } catch (Exception ignored) {}
+            c.setConnectTimeout(15000); c.setReadTimeout(30000); c.setInstanceFollowRedirects(true);
+            int code = c.getResponseCode();
+            if (code != 200) throw new java.io.IOException("HTTP " + code);
+            src = c.getInputStream();
+            try { out = new FileOutputStream(part); } catch (Exception e) { out = null; }
+        }
+        @Override public int read() throws java.io.IOException {
+            byte[] b = new byte[1]; int n = read(b, 0, 1); return n <= 0 ? -1 : (b[0] & 0xff);
+        }
+        @Override public int read(byte[] b, int off, int len) throws java.io.IOException {
+            try {
+                open();
+                int n = src.read(b, off, len);
+                if (n > 0 && out != null) { try { out.write(b, off, n); } catch (Exception e) { dropPart(); } }
+                if (n < 0) finish();
+                return n;
+            } catch (java.io.IOException e) { dropPart(); throw e; }
+        }
+        private void finish() {
+            if (done) return; done = true;
+            try { if (out != null) { out.close(); out = null; if (part.length() > 0 && part.renameTo(to)) owner.trim(); } } catch (Exception ignored) {}
+            try { if (part.exists()) part.delete(); } catch (Exception ignored) {}
+        }
+        private void dropPart() {
+            try { if (out != null) out.close(); } catch (Exception ignored) {}
+            out = null;
+            try { part.delete(); } catch (Exception ignored) {}
+        }
+        @Override public void close() throws java.io.IOException {
+            // 끝까지 안 읽고 닫으면(화면을 넘김 등) 반쯤 받은 것은 버린다
+            if (!done) dropPart();
+            try { if (src != null) src.close(); } catch (Exception ignored) {}
+            try { if (c != null) c.disconnect(); } catch (Exception ignored) {}
         }
     }
 
     /** 넘치면 오래 안 본 것부터 버린다 */
-    private void trim() {
+    synchronized void trim() {
         try {
             File[] fs = dir().listFiles();
             if (fs == null) return;
