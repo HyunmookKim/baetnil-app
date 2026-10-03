@@ -5,9 +5,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import androidx.activity.EdgeToEdge;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import com.getcapacitor.BridgeActivity;
+import com.getcapacitor.WebViewListener;
 
 public class MainActivity extends BridgeActivity {
     @Override
@@ -21,6 +23,16 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(BaetnilTrack.class);
         // ★★★ 5.33 — 시계 줄 글자 색. 안드로이드에서는 @capacitor/status-bar 를 빼고 이것을 쓴다 (BaetnilBars 머리말 참조).
         registerPlugin(BaetnilBars.class);
+        // ★★★ 5.34 — 안드로이드 14 이하도 15 이상처럼 화면 끝까지 그린다 (플레이 콘솔 권장 「일부 사용자에게는 더 넓은 화면이
+        //   표시되지 않을 수 있음」 — 「이전 버전과의 호환성을 위해 EdgeToEdge.enable() 을 호출하세요」).
+        //   안드로이드 공식 안내(「Display content edge-to-edge」)도 모든 버전에서 enableEdgeToEdge 를 불러 버전마다 같게 보이게 하라고 한다.
+        //   15 이상은 targetSdk 36 이라 이미 그렇게 그려진다 — 건드리지 않는다.
+        //   ★ 5.22·5.23 에 비슷하게 해 봤다가 에뮬레이터 안드로이드 14 가 멈춰 되돌렸다. 5.33 에서 그 멈춤은 앱이 아니라
+        //     에뮬레이터 소프트웨어 그리기(swiftshader) 탓으로 밝혀졌다(화면 높이가 바뀌면 굳음 → swangle 로 바꾸니 통과).
+        //   ★ 화면을 다시 만들기 전(super.onCreate 앞)에 불러야 첫 화면부터 그렇게 그린다.
+        if (Build.VERSION.SDK_INT < 35) {
+            try { EdgeToEdge.enable(this); } catch (Exception ignored) {}
+        }
         super.onCreate(savedInstanceState);
 
         // ★★★ 5.32 — 사진을 폰에 챙겨 두고 그것부터 쓴다 (BaetnilWebViewClient 머리말 참조).
@@ -29,25 +41,9 @@ public class MainActivity extends BridgeActivity {
             if (getBridge() != null) getBridge().setWebViewClient(new BaetnilWebViewClient(getBridge()));
         } catch (Exception ignored) {}
 
-        // ★★★ 5.21 — 안드로이드 14 이하에서 머리줄이 시계·배터리 줄 밑으로 들어가던 것 (5.20 에서 생김).
-        //   5.20 에 넣은 시계 줄 부품(@capacitor/status-bar)은 켜질 때 기본값으로 「웹 화면을 시계 줄 밑까지 깐다」
-        //   (overlaysWebView 기본 true). 안드로이드 15 이상은 원래 그렇게 그리고 웹 화면이 시계 줄 높이만큼 비워 두지만,
-        //   14 이하에서는 웹 화면이 그 높이를 모른다 → 머리줄이 시계 줄에 겹쳤다(에뮬레이터 안드로이드 14 검사: 위 여백 0).
-        //   14 이하에서는 5.19 까지처럼 시계 줄 아래부터 그리게 되돌린다. 15 이상은 손대지 않는다.
-        //   시계 줄 바탕색은 웹 화면이 테마에 맞춰 칠한다(index.html statusBar).
-        // ★ 5.22·5.23 에서 14 이하도 15 이상처럼 시계 줄 밑까지 그리고(키보드가 탭 줄을 밀어 올리지 않게),
-        //   시계 줄 높이를 웹에 알려 주는 방식(__sat)을 해 봤다. 머리줄은 맞았지만(위 여백 49) 에뮬레이터 안드로이드 14 에서
-        //   네 번 중 세 번 검사 도중 화면이 멈췄다(#20·#25·#27, 사진 0바이트). 이 방식(5.21)은 두 번 모두 끝까지 갔다(#22·#24).
-        //   그래서 5.21 방식으로 되돌린다. 14 이하에서 키보드가 뜨면 화면이 줄어 탭 줄이 키보드 위로 올라오는 것은
-        //   5.16~5.19 와 같다(15 이상은 가려짐) — 사장님께 여쭘.
-        if (Build.VERSION.SDK_INT < 35) {
-            try {
-                View d = getWindow().getDecorView();
-                d.setSystemUiVisibility(d.getSystemUiVisibility()
-                        & ~View.SYSTEM_UI_FLAG_LAYOUT_STABLE & ~View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-                getWindow().setStatusBarColor(0xFF122A44);
-            } catch (Exception ignored) {}
-        }
+        // ★ 5.21~5.33 의 「14 이하는 시계 줄 아래부터 그림(시스템 UI 표시 지우기 + 시계 줄 바탕색)」 은 5.34 에서 뺐다 —
+        //   위 EdgeToEdge.enable 로 15 이상과 같게 그린다. 키보드가 떠도 화면이 줄지 않아 아래 탭 줄이 따라 올라오지 않는다
+        //   (사장님 5.16 결정: 「키보드 뜨면 그냥 화면 잘라지게 해야지. 밑에 화면을 위로 올리지 않는다」).
 
         // ★★★ 5.27 — 5.26 에서 넣었던 「안드로이드 11~14 는 키보드가 떠도 화면을 줄이지 않음(ADJUST_NOTHING)」 을 물린다.
         //   에뮬레이터 안드로이드 14 검사(#32, e23dac1)에서 키보드가 떴는데 키보드 높이가 0 으로 왔다 —
@@ -69,6 +65,33 @@ public class MainActivity extends BridgeActivity {
             final View host = (wv != null && wv.getParent() instanceof View) ? (View) wv.getParent() : null;
             if (wv != null && host != null) {
                 final int[] last = { -1 };
+                // ★★★ 5.34 — 시계 줄 높이(위)·내비게이션 줄 높이(아래)를 웹 화면에 알려 준다(기기 픽셀).
+                //   · 위 — 14 이하만. 15 이상은 웹뷰가 env(safe-area-inset-top) 로 알려 준다(5.15 검사: 위 여백 49).
+                //     14 이하 웹뷰는 그 값을 0 으로 준다(5.20 에뮬레이터 안드로이드 14: 머리줄이 시계 줄에 겹침).
+                //   · 아래 — 모든 판. 화면 끝까지 그리면 아래 탭 줄이 세 단추·제스처 막대 밑으로 들어간다.
+                //     웹뷰가 env(safe-area-inset-bottom) 를 주는지는 웹뷰 판마다 달라 앱이 잰 값을 쓴다(웹은 --sabn).
+                //   창 전체가 받은 여백(getRootWindowInsets)에서 읽는다 — 웹뷰를 담은 틀에는 0 으로 올 때가 있다(5.22 #25).
+                final int[] lastBars = { -1, -1 };
+                final Runnable sendBars = () -> {
+                    try {
+                        WindowInsetsCompat ri = ViewCompat.getRootWindowInsets(getWindow().getDecorView());
+                        if (ri == null) return;
+                        int top = ri.getInsets(WindowInsetsCompat.Type.statusBars()).top;
+                        int bot = ri.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
+                        if (Build.VERSION.SDK_INT < 35 && top <= 0) {
+                            int id = getResources().getIdentifier("status_bar_height", "dimen", "android");
+                            if (id > 0) top = getResources().getDimensionPixelSize(id);
+                        }
+                        if (Build.VERSION.SDK_INT < 35 && top > 0 && top != lastBars[0]) {
+                            lastBars[0] = top;
+                            wv.evaluateJavascript("window.__sat&&window.__sat(" + top + ")", null);
+                        }
+                        if (bot >= 0 && bot != lastBars[1]) {
+                            lastBars[1] = bot;
+                            wv.evaluateJavascript("window.__sab&&window.__sab(" + bot + ")", null);
+                        }
+                    } catch (Exception ignored) {}
+                };
                 ViewCompat.setOnApplyWindowInsetsListener(host, (v, insets) -> {
                     boolean shown = insets.isVisible(WindowInsetsCompat.Type.ime());
                     int px = shown ? Math.max(0, insets.getInsets(WindowInsetsCompat.Type.ime()).bottom) : 0;
@@ -76,9 +99,22 @@ public class MainActivity extends BridgeActivity {
                         last[0] = px;
                         try { wv.evaluateJavascript("window.__kbd&&window.__kbd(" + px + ")", null); } catch (Exception ignored) {}
                     }
+                    host.post(sendBars);
                     return insets;
                 });
                 ViewCompat.requestApplyInsets(host);
+                // 웹 화면이 덜 읽혔을 때 보낸 값은 사라지므로 몇 번 더 보내고, 화면 파일을 다시 읽을 때마다 다시 보낸다.
+                //   (같은 값은 웹에서 아무 일도 안 한다 — 다시 읽은 뒤에는 lastBars 를 비워 꼭 보낸다)
+                host.postDelayed(sendBars, 1500);
+                host.postDelayed(sendBars, 4000);
+                getBridge().addWebViewListener(new WebViewListener() {
+                    @Override
+                    public void onPageLoaded(WebView webView) {
+                        lastBars[0] = -1; lastBars[1] = -1;
+                        host.post(sendBars);
+                        host.postDelayed(sendBars, 800);
+                    }
+                });
             }
         } catch (Exception ignored) {}
     }

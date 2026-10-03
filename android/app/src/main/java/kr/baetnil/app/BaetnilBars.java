@@ -1,7 +1,5 @@
 package kr.baetnil.app;
 
-import android.graphics.Color;
-import android.os.Build;
 import android.view.Window;
 
 import androidx.core.view.WindowCompat;
@@ -27,26 +25,24 @@ import com.getcapacitor.annotation.CapacitorPlugin;
  *     SystemBars 와 같은 길(WindowInsetsControllerCompat.setAppearanceLightStatusBars)로 글자 색만 바꾼다.
  *     아이폰은 status-bar 부품을 그대로 쓴다(애플은 이 문제와 상관없음).
  *
- * ★ 안드로이드 14 이하는 시계 줄이 제 바탕색을 따로 가진다(5.21 — MainActivity 참조). 흰 화면에서 짙은 글자로
- *   바꾸면 바탕도 흰색이어야 시계가 보인다. 그 바탕색은 14 이하에서만 칠한다(15 부터는 쓰이지 않는 값이고 지원 중단).
+ * ★ 5.34 — 안드로이드 14 이하도 15 이상처럼 화면 끝까지 그린다(EdgeToEdge.enable — MainActivity 참조).
+ *   그래서 시계 줄 바탕색을 따로 칠하지 않는다(바탕은 웹 화면 머리줄이 비친다). setStatusBarColor 를 더는 부르지 않는다.
+ *   아래 내비게이션 줄(세 단추·제스처 막대) 아이콘 색도 같은 기준으로 맞춘다 — 흰 화면이면 짙은 아이콘.
  */
 @CapacitorPlugin(name = "BaetnilBars")
 public class BaetnilBars extends Plugin {
 
-    /** light: 흰 바탕 화면이면 true(짙은 글자) · color: 14 이하 시계 줄 바탕색(#RRGGBB) */
+    /** light: 흰 바탕 화면이면 true(짙은 글자·아이콘) · color: 예전 판이 넘기던 값(5.34 부터 쓰지 않음) */
     @PluginMethod
     public void setStyle(PluginCall call) {
         final boolean light = Boolean.TRUE.equals(call.getBoolean("light", false));
-        final String color = call.getString("color");
         if (getActivity() == null) { call.resolve(); return; }
         getActivity().runOnUiThread(() -> {
             try {
                 Window w = getActivity().getWindow();
                 WindowInsetsControllerCompat c = WindowCompat.getInsetsController(w, w.getDecorView());
                 c.setAppearanceLightStatusBars(light);
-                if (Build.VERSION.SDK_INT < 35 && color != null && !color.isEmpty()) {
-                    w.setStatusBarColor(Color.parseColor(color));
-                }
+                c.setAppearanceLightNavigationBars(light);
             } catch (Exception ignored) {}
             call.resolve();
         });
