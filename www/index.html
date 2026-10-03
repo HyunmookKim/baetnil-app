@@ -28526,7 +28526,7 @@ function openTrash(){
     const thumb = r.thumb
       ? `<img loading="lazy" src="${r.thumb}" style="width:34px;height:34px;object-fit:cover;border-radius:4px;border:1px solid #2a5a8a;margin-right:8px">`
       // ★ 5.30 — 사진 없는 줄은 이름이 왼쪽으로 튀어나와 줄이 안 맞았다. 사진 자리만큼 비워 둔다
-      : (볼것.some(x => x.thumb) ? `<span style="flex:0 0 34px;width:34px;height:34px;margin-right:8px"></span>` : '');
+      : '';
     return h + `<div class="trow">${thumb}<div style="flex:1;min-width:0">
         <div style="font-size:13px;color:#D7D9DC;font-weight:600">${
           r.tag ? `<span class="chip nchip" style="margin-right:6px">${esc(r.tag)}</span>` : ''
@@ -50419,7 +50419,7 @@ document.addEventListener('error', e=>{
       if(된다) return;
       if(el.classList.contains('mt')) return;    // 타일은 그냥 빈다
       el.classList.add('imgfail');
-      try{ const w = parseFloat(el.style.width || el.getAttribute('width') || ''); if(w > 0 && w <= 64) el.classList.add('sm'); }catch(_){}
+      
       el.alt = t('사진을 불러오지 못했습니다. 인터넷 연결을 확인해 주세요');
     });
     return;
@@ -50429,7 +50429,7 @@ document.addEventListener('error', e=>{
   //   타일은 원래 안 보이면 그냥 비는 것이 맞다.
   if(el.classList.contains('mt')) return;
   el.classList.add('imgfail');
-      try{ const w = parseFloat(el.style.width || el.getAttribute('width') || ''); if(w > 0 && w <= 64) el.classList.add('sm'); }catch(_){}
+      
   el.alt = t('사진을 불러오지 못했습니다. 인터넷 연결을 확인해 주세요');
 }, true);
 window.addEventListener('online', ()=>{
