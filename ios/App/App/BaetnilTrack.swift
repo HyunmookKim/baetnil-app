@@ -21,7 +21,7 @@ import Capacitor
 import CoreLocation
 
 @objc(BaetnilTrack)
-public class BaetnilTrack: CAPPlugin, CAPBridgedPlugin, CLLocationManagerDelegate {
+public class BaetnilTrack: CAPPlugin, CAPBridgedPlugin {
     public let identifier = "BaetnilTrack"
     public let jsName = "BaetnilTrack"
     public let pluginMethods: [CAPPluginMethod] = [
@@ -32,19 +32,7 @@ public class BaetnilTrack: CAPPlugin, CAPBridgedPlugin, CLLocationManagerDelegat
         CAPPluginMethod(name: "once",   returnType: CAPPluginReturnPromise)
     ]
 
-    static let FILE = "baetnil_track.jsonl"
-    static let MAX_BYTES = 4 * 1024 * 1024        // 넘으면 앞 절반을 버린다 (안드로이드와 같다)
-    private var lm: CLLocationManager?
-    private var running = false
-    private let q = DispatchQueue(label: "kr.baetnil.track.file")
-
-    private func fileURL() -> URL {
-        let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        return dir.appendingPathComponent(BaetnilTrack.FILE)
-    }
-
-    /// 기록을 켠다 — 사람이 앱 안에서 [기록 시작] 을 눌렀을 때만 불린다
+    /// 기록을 켠다 — 사람이 앱 안에서 [기록 시작] 을 눌렀을 때, 그리고 앱이 다시 켜져 이어 붙일 때 불린다
     @objc func start(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let st = CLLocationManager().authorizationStatus
@@ -62,19 +50,7 @@ public class BaetnilTrack: CAPPlugin, CAPBridgedPlugin, CLLocationManagerDelegat
             // ★ 5.32 — 아이패드는 위성 장치가 있는지 알 수 없다 (애플 개발자 포럼: 공개 API 가 없다).
             //   아이폰은 모두 GPS 가 있다. 그래서 아이패드인지만 알려 주고, 앱이 실제로 위성 점이 들어오는지 본다.
             let pad = UIDevice.current.userInterfaceIdiom == .pad
-            if self.lm == nil {
-                let m = CLLocationManager()
-                m.delegate = self
-                m.desiredAccuracy = kCLLocationAccuracyBest
-                m.distanceFilter = 5                        // 5m 움직일 때마다 (5.10: 앱 저장 간격 10m 보다 촘촘히)
-                m.activityType = .otherNavigation           // 배 — 도로에 붙이지 않는다
-                m.pausesLocationUpdatesAutomatically = false // ★ 멈춰 있어도 끄지 않는다 (정박 중에도)
-                m.allowsBackgroundLocationUpdates = true     // ★ UIBackgroundModes 에 location 이 있어야 한다
-                m.showsBackgroundLocationIndicator = true    // 기록 중임을 사람에게 보여 준다
-                self.lm = m
-            }
-            self.lm?.startUpdatingLocation()
-            self.running = true
+            BaetnilTrackRec.shared.begin()
             call.resolve(["started": true, "pad": pad])
         }
     }
@@ -82,39 +58,20 @@ public class BaetnilTrack: CAPPlugin, CAPBridgedPlugin, CLLocationManagerDelegat
     /// 입항을 적었다 — 끈다
     @objc func stop(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            self.lm?.stopUpdatingLocation()
-            self.running = false
+            BaetnilTrackRec.shared.end()
             call.resolve(["stopped": true])
         }
     }
 
     /// 쌓인 점을 통째로 가져가고 파일을 비운다
     @objc func drain(_ call: CAPPluginCall) {
-        q.async {
-            var pts: [[String: Any]] = []
-            var bad = 0
-            let u = self.fileURL()
-            if let s = try? String(contentsOf: u, encoding: .utf8) {
-                for line in s.split(separator: "\n") {
-                    let t = line.trimmingCharacters(in: .whitespaces)
-                    if t.count < 2 { continue }
-                    if let d = t.data(using: .utf8),
-                       let o = try? JSONSerialization.jsonObject(with: d) as? [String: Any] {
-                        pts.append(o)
-                    } else { bad += 1 }             // ★ 한 줄이 깨져도 나머지는 살린다
-                }
-                try? FileManager.default.removeItem(at: u)
-            }
-            call.resolve(["pts": pts, "bad": bad])
-        }
+        BaetnilTrackRec.shared.drain { pts, bad in call.resolve(["pts": pts, "bad": bad]) }
     }
 
-    /// 지금 돌고 있나 · 몇 바이트 쌓였나
+    /// 지금 돌고 있나 · 몇 바이트 쌓였나 · 앱이 꺼졌다 다시 켜져 스스로 이어 붙인 적이 있나
     @objc func status(_ call: CAPPluginCall) {
-        q.async {
-            let u = self.fileURL()
-            let n = (try? FileManager.default.attributesOfItem(atPath: u.path)[.size] as? NSNumber)?.intValue ?? 0
-            call.resolve(["running": self.running, "bytes": n])
+        BaetnilTrackRec.shared.status { running, bytes, relaunch in
+            call.resolve(["running": running, "bytes": bytes, "relaunch": relaunch])
         }
     }
 
@@ -136,9 +93,139 @@ public class BaetnilTrack: CAPPlugin, CAPBridgedPlugin, CLLocationManagerDelegat
             o.begin()
         }
     }
+}
 
-    // ── 점이 올 때마다 파일 끝에 한 줄씩 붙인다 (웹뷰가 멈춰 있어도 여기는 돈다)
-    public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+
+// ══════════════════════════════════════════════════════════════════════
+// ★★★ 5.34 — 아이폰이 앱을 꺼도 기록이 다시 살아나게 (사장님: 「아이폰 똑바로 되는 거 맞아?」, 2026-10-03)
+//
+//   ★ 무엇이 모자랐나
+//     안드로이드 기록 장치(BaetnilTrackService)는 START_STICKY 다 — 안드로이드가 메모리 때문에 앱을 꺼도
+//     기록 장치가 스스로 다시 살아나 점을 계속 쌓는다.
+//     아이폰은 그런 장치가 없었다. 기록 중에 아이폰이 뱃일을 끄면(메모리가 모자랄 때 — 사진·카메라·게임 등)
+//     사람이 앱을 다시 열 때까지 그 사이 항적이 통째로 빠졌다.
+//
+//   ★ 다른 앱·애플이 하는 것
+//     · 애플 문서 startMonitoringSignificantLocationChanges(): 「이 서비스를 켠 뒤 앱이 꺼지면, 새 위치가 오면
+//       시스템이 앱을 뒤에서 다시 켠다. 다시 켜졌을 때 위치 관리자를 다시 만들어 이어 받아야 한다.」
+//       (보통 500m 넘게 움직이면 온다 · 「항상 허용」 권한일 때)
+//     · 애플 WWDC23 「Discover streamlined location updates」: iOS 17 부터 CLBackgroundActivitySession 을
+//       쥐고 있으면 앱이 꺼져도 위치가 오면 다시 켜 준다. 다시 켜졌을 때 didFinishLaunching 에서 세션을
+//       다시 만들어야 이어진다(새 세션이 아니라 이어 받는 것). 「앱을 쓰는 동안」 권한이어도 된다.
+//       애플 포럼(767460): 새 세션은 앞화면에서만 시작된다 — 뒤에서 다시 켜졌을 때는 이어 받기만 된다.
+//     · 위치 부품 transistorsoft(stopOnTerminate:false): 앱이 꺼져도 머문 자리 둘레(약 200m)를 벗어나면
+//       아이폰이 앱을 다시 켜고 기록을 잇는다.
+//     · Gaia GPS 안내: 아이폰이 자원을 많이 쓴다고 보면 기록이 멈출 수 있다.
+//   ★ 어느 앱도 못 하는 것 — 사람이 앱 목록에서 직접 쓸어 끈 앱은 애플이 다시 켜 주지 않는다(애플 포럼 701377).
+//
+//   ★ 그래서 이렇게 한다
+//     ① 기록 중인지를 폰에 적어 둔다(UserDefaults bt_trk_on). 입항하면 지운다.
+//     ② 기록 중에는 큰 위치 변화 알림도 같이 켜고, iOS 17 부터는 백그라운드 위치 세션도 쥔다.
+//     ③ 앱이 켜질 때(뒤에서 다시 켜진 것 포함) AppDelegate 가 가장 먼저 resumeIfNeeded() 를 부른다 —
+//        웹 화면이 뜨기 전에 위치 받기를 다시 켜서 점이 파일에 쌓인다. 웹 화면이 뜨면 예전처럼 통째로 가져간다.
+//   ★ 큰 위치 변화 알림이 주는 점은 기지국·와이파이 위치라 속도가 없고 흐리다 → 웹 쪽 trkSatPt 가 버린다(항적에 안 들어감).
+// ══════════════════════════════════════════════════════════════════════
+final class BaetnilTrackRec: NSObject, CLLocationManagerDelegate {
+    static let shared = BaetnilTrackRec()
+    static let FILE = "baetnil_track.jsonl"
+    static let MAX_BYTES = 4 * 1024 * 1024        // 넘으면 앞 절반을 버린다 (안드로이드와 같다)
+    static let ON_KEY = "bt_trk_on"               // 기록 중이면 true — 앱이 꺼졌다 켜져도 이어 붙이려고
+    private var lm: CLLocationManager?
+    private var running = false
+    private var relaunched = false                // 앱이 꺼졌다 켜지며 스스로 이어 붙였나 (검사·확인자료용)
+    private var bgSession: AnyObject?             // iOS 17 CLBackgroundActivitySession
+    private let q = DispatchQueue(label: "kr.baetnil.track.file")
+
+    private func fileURL() -> URL {
+        let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        return dir.appendingPathComponent(BaetnilTrackRec.FILE)
+    }
+
+    private func authOK() -> Bool {
+        let m = CLLocationManager()
+        let st = m.authorizationStatus
+        if st != .authorizedAlways && st != .authorizedWhenInUse { return false }
+        if #available(iOS 14.0, *) { if m.accuracyAuthorization == .reducedAccuracy { return false } }
+        return true
+    }
+
+    /// 앱이 켜질 때 AppDelegate 가 부른다 (메인 스레드). 기록 중이던 것이 있으면 곧바로 다시 켠다.
+    func resumeIfNeeded() {
+        guard UserDefaults.standard.bool(forKey: BaetnilTrackRec.ON_KEY) else { return }
+        guard authOK() else { return }            // 그사이 권한을 끈 것 — 웹 화면이 뜨면 거기서 까닭을 말한다
+        relaunched = true
+        begin()
+    }
+
+    /// 켠다 (메인 스레드). 여러 번 불러도 한 벌만 돈다.
+    func begin() {
+        UserDefaults.standard.set(true, forKey: BaetnilTrackRec.ON_KEY)
+        if lm == nil {
+            let m = CLLocationManager()
+            m.delegate = self
+            m.desiredAccuracy = kCLLocationAccuracyBest
+            m.distanceFilter = 5                        // 5m 움직일 때마다 (5.10: 앱 저장 간격 10m 보다 촘촘히)
+            m.activityType = .otherNavigation           // 배 — 도로에 붙이지 않는다
+            m.pausesLocationUpdatesAutomatically = false // ★ 멈춰 있어도 끄지 않는다 (정박 중에도)
+            m.allowsBackgroundLocationUpdates = true     // ★ UIBackgroundModes 에 location 이 있어야 한다
+            m.showsBackgroundLocationIndicator = true    // 기록 중임을 사람에게 보여 준다
+            lm = m
+        }
+        if #available(iOS 17.0, *) {
+            // ★ 꺼졌다 다시 켜졌을 때도 다시 만든다 — 애플: 새 세션이 아니라 이어 받는 것이다
+            if bgSession == nil { bgSession = CLBackgroundActivitySession() }
+        }
+        lm?.startUpdatingLocation()
+        if CLLocationManager.significantLocationChangeMonitoringAvailable() {
+            lm?.startMonitoringSignificantLocationChanges()   // ★ 앱이 꺼져도 다시 켜 주는 문
+        }
+        running = true
+    }
+
+    /// 끈다 (메인 스레드)
+    func end() {
+        UserDefaults.standard.set(false, forKey: BaetnilTrackRec.ON_KEY)
+        lm?.stopUpdatingLocation()
+        lm?.stopMonitoringSignificantLocationChanges()
+        if #available(iOS 17.0, *) {
+            (bgSession as? CLBackgroundActivitySession)?.invalidate()
+        }
+        bgSession = nil
+        running = false
+        relaunched = false
+    }
+
+    func drain(_ done: @escaping ([[String: Any]], Int) -> Void) {
+        q.async {
+            var pts: [[String: Any]] = []
+            var bad = 0
+            let u = self.fileURL()
+            if let s = try? String(contentsOf: u, encoding: .utf8) {
+                for line in s.split(separator: "\n") {
+                    let t = line.trimmingCharacters(in: .whitespaces)
+                    if t.count < 2 { continue }
+                    if let d = t.data(using: .utf8),
+                       let o = try? JSONSerialization.jsonObject(with: d) as? [String: Any] {
+                        pts.append(o)
+                    } else { bad += 1 }             // ★ 한 줄이 깨져도 나머지는 살린다
+                }
+                try? FileManager.default.removeItem(at: u)
+            }
+            done(pts, bad)
+        }
+    }
+
+    func status(_ done: @escaping (Bool, Int, Bool) -> Void) {
+        q.async {
+            let u = self.fileURL()
+            let n = (try? FileManager.default.attributesOfItem(atPath: u.path)[.size] as? NSNumber)?.intValue ?? 0
+            done(self.running, n, self.relaunched)
+        }
+    }
+
+    // ── 점이 올 때마다 파일 끝에 한 줄씩 붙인다 (웹뷰가 멈춰 있어도, 웹 화면이 아직 안 떴어도 여기는 돈다)
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         var buf = ""
         for l in locations {
             var s = "{\"t\":\(Int64(l.timestamp.timeIntervalSince1970 * 1000))"
@@ -155,7 +242,7 @@ public class BaetnilTrack: CAPPlugin, CAPBridgedPlugin, CLLocationManagerDelegat
         q.async { self.append(buf) }
     }
 
-    public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         // 잠깐 못 받는 것은 흔하다(터널·실내). 그대로 두면 다시 온다.
     }
 
@@ -174,7 +261,7 @@ public class BaetnilTrack: CAPPlugin, CAPBridgedPlugin, CLLocationManagerDelegat
 
     private func trimIfBig(_ u: URL) {
         guard let n = (try? FileManager.default.attributesOfItem(atPath: u.path)[.size] as? NSNumber)?.intValue,
-              n > BaetnilTrack.MAX_BYTES,
+              n > BaetnilTrackRec.MAX_BYTES,
               let all = try? Data(contentsOf: u) else { return }
         let half = all.count / 2
         var cut = half

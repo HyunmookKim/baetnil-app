@@ -8,7 +8,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        // ★★★ 5.34 — 항해 기록 중에 아이폰이 앱을 껐다가 다시 켠 것이면(위치가 와서 뒤에서 켜진 것 포함)
+        //   웹 화면이 뜨기 전에 여기서 곧바로 위치 받기를 다시 켠다 (BaetnilTrack.swift 의 BaetnilTrackRec 머리말).
+        //   애플 문서: 다시 켜졌을 때 위치 관리자를 다시 만들어 이어 받아야 한다 — 그 자리가 여기다.
+        BaetnilTrackRec.shared.resumeIfNeeded()
         return true
     }
 
