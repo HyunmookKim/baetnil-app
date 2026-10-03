@@ -12,3 +12,9 @@
 # 오류 보고에서 몇째 줄인지 보이게 (파일 이름은 감춘다)
 -keepattributes SourceFile,LineNumberTable
 -renamesourcefileattribute SourceFile
+
+# ★ 로그인 부품(@capacitor-firebase/authentication 7.5)은 페이스북 로그인 라이브러리를 「있으면 쓰는」 꼴(compileOnly)로 둔다.
+#   우리는 페이스북 로그인을 안 쓴다(capacitor.config.json providers: google.com · apple.com) — 그 부품은
+#   providers 에 facebook.com 이 있을 때만 FacebookAuthProviderHandler 를 만든다(FirebaseAuthentication.initAuthProviderHandlers).
+#   R8 은 없는 라이브러리를 보면 멈추므로(첫 검사 빌드: Missing class com.facebook.CallbackManager$Factory) 그 이름만 알려 둔다.
+-dontwarn com.facebook.**
