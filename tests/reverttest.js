@@ -57,14 +57,16 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);}
   await pg.evaluate(()=>openMR('maint','m1'));
   await pg.waitForTimeout(600);
   const b0 = await btns();
+  // ★ 5.36 — 머리 단추는 다른 앱처럼 왼쪽 「취소」 · 오른쪽 「저장」 (사장님: 「저장 후 닫기 그냥 닫기 뒤로 가기 … 다른 어플들이랑 완전히 다르거든」)
+  //   「되돌리고 닫기」 는 「취소」 가 맡는다 — 바뀐 것이 있으면 묻고 처음 모습으로 돌린다.
   T('처음 열면 「되돌리고 닫기」 가 없다', !b0.some(x=>/되돌리고/.test(x)), b0);
-  T('「저장 후 닫기」 는 있다', b0.some(x=>/저장 후 닫기/.test(x)), b0);
+  T('「취소」 왼쪽 · 「저장」 오른쪽', b0[0] === '취소' && b0[b0.length-1] === '저장', b0);
 
   // ── ② 한 칸 고치면 단추가 나온다
   await pg.evaluate(()=>mrField('name','바뀐 이름'));
   await pg.waitForTimeout(600);
   const b1 = await btns();
-  T('★ 고치면 「되돌리고 닫기」 가 나온다', b1.some(x=>/되돌리고/.test(x)), b1);
+  T('★ 고쳐도 단추는 그대로(취소가 되돌린다)', b1[0] === '취소' && b1[b1.length-1] === '저장', b1);
   T('자료가 실제로 바뀌었다', (await pg.evaluate(()=>maint[0].name)) === '바뀐 이름');
 
   // ── ③ ★ 두 번 고쳐도 처음 모습이 안 흔들린다
@@ -85,7 +87,7 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);}
   T('★ 되돌리면 이름이 처음으로 돌아간다', after.이름 === '엔진오일 교체', after);
   T('★ 메모도 함께 돌아간다', after.메모 === '처음 메모', after);
   T('안 건드린 칸은 그대로다', after.주기 === 12, after);
-  T('버리기 전에 한 번 묻는다', (after.말||[]).some(x=>/confirm.*버리고 닫을까요/.test(x)), after.말);
+  T('버리기 전에 한 번 묻는다', (after.말||[]).some(x=>/confirm.*저장하지 않고 나갈까요/.test(x)), after.말);
   T('되돌린 뒤 창이 닫힌다', after.창열림 === false, after);
 
   // ── ⑤ 아니오를 누르면 아무 일도 없다

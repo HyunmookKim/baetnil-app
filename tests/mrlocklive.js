@@ -49,12 +49,13 @@ const T = (n, c, w) => { if(c){ ok++; console.log('통과: ' + n); }
   const 칸수 = () => pg.evaluate(() =>
     document.querySelectorAll('#mrPanel input, #mrPanel textarea, #mrPanel select').length);
   const 단추 = () => pg.evaluate(() =>
-    [...document.querySelectorAll('#mrPanel .mrtop .mrbtn')].map(b => b.textContent.trim()));
+    [...document.querySelectorAll('#mrPanel .mrtop button')].filter(b => getComputedStyle(b).display !== 'none' && !b.classList.contains('acthead')).map(b => b.textContent.trim()));
 
   T('보기 전용으로 창이 열렸다', await pg.evaluate(() => !unlocked && !!mrOpenId));
   const 잠김칸 = await 칸수();
   T('★★ 보기 전용에서는 고치는 칸이 없다', 잠김칸 === 0, 잠김칸);
-  T('★★ 그때 단추는 「목록」 뿐이다', (await 단추()).join(',') === '목록', await 단추());
+  // ★ 5.36 — 머리 단추를 다른 앱처럼: 보기 전용이면 왼쪽 「←」 하나, 고칠 때는 왼쪽 「취소」 · 오른쪽 「저장」
+  T('★★ 그때 단추는 「←」 뿐이다', (await 단추()).join(',') === '←', await 단추());
 
   // ★★★ 여기가 사장님이 겪으신 자리다 — 밑의 목록이 한 번 더 돌게 만든다
   await pg.evaluate(() => { try{ renderMaintList(); }catch(_){} });
@@ -66,15 +67,16 @@ const T = (n, c, w) => { if(c){ ok++; console.log('통과: ' + n); }
   T('★★★ 편집 중으로 바꾸면 **바로** 고치는 칸이 나온다 (다른 창 다녀올 것 없이)',
     푼칸 > 0, { 잠김칸, 푼칸 });
   const 푼단추 = await 단추();
-  T('★★★ 「저장 후 닫기」 가 바로 나온다', 푼단추.indexOf('저장 후 닫기') >= 0, 푼단추);
+  T('★★★ 「취소」·「저장」 이 바로 나온다', 푼단추[0] === '취소' && 푼단추[푼단추.length - 1] === '저장', 푼단추);
   T('★★ 창이 그대로 그 기록이다', await pg.evaluate(() => mrOpenId === 'm1'));
 
   // ── 되돌리고 닫기 — 글자 하나 치는 순간 뜬다
+  // ★ 5.36 — 「저장 안 하고 닫기」 는 왼쪽 「취소」 가 늘 맡는다(애플·머티리얼 공통). 고친 것이 있으면 취소가 묻고 되돌린다.
   const 되돌림보임 = () => pg.evaluate(() => {
-    const b = document.getElementById('mrRevertBtn');
-    return !!b && getComputedStyle(b).display !== 'none';
+    const b = document.querySelector('#mrPanel .mrtop .nvL');
+    return !!b && getComputedStyle(b).display !== 'none' && b.textContent.trim() === '취소' && mrDirty();
   });
-  T('★★ 아직 아무것도 안 고쳤으면 「되돌리고 닫기」 는 없다', (await 되돌림보임()) === false);
+  T('★★ 아직 아무것도 안 고쳤으면 고친 것 없음', (await 되돌림보임()) === false);
   await pg.evaluate(() => {
     const el = [...document.querySelectorAll('#mrPanel input')]
       .find(x => x.value === '엔진오일 및 필터 교체');
@@ -84,8 +86,14 @@ const T = (n, c, w) => { if(c){ ok++; console.log('통과: ' + n); }
   await pg.evaluate(() => { document.getElementById('__nm0').setSelectionRange(999,999); });
   await pg.keyboard.type('2', { delay: 40 });
   await pg.waitForTimeout(250);
-  T('★★★ 글자를 고치는 **그 순간** 「되돌리고 닫기」 가 뜬다 (칸을 벗어나지 않아도)',
-    await 되돌림보임());
+  // 글자를 친 채로 「취소」 를 누르면 → 묻는다(계속 수정을 고르면 창과 글자가 그대로)
+  await pg.evaluate(() => { window.__q = []; window.ask = m => { window.__q.push(String(m)); return Promise.resolve(false); }; });
+  await pg.click('#mrPanel .mrtop .nvL');
+  await pg.waitForTimeout(400);
+  const 물음 = await pg.evaluate(() => ({ q: window.__q, 열림: !!mrOpenId, 값: (maint.find(x=>x.id==='m1')||{}).name }));
+  T('★★★ 글자를 고친 채 「취소」 → 「수정한 내용을 저장하지 않고 나갈까요?」 (계속 수정이면 그대로)',
+    물음.q.some(x => /저장하지 않고 나갈까요/.test(x)) && 물음.열림 && /2$/.test(물음.값), 물음);
+  await pg.evaluate(() => { window.ask = () => Promise.resolve(true); });
 
   // ── 저장 후 닫기 — 한 번만 눌러도 닫힌다
   //    ★ 칸에 커서를 둔 채로 누른다. 여태 이때 두 번 눌러야 했다.
@@ -102,13 +110,13 @@ const T = (n, c, w) => { if(c){ ok++; console.log('통과: ' + n); }
   T('★★ 지금 커서가 그 칸에 있다 (여태 이때 두 번 눌러야 했다)',
     await pg.evaluate(() => document.activeElement && document.activeElement.id === '__nm'));
   // ★ 딱 한 번 누른다 — 진짜 손가락처럼
-  await pg.click('#mrPanel .mrtop .mrbtn.ok');
+  await pg.click('#mrPanel .mrtop .nvsave');
   await pg.waitForTimeout(800);
   const 닫힘 = await pg.evaluate(() => ({
     열림: !!mrOpenId,
     화면: SCREEN_STACK.indexOf('mrPanel') >= 0,
     이름: (maint.find(x=>x.id==='m1')||{}).name }));
-  T('★★★ 「저장 후 닫기」 를 **한 번만** 눌러도 닫힌다 (사장님 지적)',
+  T('★★★ 「저장」 을 **한 번만** 눌러도 닫힌다 (사장님 지적)',
     닫힘.열림 === false && 닫힘.화면 === false, 닫힘);
   T('★★★ 그리고 고친 것이 실제로 저장된다 (첫 누르기가 허공에 안 떨어진다)',
     닫힘.이름 === '엔진오일 및 필터 교체22', 닫힘);

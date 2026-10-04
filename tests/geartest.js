@@ -106,7 +106,7 @@ T('★ 그리는 곳이 있다 (renderGear)', !!RG);
 T('★ 넣는 곳이 있다 (addGear)', !!AG);
 if(AG){
   T('★★ 잠금 중에는 조용히 안 넣는다', /if\(!unlocked\)\s*return/.test(AG), AG.slice(0,120));
-  T('★ 넣고 바로 그 장비를 연다', /openMR\('gear'/.test(AG), AG.slice(0,300));
+  T('★ 넣고 바로 그 장비를 연다', /(openMR|mrOpenNew)\('gear'/.test(AG), AG.slice(0,300));
 }
 if(RG){
   T('★ 없을 때 안내가 나온다 (빈 화면을 안 준다)', /emptybox/.test(RG));

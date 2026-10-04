@@ -8,7 +8,7 @@ const grab=(js,name)=>{ const i=js.indexOf('function '+name+'('); if(i<0) return
   for(let j=st;j<js.length;j++){ if(js[j]==='{')d++; else if(js[j]==='}'){d--; if(!d) return js.slice(i,j+1);} }
   return ''; };
 
-T('★★★ 목록·지도 전환 띠가 있다', /\+ spotViewBar\(\)/.test(src) && !!grab(src,'spotViewBar'));
+T('★★★ 목록·지도 전환 단추가 붙어 있는 종류 줄에 있다 (5.36)', /\+ spotViewBtns\(\)/.test(src) && !!grab(src,'spotViewBtns'));
 T('★★ 고른 것을 기억한다', /localStorage\.setItem\('bt_spotview'/.test(grab(src,'setSpotView')));
 T('★★★ 지도일 때 지도 상자를 그린다', /mapBox\('spotsMap'/.test(src));
 T('★★ 목록일 때는 줄을 그린다', /spotView === 'map'[\s\S]{0,120}spotRowsHtml\(\)/.test(src));

@@ -57,9 +57,11 @@ async function run(br, lang){
   await fill(2, 'insta', 'etc', '@baetnil_yacht');
   const ins = await fill(3, 'kakao', 'custom', 'open.kakao.com/o/abc123');
   const r3 = (await pg.$$('#mrPanel .ciedit'))[3];
+  // ★ 5.36 — 「직접 입력」 은 용도 칸 **그 자리**가 글 칸으로 바뀐다(사장님: 「그 이름이 위에가 있어야지」)
+  const cl = await r3.$$('.ciline input.cicl');
   const ci = await r3.$$('input.ciinput');
-  T(L + '「직접 입력」 을 고르면 용도 칸이 하나 더 나온다', ci.length === 2, ci.length);
-  if(ci[1]) await ci[1].fill('예약 문의');
+  T(L + '「직접 입력」 을 고르면 용도 칸 그 자리가 글 칸이 된다 (아래에 따로 안 생김)', cl.length === 1 && ci.length === 1, [cl.length, ci.length]);
+  if(cl[0]) await cl[0].fill('예약 문의');
   await shot('1-contact-edit');
   await pg.evaluate(() => ciSave());
   await pg.waitForTimeout(500);
@@ -108,7 +110,7 @@ async function run(br, lang){
     saveMR(); setHomeSub('check');
   });
   await pg.waitForTimeout(800);
-  const scr = await pg.evaluate(() => ({ chips: !!document.querySelector('.ckchips.pinbar'), rows: document.querySelectorAll('[onclick*="ckRowMenu"]').length }));
+  const scr = await pg.evaluate(() => ({ chips: !!document.querySelector('.ckpin'), rows: document.querySelectorAll('[onclick*="ckRowMenu"]').length }));
   T(L + '체크리스트 화면이 뜨고 줄마다 수정 단추', scr.rows >= 40, scr);
   const firstLabel = await pg.evaluate(() => { const m = document.querySelector('[onclick*="ckRowMenu"]').getAttribute('onclick').match(/ckRowMenu\('([^']+)'\)/); const it = checkt.find(c => String(c.id) === m[1]); return it ? it.label : null; });
   await pg.click('[onclick*="ckRowMenu"]');
@@ -137,10 +139,10 @@ async function run(br, lang){
   // ── 갈래 줄이 스크롤해도 남는가 (체크리스트 목록 줄)
   await pg.evaluate(() => { window.scrollTo(0, 0); });
   await pg.waitForTimeout(200);
-  const top0 = await pg.evaluate(() => { const e = document.querySelector('.ckchips.pinbar'); return e ? e.getBoundingClientRect().top : null; });
+  const top0 = await pg.evaluate(() => { const e = document.querySelector('.ckpin'); return e ? e.getBoundingClientRect().top : null; });
   await pg.mouse.wheel(0, 1600); await pg.waitForTimeout(500);
   const pin = await pg.evaluate(() => {
-    const e = document.querySelector('.ckchips.pinbar'); const h = document.getElementById('hdr') || document.querySelector('header');
+    const e = document.querySelector('.ckpin'); const h = document.getElementById('hdr') || document.querySelector('header');
     const r = e ? e.getBoundingClientRect() : null;
     const se = document.scrollingElement;
     return { top: r && r.top, bottom: r && r.bottom, hdr: h ? h.getBoundingClientRect().bottom : null, sy: se.scrollTop, stickyTop: getComputedStyle(document.documentElement).getPropertyValue('--stickyTop') || getComputedStyle(document.documentElement).getPropertyValue('--hdrH') };

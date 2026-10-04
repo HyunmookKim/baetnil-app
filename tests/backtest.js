@@ -27,14 +27,12 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + n); } else { fail+
 // ── 1. 기록 화면 버튼
 {
   const mr = grab(js, 'openMR') || '';
-  T('보기 전용이면 저장 버튼을 안 보여준다', /unlocked\s*$|\$\{unlocked/.test(mr) && /저장 후 닫기/.test(mr));
-  // ★ 3.88 부터 사전을 거친다 — `>${esc(t('목록'))}<` 모양이다
-  const LIST_BTN = /closeMR\(\)">\$\{esc\(t\('목록'\)\)\}/g;
-  T('보기 전용에도 나갈 길이 있다', LIST_BTN.test(mr));
-  T('고치는 중에도 그냥 목록으로 갈 수 있다',
-    (mr.match(LIST_BTN) || []).length >= 2);
-  T('저장 후 닫기는 고치는 중에만 나온다',
-    /\$\{unlocked[\s\S]{0,200}저장 후 닫기/.test(mr));
+  // ★ 5.36 — 머리 단추를 다른 앱처럼 (사장님: 「저장 후 닫기 그냥 닫기 뒤로 가기 … 다른 어플들이랑 완전히 다르거든」)
+  //   고칠 때: 왼쪽 「취소」 · 오른쪽 「저장」. 보기 전용: 왼쪽 「←」 (머리줄의 ← 와 같은 일).
+  T('보기 전용이면 저장 버튼을 안 보여준다', /\$\{unlocked[\s\S]{0,160}nvsave/.test(mr) && /nvsave[\s\S]{0,120}: ''\}/.test(mr));
+  T('보기 전용에도 나갈 길이 있다', /nvback" onclick="closeMR\(\)"/.test(mr));
+  T('고치는 중에는 왼쪽 「취소」 가 나갈 길이다', /nvL" onpointerdown="mrHoldClose\(\)" onclick="mrCancel\(\)"/.test(mr));
+  T('「저장 후 닫기」·「목록」 단추가 남아 있지 않다', !/저장 후 닫기/.test(mr) && !/t\('목록'\)/.test(mr));
 }
 
 // ── 2. 목록으로 돌아가기
@@ -44,8 +42,9 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + n); } else { fail+
   T('덮개를 먼저 닫는다 (안 닫으면 뒤에 그려도 안 보인다)', /closeBoat\(\)/.test(bt));
   T('커뮤니티 탭으로 간다', /switchTab\('community'\)/.test(bt));
   T('보던 쪽(모아보기·영업)으로 돌아간다', /exploreBiz/.test(bt) && /comSub/.test(bt));
-  T('배 페이지 목록 버튼이 그 함수를 쓴다',
-    /onclick="backToExplore\(\)">(목록|\$\{esc\(t\('목록'\)\)\})/.test(src));
+  // ★ 5.36 — 오른쪽 「목록」 단추를 없애고 머리줄 ← 하나로. 남의 배 화면은 커뮤니티·남의 배 두 곳에서 들어오므로
+  //   ← 는 들어온 그 탭으로 돌아간다(뒤로 가기와 같다). backToExplore 는 숨긴 배 등에서 그대로 쓴다.
+  T('배 페이지에 오른쪽 「목록」 단추가 남아 있지 않다', !/onclick="backToExplore\(\)">(목록|\$\{esc\(t\('목록'\)\)\})/.test(src));
   T('덮개 위에서 openExplore 를 바로 부르지 않는다',
     !/onclick="openExplore\(\$\{exploreBiz\}\)">목록/.test(src));
 }

@@ -61,7 +61,7 @@ const sleep = ms => new Promise(r=>setTimeout(r,ms));
   await pg.evaluate(()=>openProfEdit());
   await sleep(300);
   const head = await pg.evaluate(()=>[...document.querySelectorAll('#mrPanel .mrhead button')].map(b=>b.textContent.trim()));
-  T('★ 프로필 수정 화면 머리줄에 [취소] [완료]', head.join(',') === '취소,완료', head);
+  T('★ 프로필 수정 화면 머리줄에 [취소] [저장] (5.36 — 왼쪽 취소 · 오른쪽 저장)', head.join(',') === '취소,저장', head);
   tx = await panel();
   T('수정 화면에 이름·소개·자주 타는 바다·가고 싶은 곳·공개 범위', ['이름','소개','자주 타는 바다','가고 싶은 곳','공개 범위'].every(w=>tx.indexOf(w)>=0), tx.slice(0,300));
   // 안 바꾸고 취소 → 묻지 않고 돌아간다

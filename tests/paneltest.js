@@ -101,7 +101,7 @@ T('되돌아가기 버튼은 갈 곳을 적는다', /←\s*내 배/.test(src));
 // 기록 화면은 고치는 중이므로 '저장 후 닫기'
 {
   const mr = grab(js, 'openMR') || '';
-  T('기록 화면 버튼은 저장 후 닫기다', /저장 후 닫기/.test(mr));
+  T('기록 화면 버튼은 왼쪽 취소 · 오른쪽 저장이다 (5.36)', /nvL[^>]*onclick="mrCancel\(\)"/.test(mr) && /nvsave[^>]*onclick="mrSaveClose\(\)"/.test(mr));
   T('저장 후 닫기가 실제로 저장한다', !!grab(js, 'mrSaveClose'));
   const sc = grab(js, 'mrSaveClose') || '';
   T('저장하고 나서 닫는다', /save|schedulePush/.test(sc) && /closeMR/.test(sc));

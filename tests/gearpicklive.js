@@ -116,8 +116,14 @@ const server = http.createServer((rq, rs) => { const u = rq.url.split('?')[0];
   T('누르면 이상 없음 / 고장 목록', JSON.stringify(await pg.locator('#formOv .fopt b').allInnerTexts()) === JSON.stringify(['이상 없음', '고장']));
   await pg.locator('#formOv .fopt', { hasText: '고장' }).first().click();
   await pg.locator('#formOv .fbtn.go').click(); await pg.waitForTimeout(600);
-  const rp = await pg.evaluate(() => ({ n: repair.length, g: repair[0] && repair[0].gearId, st: repair[0] && repair[0].status, open: typeof mrOpenType !== 'undefined' ? mrOpenType : '' }));
-  T('고장을 선택하면 이 장비와 연결된 고장 기록이 생기고 그 창이 열린다', rp.n === 1 && rp.g === 'g2' && rp.st === 'open' && rp.open === 'repair');
+  // ★ 5.36 — 사장님: 「장비에서 고장 났다고 표시를 하면 바로 말도 없이 이게 수리 목록으로 들어가 버리잖아 … 제목이 없이 들어가네」
+  //   → 고르면 바로 만들지 않고 「+ 고장」 창에서 내용을 받는다. 추가한 뒤에는 장비 화면에 그대로 있고 알린다.
+  const ask1 = await pg.evaluate(() => ({ n: repair.length, title: document.getElementById('lkFormTitle').textContent }));
+  T('고장을 선택하면 바로 기록을 만들지 않고 내용을 묻는다', ask1.n === 0 && /고장/.test(ask1.title), ask1);
+  await pg.locator('#formOv input').first().fill('임펠러 파손');
+  await pg.locator('#formOv .fbtn.go').click(); await pg.waitForTimeout(600);
+  const rp = await pg.evaluate(() => ({ n: repair.length, g: repair[0] && repair[0].gearId, st: repair[0] && repair[0].status, ti: repair[0] && repair[0].title, open: typeof mrOpenType !== 'undefined' ? mrOpenType : '' }));
+  T('내용을 넣고 추가하면 이 장비와 연결된 고장 기록이 생기고 장비 화면에 그대로 있다', rp.n === 1 && rp.g === 'g2' && rp.st === 'open' && rp.ti === '임펠러 파손' && rp.open === 'gear', rp);
   await pg.evaluate(() => openMR('gear', 'g2')); await pg.waitForTimeout(300);
   T('장비 상태가 고장 1 로 바뀐다', (await pg.locator('#mrPanel .mrrow', { hasText: '상태' }).innerText()).includes('고장 1'));
   if(SHOT) await pg.screenshot({ path: path.join(SHOT, 'gear-broken.png') });

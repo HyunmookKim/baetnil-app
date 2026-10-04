@@ -42,7 +42,8 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.lo
   const whoTxt = await pg.evaluate((vid)=>{ openVoyCrew(vid); const P=document.getElementById('panel'); return P ? P.innerText.slice(0,120) : ''; }, vid);
   T('함께 탄 사람 선택 화면이 뜬다', /함께 탄 사람 선택/.test(whoTxt), whoTxt);
   await pg.waitForTimeout(200);
-  const head = await pg.evaluate(()=>(document.getElementById('hNav')||{}).innerText||'');
+  // ★ 5.36 — 머리줄에 ← 가 함께 있다. 이름만 본다.
+  const head = await pg.evaluate(()=>((document.querySelector('#hNav .htit')||document.getElementById('hNav')||{}).innerText)||'');
   T('머리줄 이름도 「함께 탄 사람 선택」 (가려 둔 적재표 칸 이름이 올라오지 않는다)', head.trim() === '함께 탄 사람 선택', head);
   // 완료 → 기록으로 돌아간다
   await pg.evaluate(()=>planWhoDone()); await pg.waitForTimeout(300);

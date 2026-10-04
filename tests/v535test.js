@@ -33,11 +33,11 @@ for(const [n, re] of [
   ['연료 화면', /<div id="mntBar4" class="pinbar"><\/div>/],
   ['장비 목록·정기점검·리뷰', /<div class="mrhead pinbar" style="flex-wrap:wrap">\s*<button class="tab on" id="gearTabG"/],
   ['문서·이력·연락처', /`<div class="tfilt pinbar" style="align-items:center">` \+ DOC_SUBS/],
-  ['체크리스트 목록', /<div class="ckchips pinbar">/],
+  ['체크리스트 목록', /<div class="pinbar ckpin"><div class="ckchips">/],
   ['뉴스 갈래', /`<div class="subrow pinbar">`\s*\+ \[\['kr'/],
   ['게시판 말머리', /const kinds = `<div class="tfilt pinbar">`/],
   ['정박지 종류', /`<div class="tfilt pinbar">`\s*\+ `<button class="tchip\$\{spotKindNow\(\)/],
-  ['남의 배 탭(머리줄 둘째 줄)', /<div class="mrhead mrhead2">[\s\S]{0,300}\$\{탭줄\}<\/div>/]
+  ['남의 배 탭(머리줄 둘째 줄)', /<div class="mrhead mrhead2"[^>]*>[\s\S]{0,300}\$\{탭줄\}<\/div>/]
 ]) T('붙여 두는 줄 — ' + n, re.test(src));
 
 // ③ 연락처

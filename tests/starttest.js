@@ -72,7 +72,7 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + n); } else { fail+
   T('배 등록 화면이 있다', bs.length > 0);
   T('닫는 길이 있다', /closeBoatSetup\(/.test(bs));
   // 앱은 '닫기' 라는 글자 대신 '← 오늘' 로 되돌아간다 (사장님이 정한 모양)
-  T('되돌아가는 모양이 앱과 같다', /← 오늘|←/.test(bs) && !/>닫기</.test(bs));
+  T('되돌아가는 모양이 앱과 같다 (5.36: 머리줄 ← 가 data-up 으로 오늘)', /data-up="closeBoatSetup\(\)"/.test(bs) && !/>닫기</.test(bs));
   const cs = grab(js, 'closeBoatSetup') || '';
   T('닫는 함수가 있다', cs.length > 0);
   T('닫으면 오늘 탭으로 돌아간다', /switchTab\('home'\)|closeBoat\(/.test(cs));
