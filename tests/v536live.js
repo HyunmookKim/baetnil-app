@@ -81,7 +81,7 @@ async function run(br, lang){
     const r = x => x.getBoundingClientRect(); return { txt: bs.map(x => x.textContent.trim()), firstLeft: r(bs[0]).left, lastRight: r(bs[bs.length - 1]).right,
       hback: !!document.querySelector('#hNav .hback') && getComputedStyle(document.querySelector('#hNav .hback')).display !== 'none' }; });
   T(L + '기록 창 머리: 맨 왼쪽 「취소」 · 맨 오른쪽 「저장」', /^(취소|Cancel)$/.test(hb.txt[0]) && /^(저장|Save)$/.test(hb.txt[hb.txt.length - 1]) && hb.firstLeft < 60, hb);
-  T(L + '「저장 후 닫기」·「되돌리고 닫기」·「목록」 이 없다', !hb.txt.some(x => /저장 후 닫기|되돌리고 닫기|^목록$|Save and close|^List$/.test(x)), hb.txt);
+  T(L + '「저장 후 닫기」·「저장하지 않고 닫기」·「목록」 이 없다', !hb.txt.some(x => /저장 후 닫기|되돌리고 닫기|^목록$|Save and close|^List$/.test(x)), hb.txt);
   T(L + '고치는 화면에서는 머리줄 「←」 를 숨긴다(취소와 같이 두지 않는다)', !hb.hback, hb);
   await shot('3-record-head');
   // 새 수리 기록: 이름 없이 저장 → 오류, 취소 → 안 남음

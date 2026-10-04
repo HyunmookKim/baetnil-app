@@ -103,7 +103,7 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);}
   // 옛 기록(숫자 없이 글만)은 그대로 남는다
   const wxOld = await pg.evaluate(()=>{
     const d=document.createElement('div');
-    d.innerHTML = wxLine({ text:'받는 중…', at:'', spot:'' }, '');
+    d.innerHTML = wxLine({ text:'불러오는 중…', at:'', spot:'' }, '');
     return d.innerText; });
   T('숫자가 없는 옛 기록도 사전을 거친다', !/받는 중/.test(wxOld), wxOld);
 

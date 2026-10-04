@@ -31,7 +31,7 @@ T('★★ 뉴스만 「오늘」 탭으로 갔다',
 // ── 「남의 배」 탭 — 네 갈래
 const OS = (src.match(/const OTHERSUB_TITLES = \{[^\n]*\};/) || [''])[0];
 T('★ 「남의 배」 갈래 이름이 있다', !!OS);
-[['voyage','항해일지'],['maint','정비수첩'],['review','제품리뷰'],['boatrv','배리뷰']].forEach(([k,n])=>
+[['voyage','항해일지'],['maint','정비수첩'],['review','제품리뷰'],['boatrv','배 리뷰']].forEach(([k,n])=>
   T('★ 갈래에 ' + n + ' 가 있다', new RegExp(k + ":t\\('" + n + "'\\)").test(OS), OS));
 T('★★ 항해일지가 맨 앞이다 (「여수 개도 정박」 검색이 「Yanmar 임펠러」보다 훨씬 많다)',
   OS.indexOf("voyage:") < OS.indexOf("maint:") && OS.indexOf("maint:") < OS.indexOf("review:"), OS);
@@ -132,7 +132,7 @@ T('★ 절차가 있는 것만 눌린다', /\$\{n\?` onclick="pubHowOpen/.test(s
 //   「그럼 왜 가격이랑 제품이랑 이런 걸 왜 적냐」 — 적은 것이 보이지 않으면 적을 까닭이 없다.
 {
   const H = grab('pubHowBody') || '';
-  ['난이도','걸린 시간','비용','부품·공구','장비','완료일'].forEach(lbl=>   // 5.30 — 문구 바뀜 (든 돈 → 비용)
+  ['난이도','소요 시간','비용','부품·공구','장비','완료일'].forEach(lbl=>   // 5.30 — 문구 바뀜 (든 돈 → 비용)
     T('★★ 공개 정비수첩에 「' + lbl + '」 이 칸 이름을 달고 나온다',
       H.indexOf("'" + lbl + "'") >= 0, lbl));
   T('★★★ 옛 방식(옅은 한 줄)이 안 남아 있다', !/const meta = \[/.test(H), H.slice(0,200));

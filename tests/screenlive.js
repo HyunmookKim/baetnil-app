@@ -101,7 +101,7 @@ const 화면들 = [
   }
 
   // ── 리뷰는 쓰는 것이다 — 쓰러 가는 문이 있어야 한다 (4.66, 사장님 지적)
-  for(const [sub, 이름] of [['review','제품리뷰'],['boatrv','배리뷰']]){
+  for(const [sub, 이름] of [['review','제품리뷰'],['boatrv','배 리뷰']]){
     const 있나 = await p.evaluate(async (sb)=>{
       switchTab('others'); setOtherSub(sb);
       await new Promise(r=>setTimeout(r,700));

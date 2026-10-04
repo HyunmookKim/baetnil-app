@@ -65,7 +65,7 @@ const T = (n, c, x) => { if(c){ ok++; console.log('통과: ' + n); }
                  len: P ? P.innerHTML.length : 0 };
       });
     };
-    for(const [fnName, 이름] of [['openRoster','회원명부'], ['openRanks','등급설정'],
+    for(const [fnName, 이름] of [['openRoster','회원명부'], ['openRanks','등급 설정'],
         ['openJoinReqs','참여신청'], ['openMyTasks','할일'], ['openBoard','게시판'], ['openPublish','공개설정']]){
       const r = await look(fnName);
       T('★ ' + 이름 + ' 이 빈 화면이 아니다', r.open && r.len > 300, r);

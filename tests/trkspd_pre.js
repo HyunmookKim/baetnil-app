@@ -11,5 +11,8 @@ module.exports = function(src){
          // ★ 5.32 — 기기별 정확도 기준(trkAccJump·trkAccSeen)과 위성 점 판정(trkSatPt)
          `const TRK_ACC_OK=${c('TRK_ACC_OK')}, TRK_ACC_X=${c('TRK_ACC_X')}, TRK_ACC_N=${c('TRK_ACC_N')}, TRK_ACC_MINN=${c('TRK_ACC_MINN')};\n` +
          g('trkSpd') + '\n' + g('trkOldMaxKt') + '\n' + g('trkFirstWait') + '\n' +
-         g('trkAccJump') + '\n' + g('trkAccSeen') + '\n' + g('trkSatPt') + '\n';
+         g('trkAccJump') + '\n' + g('trkAccSeen') + '\n' + g('trkSatPt') + '\n' +
+         // ★ 5.37 — OsmAnd 문 (5초 간격 · 정확도 50m · 6분/10배 끊김)
+         `const TRK_OSM_MS=${c('TRK_OSM_MS')}, TRK_OSM_ACC=${c('TRK_OSM_ACC')}, TRK_OSM_SEG_MS=${c('TRK_OSM_SEG_MS')}, TRK_OSM_SEG_X=${c('TRK_OSM_SEG_X')};\n` +
+         g('trkOsmWhy') + '\n' + g('trkCnt') + '\n';
 };

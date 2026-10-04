@@ -81,7 +81,7 @@ T('★ 기록 창에 「정비 절차」 가 있다', /정비 절차/.test(src))
 T('★ 단계를 더하는 단추가 있다', /howAdd\(/.test(src));
 T('★ 단계마다 사진을 넣을 수 있다', /howPhoto\(/.test(src));
 T('★ 난이도 칸이 있다', /mrField\('hard'/.test(src));
-T('★ 걸린 시간이 시·분 두 칸이다', /durRow\('걸린 시간'|durRow\('작업 시간'/.test(src));
+T('★ 걸린 시간이 시·분 두 칸이다', /durRow\('소요 시간'|durRow\('소요 시간'|durRow\('작업 시간'/.test(src));
 T('★ 든 돈 칸이 있다', /mrField\('cost'/.test(src));
 T('★★ 이 기록을 공개하는 스위치가 있다', /mrField\('pub'|howPubToggle\(/.test(src));
 

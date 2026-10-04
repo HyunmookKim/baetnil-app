@@ -51,7 +51,7 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + n); } else { fail+
   //   한 곳(adminGuard)에 모으고, 손대는 함수가 전부 그것을 쓰는지 이름까지 찍어서 본다.
   const g = grab(js, 'adminGuard') || '';
   T('최고 운영자 보호가 검사 안에 있다', /isOwnerAdmin\(/.test(g));
-  T('왜 못 하는지 알려준다', /최고 운영자/.test(g));
+  T('왜 못 하는지 알려준다', /최고 관리자/.test(g));
   const touch = ['adminSetPerm','adminRemove','adminAdd','personPerm','personAppoint','personRemove']
     .filter(fn => grab(js, fn));
   T('운영자 문서를 손대는 함수를 찾았다', touch.length >= 3);

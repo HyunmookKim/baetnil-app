@@ -81,7 +81,7 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + n); } else { fail+
   T('최고 운영자는 못 건드린다', /isOwnerAdmin\(/.test(g));
   T('자기 임명 권한을 스스로 끄지 못한다', /adminIsMe\(/.test(g) && /'admin'/.test(g));
   T('자기 자신을 해임하지 못한다', /'remove'[\s\S]{0,80}?adminIsMe\(/.test(g));
-  T('왜 막는지 알려준다', /잠기|복구|아무도/.test(g) && /최고 운영자/.test(g));
+  T('왜 막는지 알려준다', /잠기|복구|아무도/.test(g) && /최고 관리자/.test(g));
   // 검사를 부르기만 하고 결과를 안 쓰면 소용없다 — 막고 돌아서는지까지 본다
   ['adminSetPerm','adminRemove','adminAdd','personPerm','personAppoint','personRemove']
     .filter(fn => grab(js, fn))

@@ -24,8 +24,10 @@ const C = k => { const m = src.match(new RegExp('const ' + k + '\\s*=\\s*([\\d.]
 T('부품 점은 trkFromPart 로 간다', /else trkFromPart\(pos\); \}\);/.test(src));
 T('우리 기록 장치가 돌면 부품 점을 항적에 안 넣는다', /if\(trkNow && trkNow\.nat\)\{[\s\S]{0,200}return false;\s*\}\s*return trkPush\(pos\);/.test(grab(src, 'trkFromPart')));
 T('기록 장치 점은 trkSatPt 로 가른다', /if\(!trkSatPt\(q, ac\)\)/.test(agrab(src, 'trkBufDrain')));
-T('기기별 정확도 기준을 trkPush 와 trkBufDrain 둘 다 쓴다',
-  /trkAccJump\(ac, trkNow\.acr\)/.test(grab(src, 'trkPush')) && /trkAccJump\(ac, trkNow\.acr\)/.test(agrab(src, 'trkBufDrain')));
+// ★ 5.37 — 기기별 정확도 기준(최근 중앙값 3배)은 다른 앱 근거 없이 정한 것이라 없앴다. OsmAnd 그대로 50m 하나.
+T('정확도 기준은 OsmAnd 50m 하나 — trkPush 와 trkBufDrain 둘 다',
+  /trkOsmWhy\(p, trkNow\.pts/.test(grab(src, 'trkPush')) && /ac <= TRK_OSM_ACC/.test(agrab(src, 'trkBufDrain'))
+  && !/trkAccJump\(/.test(grab(src, 'trkPush')) && !/trkAccJump\(/.test(agrab(src, 'trkBufDrain')));
 T('GPS 없는 기기 안내 넷이 다 있다', ['no-gps', 'gps-off', 'coarse'].every(w => grab(src, 'trkNoSatWhy').includes("'" + w + "'")));
 T('기록이 안 켜지면 까닭을 사람에게 말한다', /return trkAttachWhy \|\| '위치를 받지 못했습니다/.test(src));
 {
@@ -122,8 +124,12 @@ function offPath(p, truth){ let m = 1e9; for(const q of truth) m = Math.min(m, d
       // 화면이 켜졌다 꺼졌다 — 몇 분 단위로 몰아 받는다
       for(let i = 0; i < all.length; i += 180){ F.feed(all.slice(i, i + 180)); await F.drain(); }
       const pts = F.get().pts;
-      const 튐 = pts.filter(p => offPath(p, tr) > 60).length;
-      T(`${기기} · ${b.name}: 튄 점이 하나도 안 남는다`, 튐 === 0, { 튐, n: pts.length });
+      // ★ 5.37 — OsmAnd 그대로: 정확도 50m 보다 흐린 위치만 안 남긴다. 50m 안의 위치는 OsmAnd 도 남긴다.
+      const 흐린튐 = pts.filter(p => offPath(p, tr) > 60 && !(p.ac <= 50)).length;
+      const 남은튐 = pts.filter(p => offPath(p, tr) > 60).length;
+      T(`${기기} · ${b.name}: 정확도 50m 보다 흐린 튄 점은 하나도 안 남는다 (OsmAnd)`, 흐린튐 === 0, { 흐린튐, 남은튐, n: pts.length });
+      T(`${기기} · ${b.name}: 남은 점은 모두 정확도 50m 안 (OsmAnd)`, pts.every(p => p.ac <= 50), { n: pts.length });
+      T(`${기기} · ${b.name}: 5초보다 촘촘히 남지 않는다 (OsmAnd)`, pts.every((p, i) => !i || Date.parse(p.t) - Date.parse(pts[i-1].t) > 5000));
       // 진짜 길이 끊기지 않았나 — 5분 넘게 빈 데가 없어야 한다
       let gap = 0; for(let i = 1; i < pts.length; i++) gap = Math.max(gap, Date.parse(pts[i].t) - Date.parse(pts[i-1].t));
       T(`${기기} · ${b.name}: 길이 끊기지 않는다 (가장 긴 빈 데 ${Math.round(gap/1000)}초)`, pts.length > 10 && gap < 300e3, { n: pts.length, gap });
@@ -179,7 +185,8 @@ function offPath(p, truth){ let m = 1e9; for(const q of truth) m = Math.min(m, d
     T('안드로이드 gps 공급원은 위성', sat({ pv:'gps' }, 50) === true);
     T('안드로이드 network·fused 는 위성 아님', sat({ pv:'network', sp:1 }, 5) === false && sat({ pv:'fused', sp:1 }, 5) === false);
     T('아이폰: 속도를 준 점은 위성', sat({ pv:'ios', sp:0 }, 12) === true);
-    T('아이폰: 속도 없고 65m(와이파이) 는 위성 아님', sat({ pv:'ios' }, 65) === false);
+    // ★ 5.37 — 아이폰은 공급원을 안 준다. OsmAnd 처럼 공급원으로 안 가르고, 65m 는 정확도 50m 문에서 빠진다 (아래 흉내 검사)
+    T('아이폰: 공급원으로는 안 가른다 (OsmAnd — 정확도 50m 로만)', sat({ pv:'ios' }, 65) === true && sat({ pv:'ios', sp:2 }, 5) === true);
     T('아이폰: 속도 없어도 8m 로 또렷하면 위성', sat({ pv:'ios' }, 8) === true);
   }
 

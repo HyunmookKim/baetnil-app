@@ -26,7 +26,7 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.lo
   const V = grab('pubHowBody');
   T('★ 공개 정비수첩 화면을 찾았다', !!V);
   // 내보내는 칸(mlogPublic)이 화면에 제 이름을 달고 나오는가
-  [['완료일','date'],['장비','gear'],['난이도','hard'],['걸린 시간','work'],
+  [['완료일','date'],['장비','gear'],['난이도','hard'],['소요 시간','work'],
    ['비용','cost'],['부품·공구','used'],['계통','sys']].forEach(([lbl, f])=>{ // 5.30 — 문구 바뀜 (든 돈 → 비용)
     T('★★ 정비수첩 — 「' + lbl + '」 이 칸 이름을 달고 나온다',
       V.indexOf("'" + lbl + "'") >= 0 && V.indexOf('m.' + f) >= 0, lbl);

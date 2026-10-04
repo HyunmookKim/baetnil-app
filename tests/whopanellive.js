@@ -40,11 +40,11 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.lo
   await pg.evaluate((vid)=>{ openMR('voyage', vid); }, vid);
   await pg.waitForTimeout(300);
   const whoTxt = await pg.evaluate((vid)=>{ openVoyCrew(vid); const P=document.getElementById('panel'); return P ? P.innerText.slice(0,120) : ''; }, vid);
-  T('함께 탄 사람 선택 화면이 뜬다', /함께 탄 사람 선택/.test(whoTxt), whoTxt);
+  T('함께 탄 사람 선택 화면이 뜬다', /동승자 선택/.test(whoTxt), whoTxt);
   await pg.waitForTimeout(200);
   // ★ 5.36 — 머리줄에 ← 가 함께 있다. 이름만 본다.
   const head = await pg.evaluate(()=>((document.querySelector('#hNav .htit')||document.getElementById('hNav')||{}).innerText)||'');
-  T('머리줄 이름도 「함께 탄 사람 선택」 (가려 둔 적재표 칸 이름이 올라오지 않는다)', head.trim() === '함께 탄 사람 선택', head);
+  T('머리줄 이름도 「함께 탄 사람 선택」 (가려 둔 적재표 칸 이름이 올라오지 않는다)', head.trim() === '동승자 선택', head);
   // 완료 → 기록으로 돌아간다
   await pg.evaluate(()=>planWhoDone()); await pg.waitForTimeout(300);
   // 알릴 사람 선택도 한 번 열고 뒤로(닫기)로 나간다
@@ -57,14 +57,14 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.lo
   const r = await pg.evaluate(()=>{ let e=''; try{ setBoatSubTab('stow'); openLocker(lockers[0].id); }catch(x){ e=String(x); }
     const P=document.getElementById('panel');
     return { e, open: P.classList.contains('open'), txt: (document.getElementById('pitems')||{}).innerText || '',
-      whoLeft: /함께 탄 사람|알릴 사람/.test(P.innerText) }; });
+      whoLeft: /동승자|알릴 사람/.test(P.innerText) }; });
   T('★★★ 그 뒤 적재 화면에서 칸을 눌러도 앱이 죽지 않는다', !r.e, r.e);
   T('★★ 칸의 물품이 목록에 나온다', r.open && /물건1/.test(r.txt) && /물건2/.test(r.txt), r);
   T('사람 선택 화면이 적재표 칸 안에 남아 있지 않다', !r.whoLeft, r);
   // 사람 선택이 떠 있는 동안 다시 그리기(구름 동기화)가 와도 사람 선택이 지워지지 않는다
   const r2 = await pg.evaluate((vid)=>{ closePanel(); openMR('voyage', vid); openVoyCrew(vid);
     try{ repaintNow(); }catch(_){}
-    return /함께 탄 사람 선택/.test(document.getElementById('panel').innerText); }, vid);
+    return /동승자 선택/.test(document.getElementById('panel').innerText); }, vid);
   T('사람 선택이 떠 있는 동안 화면을 다시 그려도 사람 선택이 그대로 보인다', r2, r2);
   await pg.evaluate(()=>planWhoDone());
   T('오류가 없다', errs.length === 0, errs.slice(0,3));

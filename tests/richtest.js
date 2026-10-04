@@ -61,7 +61,7 @@ T('편집기 내용을 블록으로 되돌린다', !!grab(js, 'deltaToBlocks'));
   // ★ Quill 은 커서를 글자 번호로 다룬다 (DOM Range 가 아니다)
   T('커서 자리에 넣는다',
     /getSelection\(\)/.test(cur) && /setSelection\(/.test(cur));
-  T('사진 넣는 동안 자리를 잡아 둔다', /placeholder|자리|넣는 중/.test(rp));
+  T('사진 넣는 동안 자리를 잡아 둔다', /placeholder|자리|넣는 중|업로드 중/.test(rp));
   T('사진이 없으면 브라우저에 맡기지 않고 글자만 넣는다', /preventDefault/.test(rp));
   // 빠져나가는 조건이 '사진이 없을 때' 여야 한다.
   // 조건을 늘 참으로 바꾸면 사진이 통째로 무시되는데 글자만 보면 안 잡힌다.

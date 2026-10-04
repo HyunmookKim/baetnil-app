@@ -58,7 +58,7 @@ const SAMPLES = ['입니다.', '를 누릅니다', '은 글과 함께 사라집�
 const caught = SAMPLES.filter(x => isFrag(x)).length;
 T('견본 토막 다섯을 모두 잡는다 — ' + caught + '개', caught === SAMPLES.length);
 // 멀쩡한 글은 잡지 않는다 (헛경보 확인)
-const FINE = ['이 배', '바꾸지 못했습니다: ', ' (현재 위치)', '오늘', '배 등록하기'];
+const FINE = ['이 배', '변경하지 못했습니다: ', ' (현재 위치)', '오늘', '배 등록하기'];
 const wrong = FINE.filter(x => isFrag(x));
 T('멀쩡한 글은 잡지 않는다' + (wrong.length ? ' — ' + JSON.stringify(wrong) : ''), !wrong.length);
 

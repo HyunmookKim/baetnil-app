@@ -91,7 +91,7 @@ T('한국어로 볼 때 한국어 제목이 없는 해외 소식은 옮길 것�
 
 // ── 3. 한 줄 안내를 언제 내나
 //    ★★★ 4.81 — 「번역해서 보기」 단추를 없앴다 (사장님이 정하신 것).
-//      누르지 않아도 옮겨진다. 남는 것은 「원어로 보기」 하나뿐이다 —
+//      누르지 않아도 옮겨진다. 남는 것은 「원문 보기」 하나뿐이다 —
 //      원문이 보고 싶은 사람은 있어도, 남의 말로 보고 싶은 사람은 없다.
 LANG = 'en';
 globalThis.trNewsOn = false; globalThis.TR_BUSY = {};
@@ -108,7 +108,7 @@ globalThis.TR_NEWS = { en: {} };
 T('★★★ 켜졌어도 바뀐 글자가 없으면 아무 말도 안 낸다 (거짓말 금지)',
   newsTrBar([KR]) === '', newsTrBar([KR]));
 globalThis.TR_NEWS = { en: { [KR.title]: 'EN:' + KR.title } };
-T('★★ 실제로 옮겼으면 원어로 보기를 낸다', /원문 보기/.test(newsTrBar([KR])));  // 5.30 — 문구 바뀜 (「원어로 보기」 → 「원문 보기」)
+T('★★ 실제로 옮겼으면 원어로 보기를 낸다', /원문 보기/.test(newsTrBar([KR])));  // 5.30 — 문구 바뀜 (「원문 보기」 → 「원문 보기」)
 T('★★ 원래 내 말인 것에는 아무 말도 안 낸다 (고장으로 보인다)', newsTrBar([WW]) === '');
 globalThis.trNewsOn = false; globalThis.TR_NEWS = {};
 
@@ -136,12 +136,12 @@ const ROWS = [KR, { title: '어선 안전조업 규정 개정 안내' }, WW];   
   await newsTrAuto(ROWS);
   T('★★★ 한 번 옮긴 말은 서버를 다시 안 부른다 (돈이 샌다)', sent === null);
 
-  // ★★★ 「원어로 보기」 를 누른 사람에게는 다시 안 옮긴다
+  // ★★★ 「원문 보기」 를 누른 사람에게는 다시 안 옮긴다
   sent = null;
   globalThis.newsTrSkip = true;
   globalThis.TR_NEWS = {};
   await newsTrAuto(ROWS);
-  T('★★★ 「원어로 보기」 를 누른 사람에게는 다시 안 옮긴다', sent === null);
+  T('★★★ 「원문 보기」 를 누른 사람에게는 다시 안 옮긴다', sent === null);
   globalThis.newsTrSkip = false;
 
   // 옮길 것이 하나도 없으면 서버를 안 부른다

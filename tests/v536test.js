@@ -32,7 +32,7 @@ const grab = name => { const i = src.indexOf('function ' + name + '('); if(i < 0
 
 // ② 머리 단추
 {
-  T('「저장 후 닫기」·「되돌리고 닫기」 단추가 없다', !/t\('저장 후 닫기'\)\)\}<\/button>/.test(src) && !/t\('되돌리고 닫기'\)\)\}<\/button>/.test(src));
+  T('「저장 후 닫기」·「저장하지 않고 닫기」 단추가 없다', !/t\('저장 후 닫기'\)\)\}<\/button>/.test(src) && !/t\('저장하지 않고 닫기'\)\)\}<\/button>/.test(src));
   T('오른쪽 「목록」 단추가 없다 (머리줄 ← 하나로)', !/<button class="tab" onclick="[^"]+">\$\{esc\(t\('목록'\)\)\}<\/button><\/div>/.test(src)
     && !/\$\{할일\}<button class="tab" onclick="[^"]+">\$\{esc\(t\('목록'\)\)\}/.test(src));
   T('오른쪽 「← 계류장」 같은 단추가 없다', !/<button class="tab" onclick="[^"]+">\$\{esc\(t\('← (계류장|오늘|운영자|공개 설정|등급 설정|회원 명부|뒤로)'\)\)\}<\/button>/.test(src));

@@ -28,7 +28,7 @@ const SCREENS = [
   ['게시판(커뮤니티)', "setComSub('talk')"], ['정박지', "setComSub('spots')"], ['중고 장터', "setComSub('market')"],
   ['배 둘러보기', "setComSub('explore')"],
   ['계류장 기본정보', "openBoat('info')"], ['계류장 제원', "openBoat('spec')"], ['계류장 배소개', "openBoat('intro')"],
-  ['회원명부', "openRoster()"], ['등급설정', "openRanks()"], ['배 게시판', "openBoard()"], ['할일', "openMyTasks()"],
+  ['회원명부', "openRoster()"], ['등급 설정', "openRanks()"], ['배 게시판', "openBoard()"], ['할일', "openMyTasks()"],
   ['참여신청', "openJoinReqs()"], ['공개설정', "openPublish()"],
   ['연락처 수정', "openBoat('info'); openCiEdit()"],
   ['장비 기록', "openMR('gear', gearRows()[0].id)"], ['수리 기록', "openMR('repair', repair[0].id)"],

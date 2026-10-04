@@ -5,7 +5,7 @@
 //    게시물 제목은 처음부터 번역돼서 보여야지. 그게 뭔 줄 알고 사용자가 번역을 할지 말지를 하냐」
 //
 //   맞는 말이다. 무슨 글인지 알아야 누를지 말지를 정하는데, 알려면 이미 읽은 뒤다.
-//   그래서 **내 말이 아닌 글은 알아서 옮겨서 보여 준다.** 단추는 「원어로 보기」 하나만 남는다.
+//   그래서 **내 말이 아닌 글은 알아서 옮겨서 보여 준다.** 단추는 「원문 보기」 하나만 남는다.
 const fs = require('fs');
 const src = fs.readFileSync(process.argv[2] || 'work.html', 'utf8');
 function grab(n){
@@ -37,7 +37,7 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.lo
   T('★★★ 안 옮겨진 남의 말 글은 알아서 옮긴다', /trAuto\(/.test(B), B.slice(-500));
   T('★★★ 「번역해서 보기」 를 기본으로 내놓지 않는다',
     B.indexOf('trAuto(') < B.indexOf("t('번역 보기')"), B.slice(-500));
-  T('★★ 옮긴 뒤에는 「원어로 보기」 만 남는다', /trOff\(/.test(B) && /원어로 보기/.test(B));
+  T('★★ 옮긴 뒤에는 「원문 보기」 만 남는다', /trOff\(/.test(B) && /원문 보기/.test(B));
   // ★ 4.85 — 「내 말인가」 를 셈하는 곳을 trMine 하나로 모았다.
   //   전에는 trBar 와 trAuto 가 따로 셈해서, 한국어 글에 러시아어 댓글이 달리면
   //   trBar 는 옮기라 하고 trAuto 는 「한국어네」 하며 되돌아갔다 — 영영 안 옮겨졌다.
@@ -52,7 +52,7 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.lo
   T('★★★ 부르는 중인 것은 또 안 부른다', /TR_BUSY\[key\]/.test(A));
   T('★★★ 같은 글을 줄에 두 번 넣지 않는다', /trQ\.some/.test(A), A);
   T('★★ 내 말로 쓰인 글은 안 부른다', /trMine\(src, cmt\)/.test(A));
-  T('★★★ 「원어로 보기」 를 누른 글은 다시 자동으로 안 옮긴다', /TR_SKIP\[key\]/.test(A));
+  T('★★★ 「원문 보기」 를 누른 글은 다시 자동으로 안 옮긴다', /TR_SKIP\[key\]/.test(A));
   T('★★ 한 번에 몇 개만 부른다 (목록에서 수십 개가 한꺼번에 나가지 않게)',
     /TR_PAR/.test(P) && /const TR_PAR = \d+/.test(src), (src.match(/const TR_PAR = \d+/)||[''])[0]);
   T('★ 인터넷이 없으면 안 부른다', /navigator\.onLine === false/.test(A));

@@ -12,7 +12,7 @@
 //
 // 그리고 같이 본다 —
 //   · 「저장 후 닫기」 는 **한 번만** 눌러도 닫힌다
-//   · 무엇이 바뀌는 **그 순간** 「되돌리고 닫기」 가 뜬다
+//   · 무엇이 바뀌는 **그 순간** 「저장하지 않고 닫기」 가 뜬다
 const { chromium } = require('playwright');
 const http = require('http'), fs = require('fs'), path = require('path');
 const FILE = process.argv[2] || 'work.html';

@@ -180,7 +180,7 @@ function F(o){
   B.fuelClearMark();
   T('★★★ 되돌리면 사람 표시가 사라진다', B.fuelMark() === null, B.fuelSet());
   const L2 = B.fuelLeft();
-  T('★★ 되돌린 뒤에는 「내가 적음」 이 아니다', !L2 || !L2.mine, L2);
+  T('★★ 되돌린 뒤에는 「직접 입력」 이 아니다', !L2 || !L2.mine, L2);
 }
 
 // ══ 4. 두 값이 서로 얽힌다 — 사람이 적은 L/시간으로 잔량을 센다 ═════

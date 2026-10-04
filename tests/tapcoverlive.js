@@ -194,7 +194,7 @@ const PROBE = `(() => {
   await pg.evaluate(() => { try{ closeDrawer(); }catch(_){} });
   await pg.waitForTimeout(300);
 
-  // ★ 이번에 사고 난 자리 — 항해일지의 「위치 찍기」
+  // ★ 이번에 사고 난 자리 — 항해일지의 「위치 지정」
   await pg.evaluate(() => { switchTab('boat'); setBoatSubTab('voyage'); });
   await pg.waitForTimeout(700);
   await pg.evaluate(() => { try{ openMR('voyage','v1'); }catch(e){} });

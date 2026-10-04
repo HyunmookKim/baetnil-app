@@ -83,7 +83,7 @@ const T=(n,ok,x)=>{ ok?pass++:(fail++,console.log('★ 실패:',n, x===undefined
   const 화면 = await p.evaluate(()=>{
     const L=document.getElementById('homeList');
     const 글 = L ? L.innerText : '';
-    // ★ 4.122 에서 「첫걸음」 카드(3/4)가 맨 위에 생겼다. 글 전체에서 첫 숫자짝을 집으면
+    // ★ 4.122 에서 「시작하기」 카드(3/4)가 맨 위에 생겼다. 글 전체에서 첫 숫자짝을 집으면
     //   점검 카드가 아니라 첫걸음 카드를 세게 된다. 점검 카드는 곁말이 「n개 목록 중」 이다.
     const 카드 = [...document.querySelectorAll('#homeList .hcard')]
       .find(c => /개 목록 중/.test(c.innerText || ''));

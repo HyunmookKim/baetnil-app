@@ -15,7 +15,7 @@ const load=(D)=>{ try{skipWelcome();}catch(_){}
 (async()=>{
   await new Promise(r=>server.listen(8771,r));
   const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium-1194/chrome-linux/chrome'});
-  const CASES=[['등급설정', ()=>openRanks()],
+  const CASES=[['등급 설정', ()=>openRanks()],
                ['회원명부', ()=>openRoster && openRoster()],
                ['등급설정 → 권한', ()=>{ openRanks(); }],
                ['도움말',   ()=>{ const b2=document.querySelector('.helpb'); if(b2) b2.click(); }]];

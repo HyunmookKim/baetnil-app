@@ -38,10 +38,11 @@ T('★ 몰아서 들어온 점은 **그 점이 찍힌 때**로 잰다 (화면 �
   api(80, 켠때, 켠때 + 5000) === true && api(80, 켠때, 켠때 + 120000) === false);
 
 // ── 앱 안에서 실제로 걸리는 자리인가
-T('★★★ 실시간 경로에 문이 걸려 있다',
-  /if\(!trkNow\.pts\.length && trkFirstWait\(ac, Date\.parse\(trkNow\.from\)\)\)\{/.test(src));
-T('★★★ 몰아 받는 경로(자바 버퍼)에도 같은 문이 걸려 있다',
-  /trkFirstWait\(ac, Date\.parse\(trkNow\.from\), Number\(q\.t\)\)/.test(src));
+// ★★★★ 5.37 — 첫 점 기다리기(20m·90초)는 다른 앱 근거 없이 정한 숫자였다. OsmAnd 는 첫 점도 다른 점과 같은 문(정확도 50m)이다.
+T('★★★ 실시간 경로에 첫 점 기다리기가 없다 (OsmAnd)',
+  !/trkFirstWait\(ac, Date\.parse\(trkNow\.from\)\)/.test(src));
+T('★★★ 몰아 받는 경로(자바 버퍼)에도 없다 (OsmAnd)',
+  !/trkFirstWait\(ac, Date\.parse\(trkNow\.from\), Number\(q\.t\)\)/.test(src));
 T('★ 기다리는 동안 화면에 까닭을 밝힌다',
   /GPS 신호를 찾고 있습니다\. 위치가 정확해지면 첫 점을 기록합니다\./.test(src));  // 5.30 — 문구 바뀜 (줄표 → 마침표)
 {
@@ -49,8 +50,8 @@ T('★ 기다리는 동안 화면에 까닭을 밝힌다',
   const n = (src.match(new RegExp("'" + w + "':", 'g')) || []).length;
   T('그 말이 세 나라말에 다 있다 — ' + n, n === 3);
 }
-T('★ 흐린 점을 버릴 때 세어 둔다 (나중에 「왜 안 찍혔나」 를 물을 수 있게)',
-  /trkNow\.wait = \(Number\(trkNow\.wait\) \|\| 0\) \+ 1/.test(src));
+T('★ 흐린 점(50m 넘음)을 버릴 때 세어 둔다 (나중에 「왜 안 찍혔나」 를 물을 수 있게)',
+  /trkCnt\('blur'\)/.test(src) && /\['blur', 'often', 'net'\]\.forEach/.test(src));
 
 console.log('\n합계: ' + pass + '개 통과 / ' + fail + '개 실패');
 process.exit(fail ? 1 : 0);

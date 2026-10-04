@@ -29,7 +29,7 @@ T('★★★ 목록 한 줄이 옮긴 글자를 쓴다', /function trRow\(/.test
   const v = m ? Number(m[1]) : 0;
   T('★★★ 그 수가 실제로 적다 (지금 ' + v + '줄)', v > 0 && v <= 30, v);
   T('★★★ 이미 옮긴 것은 다시 안 부른다', /TR_GOT\[key \+ ':' \+ langNow\(\)\]/.test(f));
-  T('★★★ 「원어로 보기」 를 누른 글은 그대로 둔다', /TR_SKIP\[key\]/.test(f));
+  T('★★★ 「원문 보기」 를 누른 글은 그대로 둔다', /TR_SKIP\[key\]/.test(f));
 }
 // ★ 앱에 든 정박지·나라 꾸러미는 서버에 글이 없다. 부르면 값만 들고 못 받는다.
 T('★★★ 앱에 든 정박지는 안 부른다 (서버에 글이 없다)',
@@ -82,7 +82,7 @@ T('★★★ 앱에 든 정박지는 안 부른다 (서버에 글이 없다)',
   F.비우기();
   F.TR_SKIP['community:p1'] = true;
   F.trListAuto('community', 줄, r => r.title);
-  T('★★★ 「원어로 보기」 를 누른 줄은 안 부른다', F.부른것().indexOf('p1') < 0);
+  T('★★★ 「원문 보기」 를 누른 줄은 안 부른다', F.부른것().indexOf('p1') < 0);
 
   F.비우기();
   F.trListAuto('community', [{ id:'x1', title:'' }], r => r.title);

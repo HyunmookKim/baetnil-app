@@ -1,4 +1,4 @@
-// 기록 창 「되돌리고 닫기」 — 진짜 브라우저에서 눌러 본다.
+// 기록 창 「저장하지 않고 닫기」 — 진짜 브라우저에서 눌러 본다.
 //
 // ★ 왜 이 검사가 있나
 //   이 창의 칸들은 글자를 넣고 칸을 벗어나는 순간 이미 저장된다(onchange → saveMR).
@@ -42,7 +42,7 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);}
   await pg.evaluate(()=>{ document.getElementById('nbName').value='시험호'; createBoat(); });
   await pg.waitForTimeout(1500);
 
-  // ★ 4.102 — 「되돌리고 닫기」 는 이제 늘 붙어 있고 **보였다 숨었다** 한다.
+  // ★ 4.102 — 「저장하지 않고 닫기」 는 이제 늘 붙어 있고 **보였다 숨었다** 한다.
   //   글자 하나 고치는 순간 떠야 하는데(사장님 지적), 그러려면 창을 다시 그리지 않고
   //   보이기만 바꿔야 한다. 그래서 여기서도 **눈에 보이는 것**만 센다.
   const btns = ()=>pg.evaluate(()=>[...document.querySelectorAll('#mrPanel .mrtop button')]
@@ -58,8 +58,8 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);}
   await pg.waitForTimeout(600);
   const b0 = await btns();
   // ★ 5.36 — 머리 단추는 다른 앱처럼 왼쪽 「취소」 · 오른쪽 「저장」 (사장님: 「저장 후 닫기 그냥 닫기 뒤로 가기 … 다른 어플들이랑 완전히 다르거든」)
-  //   「되돌리고 닫기」 는 「취소」 가 맡는다 — 바뀐 것이 있으면 묻고 처음 모습으로 돌린다.
-  T('처음 열면 「되돌리고 닫기」 가 없다', !b0.some(x=>/되돌리고/.test(x)), b0);
+  //   「저장하지 않고 닫기」 는 「취소」 가 맡는다 — 바뀐 것이 있으면 묻고 처음 모습으로 돌린다.
+  T('처음 열면 「저장하지 않고 닫기」 가 없다', !b0.some(x=>/되돌리고/.test(x)), b0);
   T('「취소」 왼쪽 · 「저장」 오른쪽', b0[0] === '취소' && b0[b0.length-1] === '저장', b0);
 
   // ── ② 한 칸 고치면 단추가 나온다
@@ -110,7 +110,7 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);}
   await pg.evaluate(()=>{ openMR('maint','m1'); });
   await pg.waitForTimeout(500);
   const b2 = await btns();
-  T('★ 다시 열면 「되돌리고 닫기」 가 다시 사라진다 (지금이 처음 모습이다)',
+  T('★ 다시 열면 「저장하지 않고 닫기」 가 다시 사라진다 (지금이 처음 모습이다)',
     !b2.some(x=>/되돌리고/.test(x)), b2);
   T('찍어 둔 것이 지금 값이다', (await pg.evaluate(()=>mrSnap.name)) === '또 바꿈');
 

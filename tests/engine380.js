@@ -320,7 +320,7 @@ function richPickPhoto(fid){
     const fs2 = [].slice.call(inp.files || []);
     if(!fs2.length) return;
     const mark = richMark(fid);
-    richStatus(fid, t('사진을 넣는 중…'));
+    richStatus(fid, t('사진 업로드 중…'));
     resizePhotos(fs2, out => {
       richInsert(fid, out.map(u => ({ t:'photo', v:u })), mark);
       richStatus(fid, '');
@@ -343,7 +343,7 @@ function onRichPaste(e, fid){
   e.preventDefault(); e.stopPropagation();
 
   const mark = richMark(fid);
-  richStatus(fid, t('사진을 넣는 중…'));
+  richStatus(fid, t('사진 업로드 중…'));
   resizePhotos(photos, out => {
     let k = 0;
     const seq = parts.map(x => x.t === 'photo' ? { t:'photo', v: out[k++] } : x)

@@ -150,42 +150,23 @@ const P = (dx, dy, sec) => ({ la: LA0 + dy * M, lo: LO0 + dx * MO,
   T('★★★ 사람이 부르는 문(trkTidy)이 없다', !/function trkTidy\(/.test(src));
   T('★★★ 그 단추를 부르는 자리도 없다', !/onclick="trkTidy\(\)"/.test(src));
 
-  // ★ 없앤 대신 **그릴 때 앱이 거른다**
+  // ★★★ 5.37 — 그릴 때 거르지 않는다 (사장님 10/4: 「그리기에서 고치는 병신같은 방법 쓰지 말고」 · OsmAnd 는 남긴 그대로 그린다)
   const tl = grab(src, 'trkLine') || '';
-  T('★★★ 그릴 때 걸러서 그린다', /trkClean\(a\)\.pts/.test(tl), tl);
-  T('★★★ 점이 셋 미만이면 그냥 둔다 (거를 것이 없다)',
-    /a\.length > 2\) \? trkClean\(a\)\.pts : a/.test(tl), tl);
-  // ★★★ 자료는 안 건드린다 — 화면에 그릴 때만 거른다 (사장님이 정하신 것 0번)
+  T('★★★ 그릴 때 거르지 않는다 (trkClean 없음)', !/trkClean\(/.test(tl), tl);
   T('★★★ 그리면서 저장된 자료를 안 고친다',
     !/it\.trk\s*=/.test(tl) && !/saveMR\(/.test(tl), tl);
-
-  // ★ 실제로 돌려 본다 — 튄 점이 든 항적을 넣으면 그 점 없이 나오는가
   const F2 = new Function(`
-    const hav = (la1, lo1, la2, lo2) => {
-      const R = 6371, r = Math.PI/180;
-      const x = (lo2-lo1)*r*Math.cos((la1+la2)/2*r), y = (la2-la1)*r;
-      return Math.sqrt(x*x+y*y)*R;
-    };
-    const TRK_MAXKT = ${CONST('TRK_MAXKT')}, TRK_LOST = ${CONST('TRK_LOST')};
-    const TRK_BACK_R = ${CONST('TRK_BACK_R')}, TRK_BACK_M = ${CONST('TRK_BACK_M')};
-    // ★ 4.116 — 기록이 끊긴 데를 가리는 문이 trkLine 안에 들어왔다 (trkgaptest 가 따로 잰다)
-    const TRK_GAP_S = ${CONST('TRK_GAP_S')}, TRK_GAP_M = ${CONST('TRK_GAP_M')};
     ${grab(src, 'trkGap')}
+    const TRK_OSM_SEG_MS = 360000, TRK_OSM_SEG_X = 10;
     let RAW = [];
     const trkRaw = () => RAW;
-    ${require('./trkspd_pre.js')(src)}${grab(src, 'trkTooFast')}
-    ${grab(src, 'trkBackTrack')}
-    ${grab(src, 'trkClean1')}
-    ${grab(src, 'trkClean')}
     ${tl}
     return { set: a => { RAW = a; }, trkLine };`)();
   const 원본 = [ P(0,0,0), P(100,0,60), P(200,0,120), P(-400,0,180),
                  P(300,0,240), P(400,0,300), P(500,0,360) ];
   F2.set(원본);
   const 선 = F2.trkLine({});
-  T('★★★ 튄 점이 화면에 안 그려진다', 선.length === 6, 선.length);
-  T('★★★ 튀었던 자리가 선에 없다',
-    !선.some(p => p.lon < LO0 - 100 * MO), 선.map(p => Math.round((p.lon-LO0)/MO)));
+  T('★★★ 남긴 일곱 점이 그대로 그려진다', 선.length === 7, 선.length);
   T('★★★ 저장된 자료는 그대로다 (일곱 점 그대로)', 원본.length === 7);
 }
 

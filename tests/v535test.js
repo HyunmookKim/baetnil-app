@@ -25,18 +25,18 @@ T('「목록 수정」 은 곧바로 목록 화면(이름·주기·삭제)', /fu
 }
 T('입력 화면이 넓은 화면에서 왼쪽에 좁게 뜨지 않는다', /#formOv \.formBox\{flex:1 1 auto;width:100%;min-width:0\}/.test(src));
 
-// ② 갈래 줄
+// ② 갈래 줄 (★ 5.37 — 옆으로 밀리는 줄은 .pinbar 껍데기 안에 둔다: 흐림 판이 잘리지 않게. pin537test)
 T('붙여 두는 줄 규칙이 있다 (머리줄 밑)', /\.pinbar\{position:sticky;top:var\(--stickyTop,var\(--hdrH,56px\)\);z-index:6\}/.test(src));
 for(const [n, re] of [
   ['정비수첩·수리·연료', /<div id="mntBar3" class="pinbar"><\/div>/],
   ['정비수첩 화면', /<div id="mntBar1" class="pinbar"><\/div>/],
   ['연료 화면', /<div id="mntBar4" class="pinbar"><\/div>/],
   ['장비 목록·정기점검·리뷰', /<div class="mrhead pinbar" style="flex-wrap:wrap">\s*<button class="tab on" id="gearTabG"/],
-  ['문서·이력·연락처', /`<div class="tfilt pinbar" style="align-items:center">` \+ DOC_SUBS/],
+  ['문서·이력·연락처', /`<div class="pinbar"><div class="tfilt" style="align-items:center">` \+ DOC_SUBS/],
   ['체크리스트 목록', /<div class="pinbar ckpin"><div class="ckchips">/],
-  ['뉴스 갈래', /`<div class="subrow pinbar">`\s*\+ \[\['kr'/],
-  ['게시판 말머리', /const kinds = `<div class="tfilt pinbar">`/],
-  ['정박지 종류', /`<div class="tfilt pinbar">`\s*\+ `<button class="tchip\$\{spotKindNow\(\)/],
+  ['뉴스 갈래', /`<div class="pinbar"><div class="subrow">`\s*\+ \[\['kr'/],
+  ['게시판 말머리', /const kinds = `<div class="pinbar"><div class="tfilt">`/],
+  ['정박지 종류', /`<div class="pinbar"><div class="tfilt">`\s*\+ `<button class="tchip\$\{spotKindNow\(\)/],
   ['남의 배 탭(머리줄 둘째 줄)', /<div class="mrhead mrhead2"[^>]*>[\s\S]{0,300}\$\{탭줄\}<\/div>/]
 ]) T('붙여 두는 줄 — ' + n, re.test(src));
 

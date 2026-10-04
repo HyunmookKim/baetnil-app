@@ -55,9 +55,10 @@ T('★★★ 앱을 다시 볼 때 곧바로 가져온다', /trkBufDrain\(\)/.te
   // ★ 5.4 — 이제 trkPush 를 거치지 않는다. 지나간 점을 뒤에 붙이면 50m 문과 속도 문이
   //   시간을 거슬러 걸려 버려지기 때문이다. 대신 **같은 거르개**를 여기서 직접 건다.
   T('★ 가져온 점에도 기지국 거르개를 건다 (5.32 trkSatPt — 위성 점만)', /if\(!trkSatPt\(q, ac\)\)/.test(dr));
-  T('★ 가져온 점에도 흐림 거르개를 건다 (TRK_ACC)', /TRK_ACC/.test(dr));
-  T('★ 가져온 점에도 50m 문을 건다 (TRK_DIST)', /TRK_DIST/.test(dr));
-  T('★ 가져온 점에도 속도 문을 건다 (trkTooFast)', /trkTooFast\(/.test(dr));
+  // ★ 5.37 — OsmAnd 그대로: 가져온 점도 정확도 50m·5초 간격만 본다 (거리·속도 문은 없앴다)
+  T('★ 가져온 점에도 정확도 50m 문을 건다 (TRK_OSM_ACC)', /TRK_OSM_ACC/.test(dr));
+  T('★ 가져온 점에도 5초 간격 문을 건다 (TRK_OSM_MS)', /TRK_OSM_MS/.test(dr));
+  T('★ 가져온 점에 거리·속도 문이 없다 (OsmAnd 에 없음)', !/TRK_DIST/.test(dr) && !/trkTooFast\(/.test(dr));
   T('★★★ 시각으로 세운 뒤에 문을 건다 (sort 가 있다)', /\.sort\(/.test(dr));
   T('★★★ 5.3 의 「마지막 점보다 앞선 것은 버린다」 가 사라졌다',
     !/if\(Number\(q\.t\) <= lastT\) continue;/.test(dr));

@@ -16,8 +16,8 @@ const grab=(js,name)=>{ const i=js.indexOf('function '+name+'('); if(i<0) return
   return ''; };
 
 T('★★★ 지어낸 자리(simulated)를 버린다', /pos\.simulated === true/.test(src));
-T('★★★ speed·bearing 이 둘 다 없으면 위성 자리로 안 본다',
-  /\(pos\.speed != null\) \|\| \(pos\.bearing != null\)/.test(src));
+// ★ 5.37 — 「speed·bearing 둘 다 없으면 위성 아님」 은 다른 앱 근거 없이 정한 것이라 없앴다. OsmAnd 는 정확도(50m)로만 본다.
+T('★★★ speed·bearing 으로 가르지 않는다 (OsmAnd)', !/\(pos\.speed != null\) \|\| \(pos\.bearing != null\)/.test(grab(src, 'trkPush')));
 {
   const m = src.match(/const TRK_GPS_ACC = (\d+)/);
   const v = m ? Number(m[1]) : 0;
@@ -34,13 +34,10 @@ T('★★★ 흐리다고 사람을 부르는 창(trkBlurWarn)이 없다', !/trk
     /\{n\}개 지점/.test(f) && !/버림/.test(f)  // 5.30 — 문구 바뀜 ({n}점 → {n}개 지점)
       && !/정확도/.test(f), f.slice(0, 200));
 }
-// ★★★ 떨림 고르개 (4.79) — 다른 기록 앱들이 쓰는 칼만 고르개를 그대로 쓴다
-T('★★★ 떨림 고르개가 있다', /function trkSmooth\(/.test(src));
-T('★★★ 담기 전에 실제로 고른다', /trkSmooth\(la, lo, ac, tms, spd\)/.test(src));
-T('★★★ 고른 자리를 담는다 (받은 그대로가 아니다)', /la:\+sm\.la\.toFixed\(5\)/.test(src));
-T('★★ 항해를 새로 켜면 고르개도 새로 시작한다', /trkSmoothReset\(\);\n  trkNow = \{ vid/.test(src));
-T('★★ 입항하면 튄 점을 알아서 걷어낸다 (사람이 누르지 않아도)',
-  /trkSimplify\(trkClean\(cur\.pts \|\| \[\]\)\.pts, TRK_TOL\)/.test(src));
+// ★★★★ 5.37 — 흔들림 고르기(칼만)·입항 때 걷어내기는 OsmAnd 에 없다. OsmAnd 는 받은 좌표를 그대로 남기고 줄이지 않는다.
+T('★★★ 담을 때 흔들림을 고르지 않는다 (받은 좌표 그대로 — OsmAnd)', !/trkSmooth\(la, lo, ac, tms, spd\)/.test(grab(src, 'trkPush')) && /la:\+la\.toFixed\(5\)/.test(grab(src, 'trkPush')));
+T('★★★ 입항할 때 점을 지우지 않는다 (OsmAnd)', !/trkSimplify\(trkClean\(cur\.pts/.test(src) && /const pts = \(cur\.pts \|\| \[\]\)\.filter/.test(src));
+T('★★★ 기록 중 저장(trkFlush)도 줄이지 않는다', !/trkSimplify\(trkNow\.pts \|\| \[\], TRK_TOL\)/.test(src));
 
 // 실제로 돌려 본다
 {
@@ -63,11 +60,16 @@ T('★★ 입항하면 튄 점을 알아서 걷어낸다 (사람이 누르지 �
   // 기지국 자리 — 흐리고 speed·bearing 이 없다
   T('★★★ 기지국 자리는 버린다 (흐리고 speed·bearing 없음)',
     F.trkPush({ latitude:34.7600, longitude:127.6900, accuracy:600, time:Date.now()+60000 }) === false);
-  T('★★★ 버린 까닭을 센다', (F.get().net || 0) === 1, F.get());
+  T('★★★ 버린 까닭을 센다 (흐림)', (F.get().blur || 0) === 1, F.get());
+  T('★★ 정확도 50m 는 남긴다 · 51m 는 안 남긴다 (OsmAnd)',
+    F.trkPush({ latitude:34.7405, longitude:127.7405, accuracy:51, time:Date.now()+70000 }) === false
+    && F.trkPush({ latitude:34.7406, longitude:127.7406, accuracy:50, time:Date.now()+80000 }) === true);
+  T('★★ 5초 안에 온 위치는 안 남긴다 (OsmAnd)',
+    F.trkPush({ latitude:34.7407, longitude:127.7407, accuracy:5, time:Date.now()+84000 }) === false);
 
-  // accuracy 를 아예 안 주는 기기 — speed 가 있으면 위성 자리다
-  T('★★ 정확도를 안 주는 기기라도 speed 가 있으면 받는다',
-    F.trkPush({ latitude:34.7440, longitude:127.7440, speed:3.0, time:Date.now()+600000 }) === true);
+  // ★ 5.37 — OsmAnd: 정확도를 안 주는 위치는 남기지 않는다 (!location.hasAccuracy())
+  T('★★ 정확도를 안 주는 위치는 안 남긴다 (OsmAnd)',
+    F.trkPush({ latitude:34.7440, longitude:127.7440, speed:3.0, time:Date.now()+600000 }) === false);
   // accuracy 도 speed 도 bearing 도 없다 — 못 믿는다
   T('★★★ 아무 신호도 없으면 안 받는다',
     F.trkPush({ latitude:34.7480, longitude:127.7480, time:Date.now()+1200000 }) === false);
@@ -78,43 +80,6 @@ T('★★ 입항하면 튄 점을 알아서 걷어낸다 (사람이 누르지 �
   T('★★★ 지어낸 자리는 또렷해도 버린다',
     F.trkPush({ latitude:34.7520, longitude:127.7520, accuracy:5, speed:2, simulated:true, time:Date.now()+2400000 }) === false);
   T('★★ 거짓 자리도 센다', (F.get().mock || 0) === 1);
-}
-// ── 고르개가 실제로 떨림을 줄이는가 (셈으로 확인한다)
-{
-  const env2 = `
-    ${(src.match(/const TRK_Q = [^;]+;/)||['const TRK_Q = 0;'])[0]} let trkKal = null;
-    ${grab(src,'trkSmooth')}
-    ${grab(src,'trkSmoothReset')}
-    return { trkSmooth, trkSmoothReset, kal:()=>trkKal };`;
-  const S = new Function(env2)();
-  // 배는 곧게 간다. GPS 만 좌우로 흔들린다 — 고른 뒤에는 흔들림이 줄어야 한다.
-  const t0 = 1000000;
-  let 날 = 0, 곤 = 0;
-  const 참 = [];
-  for(let i = 0; i < 40; i++) 참.push(34.7400 + i * 0.0001);
-  const 흔 = 참.map((v,i) => v + ((i % 2) ? 0.00008 : -0.00008));   // 지그재그
-  S.trkSmoothReset();
-  const 고 = 흔.map((v,i) => S.trkSmooth(v, 127.74, 8, t0 + i * 4000).la);
-  for(let i = 0; i < 참.length; i++){
-    날 += Math.abs(흔[i] - 참[i]);
-    곤 += Math.abs(고[i] - 참[i]);
-  }
-  T('★★★ 고르개가 떨림을 실제로 줄인다 (날것 ' + 날.toFixed(5) + ' → 고른 것 ' + 곤.toFixed(5) + ')',
-    곤 < 날 * 0.95, { 날, 곤 });
-  // ★ 너무 고르면 선이 배보다 뒤처진다 — 바다에서는 그게 더 위험하다.
-  // ★ 실제로 재 보면 떨림은 8.9m → 4.9m 로 반이 되고, 뒤처짐은 0.2m 다.
-  //   한도를 2m 로 못 박는다 — 이보다 뒤처지면 Q 를 잘못 만진 것이다.
-  {
-    const 뒤m = Math.abs(고[고.length-1] - 참[참.length-1]) * 111320;
-    T('★★★ 그러면서 배보다 심하게 뒤처지지 않는다 (지금 ' + 뒤m.toFixed(1) + 'm)',
-      뒤m < 2, 뒤m);
-  }
-  // ★ 오래 끊겼다 이어지면 앞 점에 끌려가면 안 된다
-  S.trkSmoothReset();
-  S.trkSmooth(34.7400, 127.7400, 8, t0);
-  const 뒤 = S.trkSmooth(34.9000, 127.9000, 8, t0 + 600000);   // 10분 뒤
-  T('★★★ 오래 끊겼다 이어지면 새 자리를 그대로 받는다 (앞 점에 안 끌린다)',
-    Math.abs(뒤.la - 34.9000) < 1e-9, 뒤);
 }
 console.log('\n합계: ' + ok + '개 통과 / ' + bad + '개 실패');
 process.exit(bad?1:0);
