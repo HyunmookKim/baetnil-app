@@ -70,8 +70,8 @@ public class BaetnilTrack: CAPPlugin, CAPBridgedPlugin {
 
     /// 지금 돌고 있나 · 몇 바이트 쌓였나 · 앱이 꺼졌다 다시 켜져 스스로 이어 붙인 적이 있나
     @objc func status(_ call: CAPPluginCall) {
-        BaetnilTrackRec.shared.status { running, bytes, relaunch in
-            call.resolve(["running": running, "bytes": bytes, "relaunch": relaunch])
+        BaetnilTrackRec.shared.status { running, bytes, relaunch, still, stills in
+            call.resolve(["running": running, "bytes": bytes, "relaunch": relaunch, "still": still, "pauses": stills])
         }
     }
 
@@ -134,6 +134,9 @@ final class BaetnilTrackRec: NSObject, CLLocationManagerDelegate {
     private var running = false
     private var relaunched = false                // 앱이 꺼졌다 켜지며 스스로 이어 붙였나 (검사·확인자료용)
     private var bgSession: AnyObject?             // iOS 17 CLBackgroundActivitySession
+    private var liveTask: Any?                    // ★ 5.38 — iOS 17 CLLocationUpdate.liveUpdates 를 도는 Task
+    private var stillNow = false                  // ★ 5.38 — 애플이 「멈춰 있음」 으로 위치를 쉬고 있나
+    private var stills = 0                        //   몇 번 쉬었나
     private let q = DispatchQueue(label: "kr.baetnil.track.file")
 
     private func fileURL() -> URL {
@@ -158,6 +161,25 @@ final class BaetnilTrackRec: NSObject, CLLocationManagerDelegate {
         begin()
     }
 
+    // ══════════════════════════════════════════════════════════════════
+    // ★★★ 5.38 — 위치 받는 방식 (사장님 승인 2026-10-05 「그래」)
+    //   ① 정확도: 배터리일 때 Best, 충전 중일 때 BestForNavigation — OsmAnd·Organic Maps 가 이렇게 하고,
+    //      애플은 「BestForNavigation 은 충전 중일 때만 쓰라」 고 한다.
+    //   ② 5m 움직일 때마다 받는 것은 그대로 (OsmAnd 는 뒤에서 5~10m). 애플: 이 거리만큼 움직일 때만 앱을 깨운다.
+    //   ③ iOS 27 의 배 전용 설정(maritime)은 지금 빌드 도구(Xcode 26.6 · iOS 26 SDK)에 없어 아직 못 넣는다.
+    //   ④ 멈추면 쉬기: iOS 17+ 는 애플의 새 위치 받기(CLLocationUpdate.liveUpdates)를 쓴다 — 멈추면 저절로 쉬고
+    //      움직이면 다시 받는다(애플 WWDC23). 백그라운드 세션(CLBackgroundActivitySession)과 같이 쓰면 화면이 꺼져도,
+    //      「앱을 사용하는 동안」 권한이어도 이어진다. 그 아래(iOS 14~16)는 예전 방식(①·②)으로 받는다.
+    //   ⑤ 앱이 꺼지면 다시 켜지는 장치(큰 위치 변화 알림 · 백그라운드 세션)는 그대로.
+    // ══════════════════════════════════════════════════════════════════
+    @objc private func powerChanged() { tuneAccuracy() }
+    private func tuneAccuracy() {
+        guard let m = lm else { return }
+        let st = UIDevice.current.batteryState
+        let plugged = (st == .charging || st == .full)
+        m.desiredAccuracy = plugged ? kCLLocationAccuracyBestForNavigation : kCLLocationAccuracyBest
+    }
+
     /// 켠다 (메인 스레드). 여러 번 불러도 한 벌만 돈다.
     func begin() {
         UserDefaults.standard.set(true, forKey: BaetnilTrackRec.ON_KEY)
@@ -171,21 +193,62 @@ final class BaetnilTrackRec: NSObject, CLLocationManagerDelegate {
             m.allowsBackgroundLocationUpdates = true     // ★ UIBackgroundModes 에 location 이 있어야 한다
             m.showsBackgroundLocationIndicator = true    // 기록 중임을 사람에게 보여 준다
             lm = m
+            UIDevice.current.isBatteryMonitoringEnabled = true
+            NotificationCenter.default.addObserver(self, selector: #selector(powerChanged),
+                                                   name: UIDevice.batteryStateDidChangeNotification, object: nil)
         }
+        tuneAccuracy()
         if #available(iOS 17.0, *) {
             // ★ 꺼졌다 다시 켜졌을 때도 다시 만든다 — 애플: 새 세션이 아니라 이어 받는 것이다
             if bgSession == nil { bgSession = CLBackgroundActivitySession() }
+            liveStart()
+        } else {
+            lm?.startUpdatingLocation()
         }
-        lm?.startUpdatingLocation()
         if CLLocationManager.significantLocationChangeMonitoringAvailable() {
             lm?.startMonitoringSignificantLocationChanges()   // ★ 앱이 꺼져도 다시 켜 주는 문
         }
         running = true
     }
 
+    /// ★ 5.38 — iOS 17+ : 애플의 새 위치 받기. 멈추면 저절로 쉬고 움직이면 다시 받는다.
+    @available(iOS 17.0, *)
+    private func liveStart() {
+        if liveTask != nil { return }
+        let t = Task { [weak self] in
+            do {
+                for try await u in CLLocationUpdate.liveUpdates(.otherNavigation) {
+                    guard let self = self else { break }
+                    if Task.isCancelled { break }
+                    let st = u.isStationary
+                    if st && !self.stillNow { self.stills += 1 }
+                    self.stillNow = st
+                    if let l = u.location { self.write([l]) }
+                }
+            } catch {
+                // 잠깐 못 받는 것은 흔하다. 예전 방식으로 이어 받는다(기록이 끊기지 않게).
+                await MainActor.run { [weak self] in
+                    guard let self = self, self.running else { return }
+                    self.liveTask = nil
+                    self.lm?.startUpdatingLocation()
+                }
+            }
+        }
+        liveTask = t
+    }
+
+    @available(iOS 17.0, *)
+    private func liveStop() {
+        (liveTask as? Task<Void, Never>)?.cancel()
+        liveTask = nil
+    }
+
     /// 끈다 (메인 스레드)
     func end() {
         UserDefaults.standard.set(false, forKey: BaetnilTrackRec.ON_KEY)
+        if #available(iOS 17.0, *) { liveStop() }
+        stillNow = false
+        stills = 0
         lm?.stopUpdatingLocation()
         lm?.stopMonitoringSignificantLocationChanges()
         if #available(iOS 17.0, *) {
@@ -216,16 +279,23 @@ final class BaetnilTrackRec: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    func status(_ done: @escaping (Bool, Int, Bool) -> Void) {
+    func status(_ done: @escaping (Bool, Int, Bool, Bool, Int) -> Void) {
         q.async {
             let u = self.fileURL()
             let n = (try? FileManager.default.attributesOfItem(atPath: u.path)[.size] as? NSNumber)?.intValue ?? 0
-            done(self.running, n, self.relaunched)
+            done(self.running, n, self.relaunched, self.stillNow, self.stills)
         }
     }
 
     // ── 점이 올 때마다 파일 끝에 한 줄씩 붙인다 (웹뷰가 멈춰 있어도, 웹 화면이 아직 안 떴어도 여기는 돈다)
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        // ★ 5.38 — iOS 17+ 는 liveUpdates 가 점을 준다. 여기로 오는 것은 큰 위치 변화 알림(기지국 위치)뿐이라
+        //   예전처럼 써 두되(웹 쪽 trkSatPt 가 버린다), 두 벌로 쌓이지 않게 liveUpdates 가 돌면 일반 점은 거기서만 받는다.
+        write(locations)
+    }
+
+    /// 점을 파일 끝에 한 줄씩 붙인다 (두 받는 길이 같은 문을 쓴다)
+    func write(_ locations: [CLLocation]) {
         var buf = ""
         for l in locations {
             var s = "{\"t\":\(Int64(l.timestamp.timeIntervalSince1970 * 1000))"
