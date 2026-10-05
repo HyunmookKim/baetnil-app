@@ -129,7 +129,8 @@ function offPath(p, truth){ let m = 1e9; for(const q of truth) m = Math.min(m, d
       const 남은튐 = pts.filter(p => offPath(p, tr) > 60).length;
       T(`${기기} · ${b.name}: 정확도 50m 보다 흐린 튄 점은 하나도 안 남는다 (OsmAnd)`, 흐린튐 === 0, { 흐린튐, 남은튐, n: pts.length });
       T(`${기기} · ${b.name}: 남은 점은 모두 정확도 50m 안 (OsmAnd)`, pts.every(p => p.ac <= 50), { n: pts.length });
-      T(`${기기} · ${b.name}: 5초보다 촘촘히 남지 않는다 (OsmAnd)`, pts.every((p, i) => !i || Date.parse(p.t) - Date.parse(pts[i-1].t) > 5000));
+      // ★ 5.40 — 기록 간격(기본 5초)과 같으면 남긴다(>=): 안드로이드 기록 장치가 딱 그 간격으로 주므로 > 면 하나 건너 하나씩 버려진다
+      T(`${기기} · ${b.name}: 기록 간격(5초)보다 촘촘히 남지 않는다 (OsmAnd)`, pts.every((p, i) => !i || Date.parse(p.t) - Date.parse(pts[i-1].t) >= 5000));
       // 진짜 길이 끊기지 않았나 — 5분 넘게 빈 데가 없어야 한다
       let gap = 0; for(let i = 1; i < pts.length; i++) gap = Math.max(gap, Date.parse(pts[i].t) - Date.parse(pts[i-1].t));
       T(`${기기} · ${b.name}: 길이 끊기지 않는다 (가장 긴 빈 데 ${Math.round(gap/1000)}초)`, pts.length > 10 && gap < 300e3, { n: pts.length, gap });

@@ -201,13 +201,14 @@ function grab(name){
     __t += 40000; w.cb({ latitude: la0, longitude: lo0 + dLo * 0.312, accuracy: 20, speed: 0.1, time: __t }, null);
     const n2 = trkNow.pts.length;
     // 칩 속도가 있고 움직이고 있으면 12m 도 담는다
-    __t += 5000; w.cb({ latitude: la0, longitude: lo0 + dLo * 0.324, accuracy: 5, speed: 2.5, time: __t }, null);
+    // ★ 5.40 — 기록 간격(5초)과 같으면 남기므로(>=) 그보다 짧은 4초로 본다
+    __t += 4000; w.cb({ latitude: la0, longitude: lo0 + dLo * 0.324, accuracy: 5, speed: 2.5, time: __t }, null);
     return { 점수: n1, 멈춤: n2 - n1, 움직임: trkNow.pts.length - n2, 점: trkNow.pts.map(p => Math.round((p.lo - lo0) / dLo * 1000)) };
   });
   // ★★★★ 5.37 — OsmAnd 그대로: 거리·속도로 거르지 않고(최소 이동 거리 0) 5초 간격·정확도 50m 로만 남긴다
   T('★★ 거리로 거르지 않는다 — 40초마다 온 위치는 2m 를 움직였어도 남긴다 (OsmAnd 최소 이동 거리 0)', push.점수 === 6, push);
   T('★★ 멈춰 있어도(칩 속도 0.1m/s) 정확도 50m 안이면 남긴다 (OsmAnd 최소 속도 0)', push.멈춤 === 1, push);
-  T('★★ 5초 안에 온 위치는 안 남긴다 (OsmAnd 5초)', push.움직임 === 0, push);
+  T('★★ 기록 간격(5초)보다 먼저 온 위치는 안 남긴다 (OsmAnd)', push.움직임 === 0, push);
 
   // 오류가 오면 멈추고 설정을 열어 준다
   const errCase = await pg.evaluate(async () => {

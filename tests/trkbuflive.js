@@ -57,7 +57,7 @@ T('★★★ 앱을 다시 볼 때 곧바로 가져온다', /trkBufDrain\(\)/.te
   T('★ 가져온 점에도 기지국 거르개를 건다 (5.32 trkSatPt — 위성 점만)', /if\(!trkSatPt\(q, ac\)\)/.test(dr));
   // ★ 5.37 — OsmAnd 그대로: 가져온 점도 정확도 50m·5초 간격만 본다 (거리·속도 문은 없앴다)
   T('★ 가져온 점에도 정확도 50m 문을 건다 (TRK_OSM_ACC)', /TRK_OSM_ACC/.test(dr));
-  T('★ 가져온 점에도 5초 간격 문을 건다 (TRK_OSM_MS)', /TRK_OSM_MS/.test(dr));
+  T('★ 가져온 점에도 기록 간격 문을 건다 (5.40 trkIntMs — 기본 5초)', /trkIntMs\(\)/.test(dr));
   T('★ 가져온 점에 거리·속도 문이 없다 (OsmAnd 에 없음)', !/TRK_DIST/.test(dr) && !/trkTooFast\(/.test(dr));
   T('★★★ 시각으로 세운 뒤에 문을 건다 (sort 가 있다)', /\.sort\(/.test(dr));
   T('★★★ 5.3 의 「마지막 점보다 앞선 것은 버린다」 가 사라졌다',

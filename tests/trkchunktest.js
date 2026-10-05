@@ -22,6 +22,14 @@ function 새앱(store){
     const TRK_PKEY = i => TRK_KEY + 'p' + i;
     let trkNow = null; let trkKept = { n: 0, head: '', last: '', chunks: 0 };
     const trkWatchStart = () => {};
+    // ★ 5.40 — 묶음을 짧은 글자(구글 Encoded Polyline 꼴)로 적고 읽는다
+    const TRK_ENC_KEYS = { la:1, lo:1, t:1, ac:1, sp:1 };
+    ${cut('function trkVarEnc(')}
+    ${cut('function trkVarDec(')}
+    ${cut('function trkEnc(')}
+    ${cut('function trkEncOrder(')}
+    ${cut('function trkDec(')}
+    ${cut('function trkChunkRead(')}
     ${cut('function trkKeepMeta(')}
     ${cut('function trkKeep(')}
     ${cut('function trkLoad(')}

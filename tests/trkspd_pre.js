@@ -14,5 +14,9 @@ module.exports = function(src){
          g('trkAccJump') + '\n' + g('trkAccSeen') + '\n' + g('trkSatPt') + '\n' +
          // ★ 5.37 — OsmAnd 문 (5초 간격 · 정확도 50m · 6분/10배 끊김)
          `const TRK_OSM_MS=${c('TRK_OSM_MS')}, TRK_OSM_ACC=${c('TRK_OSM_ACC')}, TRK_OSM_SEG_MS=${c('TRK_OSM_SEG_MS')}, TRK_OSM_SEG_X=${c('TRK_OSM_SEG_X')};\n` +
-         g('trkOsmWhy') + '\n' + g('trkCnt') + '\n';
+         g('trkOsmWhy') + '\n' + g('trkCnt') + '\n' +
+         // ★ 5.40 — 기록 간격을 사람이 정한다 (설정 값이 없으면 기본 5초)
+         `const TRK_INT_KEY='bt_trkint', TRK_INT_OPTS=[1,2,3,5,10,15,20,30,60,90,120,180,300];\n` +
+         `const localStorage = (typeof globalThis !== 'undefined' && globalThis.localStorage) || { getItem(){ return null; }, setItem(){}, removeItem(){} };\n` +
+         g('trkIntSec') + '\n' + g('trkIntMs') + '\n';
 };

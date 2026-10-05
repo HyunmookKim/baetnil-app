@@ -30,6 +30,6 @@ T('③-2 도움말 머리는 붙여 두는 줄(.pinbar)', /<div class="helphd pi
 const tc = (css.match(/#trashBody \.trchips\{[^}]*\}/) || [''])[0];
 T('③-3 휴지통 갈래 칩: 바탕·자체 sticky 없음', tc && !/background/.test(tc) && !/sticky/.test(tc), tc);
 T('③-4 휴지통 갈래 칩은 바깥 껍데기 .pinbar 안', /<div class="pinbar"><div class="tfilt trchips">/.test(src));
-T('판 5.39', /const APP_VER = '5\.39';/.test(src));
+T('판 5.39 이상', (() => { const m = src.match(/const APP_VER = '5\.(\d+)';/); return m && +m[1] >= 39; })());
 console.log('\n합계: ' + ok + '개 통과 / ' + bad + '개 실패');
 process.exit(bad ? 1 : 0);

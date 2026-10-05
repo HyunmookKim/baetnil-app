@@ -77,7 +77,10 @@ for(const k of ['TRK_OSM_MS','TRK_OSM_ACC','TRK_OSM_SEG_MS','TRK_OSM_SEG_X']){ c
 globalThis.trkOn = () => !!globalThis.trkNow;
 // 5.12·5.32 — trkPush 가 쓰는 첫 점 기다리기·기기별 정확도 기준(trkFirstWait·trkAccJump·trkAccSeen)
 for(const k of ['TRK_FIRST_ACC','TRK_FIRST_WAIT','TRK_ACC_OK','TRK_ACC_X','TRK_ACC_N','TRK_ACC_MINN']){ const m = src.match(new RegExp('const ' + k + '\\s*=\\s*([\\d.]+)')); if(m) globalThis[k] = Number(m[1]); }
-for(const f of ['trkFirstWait','trkAccJump','trkAccSeen','trkSatPt','trkOsmWhy','trkCnt']){ const g = grab(src,f); if(g) eval('globalThis.'+f+' = '+g); }
+// 5.40 — 기록 간격(설정 값이 없으면 기본 5초)
+globalThis.TRK_INT_KEY = 'bt_trkint'; globalThis.TRK_INT_OPTS = [1,2,3,5,10,15,20,30,60,90,120,180,300];
+if(typeof globalThis.localStorage === 'undefined') globalThis.localStorage = { getItem(){ return null; }, setItem(){}, removeItem(){} };
+for(const f of ['trkIntSec','trkIntMs','trkFirstWait','trkAccJump','trkAccSeen','trkSatPt','trkOsmWhy','trkCnt']){ const g = grab(src,f); if(g) eval('globalThis.'+f+' = '+g); }
 for(const f of need){ eval('globalThis.'+f+' = '+grab(src,f)); }
 
 T('TRK_FLUSH 이 정해져 있다', typeof TRK_FLUSH === 'number' && TRK_FLUSH > 0);

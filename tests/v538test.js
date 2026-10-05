@@ -23,7 +23,7 @@ function grab(name){
 }
 
 // ── 안드로이드
-T('A① 위성(GPS_PROVIDER)만 받는다', /requestLocationUpdates\(LocationManager\.GPS_PROVIDER, ASK_MS, 0f, this\)/.test(svc) && !/NETWORK_PROVIDER, ASK_MS/.test(svc));
+T('A① 위성(GPS_PROVIDER)만 받는다 (5.40 — 간격은 사람이 정한 askMs, 기본 ASK_MS 5초)', /requestLocationUpdates\(LocationManager\.GPS_PROVIDER, askMs, 0f, this\)/.test(svc) && !/NETWORK_PROVIDER/.test(svc.replace(/\/\/[^\n]*/g, '').replace(/\/\*[\s\S]*?\*\//g, '')));
 T('A② 받는 간격 5초 (SeaPeople·OsmAnd 남기는 간격)', /ASK_MS = 5000L/.test(svc));
 T('A④ 「가만히 있음」 60초 뒤 끈다 (Traccar stopTimeoutSeconds)', /STOP_TIMEOUT_MS = 60000L/.test(svc));
 T('A④ 100m 를 벗어나면 다시 켠다 (Traccar stationaryRadiusMeters)', /STATIONARY_M\s*= 100f/.test(svc) && /distanceTo\(anchor\) > STATIONARY_M/.test(svc));
@@ -57,7 +57,7 @@ T('I 상태에 still·pauses', /"still": still, "pauses": stills/.test(swift));
 // ── 앱 쪽
 const at = grab('trkAttach');
 T('J③ 기록 장치가 켜지면 부품 위치 받기를 내린다', /trkNow\.nat && trkNow\.id != null\)\{\s*try\{ await G\.removeWatcher/.test(at), at.slice(-600));
-T('J③ 화면이 보이는 동안 5초마다 가져와 그린다', /if\(trkNow && trkNow\.nat\) trkLiveDrainOn\(\)/.test(at) && /visibilityState === 'visible'\) trkBufDrain\(\)/.test(grab('trkLiveDrainOn')) && /\}, TRK_OSM_MS\)/.test(grab('trkLiveDrainOn')));
+T('J③ 화면이 보이는 동안 5초마다 가져와 그린다', /if\(trkNow && trkNow\.nat\) trkLiveDrainOn\(\)/.test(at) && /visibilityState === 'visible'\) trkBufDrain\(\)/.test(grab('trkLiveDrainOn')) && /\}, Math\.max\(TRK_OSM_MS, trkIntMs\(\)\)\)/.test(grab('trkLiveDrainOn')));
 T('J③ 멈출 때 그 타이머를 끈다', /trkLiveDrainOff\(\)/.test(grab('trkStop')));
 T('J 안드로이드 신체 활동 권한을 묻는다 (거절해도 기록은 된다)', /P0\.askMotion === 'function'\) await P0\.askMotion\(\)/.test(at));
 T('J④ 기록 장치가 돌면 앱 쪽 웨이크락을 안 잡는다 (쉬는 동안 CPU 가 깨어 있지 않게)',

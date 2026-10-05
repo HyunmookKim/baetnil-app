@@ -27,12 +27,13 @@ T('위치 받는 방식은 5.36 그대로 (아이폰 5m)', /m\.distanceFilter = 
 T('버린 까닭별 개수를 항해에 남긴다 (blur·often·net)', /\['blur', 'often', 'net'\]\.forEach/.test(grab('trkStop')) && /it\.trkRule = 'osmand'/.test(grab('trkStop')));
 
 // ③ trkOsmWhy 를 실제로 돌린다
-const W = new Function(`const TRK_OSM_MS=5000, TRK_OSM_ACC=50; ${grab('trkOsmWhy')} return trkOsmWhy;`)();
+const W = new Function(`const TRK_OSM_MS=5000, TRK_OSM_ACC=50; const trkIntMs = () => 5000; ${grab('trkOsmWhy')} return trkOsmWhy;`)();   // 5.40 — 기록 간격(기본 5초)
 const at = s => new Date(Date.parse('2026-10-04T07:48:30Z') + s * 1000).toISOString();
 T('첫 점 · 정확도 4m → 남긴다', W({ t: at(0), ac: 4 }, null) === '');
 T('정확도 129m (10/4 출발 위치) → 안 남긴다', W({ t: at(0), ac: 129 }, null) === 'blur');
 T('정확도 모름 → 안 남긴다', W({ t: at(0) }, null) === 'blur');
-T('5초 → 안 남긴다 · 6초 → 남긴다', W({ t: at(5), ac: 4 }, { t: at(0) }) === 'often' && W({ t: at(6), ac: 4 }, { t: at(0) }) === '');
+// ★ 5.40 — 기록 간격과 같으면 남긴다(>=). 안드로이드 기록 장치가 딱 그 간격으로 주므로 > 면 하나 건너 하나씩 버려진다
+T('4초 → 안 남긴다 · 5초 → 남긴다', W({ t: at(4), ac: 4 }, { t: at(0) }) === 'often' && W({ t: at(5), ac: 4 }, { t: at(0) }) === '');
 
 // ④ 10/4 처럼 천천히 95분 세일 — 2초마다 받은 위치가 얼마나 남고, 끊김이 몇 곳인가
 {
