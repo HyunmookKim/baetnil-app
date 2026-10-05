@@ -384,7 +384,19 @@
     await until(function(){ return voyage.length > n; }, 5000);
     S.voy = String(newest(voyage).id); keep(S);
     await until(function(){ return typeof trkNow !== 'undefined' && trkNow && trkNow.vid; }, 30000, '항적 켜짐');
-    await until(function(){ return trkNow.pts && trkNow.pts.length >= 3; }, 60000, '점이 쌓임 (지금 ' + ((typeof trkNow!=='undefined'&&trkNow&&trkNow.pts)?trkNow.pts.length:0) + ')');
+    // ★ 5.38 — 실패하면 그때 상태를 남긴다 (예전 「지금 0」 은 기다리기 **전** 수였다)
+    try{ await until(function(){ return trkNow.pts && trkNow.pts.length >= 3; }, 60000, '점이 쌓임'); }
+    catch(e){
+      var d = {};
+      try{ ['nat','id','pad','bufGot','bufAdd','sat','net','old','mock','often','part'].forEach(function(k){ d[k] = trkNow[k]; });
+           d.pts = (trkNow.pts || []).length; d.cnt = trkNow.cnt; }catch(_){}
+      try{ d.timer = (typeof trkLiveDrainTimer !== 'undefined') ? !!trkLiveDrainTimer : 'none'; }catch(_){}
+      try{ d.draining = (typeof trkDraining !== 'undefined') ? trkDraining : 'none'; }catch(_){}
+      try{ d.vis = document.visibilityState; }catch(_){}
+      try{ var P = window.Capacitor.Plugins.BaetnilTrack; d.st = await Promise.race([P.status(), sleep(3000).then(function(){ return 'timeout'; })]); }catch(x){ d.st = 'err ' + x; }
+      log('INFO 점이 안 쌓일 때 상태 ' + JSON.stringify(d));
+      throw new Error(e.message + ' (지금 ' + d.pts + ')');
+    }
     S.pts1 = trkNow.pts.length; keep(S);
     await shot('14-track');
   });
