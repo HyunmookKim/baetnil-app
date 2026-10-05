@@ -101,6 +101,8 @@ dependencies {
     implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
     implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
     implementation project(':capacitor-android')
+    // ★ 5.38 — 멈춤 감지(활동 인식 · Traccar 방식). 위치 부품이 이미 쓰는 것과 같은 구글 위치 서비스다.
+    implementation "com.google.android.gms:play-services-location:21.0.1"
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
