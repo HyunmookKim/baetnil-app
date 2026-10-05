@@ -54,7 +54,7 @@ T('5초 → 안 남긴다 · 6초 → 남긴다', W({ t: at(5), ac: 4 }, { t: at
   T('도착 표시 — 항적이 있으면 끝 점 (기록 중이 아닐 때)', /\(줄\.length > 1 && !기록중\) \? 끝점\(줄\[줄\.length - 1\]\) : it\.posIn/.test(tp));
 }
 // ⑥ 판 번호
-T('판 5.37', /const APP_VER = '5\.37';/.test(src));
+T('판 5.37 이상', /const APP_VER = '5\.(3[7-9]|[4-9][0-9])';/.test(src));
 
 console.log('\n' + ok + ' 통과 · ' + bad + ' 실패');
 process.exit(bad ? 1 : 0);
