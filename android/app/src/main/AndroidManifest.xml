@@ -35,6 +35,10 @@
             android:exported="false"
             android:stopWithTask="false"
             android:foregroundServiceType="location" />
+        <!-- ★ 5.38 — 멈춤 감지·쉬는 동안 위치 확인 (Traccar 방식). 앱 안에서만 부른다. -->
+        <receiver
+            android:name=".BaetnilMotionReceiver"
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -76,4 +80,9 @@
          서비스는 살아 있는데도 자리가 그대로 버려진다 — 사장님 항적이 비었던 그것이다.
          달리기 기록 앱들이 다 하는 그대로, 기록하는 동안만 CPU 를 깨워 둔다. -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- ★ 5.38 — 배가 멈춰 있으면 위성을 끈다 (Traccar 방식 · 사장님 승인 2026-10-05).
+         폰이 「가만히 있음」 을 알려 주는 기능(활동 인식)을 쓴다. 안드로이드 10+ 는 「신체 활동」 권한,
+         9 이하는 구글 서비스 권한이다. 거절해도 기록은 예전처럼 된다(멈춤 감지만 빠진다). -->
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
 </manifest>
