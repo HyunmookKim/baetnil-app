@@ -384,8 +384,29 @@
     await until(function(){ return voyage.length > n; }, 5000);
     S.voy = String(newest(voyage).id); keep(S);
     await until(function(){ return typeof trkNow !== 'undefined' && trkNow && trkNow.vid; }, 30000, '항적 켜짐');
-    // ★ 5.38 — 실패하면 그때 상태를 남긴다 (예전 「지금 0」 은 기다리기 **전** 수였다)
-    try{ await until(function(){ return trkNow.pts && trkNow.pts.length >= 3; }, 60000, '점이 쌓임'); }
+    // ★ 5.38 — 위치를 받는 곳이 기록 장치 하나가 되면서, 앱은 **화면이 보일 때만** 5초마다 쌓인 점을 가져와 그린다.
+    //   기록을 시작하면 앱이 배터리 설정 화면(「앱 배터리 사용량」)을 띄워 뱃일 화면이 가려진다(#102 fail-20 사진).
+    //   가려진 동안은 점이 기록 장치 파일에 쌓이는지 보고, 그 점이 앱으로 오는지는 다음 단계(뒤로 보냈다 돌아오기)에서 본다.
+    //   실패하면 그때 상태를 남긴다 (예전 「지금 0」 은 기다리기 **전** 수였다)
+    var TP = window.Capacitor.Plugins.BaetnilTrack, stNow = null;
+    async function stPoll(){ try{ stNow = await Promise.race([TP.status(), sleep(3000).then(function(){ return null; })]); }catch(_){ stNow = null; } }
+    try{
+      var t0 = Date.now();
+      while(true){
+        if(trkNow.pts && trkNow.pts.length >= 3) break;
+        if(document.visibilityState !== 'visible'){
+          await stPoll();
+          // 기록 장치 파일 한 줄은 약 100바이트 — 세 점이 넘게 쌓였는가
+          if(stNow && stNow.running && Number(stNow.bytes) >= 300){
+            log('INFO 화면이 가려진 동안 기록 장치 파일에 쌓임 ' + stNow.bytes + '바이트 (앱 그리기는 화면이 보일 때)');
+            S.hiddenStart = true; keep(S);
+            break;
+          }
+        }
+        if(Date.now() - t0 > 60000) throw new Error('기다려도 안 됨: 점이 쌓임');
+        await sleep(1000);
+      }
+    }
     catch(e){
       var d = {};
       try{ ['nat','id','pad','bufGot','bufAdd','sat','net','old','mock','often','part'].forEach(function(k){ d[k] = trkNow[k]; });
