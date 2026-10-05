@@ -13,7 +13,10 @@ import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
+import com.getcapacitor.PermissionState;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import com.getcapacitor.annotation.Permission;
+import com.getcapacitor.annotation.PermissionCallback;
 
 import org.json.JSONObject;
 
@@ -33,7 +36,11 @@ import java.nio.charset.StandardCharsets;
  *   가져간 것을 앱이 못 담고 죽으면 그 몇 점은 잃는다. 대신 파일이 한없이 자라지 않는다.
  *   (점은 어차피 30m 문에서 다시 걸러지므로, 몇 점을 잃어도 선은 이어진다)
  */
-@CapacitorPlugin(name = "BaetnilTrack")
+@CapacitorPlugin(name = "BaetnilTrack",
+    permissions = {
+        // ★ 5.38 — 멈춤 감지(Traccar 방식)에 쓰는 「신체 활동」 권한. 안드로이드 10+ 만 묻는다.
+        @Permission(alias = "motion", strings = { "android.permission.ACTIVITY_RECOGNITION" })
+    })
 public class BaetnilTrack extends Plugin {
 
     private boolean noPermission() {
@@ -94,6 +101,26 @@ public class BaetnilTrack extends Plugin {
         call.resolve(r);      // ★ 못 켜도 막지 않는다 — 부품 쪽 기록은 그대로 돈다
     }
 
+    /**
+     * ★ 5.38 — 「신체 활동」 권한을 묻는다 (배가 멈춰 있으면 위성을 끄는 데 쓴다 · Traccar 방식).
+     *   거절해도 기록은 예전처럼 된다 — 멈춤 감지만 건너뛴다(Traccar 도 권한이 없으면 건너뛴다).
+     *   안드로이드 9 이하는 설치할 때 받는 권한이라 묻지 않는다.
+     */
+    @PluginMethod
+    public void askMotion(PluginCall call) {
+        if (Build.VERSION.SDK_INT < 29 || getPermissionState("motion") == PermissionState.GRANTED) {
+            JSObject r = new JSObject(); r.put("motion", "granted"); call.resolve(r); return;
+        }
+        requestPermissionForAlias("motion", call, "motionDone");
+    }
+
+    @PermissionCallback
+    private void motionDone(PluginCall call) {
+        JSObject r = new JSObject();
+        r.put("motion", getPermissionState("motion") == PermissionState.GRANTED ? "granted" : "denied");
+        call.resolve(r);
+    }
+
     /** 쌓인 점을 통째로 가져가고 파일을 비운다 */
     @PluginMethod
     public void drain(PluginCall call) {
@@ -147,6 +174,10 @@ public class BaetnilTrack extends Plugin {
             if (f.exists()) n = f.length();
         } catch (Exception ignored) {}
         r.put("bytes", n);
+        // ★ 5.38 — 멈춰서 위성을 꺼 둔 상태인가 · 몇 번 · 얼마 동안 (항해 기록에 남겨 효과를 본다)
+        r.put("still", BaetnilTrackService.isPaused());
+        r.put("pauses", BaetnilTrackService.pauseCount());
+        r.put("pausedMs", BaetnilTrackService.pausedTotalMs());
         call.resolve(r);
     }
 }

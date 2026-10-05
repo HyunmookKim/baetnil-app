@@ -3,6 +3,7 @@ package kr.baetnil.app;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -13,8 +14,21 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.PowerManager;
+import android.os.SystemClock;
+
+import androidx.core.content.ContextCompat;
+
+import com.google.android.gms.location.ActivityRecognition;
+import com.google.android.gms.location.ActivityTransition;
+import com.google.android.gms.location.ActivityTransitionRequest;
+import com.google.android.gms.location.DetectedActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -46,8 +60,8 @@ import java.nio.charset.StandardCharsets;
  *   위치를 받는 즉시 앱 안쪽 파일에 한 줄씩 적어 둔다. 웹뷰가 자고 있어도 쌓인다.
  *   웹뷰가 깨면 drain() 으로 통째로 가져가고 파일을 비운다.
  *
- * ★ 부품은 그대로 둔다 — 깨어 있는 동안은 그쪽이 곧바로 그려 주는 편이 낫다.
- *   같은 자리가 두 번 들어와도 앱의 30m 문에서 걸러지므로 겹치지 않는다.
+ * ★ 5.38 — 이 서비스가 돌면 부품(background-geolocation)은 권한만 받고 내린다(위치를 받는 곳을 하나로).
+ *   화면이 보이는 동안은 앱이 5초마다 drain() 으로 가져가 그린다.
  *
  * ★ 구글 심사가 필요한 권한은 하나도 안 쓴다 (ACCESS_BACKGROUND_LOCATION 없음).
  *   사람이 앱 안에서 [기록 시작] 을 눌러야만 켜지는 location 유형 전경 서비스다.
@@ -61,8 +75,45 @@ public class BaetnilTrackService extends Service implements LocationListener {
     /** 파일이 한없이 자라지 않게 — 한 줄 100바이트쯤이니 2만 줄이면 2MB 안쪽이다 */
     private static final long MAX_BYTES = 4L * 1024 * 1024;
 
-    /** GPS 에게 몇 밀리초마다 달라고 할 것인가. 0m 로 두고 우리가 고른다. */
-    private static final long ASK_MS = 2000L;
+    /** GPS 에게 몇 밀리초마다 달라고 할 것인가. 0m 로 두고 우리가 고른다.
+     *  ★ 5.38 — 2초 → 5초. 앱이 5초마다 남기므로(OsmAnd) 받는 것도 맞춘다. SeaPeople 도 「5초마다 위치를 받는다」. */
+    private static final long ASK_MS = 5000L;
+
+    // ══════════════════════════════════════════════════════════════════
+    // ★★★ 5.38 — 배가 멈춰 있으면 위성을 끈다 (Traccar 방식 · 사장님 승인 2026-10-05 「그래」)
+    //   배터리를 실제로 아끼는 방법은 위성을 끄는 것뿐이다(GPSLogger 안내). 위성이 켜져 있으면
+    //   2초든 5초든 배터리 차이가 크지 않다.
+    //   Traccar(traccar-client-sdk): 폰이 「가만히 있음(STILL)」 을 알리고 60초가 지나면 위치 받기를 끄고,
+    //   움직임이 감지되거나 100m 를 벗어나면 다시 켠다. 웨이크락도 쉬는 동안은 놓는다.
+    //   ★ 100m 를 벗어나는지는 Traccar 가 지오펜스로 보는데, 안드로이드 공식 문서가 지오펜스에
+    //     ACCESS_BACKGROUND_LOCATION 을 요구한다(뱃일은 구글 심사 때문에 이 권한을 안 쓴다 — 4.130).
+    //     그래서 Traccar 의 다른 장치인 「쉬는 동안 한 번씩 위치 확인(heartbeat)」 으로 100m 를 본다.
+    //     간격 60초 = Traccar heartbeat 의 최소값 · GPSLogger 기본 간격.
+    //   ★ 「신체 활동」 권한이 없으면 Traccar 처럼 멈춤 감지를 건너뛴다 — 예전처럼 늘 받는다.
+    // ══════════════════════════════════════════════════════════════════
+    public static final String ACT_MOTION = "kr.baetnil.app.TRK_MOTION";
+    public static final String ACT_BEAT   = "kr.baetnil.app.TRK_BEAT";
+    private static final long STOP_TIMEOUT_MS = 60000L;     // Traccar stopTimeoutSeconds 60
+    private static final float STATIONARY_M   = 100f;       // Traccar stationaryRadiusMeters 100
+    private static final long BEAT_MS         = 60000L;     // Traccar heartbeat 최소 60초 · GPSLogger 기본 60초
+    private static final long BEAT_FIX_MS     = 30000L;     // Traccar fetchOnce — 30초 안에 위치 하나
+
+    private static volatile BaetnilTrackService self = null;
+    private final Handler h = new Handler(Looper.getMainLooper());
+    private volatile boolean paused = false;
+    private Location last = null;          // 마지막으로 받은 위치
+    private Location anchor = null;        // 멈춘 자리
+    private boolean motionOn = false;
+    private PendingIntent motionPi = null;
+    private PendingIntent beatPi = null;
+    private PowerManager.WakeLock beatLock = null;
+    private LocationListener beatL = null;
+    private static volatile int pauses = 0;
+    private static volatile long pausedMs = 0L, pausedAt = 0L;
+
+    public static boolean isPaused() { return self != null && self.paused; }
+    public static int pauseCount() { return pauses; }
+    public static long pausedTotalMs() { return pausedMs + (pausedAt > 0 ? SystemClock.elapsedRealtime() - pausedAt : 0); }
 
     private LocationManager lm = null;
     private PowerManager.WakeLock lock = null;
@@ -83,8 +134,11 @@ public class BaetnilTrackService extends Service implements LocationListener {
             // ★ 전경으로 못 올라가면 서비스가 곧 죽는다. 조용히 죽지 않고 스스로 멈춘다.
             stopSelf(); return START_NOT_STICKY;
         }
+        if (!running) { pauses = 0; pausedMs = 0L; pausedAt = 0L; }   // 새 기록이면 쉰 횟수·시간을 새로 센다
+        self = this;
         keepAwake();
         askLocations();
+        motionStart();
         running = true;
         // ★ START_STICKY — 안드로이드가 메모리 때문에 죽여도 다시 살린다.
         return START_STICKY;
@@ -153,7 +207,147 @@ public class BaetnilTrackService extends Service implements LocationListener {
     @Override
     public void onLocationChanged(Location l) {
         if (l == null) return;
+        last = l;
         append(line(l));
+    }
+
+    // ── 멈춤 감지 (Traccar ActivityRecognitionDetector 와 같은 꼴) ──
+    private boolean motionAllowed() {
+        if (Build.VERSION.SDK_INT >= 29) {
+            return ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACTIVITY_RECOGNITION)
+                   == android.content.pm.PackageManager.PERMISSION_GRANTED;
+        }
+        return true;   // 안드로이드 9 이하는 설치할 때 받는 권한이다
+    }
+
+    private PendingIntent pi(String action, int code) {
+        Intent i = new Intent(this, BaetnilMotionReceiver.class).setAction(action);
+        int f = PendingIntent.FLAG_UPDATE_CURRENT;
+        // ★ 활동 인식 결과는 구글 서비스가 인텐트에 붙여 넣는다 — 안드로이드 12+ 는 MUTABLE 이어야 받는다
+        if (Build.VERSION.SDK_INT >= 31) f |= (ACT_MOTION.equals(action) ? PendingIntent.FLAG_MUTABLE : PendingIntent.FLAG_IMMUTABLE);
+        else if (Build.VERSION.SDK_INT >= 23 && !ACT_MOTION.equals(action)) f |= PendingIntent.FLAG_IMMUTABLE;
+        return PendingIntent.getBroadcast(this, code, i, f);
+    }
+
+    private void motionStart() {
+        if (motionOn || !motionAllowed()) return;
+        try {
+            List<ActivityTransition> ts = new ArrayList<>();
+            int[] kinds = { DetectedActivity.STILL, DetectedActivity.IN_VEHICLE, DetectedActivity.ON_BICYCLE,
+                            DetectedActivity.RUNNING, DetectedActivity.WALKING };
+            for (int k : kinds) {
+                ts.add(new ActivityTransition.Builder().setActivityType(k)
+                        .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER).build());
+                ts.add(new ActivityTransition.Builder().setActivityType(k)
+                        .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT).build());
+            }
+            motionPi = pi(ACT_MOTION, 7101);
+            ActivityRecognition.getClient(this)
+                .requestActivityTransitionUpdates(new ActivityTransitionRequest(ts), motionPi);
+            motionOn = true;
+        } catch (Exception | Error ignored) { motionOn = false; }
+    }
+
+    private void motionStop() {
+        try { if (motionPi != null) ActivityRecognition.getClient(this).removeActivityTransitionUpdates(motionPi); }
+        catch (Exception | Error ignored) {}
+        motionOn = false;
+    }
+
+    private final Runnable goStill = new Runnable() { public void run() { pause(); } };
+
+    /** 리시버가 부른다 — still=true 면 가만히 있음에 들어갔다, false 면 움직이기 시작했다 */
+    static void onMotion(boolean still) {
+        final BaetnilTrackService s = self;
+        if (s == null) return;
+        s.h.post(new Runnable() { public void run() {
+            if (still) {
+                if (!s.paused) { s.h.removeCallbacks(s.goStill); s.h.postDelayed(s.goStill, STOP_TIMEOUT_MS); }
+            } else {
+                s.h.removeCallbacks(s.goStill);
+                if (s.paused) s.resume();
+            }
+        }});
+    }
+
+    static void onBeat() {
+        final BaetnilTrackService s = self;
+        if (s == null) return;
+        s.h.post(new Runnable() { public void run() { s.beat(); } });
+    }
+
+    private void pause() {
+        if (paused || !running) return;
+        paused = true; pauses++; pausedAt = SystemClock.elapsedRealtime();
+        anchor = last;
+        try { if (lm != null) lm.removeUpdates(this); } catch (Exception ignored) {}
+        try { if (lock != null && lock.isHeld()) lock.release(); } catch (Exception ignored) {}   // Traccar: 쉬는 동안은 웨이크락을 놓는다
+        beatLater();
+    }
+
+    private void resume() {
+        if (!paused) return;
+        paused = false;
+        if (pausedAt > 0) { pausedMs += SystemClock.elapsedRealtime() - pausedAt; pausedAt = 0L; }
+        beatCancel();
+        beatEnd();
+        keepAwake();
+        askLocations();
+    }
+
+    private void beatLater() {
+        try {
+            AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            if (am == null) return;
+            beatPi = pi(ACT_BEAT, 7102);
+            long at = SystemClock.elapsedRealtime() + BEAT_MS;
+            if (Build.VERSION.SDK_INT >= 23) am.setAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, at, beatPi);
+            else am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, at, beatPi);
+        } catch (Exception ignored) {}
+    }
+
+    private void beatCancel() {
+        try {
+            AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            if (am != null && beatPi != null) am.cancel(beatPi);
+        } catch (Exception ignored) {}
+    }
+
+    private final Runnable beatTimeout = new Runnable() { public void run() { beatEnd(); if (paused) beatLater(); } };
+
+    /** 쉬는 동안 한 번 위치를 받아 본다 — 100m 를 벗어났으면 다시 켠다 */
+    private void beat() {
+        if (!paused || lm == null) return;
+        try {
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            if (pm != null) {
+                if (beatLock == null) { beatLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "baetnil:trkbeat"); beatLock.setReferenceCounted(false); }
+                beatLock.acquire(BEAT_FIX_MS + 5000L);
+            }
+        } catch (Exception ignored) {}
+        beatL = new LocationListener() {
+            @Override public void onLocationChanged(Location l) {
+                if (l == null) return;
+                last = l;
+                append(line(l));
+                boolean moved = anchor == null || l.distanceTo(anchor) > STATIONARY_M;
+                h.removeCallbacks(beatTimeout);
+                beatEnd();
+                if (moved) resume(); else beatLater();
+            }
+            @Override public void onProviderEnabled(String p) {}
+            @Override public void onProviderDisabled(String p) {}
+            public void onStatusChanged(String p, int st, Bundle e) {}
+        };
+        try { lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 0f, beatL, Looper.getMainLooper()); }
+        catch (Exception e) { beatEnd(); beatLater(); return; }
+        h.postDelayed(beatTimeout, BEAT_FIX_MS);
+    }
+
+    private void beatEnd() {
+        try { if (lm != null && beatL != null) lm.removeUpdates(beatL); } catch (Exception ignored) {}
+        beatL = null;
+        try { if (beatLock != null && beatLock.isHeld()) beatLock.release(); } catch (Exception ignored) {}
     }
 
     // 옛 안드로이드가 찾는 빈 문들 (없으면 기기에 따라 터진다)
@@ -210,6 +404,14 @@ public class BaetnilTrackService extends Service implements LocationListener {
     @Override
     public void onDestroy() {
         running = false;
+        h.removeCallbacks(goStill);
+        h.removeCallbacks(beatTimeout);
+        beatCancel();
+        beatEnd();
+        motionStop();
+        if (pausedAt > 0) { pausedMs += SystemClock.elapsedRealtime() - pausedAt; pausedAt = 0L; }
+        paused = false;
+        self = null;
         try { if (lm != null) lm.removeUpdates(this); } catch (Exception ignored) {}
         try { if (lock != null && lock.isHeld()) lock.release(); } catch (Exception ignored) {}
         super.onDestroy();
