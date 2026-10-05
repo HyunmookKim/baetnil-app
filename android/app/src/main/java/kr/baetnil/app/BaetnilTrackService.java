@@ -78,6 +78,10 @@ public class BaetnilTrackService extends Service implements LocationListener {
     /** GPS 에게 몇 밀리초마다 달라고 할 것인가. 0m 로 두고 우리가 고른다.
      *  ★ 5.38 — 2초 → 5초. 앱이 5초마다 남기므로(OsmAnd) 받는 것도 맞춘다. SeaPeople 도 「5초마다 위치를 받는다」. */
     private static final long ASK_MS = 5000L;
+    // ★ 5.40 — 기록 간격을 사람이 정한다(설정 › 항적 › 기록 간격, OsmAnd 값 1초~5분). 위 5초는 기본값.
+    //   안드로이드가 앱을 다시 살리면(START_STICKY) 인텐트가 비어 온다 — 그때는 마지막에 받은 값을 쓴다.
+    private static final long ASK_MS_MIN = 1000L, ASK_MS_MAX = 300000L;
+    private static volatile long askMs = ASK_MS;
 
     // ══════════════════════════════════════════════════════════════════
     // ★★★ 5.38 — 배가 멈춰 있으면 위성을 끈다 (Traccar 방식 · 사장님 승인 2026-10-05 「그래」)
@@ -135,9 +139,13 @@ public class BaetnilTrackService extends Service implements LocationListener {
             stopSelf(); return START_NOT_STICKY;
         }
         if (!running) { pauses = 0; pausedMs = 0L; pausedAt = 0L; }   // 새 기록이면 쉰 횟수·시간을 새로 센다
+        if (intent != null && intent.hasExtra("ms")) {
+            long ms = intent.getLongExtra("ms", ASK_MS);
+            askMs = Math.max(ASK_MS_MIN, Math.min(ASK_MS_MAX, ms));
+        }
         self = this;
-        keepAwake();
-        askLocations();
+        // ★ 5.40 — 기록 도중에 간격을 바꾸면 다시 불린다. 쉬는 중이면 위성을 켜지 않는다(다시 켤 때 새 간격으로).
+        if (!paused) { keepAwake(); askLocations(); }
         motionStart();
         running = true;
         // ★ START_STICKY — 안드로이드가 메모리 때문에 죽여도 다시 살린다.
@@ -199,7 +207,8 @@ public class BaetnilTrackService extends Service implements LocationListener {
             //   예전에는 예비로 기지국·와이파이 위치(NETWORK_PROVIDER)도 받았는데,
             //   그 위치는 수백 m~수 km 씩 틀려서 항적에 이상한 위치가 섞이는 원인이었다.
             //   OsmAnd 도 항적이 흔들리면 위치 공급원을 GPS(Android API)로 바꾸라고 안내한다.
-            try { lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, ASK_MS, 0f, this); }
+            // 같은 받는 곳으로 다시 부르면 앞의 요청을 새 간격으로 바꾼다 (안드로이드 LocationManager)
+            try { lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, askMs, 0f, this); }
             catch (Exception ignored) {}
         } catch (Exception ignored) {}
     }
