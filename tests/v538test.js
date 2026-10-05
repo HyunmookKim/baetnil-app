@@ -65,6 +65,6 @@ T('J④ 기록 장치가 돌면 앱 쪽 웨이크락을 안 잡는다 (쉬는 �
   /if\(!\(trkNow && trkNow\.nat\)\)\{ try\{ trkAwakeOn\(\); \}catch\(_\)\{\} \}/.test(grab('trkResume')));
 T('J 쉰 횟수·분을 항해에 남긴다', /it\.trkStat\.stills = /.test(grab('trkStop')) && /it\.trkStat\.stillMin = /.test(grab('trkStop')));
 
-T('판 5.38', /const APP_VER = '5\.38';/.test(src));
+T('판 5.38 이상', (() => { const m = src.match(/const APP_VER = '5\.(\d+)';/); return m && +m[1] >= 38; })());
 console.log('\n합계: ' + ok + '개 통과 / ' + bad + '개 실패');
 process.exit(bad ? 1 : 0);

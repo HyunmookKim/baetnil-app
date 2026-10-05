@@ -33,8 +33,8 @@ T('②-6 좌우 길이를 재는 문이 있다 (pinbarEdges)', /function pinbarE
 // ③ 옆으로 밀리는 칸(tfilt·subrow)은 안에 두고 .pinbar 는 바깥 껍데기 — 흐림 판이 안 잘리게
 T('③-1 「tfilt pinbar」 한 몸이 없다', !/class="tfilt pinbar"/.test(src));
 T('③-2 「subrow pinbar」 한 몸이 없다', !/class="subrow pinbar"/.test(src));
-const 껍데기 = (src.match(/<div class="pinbar"><div class="(tfilt|subrow)"/g) || []).length;
-T('③-3 껍데기로 감싼 줄 6곳 (이야기·둘러보기·장터·정박지·문서·소식)', 껍데기 === 6, 껍데기);
+const 껍데기 = (src.match(/<div class="pinbar"><div class="(tfilt|subrow)[ "]/g) || []).length;
+T('③-3 껍데기로 감싼 줄 7곳 (이야기·둘러보기·장터·정박지·문서·소식 + 5.39 휴지통)', 껍데기 === 7, 껍데기);
 
 // ④ 맨 윗줄도 같은 꼴을 고친다 (한 곳만 고치지 않는다)
 const 윗줄 = (css.match(/body\.scrolled header\s*\{[^}]*\}/g) || []).join('\n');

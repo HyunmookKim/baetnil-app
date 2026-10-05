@@ -41,7 +41,7 @@ const SCREENS = [
 (async () => {
   await new Promise(r => server.listen(0, r));
   const br = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
-  const ctx = await br.newContext({ locale: 'ko-KR', timezoneId: 'Asia/Seoul', viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  const ctx = await br.newContext({ locale: 'ko-KR', timezoneId: 'Asia/Seoul', viewport: { width: +(process.env.VW || 390), height: 844 }, isMobile: !process.env.VW, hasTouch: !process.env.VW });
   await ctx.route(/googleapis|gstatic|firebaseio|firestore|open-meteo|openstreetmap|openseamap/, r => r.abort());
   await ctx.addInitScript(() => { try{ localStorage.setItem('bt_setup', 'done'); localStorage.setItem('bt_welcome', 'done'); }catch(_){} });
   const pg = await ctx.newPage();
@@ -62,6 +62,10 @@ const SCREENS = [
     unlocked = true;
   }, BKF ? JSON.parse(fs.readFileSync(BKF, 'utf8')) : null);
   await pg.waitForTimeout(1200);
+  // ★ 5.39 — 화면 색(노을·흰·검정)마다 찍는다: THEME=light|black · ONLY=장비,게시판 처럼 이름 일부
+  if(process.env.THEME){ await pg.evaluate(t => { try{ window.btLook.set('theme', t); }catch(_){} }, process.env.THEME); await pg.waitForTimeout(500); }
+  const ONLY = (process.env.ONLY || '').split(',').filter(Boolean);
+  if(ONLY.length){ for(let i = SCREENS.length - 1; i >= 0; i--) if(!ONLY.some(o => SCREENS[i][0].indexOf(o) >= 0)) SCREENS.splice(i, 1); }
 
   const report = [];
   if(SHOTS){
