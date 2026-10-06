@@ -27446,7 +27446,7 @@ function lkAdd(rect, zone, label){
 // 도형은 그림일 뿐이고, 물품은 수납칸에만 들어간다.
 // 앱 버전. 여기 한 곳만 고치면 화면 표시가 따라온다.
 // sw.js 의 캐시 이름(baetnil-x.y)과 같아야 한다 — 검사에서 확인한다.
-const APP_VER = '5.43';
+const APP_VER = '5.44';
 // 수납칸 모양. 좌표(x,y,w,h)는 그대로 두고 겉모습만 바꾼다 —
 // 옛 칸은 shape 가 없으므로 저절로 네모가 된다.
 const LK_SHAPES = [
@@ -52190,9 +52190,18 @@ window.__boot = 'start';
       async pull(base){
         const meta = await getDoc(doc(fdb, boatPath(), 'meta', 'info'));
         const colls = {};
+        // ★★ 5.44 — 권한이 없는 칸만 건너뛴다 (사장님 2026-10-06: 「권한이 없으면 없는것만 건너뛰어야지」)
+        //   여태는 열일곱 칸을 한꺼번에 받다가, 등급에서 「없음」 인 칸(기본 손님은 항해일지·연료 등) 하나를
+        //   규칙이 거부하면 받아오기 전체가 멎었다 — 볼 수 있는 적재표·게시판도 못 받았다.
+        //   거부된 칸은 rows 없이 돌려준다 → 그 칸은 기기 것을 그대로 두고(pullInto), 나머지는 정상으로 합친다.
+        //   권한 말고 다른 오류(인터넷 끊김 등)는 예전처럼 전체를 멈춘다 — 반쯤 받은 것으로 합치면 안 된다.
         await Promise.all(CO.map(async name => {
           const b = base && base[name];
-          colls[name] = b ? await diffColl(name, b) : await fullColl(name);
+          try{ colls[name] = b ? await diffColl(name, b) : await fullColl(name); }
+          catch(e){
+            if(e && e.code === 'permission-denied'){ colls[name] = { mode:'skip', rows:null }; return; }
+            throw e;
+          }
         }));
         return { seeded: meta.exists(), colls };
       },
