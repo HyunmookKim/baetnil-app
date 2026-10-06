@@ -59,47 +59,7 @@ const SHOT = process.env.SHOT || '';
   T('① 가림 반경에 「무관」 이 없고 「없음」 이 있다', !/무관/.test(가림) && />없음</.test(가림), 가림.slice(0, 300));
   T('① 사전(영·러·일)에도 「무관」 이 없다', !/'무관':/.test(fs.readFileSync(FILE, 'utf8')));
 
-  // ══ ② 항해 기간 ══
-  await pg.evaluate(() => { boatSubTab = 'voyage'; switchTab('boat'); });
-  await sleep(600);
-  const 숫자 = () => pg.evaluate(() => [...document.querySelectorAll('#voyageList .statrow .stat b')].map(b => b.textContent.trim()));
-  const 칩 = await pg.evaluate(() => [...document.querySelectorAll('#voyageList .perrow .tab')].map(b => b.textContent.trim() + (b.classList.contains('on') ? '*' : '')));
-  T('② 기간 칩: 이번 달 · 올해 · 1년 · 3년 · 5년 · 전체 · 직접 입력 (처음은 올해)',
-    칩.join('|') === ['이번 달', (await pg.evaluate(() => __Y)) + '년*', '1년', '3년', '5년', '전체', '직접 입력'].join('|'), 칩);
-  T('② 올해 — 예정은 빼고 올해 것만 (2건 · 30 · 3)', (await 숫자()).join() === '2,30,3', await 숫자());
-  T('② 항해 이름표에 해가 박혀 있지 않다 (「항해」)', await pg.evaluate(() => document.querySelector('#voyageList .statrow .stat span').textContent.trim() === '항해'));
-  const 누름 = async name => { await pg.locator('#voyageList .perrow .tab', { hasText: name }).first().click(); await sleep(350); return 숫자(); };
-  T('② 1년 — 최근 1년 (오늘·설날·작년 늦게)', (await 누름('1년')).join() === '3,60,6', await 숫자());
-  T('② 3년', (await 누름('3년')).join() === '4,100,10', await 숫자());
-  T('② 5년', (await 누름('5년')).join() === '5,150,15', await 숫자());
-  T('② 전체 — 예정은 빼고 다', (await 누름('전체')).join() === '5,150,15', await 숫자());
-  T('② 이번 달', (await 누름('이번 달')).join().split(',')[0] >= '1', await 숫자());
-  // 직접 입력 — 4년 전 그 날 하루만
-  await pg.locator('#voyageList .perrow .tab', { hasText:'직접 입력' }).click();
-  await sleep(400);
-  const 폼 = await pg.evaluate(() => ({ t: document.getElementById('lkFormTitle').textContent, lbl: [...document.querySelectorAll('#formBody label')].map(x => x.textContent),
-    ty: [...document.querySelectorAll('#formBody input')].map(x => x.type) }));
-  T('② 직접 입력 — 시작일·종료일 날짜 칸', 폼.t === '직접 입력' && 폼.lbl.join() === '시작일,종료일' && 폼.ty.join() === 'date,date', 폼);
-  const d4 = await pg.evaluate(() => voyage.find(v => v.id === 'a5').date);
-  await pg.locator('#ff0').fill(d4); await pg.locator('#ff1').fill(d4);
-  await pg.locator('#formFoot .fbtn.go').click(); await sleep(500);
-  T('② 직접 입력 — 고른 날 하루만 (1 · 50 · 5)', (await 숫자()).join() === '1,50,5', await 숫자());
-  const 칩2 = await pg.evaluate(() => { const b = document.querySelector('#voyageList .perrow .tab.on'); const R = b.parentElement.getBoundingClientRect(), r = b.getBoundingClientRect();
-    return { txt: b.textContent.trim(), inView: r.left >= R.left - 1 && r.right <= R.right + 1 }; });
-  T('② 직접 입력 칩에 고른 기간이 보이고, 화면 안으로 밀려 있다', 칩2.txt === d4.replace(/-/g, '.') + ' – ' + d4.replace(/-/g, '.') && 칩2.inView, 칩2);
-  // 다시 켜도 기억
-  await pg.reload({ waitUntil:'domcontentloaded' }); await sleep(1600);
-  await pg.evaluate(() => { boatSubTab = 'voyage'; switchTab('boat'); }); await sleep(500);
-  T('② 다시 켜도 고른 기간을 기억한다', (await 숫자()).join() === '1,50,5', await 숫자());
-  // 시작일이 비면
-  await pg.evaluate(() => voyPerPick()); await sleep(300);
-  await pg.locator('#ff0').fill(''); await pg.locator('#formFoot .fbtn.go').click(); await sleep(300);
-  T('② 시작일이 비면 칸 아래에 알리고 창은 그대로', await pg.evaluate(() => /시작일을 입력해 주세요/.test(document.getElementById('formBody').textContent) && getComputedStyle(document.getElementById('formOv')).display !== 'none'));
-  await pg.evaluate(() => closeForm());
-  // 보기 전용에서도 기간은 고른다 (보는 것이지 고치는 것이 아니다)
-  await pg.evaluate(() => { unlocked = false; applyLock(); renderVoyage(); }); await sleep(300);
-  T('② 보기 전용에서도 기간을 고를 수 있다', (await 누름('전체')).join() === '5,150,15', await 숫자());
-  if(SHOT) await pg.screenshot({ path: SHOT + '-voyage.png' });
+  // ══ ② 항해 기간 — 5.43 에서 다른 앱 그대로 다시 만들었다. 검사는 v543live.js ①
 
   // ══ ③ 가동 시간의 시작 시점 ══
   await pg.evaluate(() => { boatSubTab = 'maint'; mntSub = 'fuel'; switchTab('boat'); }); await sleep(600);
@@ -107,14 +67,14 @@ const SHOT = process.env.SHOT || '';
   let c = await 칸();
   const 만탱값 = await pg.evaluate(() => fuelSinceFull().h);
   T('③ 처음은 「만탱크 후 가동 ▾」 — 예전 칸과 같은 값', c && c.l === '만탱크 후 가동▾' && 만탱값 > 0 && c.b.startsWith(String(Math.floor(만탱값))), { c, 만탱값 });
-  await pg.locator('#fuelList .stat.pickstat').click(); await sleep(400);
+  await pg.locator('#fuelList .stat.pickstat').first().click(); await sleep(400);
   const 고름 = await pg.evaluate(() => ({ t: document.getElementById('lkFormTitle').textContent, o: [...document.querySelectorAll('#formBody .fopt b')].map(x => x.textContent) }));
   T('③ 누르면 「시작 시점」 — 만탱크 후 · 주유 후 · 직접 입력 (보기 전용에서도)', 고름.t === '시작 시점' && 고름.o.join() === '만탱크 후,주유 후,직접 입력', 고름);
   await pg.locator('#formBody .fopt', { hasText:'주유 후' }).click(); await pg.locator('#formFoot .fbtn.go').click(); await sleep(400);
   c = await 칸();
   const 주유값 = await pg.evaluate(() => ehSince().h);
   T('③ 주유 후 — 마지막 주유(부분 주유) 뒤 엔진 시간: 만탱크 후보다 적다(그 사이 충전 2시간이 빠진다)', c && c.l === '주유 후 가동▾' && 주유값 > 0 && Math.abs((만탱값 - 주유값) - 2) < 0.01, { c, 만탱값, 주유값 });
-  await pg.locator('#fuelList .stat.pickstat').click(); await sleep(300);
+  await pg.locator('#fuelList .stat.pickstat').first().click(); await sleep(300);
   await pg.locator('#formBody .fopt', { hasText:'직접 입력' }).click(); await pg.locator('#formFoot .fbtn.go').click(); await sleep(400);
   const 날폼 = await pg.evaluate(() => ({ t: document.getElementById('lkFormTitle').textContent, ty: [...document.querySelectorAll('#formBody input')].map(x => x.type), lbl: [...document.querySelectorAll('#formBody label')].map(x => x.textContent) }));
   T('③ 직접 입력 — 시작일 날짜 칸', 날폼.t === '직접 입력' && 날폼.ty.join() === 'date' && 날폼.lbl.join() === '시작일', 날폼);
@@ -139,7 +99,7 @@ const SHOT = process.env.SHOT || '';
   await ctx.close();
 
   // ══ 세 화면 × 네 언어 ══
-  const 말 = { ko:['이번 달', '1년', '시작 시점'], en:['This month', '1 year', 'Count from'], ru:['Этот месяц', '1 год', 'Отсчёт с'], ja:['今月', '1年', '起点'] };
+  const 말 = { ko:['1일', '1년', '시작 시점'], en:['1 day', '1 year', 'Count from'], ru:['1 день', '1 год', 'Отсчёт с'], ja:['1日', '1年', '起点'] };   // 5.43 칩
   for(const theme of ['sunset', 'black', 'light']){
     for(const lang of (theme === 'sunset' ? ['en', 'ru', 'ja'] : ['ko', 'en'])){
       const o = await open(theme, lang);

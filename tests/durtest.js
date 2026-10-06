@@ -59,7 +59,7 @@ T('★ 엔진 가동 기록도 두 칸이다', /durRow\('가동시간'/.test(src
 T('★★ 어디에도 「h」로 그냥 찍는 자리가 안 남았다',
   !/\$\{it\.hours\|\|'—'\} h/.test(src) && !/\$\{it\.engineH\|\|'—'\} h/.test(src));
 T('★ 세일로 간 시간도 사람 말로 나온다', /durText\(a-b\)/.test(src));
-T('★ 총 가동시간도 사람 말로 나온다', /durText\(eh\.total\)/.test(src));
+T('★ 총 가동시간도 사람 말로 나온다', /durText\(eh\.total\)/.test(src) || /durText\(총\.h\)/.test(src));   // 5.43 시작 시점을 고르게 되어 총.h
 T('★ 공개 항해 보기에서도 사람 말로 나온다', /durText\(v\.hours\)/.test(src));
 // ★ 저장 모양은 그대로여야 한다 — 연료·엔진 누계가 이 숫자를 쓴다
 T('★★ 저장은 여전히 십진 시간이다 (연료 계산이 쓰는 값)',

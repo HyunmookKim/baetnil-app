@@ -63,7 +63,8 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + n); } else { fail+
       const P = (js.match(/const PERMS = \[[\s\S]*?\];/) || [''])[0];
       const O = (js.match(/const PERM_ORDER = \{[\s\S]*?\};/) || [''])[0];
       const po = grab(js, 'permOf') || '';
-      const fn = new Function(P + '\n' + O + '\n' + po + '\n' + f + '\n return rankSummary;')();
+      const PF = (js.match(/const PERM_FALLBACK = [^;]+;/) || [''])[0];   // 5.43
+      const fn = new Function(P + '\n' + O + '\n' + PF + '\n' + po + '\n' + f + '\n return rankSummary;')();
       out = {
         선주: fn({ owner:true }),
         정비: fn({ perms:{ maint:'write', stow:'write', voyage:'view', board:'view' } }),

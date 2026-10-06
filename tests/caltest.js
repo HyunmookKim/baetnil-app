@@ -93,10 +93,11 @@ globalThis.APP_VER = '0';
 
 globalThis.runs = []; globalThis.voyDay = v => /^\d{4}-\d{2}-\d{2}$/.test(String(v||'')) ? String(v) : '';
 for(const f of ['mHourLeft', 'mHasMonths', 'mHoursUsed', 'engHoursSince', 'addMonths', 'addPeriod', 'fmtDate', 'vdocDue',
-                'maintRows', 'mlogRows', 'mStatus', 'icsEsc', 'icsFold', 'calItems', 'calIcs', 'schedDates']){
+                'maintRows', 'mlogRows', 'mStatus', 'icsEsc', 'icsFold', 'calItems', 'calIcs', 'schedDates', 'schedSee']){
   eval('globalThis.' + f + ' = ' + grab(src, f).replace(/^(async )?function /, (a, b) => (b || '') + 'function '));
 }
 globalThis.today = () => '2026-09-06';
+globalThis.curBoat = () => null;   // 5.43 schedSee — 등급 없는 배는 일정이 보인다
 
 // ── 가짜 기록. 여섯 갈래를 하나씩 둔다.
 globalThis.voyage = [

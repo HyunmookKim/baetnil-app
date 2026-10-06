@@ -29,6 +29,7 @@ globalThis.deepCopy = o => JSON.parse(JSON.stringify(o));
 { const m = src.match(/const PERMS = \[[\s\S]*?\n\];/); if(m) eval(m[0].replace('const PERMS','globalThis.PERMS')); }
 { const m = src.match(/const PERM_LEVELS = \[[\s\S]*?\];/); if(m) eval(m[0].replace('const PERM_LEVELS','globalThis.PERM_LEVELS')); }
 { const m = src.match(/const PERM_ORDER = [^;]+;/); if(m) eval(m[0].replace('const PERM_ORDER','globalThis.PERM_ORDER')); }
+{ const m = src.match(/const PERM_FALLBACK = [^;]+;/); if(m) eval(m[0].replace('const PERM_FALLBACK','globalThis.PERM_FALLBACK')); }   // 5.43
 { const m = src.match(/const RANK_SEED = \[[\s\S]*?\n\];/); if(m) eval(m[0].replace('const RANK_SEED','globalThis.RANK_SEED')); }
 
 const need = ['mkPerms','seedRanks','rankList','migrateRanks','rankOf','ownerRank','myRank','myPos','permOf','can','canTouchRank','canTouchMember',
@@ -54,7 +55,11 @@ const boat = () => {
 };
 
 // ── 권한 항목
-T('권한 항목이 17개다', Array.isArray(PERMS) && PERMS.length===17);
+T('권한 항목이 18개다 (5.43 일정 하나 늘었다)', Array.isArray(PERMS) && PERMS.length===18 && PERMS.some(p=>p.k==='sched'));
+// ★ 5.43 — 「일정」 줄이 생기기 전 등급(값 없음)은 배 정보·제원 권한을 따른다. 선주가 값을 넣으면 그 값을 쓴다.
+T('옛 등급은 일정 권한이 배 정보 권한을 따른다', permOf({ perms:{ boat:'write' } }, 'sched') === 'write' && permOf({ perms:{ boat:'view' } }, 'sched') === 'view' && permOf({ perms:{} }, 'sched') === 'none');
+T('선주가 일정 권한을 정하면 그 값을 쓴다 (배 정보와 따로)', permOf({ perms:{ boat:'view', sched:'write' } }, 'sched') === 'write' && permOf({ perms:{ boat:'write', sched:'none' } }, 'sched') === 'none');
+T('다른 항목은 따라가지 않는다 (없으면 없음)', permOf({ perms:{ boat:'write' } }, 'maint') === 'none');
 T('권한 항목마다 이름이 있다', PERMS.every(p=>p.k && p.name));
 T('권한 단계가 있다', Array.isArray(PERM_LEVELS) && PERM_LEVELS.length>=3);
 

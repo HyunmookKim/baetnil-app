@@ -18,7 +18,8 @@ T('★★ 받은 자국을 찍는다', /scheds:r\.scheds/.test(src) && /lastClou
 T('★★ 올린다 (setSC/delSC → scheds)', /\['set','scheds'/.test(src) && /\['del','scheds'/.test(src) && /setSC:'scheds', delSC:'scheds'/.test(src)
   && /setRV, delRV, setSC, delSC\}/.test(src));
 T('★★ 못 올렸으면 기준값을 안 갱신한다', /if\(ok\('scheds'\)\)/.test(src));
-T('★★ 권한 — 클라우드 규칙의 「위에 없는 컬렉션」 문(배 정보 쓰기)과 같다', /scheds:'boat'/.test(src) && /sched:'boat' \}/.test(src));
+// ★ 5.43 — 「선주가 권한주는식」: 일정은 등급 설정의 「일정」(sched) 항목을 본다. 옛 등급은 배 정보 권한을 따른다(PERM_FALLBACK).
+T('★★ 권한 — 등급 설정의 「일정」 항목 (5.43, 옛 등급은 배 정보를 따름)', /scheds:'sched'/.test(src) && /sched:'sched' \}/.test(src) && /const PERM_FALLBACK = \{ sched:'boat' \}/.test(src));
 T('★ 사람에게 보일 이름이 있다', /scheds:t\('일정'\)/.test(src));
 T('★★ 기기에 저장·읽기 (IndexedDB · localStorage)', /idbSet\(bkey\('scheds'\), scheds\)/.test(src) && /scheds  = await get\('scheds', \[\]\)/.test(src)
   && /localStorage\.setItem\('bt_scheds'/.test(src) && /localStorage\.getItem\('bt_scheds'\)/.test(src));
