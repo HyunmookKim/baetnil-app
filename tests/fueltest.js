@@ -44,6 +44,7 @@ function F(o){
     const hm = s => String(s||'');
     const boatSpec = k => (k === 'fuelTank' ? E.tank : null);
     const curBoat = () => E.boat;
+    const unlocked = true;   // 5.42 — 되돌리기는 편집 중에만 (보기 전용 막기는 v542live 가 본다)
     const save = () => { E.saved++; };
     const renderFuel = () => { E.drawn++; };
     const t = s => s;

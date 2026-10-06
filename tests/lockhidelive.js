@@ -33,6 +33,26 @@ const BLOCKED=blockedFns();
 // 보기 전용이어도 되는 것 — 까닭을 적어 둔다
 //   (설정 안 일은 보기 전용과 상관없다 — 사장님 2026-09-27 「설정까지 들어갔다는 건 이미 고칠 마음을 먹은 것」)
 const ALLOW=new Set(['drawerRestore','restoreData','editGo','startGoCheck']);
+// ★★ 5.42 — 막는 줄이 아예 없는데 기록을 저장하는 함수도 모은다 (사장님 지적 2026-10-06 「이 두버튼은 왜 보기전용인데 안사라지냐?」
+//   — 연료 「계산값으로 되돌리기」 두 개). 위 BLOCKED 는 막는 줄이 있는 함수만 봐서, 막는 줄을 빠뜨린 함수는 이 검사를 그냥 지났다.
+//   함수 몸 전체에서 save()·saveMR()·saveLocal()·fuelSetPut()·saveBoatCloud() 를 부르는데 막는 줄이 없으면 「저장하는 함수」 로 본다.
+function saverFns(){
+  const L=SRC.split('\n'); const out=new Set();
+  for(let i=0;i<L.length;i++){
+    const m=L[i].match(/^(?:async\s+)?function\s+(\w+)\s*\(/); if(!m) continue;
+    let j=i+1; while(j<L.length && !/^(?:async\s+)?function\s+\w+\s*\(|^\}/.test(L[j])) j++;
+    const body=L.slice(i,j+1).join('\n');
+    if(/\b(?:saveMR|saveLocal|fuelSetPut|saveBoatCloud)\(|\bsave\(\)/.test(body)
+       && !/\bguardEdit\(|\bneedEdit\(|!\s*unlocked\b|lkCanEdit\(|shCanEdit\(|pushFree|saveFree|saveMRFree/.test(body))
+      out.add(m[1]);
+  }
+  return [...out];
+}
+// 보기 전용이어도 저장해도 되는 것 — 형식 고치기·기기 설정 따위(기록 내용을 안 바꾼다). 까닭을 적는다.
+const SAVE_OK=new Set(['save','saveMR','saveLocal','fuelSetPut','saveBoatCloud','sysSave','migrateVoyage','skipWelcome','setLang','setTheme','setFontSize',
+  'calPick','calMove','calToday','setHomeSub','switchTab','toggleLock','applyLock','renderFuel','renderVoyage','openMR','closeMR',
+  'toggleLike']);   // 「도움됐어요」 는 읽는 사람의 반응이다 — 배 기록을 안 바꾼다
+const SAVERS=saverFns().filter(f=>!SAVE_OK.has(f));
 
 (async()=>{
   await new Promise(r=>srv.listen(0,r));
@@ -68,6 +88,10 @@ const ALLOW=new Set(['drawerRestore','restoreData','editGo','startGoCheck']);
     talkList=[{id:'t1',title:'질문',body:'엔진 소리',by:'U1',byName:'현묵',ts:'2026-09-01',kind:'chat'}];
     window.__cmt={list:async()=>[{id:'c1',by:'U1',byName:'현묵',text:'댓글',ts:'2026-09-02'}],add:async()=>{},del:async()=>{}};
     contacts=[{id:'c1',name:'정비소',phone:'010'}]; vdocs=[{id:'d1',title:'선박검사증'}];
+    // 5.42 — 연료 안내 글의 「계산값으로 되돌리기」 두 개가 뜨게: L/시간을 직접 입력 + 잔량 확인 기록
+    fuel.push({id:'f2',date:'2026-09-30',time:'10:00',kind:'level',level:0});
+    scheds=[{id:'s1',title:'선저 청소',date:'2026-10-10',time:'09:00',rep:'w',note:''}];   // 5.41 일정
+    try{ fuelSetPut({ lph: 7.2 }); }catch(_){}
     items=[{id:'i1',name:'구명조끼',qty:6,lockerId:'L1',photos:[]}];
     lockers=[{id:'L1',name:'선수 창고',x:10,y:10,w:50,h:30}];
     posts=[{id:'p1',title:'공지',body:'내일 출항',author:'U2',authorName:'김재운',at:Date.now(),comments:[{id:'cm1',uid:'U2',name:'김재운',text:'네',at:Date.now()}]}];
@@ -109,6 +133,7 @@ const ALLOW=new Set(['drawerRestore','restoreData','editGo','startGoCheck']);
     ['엔진 가동 기록', ()=>openMR('run','rn1')],
     ['연락처 기록', ()=>openMR('contact','c1')],
     ['문서 기록', ()=>openMR('vdoc','d1')],
+    ['일정 기록 (5.41)', ()=>openMR('sched','s1')],
     ['칸 열기', ()=>openLocker('L1')],
     ['물품 열기', ()=>openItem('i1')],
     ['휴지통', ()=>openTrash()],
@@ -126,8 +151,8 @@ const ALLOW=new Set(['drawerRestore','restoreData','editGo','startGoCheck']);
     try{ await pg.evaluate(fn); }catch(e){ err=String(e).slice(0,160); }
     await pg.waitForTimeout(350);
     if(err){ console.log('  (열지 못함) '+name+' — '+err); continue; }
-    const r=await pg.evaluate(([BL,AL])=>{
-      const bl=new Set(BL), al=new Set(AL);
+    const r=await pg.evaluate(([BL,AL,SV])=>{
+      const bl=new Set(BL), al=new Set(AL), sv=new Set(SV);
       const vis=e=>{ if(!e.getClientRects().length) return false; const s=getComputedStyle(e); return s.visibility!=='hidden' && s.display!=='none' && s.pointerEvents!=='none' && parseFloat(s.opacity||'1')>0.05; };
       const hits=[];
       document.querySelectorAll('[onclick],[onchange],[oninput]').forEach(e=>{
@@ -135,7 +160,7 @@ const ALLOW=new Set(['drawerRestore','restoreData','editGo','startGoCheck']);
         if(e.closest('#drawer, #tabbar, .modal, #askOv, #formOv')) return;
         const code=(e.getAttribute('onclick')||'')+' '+(e.getAttribute('onchange')||'')+' '+(e.getAttribute('oninput')||'');
         const fns=(code.match(/[A-Za-z_$][\w$]*(?=\s*\()/g)||[]);
-        const bad=fns.filter(f=>(bl.has(f)||f==='needEdit'||f==='guardEdit') && !al.has(f));
+        const bad=fns.filter(f=>(bl.has(f)||sv.has(f)||f==='needEdit'||f==='guardEdit') && !al.has(f));
         if(bad.length) hits.push((e.textContent||e.value||e.placeholder||e.tagName).trim().slice(0,24)+' → '+bad.join(','));
       });
       // 쓰는 칸
@@ -153,7 +178,7 @@ const ALLOW=new Set(['drawerRestore','restoreData','editGo','startGoCheck']);
         if(bad.length && document.querySelector('.acthead') && document.querySelector('.acthead').getClientRects().length) hits.push('머리줄 「'+a.name+'」 → '+bad.join(','));
       }); }catch(_){}
       return [...new Set(hits)];
-    },[BLOCKED,[...ALLOW]]);
+    },[BLOCKED,[...ALLOW],SAVERS]);
     if(SHOTS) await pg.screenshot({path:path.join(SHOTS,'lk_'+name.replace(/\s/g,'_')+'.png')});
     T(name+' — 보기 전용인데 손대는 단추·칸이 없다', r.length===0, r);
   }

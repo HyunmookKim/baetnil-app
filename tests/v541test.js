@@ -6,7 +6,7 @@ const src = fs.readFileSync(process.argv[2] || path.join(__dirname, '..', 'www',
 let ok = 0, bad = 0;
 const T = (n, c, w) => { if(c){ ok++; console.log('통과: ' + n); } else { bad++; console.log('★ 실패: ' + n + (w !== undefined ? ' — ' + String(w).slice(0, 200) : '')); } };
 
-T('판 5.41', /const APP_VER = '5\.41';/.test(src));
+T('판 5.41 이상', /const APP_VER = '5\.(4[1-9])';/.test(src));
 ['BOAT_DATA', 'SYNC_COLLS', 'CO'].forEach(nm => {
   const m = src.match(new RegExp('const ' + nm + ' = \\[[\\s\\S]*?\\];'));
   T('★★ ' + nm + ' 에 scheds 가 있다', !!m && /'scheds'/.test(m[0]), m && m[0].slice(0, 200));
