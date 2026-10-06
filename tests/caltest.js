@@ -51,7 +51,9 @@ T('①-4 그 갈래를 고르면 달력을 그린다',
 const listOf = re => { const m = src.match(re); return m ? (m[0].match(/'[^']+'/g) || []).map(x => x.slice(1, -1)) : null; };
 const SY = listOf(/const SYNC_COLLS = \[[\s\S]*?\];/);
 T('②-1 동기화 칸 목록을 읽었다', !!SY);
-T('②-2 저장 칸이 열여섯 그대로다 (달력이 칸을 안 늘렸다)', SY && SY.length === 16, SY && SY.length);
+// ★ 5.41 — 사장님이 달력에 마음대로 넣을 「일정」 을 정하셨다(「그냥 일정이라고 해라」 · 「완료표시는 없이해라」, 2026-10-06).
+//   일정은 다른 기록 어디에도 속하지 않아 칸이 하나(scheds) 늘었다. 그 하나만 허락한다 — 네 목록이 같은지는 colltest 가 본다.
+T('②-2 저장 칸이 열일곱이다 (5.41 일정 scheds 하나만 늘었다)', SY && SY.length === 17 && SY.indexOf('scheds') >= 0, SY && SY.length);
 T('②-3 달력 이름의 저장 칸이 없다', SY && SY.every(x => !/^cal/i.test(x)), SY);
 
 // ══════════════════════════════════════════════════════
@@ -91,7 +93,7 @@ globalThis.APP_VER = '0';
 
 globalThis.runs = []; globalThis.voyDay = v => /^\d{4}-\d{2}-\d{2}$/.test(String(v||'')) ? String(v) : '';
 for(const f of ['mHourLeft', 'mHasMonths', 'mHoursUsed', 'engHoursSince', 'addMonths', 'addPeriod', 'fmtDate', 'vdocDue',
-                'maintRows', 'mlogRows', 'mStatus', 'icsEsc', 'icsFold', 'calItems', 'calIcs']){
+                'maintRows', 'mlogRows', 'mStatus', 'icsEsc', 'icsFold', 'calItems', 'calIcs', 'schedDates']){
   eval('globalThis.' + f + ' = ' + grab(src, f).replace(/^(async )?function /, (a, b) => (b || '') + 'function '));
 }
 globalThis.today = () => '2026-09-06';
@@ -127,6 +129,12 @@ globalThis.fuel = [
   { id: 'f2', date: '2026-09-11', kind: 'level', level: 0 }
 ];
 
+// ★ 5.41 — 일정. 한 번짜리 하나, 매주 하나(9월 2일 수요일부터), 매월 31일 하나.
+globalThis.scheds = [
+  { id: 's1', title: '선저 청소', date: '2026-09-15', time: '09:00', rep: '' },
+  { id: 's2', title: '갑판 물청소', date: '2026-09-02', time: '', rep: 'w' },
+  { id: 's3', title: '월말 정리', date: '2026-08-31', time: '', rep: 'm' }
+];
 globalThis.saved = 0;
 const rows = calItems('2026-09-01', '2026-09-30');
 // 넓은 범위 — 지난 정비 이력과 옛날에 올린 고장까지 본다
@@ -138,6 +146,22 @@ T('③-1 ★★ 달력을 그리는 동안 아무것도 저장하지 않는다',
 T('③-2 예정을 모은다',        byKind('plan').length === 1 && byKind('plan')[0].id === 'v1', byKind('plan'));
 T('③-3 항해일지를 모은다',    byKind('voyage').length === 1 && byKind('voyage')[0].id === 'v2', byKind('voyage'));
 T('③-4 정기점검을 모은다',    byKind('maint').length === 1, byKind('maint'));
+// ★ 5.41 — 일정
+{ const sc = byKind('sched');
+  const s1 = sc.filter(r => r.id === 's1'), s2 = sc.filter(r => r.id === 's2'), s3 = sc.filter(r => r.id === 's3');
+  T('일정-1 한 번짜리 일정이 그날 하나 나온다 (시각까지)', s1.length === 1 && s1[0].date === '2026-09-15' && s1[0].time === '09:00' && s1[0].title === '선저 청소', s1);
+  T('일정-2 매주 일정이 9월 수요일마다 나온다 (2·9·16·23·30)', s2.map(r => r.date).join() === '2026-09-02,2026-09-09,2026-09-16,2026-09-23,2026-09-30', s2.map(r => r.date));
+  T('일정-3 매월 31일 일정은 31일이 없는 9월에 안 나온다 (구글 캘린더와 같다)', s3.length === 0, s3);
+  const oct = calItems('2026-10-01', '2026-10-31').filter(r => r.id === 's3');
+  T('일정-4 매월 31일 일정은 10월 31일에 나온다', oct.length === 1 && oct[0].date === '2026-10-31', oct);
+  const before = calItems('2026-08-01', '2026-08-31').filter(r => r.id === 's2');
+  T('일정-5 시작일 전에는 안 나온다', before.length === 0, before);
+  const y = schedDates({ date: '2024-02-29', rep: 'y' }, '2024-01-01', '2028-12-31');
+  T('일정-6 매년 2월 29일은 윤년에만 (2024·2028)', y.join() === '2024-02-29,2028-02-29', y);
+  const d = schedDates({ date: '2026-12-30', rep: 'd' }, '2026-12-29', '2027-01-02');
+  T('일정-7 매일은 해를 넘어 이어진다', d.join() === '2026-12-30,2026-12-31,2027-01-01,2027-01-02', d);
+  T('일정-8 달력 파일에도 일정이 들어간다', /SUMMARY:\[일정\] 선저 청소/.test(calIcs('2026-09-01', '2026-09-30')));
+}
 T('③-5 정비수첩을 모은다',    byKind('mlog').length === 1 && byKind('mlog')[0].id === 'g1', byKind('mlog'));
 T('③-6 수리를 모은다 (9월에는 올린 날 하나 + 고친 날 하나)',
   byKind('repair').length === 1 && byKind('repairDone').length === 1,
@@ -265,7 +289,9 @@ T('④-21 ★ 이름 속 쉼표가 파일에서 벗겨져 있다',
 globalThis.voyage.pop();
 
 T('④-22 내보내기가 없으면 빈 달력이라도 규격을 지킨다',
-  (() => { const e = unfold(calIcs('2030-01-01', '2030-01-31')).split(/\r\n/);
+  (() => { const 일정 = globalThis.scheds; globalThis.scheds = [];   // 5.41 — 반복 일정은 2030년에도 나오므로 빈 달력을 보려면 잠시 뺀다
+           const e = unfold(calIcs('2030-01-01', '2030-01-31')).split(/\r\n/);
+           globalThis.scheds = 일정;
            return e[0] === 'BEGIN:VCALENDAR' && e.filter(x => x).slice(-1)[0] === 'END:VCALENDAR'
                   && e.filter(x => x === 'BEGIN:VEVENT').length === 0; })());
 
@@ -411,7 +437,7 @@ const tblKeys = [...new Set((kindTbl.match(/^\s*([a-zA-Z]+)\s*:\s*\{/gm) || []).
 T('⑤-12 ★ 달력에 나오는 갈래가 표에 다 있다',
   rows.every(r => tblKeys.indexOf(r.kind) >= 0), { 나온것: [...new Set(rows.map(r => r.kind))], 표: tblKeys });
 T('⑤-13 ★ 표에만 있고 안 쓰는 갈래가 없다',
-  tblKeys.length === 9, tblKeys);   // 5.27 — 주유 갈래가 더해져 아홉
+  tblKeys.length === 10, tblKeys);   // 5.27 — 주유 갈래가 더해져 아홉 · 5.41 — 일정이 더해져 열
 
 // ══════════════════════════════════════════════════════
 // 6. 새 낱말이 세 언어에 다 있는가

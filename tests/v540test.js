@@ -116,7 +116,7 @@ const ps = { name:'x', voyage: [ { id:'v1', trk: pd.voyage[0].trk.slice(0, 300) 
 T('③-18 들어가면 공개 사본도 그대로', JSON.stringify(env.pubFit(JSON.parse(JSON.stringify(ps)), { id:'b1' })) === JSON.stringify(ps));
 T('③-19 pushPublic 이 pubFit 을 지난다', /const data = pubFit\(buildPublic\(b\), b\);/.test(src));
 
-T('판 5.40', /const APP_VER = '5\.40';/.test(src));
+T('판 5.40 이상', /const APP_VER = '5\.(4\d)';/.test(src));
 console.log('\n합계: ' + ok + '개 통과 / ' + bad + '개 실패');
 process.exit(bad ? 1 : 0);
 }
