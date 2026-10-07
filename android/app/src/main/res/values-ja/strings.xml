@@ -3,4 +3,7 @@
     <string name="app_name">Baetnil</string>
     <string name="title_activity_main">Baetnil</string>
     <string name="capacitor_background_geolocation_notification_channel_name">航海の記録</string>
+    <!-- ★ 5.45 — 항적 기록 서비스(BaetnilTrackService) 알림. 서비스가 다시 살아나 앱이 넘긴 글이 없을 때 쓴다 -->
+    <string name="trk_noti_title">Baetnil — 航海記録中</string>
+    <string name="trk_noti_text">航跡を記録しています。入港を記録すると停止します。</string>
 </resources>
