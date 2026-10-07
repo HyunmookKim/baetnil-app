@@ -1,5 +1,7 @@
 {
  "ko": {
+  "CFBundleDisplayName": "뱃일",
+  "CFBundleName": "뱃일",
   "NSLocationWhenInUseUsageDescription": "항해 중 현재 위치의 바람·파고·물때와 해상 특보를 보여 드리기 위해 사용합니다.",
   "NSLocationAlwaysAndWhenInUseUsageDescription": "출항부터 입항까지 항적을 자동으로 기록하기 위해, 화면이 꺼져 있는 동안에도 위치를 사용합니다. 입항을 기록하면 멈춥니다.",
   "NSCameraUsageDescription": "물품·정비 기록·정박지에 사진을 찍어 붙이기 위해 카메라를 사용합니다.",
@@ -12,6 +14,8 @@
   "NSRemindersFullAccessUsageDescription": "정비 때를 미리 알려 드리기 위해 미리 알림을 사용합니다."
  },
  "en": {
+  "CFBundleDisplayName": "Baetnil",
+  "CFBundleName": "Baetnil",
   "NSLocationWhenInUseUsageDescription": "Used to show wind, waves, tides and marine warnings for your current position while under way.",
   "NSLocationAlwaysAndWhenInUseUsageDescription": "Used to record your track automatically from departure to arrival, including while the screen is off. Recording stops when you log your arrival.",
   "NSCameraUsageDescription": "Used to take photos and attach them to items, maintenance records and anchorages.",
@@ -24,6 +28,8 @@
   "NSRemindersFullAccessUsageDescription": "Used to remind you when maintenance is due."
  },
  "ja": {
+  "CFBundleDisplayName": "Baetnil",
+  "CFBundleName": "Baetnil",
   "NSLocationWhenInUseUsageDescription": "航海中に現在地の風・波・潮汐と海上警報を表示するために使用します。",
   "NSLocationAlwaysAndWhenInUseUsageDescription": "出港から入港まで航跡を自動で記録するため、画面が消えている間も位置情報を使用します。入港を記録すると停止します。",
   "NSCameraUsageDescription": "積載品・整備記録・停泊地に写真を撮って添付するためにカメラを使用します。",
@@ -36,6 +42,8 @@
   "NSRemindersFullAccessUsageDescription": "整備の時期をお知らせするためにリマインダーを使用します。"
  },
  "ru": {
+  "CFBundleDisplayName": "Baetnil",
+  "CFBundleName": "Baetnil",
   "NSLocationWhenInUseUsageDescription": "Используется, чтобы показывать ветер, волнение, приливы и морские предупреждения для вашего текущего места в походе.",
   "NSLocationAlwaysAndWhenInUseUsageDescription": "Используется для автоматической записи трека от выхода до прихода, в том числе при выключенном экране. Запись останавливается, когда вы отмечаете приход.",
   "NSCameraUsageDescription": "Используется, чтобы фотографировать и прикреплять снимки к вещам, записям об обслуживании и стоянкам.",
