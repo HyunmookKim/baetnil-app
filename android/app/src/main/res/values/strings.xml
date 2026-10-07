@@ -10,4 +10,7 @@
     <string name="custom_url_scheme">kr.baetnil.app</string>
     <!-- ★ 이 이름은 폰의 「설정 › 알림」 화면에 그대로 나온다. 나라말이라야 한다. -->
     <string name="capacitor_background_geolocation_notification_channel_name">Voyage recording</string>
+    <!-- ★ 5.45 — 항적 기록 서비스(BaetnilTrackService) 알림. 서비스가 다시 살아나 앱이 넘긴 글이 없을 때 쓴다 -->
+    <string name="trk_noti_title">Baetnil — recording your trip</string>
+    <string name="trk_noti_text">Recording your track. It stops when you log your arrival.</string>
 </resources>
