@@ -25,6 +25,7 @@ function grab(s, name){
   return s.slice(i, j);
 }
 const src = fs.readFileSync(process.argv[2] || 'work.html', 'utf8');
+require('./helpers546')(src);   // 5.46 단위 기호·특보 이름 도우미
 const si = src.indexOf('<script>') + 8, sj = src.indexOf('</script>', si);
 const js = src.slice(si, sj);
 

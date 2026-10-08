@@ -24,8 +24,8 @@ T('★ 커뮤니티 하위 탭 이름이 있다', !!CS);
 const nTab = (CS.match(/[a-z]+:t\(/g) || []).length;
 T('★★ 하위 탭이 다섯을 안 넘는다', nTab <= 5, nTab);
 T('★★ 커뮤니티는 넷 그대로다 — 정박지·장터·배 둘러보기가 제자리다',
-  /spots:t\('정박지'\)/.test(CS) && /market:t\('중고 장터'\)/.test(CS)
-  && /explore:t\('배 둘러보기'\)/.test(CS), CS);
+  /spots:t\('정박지(@@탭)?'\)/.test(CS) && /market:t\('중고 장터'\)/.test(CS)
+  && /explore:t\('배 둘러보기(@@탭)?'\)/.test(CS), CS);   // 5.45 — 탭 자리는 짧은 이름(@@탭), 한국어는 그대로
 T('★★ 뉴스만 「오늘」 탭으로 갔다',
   /HOMESUB_TITLES = \{[^\n]*news:t\('뉴스'\)/.test(src) && !/news:t\('뉴스'\)/.test(CS));
 // ── 「남의 배」 탭 — 네 갈래

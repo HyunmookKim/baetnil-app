@@ -12,6 +12,7 @@
 //   사장님 백업(2026-09-30)과 같은 모양의 기록으로도 돌린다(tests/fuel524-sample.json).
 const fs = require('fs'), path = require('path');
 const src = fs.readFileSync(process.argv[2] || 'work.html', 'utf8');
+require('./helpers546')(src);   // 5.46 단위 기호·특보 이름 도우미
 let pass = 0, fail = 0;
 const T = (n, c, w) => { if(c){ pass++; console.log('통과: ' + n); }
   else { fail++; console.log('★ 실패: ' + n + (w !== undefined ? '\n   ' + String(typeof w === 'string' ? w : JSON.stringify(w)).slice(0, 300) : '')); } };

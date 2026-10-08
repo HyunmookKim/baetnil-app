@@ -90,18 +90,18 @@ const LIMIT = { home: 0, boat: 0, voyage: 0, stow: 0 };
 
     // 처음 온 사람 카드 — 고르는 줄과 「배가 있습니다」 쪽 (처음에 펴져 있는 쪽)
     const need1 = lang === 'en'
-      ? ['Which are you?', 'I have a boat', 'I sail on other boats',
-         'One boat, all its records in one place', 'The maintenance log sits at the centre.',
+      ? ['Which describes you?', 'I have a boat', 'I sail on other boats',
+         'One boat, all its records in one place', 'Everything centers on the maintenance log.',
          'Register a boat']
-      : ['Что вам ближе?', 'У меня есть судно', 'Хожу на чужом судне',
-         'Всё о вашем судне — в одном месте', 'В центре — журнал работ.',
-         'Зарегистрировать судно'];
+      : ['Что вам ближе?', 'У меня есть судно', 'Хожу на чужих судах',
+         'Всё о вашем судне — в одном месте', 'Главное здесь — журнал ТО.',
+         'Добавить судно'];
     need1.forEach(x => T(lang + ' — 처음 화면에 「' + x + '」 가 있다',
       r.first.indexOf(x) >= 0, r.first.slice(0, 200)));
     // 「타기만 합니다」 를 누르면 크루 쪽 칸이 그 말로 나온다
     const need1c = lang === 'en'
       ? ['Even without a boat', 'Where do I moor?', 'Browse the community']
-      : ['Даже без судна', 'Где встать?', 'Посмотреть сообщество'];
+      : ['Даже без судна', 'Где встать?', 'Перейти в сообщество'];
     need1c.forEach(x => T(lang + ' — 「타기만 합니다」 쪽에 「' + x + '」 가 있다',
       r.crew.indexOf(x) >= 0, r.crew.slice(0, 220)));
 
@@ -109,8 +109,8 @@ const LIMIT = { home: 0, boat: 0, voyage: 0, stow: 0 };
     const need2 = lang === 'en'
       // ★ 점검 카드 제목은 「지금 고른 목록 이름」이다 (사람이 이름을 마음대로 짓는다).
       //   그래서 카드 제목 대신 그 아래 줄(「n개 목록 중」)로 이 카드가 나왔는지 본다.
-      ? ['Wind', 'Gust', 'Wave', 'across 3 lists', 'Maintenance due soon', 'Last voyage']
-      : ['Ветер', 'Порыв', 'волн', 'по 3 спискам', 'Скоро обслуживание', 'Последний выход'];
+      ? ['Wind', 'Gust', 'Wave', 'across 3 lists', 'Maintenance due soon', 'Last trip']
+      : ['Ветер', 'Порыв', 'волн', 'в 3 списках', 'Ближайшее обслуживание', 'Последний выход'];
     need2.forEach(x => T(lang + ' — 오늘 화면에 「' + x + '」 가 있다',
       r.full.indexOf(x) >= 0, r.full.slice(0, 300)));
 
@@ -153,7 +153,7 @@ const LIMIT = { home: 0, boat: 0, voyage: 0, stow: 0 };
     T(lang + ' 내 배 — 앱이 터지지 않았다', r.errs.length === 0, r.errs.slice(0,2));
     const need = lang === 'en'
       ? ['Basics', 'Specs', 'About', 'Home port', 'Join code', 'Length overall', 'Air draft']
-      : ['Основное', 'Характеристики', 'О судне', 'Порт приписки', 'Код вступления', 'Осадка'];
+      : ['Основное', 'Характеристики', 'О судне', 'Место базирования', 'Код вступления', 'Осадка'];
     const all = r.out.info + '\n' + r.out.spec + '\n' + r.out.intro;
     need.forEach(x => T(lang + ' 내 배 — 「' + x + '」 가 있다', all.indexOf(x) >= 0, all.slice(0,300)));
     T(lang + ' 내 배 — 남은 한글 ' + han(all) + '자 (한도 ' + LIMIT.boat + ')',
@@ -195,8 +195,8 @@ const LIMIT = { home: 0, boat: 0, voyage: 0, stow: 0 };
     console.log('── 항해일지 ' + lang);
     T(lang + ' 항해 — 앱이 터지지 않았다', r.errs.length === 0, r.errs.slice(0,2));
     const need = lang === 'en'
-      ? ['Distance NM', 'Engine h', 'Upcoming voyages', 'Past voyages', 'Sail together', 'Day sail']
-      : ['Дистанция', 'Моточасы', 'Предстоящие выходы', 'Прошлые выходы', 'Пойти вместе', 'Прогулка'];
+      ? ['Distance (NM)', 'Engine hours', 'Upcoming trips', 'Past trips', 'Find crew', 'Day trip']
+      : ['Дистанция', 'Моточасы', 'Предстоящие выходы', 'Прошлые выходы', 'Поиск экипажа', 'Прогулка'];
     const all = r.list + '\n' + r.ride.replace(/<[^>]*>/g, ' ');
     need.forEach(x => T(lang + ' 항해 — 「' + x + '」 가 있다', all.indexOf(x) >= 0, all.slice(0,300)));
     T(lang + ' 항해 — 남은 한글 ' + han(all) + '자 (한도 ' + LIMIT.voyage + ')',
@@ -254,9 +254,9 @@ const LIMIT = { home: 0, boat: 0, voyage: 0, stow: 0 };
     console.log('── 적재표 ' + lang);
     T(lang + ' 적재표 — 앱이 터지지 않았다', r.errs.length === 0, r.errs.slice(0,2));
     const need = lang === 'en'
-      ? ['No lockers yet', 'Unplaced', 'Draw lockers', 'Select', 'Trash', 'Search items', 'Editing']
-      : ['Рундуков пока нет', 'Не размещено', 'Рисовать рундуки', 'Выбрать', 'Корзина',
-         'Поиск вещей', 'Правка'];
+      ? ['No lockers yet', 'Unassigned', 'Draw lockers', 'Select', 'Trash', 'Search items', 'Editing']
+      : ['Рундуков пока нет', 'Без места', 'Рисовать рундуки', 'Выбрать', 'Корзина',
+         'Поиск вещей', 'Изменить'];
     need.forEach(x => T(lang + ' 적재표 — 「' + x + '」 가 있다', r.all.indexOf(x) >= 0, r.all.slice(0,300)));
     T(lang + ' 적재표 — 남은 한글 ' + han(r.all) + '자 (한도 ' + LIMIT.stow + ')',
       han(r.all) <= LIMIT.stow, hanWords(r.all));

@@ -53,7 +53,7 @@ T('★★ 「원문 보기」 는 남아 있다 (원문이 보고 싶은 사람�
 [['글판',       /trListAuto\('community'/],
  ['중고 장터',  /trListAuto\('market'/],
  ['정박지(사람)', /trListAuto\('spots'/],
- ['정박지(앱에 든 것)', /trWordsAuto\(rows\.filter\(s => s\.seed\)/],
+ ['정박지(앱에 든 것)', /trWordsAuto\((\[\]\.concat\(\.\.\.)?rows\.filter\(s => s\.seed\)/],
  ['연재',       /trListAuto\('series'/],
  ['배 둘러보기', /trListAuto\('boatPublic', 보일것/],
  ['남의 배 기록', /trAuto\('boatPublic', bid/],
@@ -207,6 +207,7 @@ T('★★ 쓰는 말에 따라 뉴스 첫 탭이 갈린다',
     ${grabConst(src,'CY_STAY')} ${grabConst(src,'CY_END')} ${grabConst(src,'NAME_WORD')}
     ${grab(src,'koSyl')} ${grab(src,'hasHangul')} ${grab(src,'romanKo')}
     ${grab(src,'kanaKo')} ${grab(src,'cyrKo')} ${grab(src,'nameSound')} ${grab(src,'nameFor')}
+    function spotNmRow(){ return null; }  // 5.45 — 사람이 적은 표(SPOT_NM)에 없는 곳의 길을 본다
     ${grab(src,'spotShowName')} ${grab(src,'boatShowName')}
     return { trWord, spotShowName, boatShowName, nameFor, TR_WORD, TR_GOT, TR_ON, setLang:l=>{langCur=l;} };`;
   const F = new Function(env)();

@@ -8,7 +8,7 @@ t('앱이 안내하는 문의 주소가 회사 것', /const SUPPORT_MAIL = 'help
 t('갈래에 메일이 있다', /\{ v:'mail',\s+name:t\('메일'\)/.test(h));
 t('사람이 고르는 갈래에서는 뺐다', /k\.v !== 'series' && k\.v !== 'mail'/.test(h));
 t('영어 사전', /'메일로 온 이야기':'Came in by email'/.test(h));
-t('러시아어 사전', /'메일로 온 이야기':'Пришло по почте'/.test(h));
+t('러시아어 사전', /'메일로 온 이야기':'Прислано по эл\. почте'/.test(h));   // 5.45 전수조사로 바꿈
 t('메일 낱말은 이미 사전에 있다', /'메일':'Email'/.test(h) && /'메일':'Эл\. почта'/.test(h));
 t('LANG_TOTAL 이 1998 이상', (()=>{const m=h.match(/LANG_TOTAL = (\d+)/); return m && +m[1] >= 1998;})());
 t('갈래 이름이 겹치지 않는다', (h.match(/v:'mail'/g)||[]).length === 1);

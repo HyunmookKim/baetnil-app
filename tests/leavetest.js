@@ -139,13 +139,14 @@ function run(env){
   // ── ⑥ 약관·처리방침
   {
     const ver = (src.match(/const LEGAL_VER\s*=\s*'([\d.]+)'/) || [])[1];
-    T('⑥ 법 문서 버전이 2.1 (다시 동의를 받는다)', ver === '2.1', ver);
-    T('⑥ 시행일이 네 나라 말 모두 10월 1일', /ko:'2026년 10월 1일', en:'1 October 2026', ru:'1 октября 2026 г\.',\s*ja:'2026年10月1日'/.test(src));
+    T('⑥ 법 문서 버전이 2.2 (5.45 원문 사실 바로잡기 — 다시 동의를 받는다)', ver === '2.2', ver);
+    T('⑥ 시행일이 네 나라 말 모두 10월 15일', /ko:'2026년 10월 15일', en:'October 15, 2026', ru:'15 октября 2026 г\.',\s*ja:'2026年10月15日'/.test(src));
+    // ★ 5.45 — 전수조사로 「탈퇴」 를 Leave·Выход(로그아웃처럼 읽힘)에서 Deleting your account·При удалении аккаунта 로 바꿨다
     const need = {
       ko: ['② 탈퇴해도 커뮤니티에 쓴 글과 댓글은 지워지지 않습니다', '커뮤니티 글·댓글: 이용자가 지울 때까지. 탈퇴해도 지워지지 않고', '커뮤니티에 쓴 글과 댓글은 지우지 않고'],
-      en: ['2. Leaving does not delete the posts and comments you wrote', 'Community posts and comments: until you delete them. They are not deleted when you leave', 'The posts and comments you wrote in the community are not deleted'],
-      ru: ['2. Выход из сервиса не удаляет ваши посты и комментарии', 'Посты и комментарии в сообществе: до удаления вами', 'Посты и комментарии в сообществе не удаляются'],
-      ja: ['② 退会しても、コミュニティに書いた投稿とコメントは削除されません', 'コミュニティの投稿・コメント: 利用者が削除するまで', 'コミュニティに書いた投稿とコメントは削除せず']
+      en: ['2. Deleting your account does not delete the posts and comments you wrote', 'Community posts and comments: until you delete them. They are not deleted when you delete your account', 'The posts and comments you wrote in the community are not deleted'],
+      ru: ['2. При удалении аккаунта ваши посты и комментарии в сообществе сохраняются', 'Посты и комментарии в сообществе: до удаления вами', 'Посты и комментарии в сообществе не удаляются'],
+      ja: ['② 退会しても、コミュニティに書いた投稿とコメントは削除されません', 'コミュニティの投稿・コメント：利用者が削除するまで', 'コミュニティに書いた投稿とコメントは削除せず']
     };
     for(const [k, arr] of Object.entries(need)) T('⑥ ' + k + ' 약관 제11조·처리방침 4번·16번', arr.every(x => src.includes(x)), arr.filter(x => !src.includes(x)));
     T('⑥ 옛 약속(「게시물: … 탈퇴할 때까지」)이 남아 있지 않다', !src.includes('배 기록·게시물: 이용자가 지울 때까지, 또는 탈퇴할 때까지')

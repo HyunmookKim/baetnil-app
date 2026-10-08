@@ -15,6 +15,7 @@ const fs = require('fs');
 const path = require('path');
 const SRC = process.argv[2] || path.join(__dirname, '..', '..', 'work.html');
 const src = fs.readFileSync(SRC, 'utf8');
+require('./helpers546')(src);   // 5.46 단위 기호·특보 이름 도우미
 
 function grab(s, name){
   let i = s.indexOf('async function ' + name + '(');
@@ -497,7 +498,7 @@ NEW_WORDS.forEach(w => {
   const r10 = calItems('2026-09-01', '2026-09-30');
   const f1 = r10.find(x => x.kind === 'fuel' && x.id === 'f1');
   T('⑩-1 ★★★ 주유가 그 날짜에 올라간다', !!f1 && f1.date === '2026-09-10', f1);
-  T('⑩-2 ★ 넣은 양과 만탱크가 보인다', !!f1 && /100 L/.test(f1.title) && /만탱크/.test(f1.title), f1);
+  T('⑩-2 ★ 넣은 양과 만탱크가 보인다', !!f1 && /100\s+L/.test(f1.title) && /만탱크/.test(f1.title), f1);
   T('⑩-3 ★ 넣은 시각도 담긴다', !!f1 && f1.time === '15:35', f1);
   T('⑩-4 ★★ 잔량 확인 기록은 안 올린다', !r10.some(x => x.id === 'f2'));
   T('⑩-5 ★ 주유 갈래 이름·색이 있다', CAL_KINDS.fuel && CAL_KINDS.fuel.n === '주유' && /^#/.test(CAL_KINDS.fuel.c));

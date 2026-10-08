@@ -181,8 +181,8 @@ if(DOC){
   T('★★ 위치기반서비스사업 신고번호가 적혀 있다', /12276/.test(l));
   // 세 말 모두에 같은 사실이 있어야 한다 (한 말만 고치면 다른 말에서 샌다)
   ['en','ru'].forEach(v => {
-    T('★★★ ' + v + ' — 잠시 멈추기가 적혀 있다', /24\(2\)/.test(L[v]));
-    T('★★★ ' + v + ' — 제3자 제공 통보가 적혀 있다', /19\(3\)/.test(L[v]));
+    T('★★★ ' + v + ' — 잠시 멈추기가 적혀 있다', /24\(2\)|ч\. 2 ст\. 24/.test(L[v]));
+    T('★★★ ' + v + ' — 제3자 제공 통보가 적혀 있다', /19\(3\)|ч\. 3 ст\. 19/.test(L[v]));   // 5.45 러시아어는 «ч. 3 ст. 19»
     T('★★★ ' + v + ' — 8세 이하 아동등이 적혀 있다', /Article 26|ст\. 26/.test(L[v]));
     T('★★ ' + v + ' — 신고번호가 적혀 있다', L[v].indexOf('12276') > 0);
   });
@@ -360,9 +360,9 @@ const KD = (K && K.LEGAL_DATES) || { ko:'(못 읽음)', en:'(못 읽음)', ru:'(
       + '\n return (k, v) => { L = v; return legalText(k); };')();
     T('ko — 신고번호를 채우면 나온다', /위치기반서비스사업 신고번호: 제2026-00호/.test(f2('location','ko')));
     T('en — 신고번호를 채우면 영어로 나온다',
-      /Location-based service business filing number: 제2026-00호/.test(f2('location','en')));
+      /Location-based service business registration number \(Republic of Korea\): 제2026-00호/.test(f2('location','en')));
     T('ru — 신고번호를 채우면 러시아어로 나온다',
-      /Номер уведомления о деятельности LBS: 제2026-00호/.test(f2('location','ru')));
+      /Номер уведомления о деятельности в сфере геолокационных услуг \(Республика Корея\): 제2026-00호/.test(f2('location','ru')));
     T('신고번호를 채워도 {자리표}가 남지 않는다',
       ['ko','en','ru'].every(v => !/\{LBS\}|\{BIZ\}/.test(f2('location', v))));
   }

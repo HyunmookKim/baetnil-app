@@ -3,6 +3,7 @@
 const fs = require('fs');
 const FILE = process.argv[2] || 'work.html';
 const src = fs.readFileSync(FILE, 'utf8');
+require('./helpers546')(src);   // 5.46 단위 기호·특보 이름 도우미
 
 function grab(name){
   const i = src.indexOf('function ' + name + '(');
