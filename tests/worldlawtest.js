@@ -92,11 +92,11 @@ const loc = L => D[L].location;
 
 // 4호 — ★ 확인자료의 보유근거 및 보유기간 (여태 빠져 있었다)
 넷다('★★★ 명시 4호 — 확인자료의 **보유 근거**(법 제16조 제2항)가 적혀 있다', loc,
-  s => /제16조\s*제2항|Article 16\(2\)|пункт 2 статьи 16|第16条第2項/.test(s));
+  s => /제16조\s*제2항|Article 16\(2\)|пункт 2 статьи 16|ч\. 2 ст\. 16|第16条第2項/.test(s));
 넷다('★★★ 명시 4호 — 확인자료의 **보유 기간**이 숫자로 적혀 있다', loc,
   s => /6개월|six months|шесть месяцев|6か月/i.test(s));
 넷다('★★ 「보유 근거」 라는 말 자체가 있다 (사람이 찾을 수 있게)', loc,
-  s => /보유 근거|보유 목적과 보유 기간, 보유 근거|basis for retain|основание хранения|保有の根拠/i.test(s));
+  s => /보유 근거|보유 목적과 보유 기간, 보유 근거|basis for retain|основание хранения|основание для него|保有の根拠/i.test(s));
 
 // 5호 — ★ 개인위치정보의 보유목적 및 보유기간
 넷다('★★★ 명시 5호 — 개인위치정보의 **보유 목적**이 적혀 있다', loc,
@@ -115,7 +115,7 @@ console.log('\n── 2. 준거법 — 사는 나라의 소비자 보호는 못 
 const terms = L => D[L].terms;
 
 넷다('★★★ 「사는 나라의 강행규정을 빼앗지 않는다」 가 있다', terms,
-  s => /물릴 수 없는|cannot be derogated from|нельзя отступить|排除することのできない/i.test(s));
+  s => /물릴 수 없는|cannot be derogated from|does not, however, deprive|нельзя отступить|排除することのできない/i.test(s));
 넷다('★★★ 소비자는 **자기 나라 법원에도** 소를 제기할 수 있다', terms,
   s => /자기가 사는 곳의 법원에도|courts\s*\n?\s*of the country of the user's habitual residence|в суд по месту\s*\n?\s*своего жительства|常居所地の裁判所にも/i.test(s.replace(/\s+/g,' ')));
 넷다('★★ 감독기관·분쟁조정기관에 이의를 낼 권리를 막지 않는다', terms,
@@ -141,15 +141,15 @@ console.log('\n── 3. 어느 바다를 위한 앱인가');
 // ─────────────────────────────────────────────────────────────
 console.log('\n── 4. 글판 — 신고하고, 지운 까닭을 알려 준다');
 넷다('★★★ 신고할 수 있다고 적혀 있다', terms,
-  s => /\[신고\]|\[Report\]|\[Пожаловаться\]|［通報］/.test(s));
+  s => /\[신고\]|\[Report\]|Report button|\[Пожаловаться\]|［通報］|\[通報\]/.test(s));
 넷다('★★★ 며칠 안에 사람이 본다고 적혀 있다', terms,
-  s => /사흘\(영업일\)|three working days|трёх рабочих дней|3営業日/i.test(s));
+  s => /사흘\(영업일\)|three working days|three business days|трёх рабочих дней|3営業日/i.test(s));
 넷다('★★★ 지울 때 **까닭과 근거**를 알려 준다', terms,
-  s => /어느 항을 어겼다고 보아|which paragraph\s+of Article 7|какой пункт статьи 7|どの項に反すると判断/i.test(s.replace(/\s+/g,' ')));
+  s => /어느 항을 어겼다고 보아|which paragraph\s+of Article 7|found to violate, and on what basis|какой пункт статьи 7|どの項に反すると判断/i.test(s.replace(/\s+/g,' ')));
 넷다('★★ 이의를 낼 길을 함께 알려 준다', terms,
   s => /이의를 제기하는 길|how to object|как подать возражение|異議申立ての方法/i.test(s));
 넷다('★★ 기계 혼자 지우지 않는다고 적혀 있다', terms,
-  s => /기계가 혼자|by machine alone|без участия человека|機械だけで/i.test(s));
+  s => /기계가 혼자|by machine alone|automated system alone|без участия человека|機械だけで/i.test(s));
 넷다('★★ 관계 당국이 연락할 창구가 적혀 있다 (DSA 11조)', terms,
   s => /관계 당국|Authorities may use|обращения органов власти|関係当局/i.test(s));
 T('★★ 러시아어판에 「3근무일 안에 배포를 멈춘다」 가 있다 (152-ФЗ ст.10.1)',
@@ -174,9 +174,9 @@ console.log('\n── 6. 기상 자료의 출처');
 넷다('★★★ 관청 발표를 **고치지 않고** 전한다고 적혀 있다', terms,
   s => /고치지 않고|unaltered|без изменений|変更せずに/i.test(s));
 넷다('★★ 어느 기관이 언제 낸 것인지 화면에 적는다고 되어 있다', terms,
-  s => /어느 기관이 언제|issuing body and the time|Название органа и время|どの機関がいつ/i.test(s));
+  s => /어느 기관이 언제|issuing body and the time|issuing agency and time|Название органа и время|どの機関がいつ/i.test(s));
 넷다('★★ 그 기관들과 관계가 없다고 밝힌다', terms,
-  s => /아무런 관계가 없고|not affiliated with those bodies|не связан с этими органами|関係がなく/i.test(s));
+  s => /아무런 관계가 없고|not affiliated with those bodies|not affiliated with those\s+agencies|не связан с этими органами|関係がなく/i.test(s));
 // ★ 5.6 — 일본 법률 검토: 「17조 예보업무에 해당하지 않는다」 는 스스로의 단정은 뺐다
 //   (Open-Meteo 는 기상 관서가 아니고, 해당 여부는 기상청이 판단한다). 대신 스스로 예보하지 않는다는 사실을 적는다.
 T('★★ 일본어판이 스스로 예보하지 않는다고 적는다', /独自の予報を行いません/.test(terms('ja')));
@@ -187,15 +187,15 @@ T('★★ 일본어판이 스스로 예보하지 않는다고 적는다', /独�
 console.log('\n── 7. 개인정보 방침');
 const priv = L => D[L].privacy;
 넷다('★★★ 계정을 지우는 길이 적혀 있다 (구글 플레이가 요구한다)', priv,
-  s => /delete\.html/.test(s));
+  s => /delete(\.(en|ja|ru))?\.html/.test(s));
 넷다('★★★ 서버가 대한민국에 있다고 적혀 있다', priv,
   s => /대한민국|Republic of Korea|Республике Корея|大韓民国/i.test(s) && /Firestore/i.test(s));
 넷다('★★★ 기기 밖으로 나가는 것을 다 적었다 (외부송신)', priv,
   s => /OpenStreetMap/.test(s) && /Firebase/.test(s));
 넷다('★★★ 광고·통계·추적이 하나도 없다고 밝힌다', priv,
-  s => /광고, 접속 통계|no advertising, no analytics|Рекламы, счётчиков|広告、アクセス解析/i.test(s));
+  s => /광고, 접속 통계|no advertising, no analytics|Рекламы, счётчиков|ни рекламы, ни счётчиков|広告、アクセス解析/i.test(s));
 넷다('★★ 날씨 쪽에는 **좌표만** 보낸다고 적혀 있다', priv,
-  s => /지점의 좌표만|coordinates of the point|только координаты точки|地点の座標/i.test(s));
+  s => /지점의 좌표만|coordinates of the point|coordinates of the spot|только координаты точки|地点の座標/i.test(s));
 T('★★★ 일본어판에 개인정보보호법 제32조 공표사항이 있다', /第32条/.test(priv('ja')));
 T('★★★ 일본어판에 **한국 제도를 확인했다**(외적환경의 파악)가 있다',
   /大韓民国の個人情報保護制度|外的環境の把握/.test(priv('ja')));
@@ -210,10 +210,11 @@ T('★★ 영어판에 유럽 적정성 결정 2022/254 가 있다', /2022\/254/
 // ─────────────────────────────────────────────────────────────
 console.log('\n── 8. 다시 동의');
 // ★ 5.29 — 2.0 → 2.1: 탈퇴해도 커뮤니티 글·댓글이 남는다(사장님 「2는 2로」). 약관 제11조②, 처리방침 4번·16번.
-T('★★★ 약관 버전이 올라갔다 (2.0 → 2.1, 5.29 — 탈퇴해도 커뮤니티 글·댓글은 남고 「탈퇴한 회원」) — 그래야 다시 동의를 받는다',
-  K.LEGAL_VER === '2.1', K.LEGAL_VER);
-T('★★ 시행일도 함께 올라갔다', /10월 1일/.test(D.ko.terms) && /1 October 2026/.test(D.en.terms) && /1 октября 2026/.test(D.ru.terms) && /2026年10月1日/.test(D.ja.terms));
-T('★★ 「판」 이 아니라 「버전」 이라고 적는다', !/\(판 /.test(D.ko.terms) && !/\(판 /.test(D.ko.privacy) && /\(버전 2\.1\)/.test(D.ko.privacy));
+// ★ 5.45 — 2.1 → 2.2: 원문을 앱이 실제로 하는 대로(항적 서버 저장·항해마다 항적 공개·확인자료 열람·동의 철회 뒤 기록·실제 메뉴 경로)
+T('★★★ 약관 버전이 올라갔다 (2.1 → 2.2, 5.45 — 원문 사실 바로잡기) — 그래야 다시 동의를 받는다',
+  K.LEGAL_VER === '2.2', K.LEGAL_VER);
+T('★★ 시행일도 함께 올라갔다', /10월 15일/.test(D.ko.terms) && /October 15, 2026/.test(D.en.terms) && /15 октября 2026/.test(D.ru.terms) && /2026年10月15日/.test(D.ja.terms));
+T('★★ 「판」 이 아니라 「버전」 이라고 적는다', !/\(판 /.test(D.ko.terms) && !/\(판 /.test(D.ko.privacy) && /\(버전 2\.2\)/.test(D.ko.privacy));
 T('★★ 채울 자리가 남아 있지 않다',
   L4.every(L => ['terms','privacy','location'].every(k => !/\{[A-Z]+\}/.test(D[L][k]))));
 T('★★ 빈 자리에 undefined 가 새지 않았다',

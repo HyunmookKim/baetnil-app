@@ -14,6 +14,7 @@
 //       위치는 비동기다. 날씨를 먼저 부르면 좌표는 언제나 아직 없다.
 const fs = require('fs');
 const src = fs.readFileSync(process.argv[2] || 'work.html', 'utf8');
+require('./helpers546')(src);   // 5.46 단위 기호·특보 이름 도우미
 function grab(name){
   let i = src.indexOf('async function ' + name + '(');
   if(i < 0) i = src.indexOf('function ' + name + '(');

@@ -15,7 +15,7 @@ const tideRow = h.indexOf("tideRow}</div></div>");
 t('비 줄이 기온 줄 바로 아래', tempRow > 0 && rainRow > tempRow && (rainRow - tempRow) < 220);
 t('비 줄이 조위 줄 앞', tideRow > 0 && rainRow < tideRow);
 // 4. 안 오면 숫자 대신 가운뎃점
-t('0mm 이면 · 을 찍는다', /rn!=null && rn>0\) \? rn\.toFixed\(1\) : '·'/.test(h));
+t('0mm 이면 · 을 찍는다', /rn!=null && rn>0\) \? decL\(rn\.toFixed\(1\)\) : '·'/.test(h));
 // 5. 색이 네 단계인가
 t('비 색 함수가 있다', /function wxRainStyle\(/.test(h));
 t('색 단계 4개', (h.match(/function wxRainStyle\(v\)\{[\s\S]*?\n\}/)||[''])[0].split('return').length-1 === 4);

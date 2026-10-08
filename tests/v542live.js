@@ -99,7 +99,7 @@ const SHOT = process.env.SHOT || '';
   await ctx.close();
 
   // ══ 세 화면 × 네 언어 ══
-  const 말 = { ko:['1일', '1년', '시작 시점'], en:['1 day', '1 year', 'Count from'], ru:['1 день', '1 год', 'Отсчёт с'], ja:['1日', '1年', '起点'] };   // 5.43 칩
+  const 말 = { ko:['1일', '1년', '시작 시점'], en:['1 day', '1 year', 'Count from'], ru:['1 день', '1 год', 'Начало отсчёта'], ja:['1日', '1年', '起点'] };   // 5.43 칩
   for(const theme of ['sunset', 'black', 'light']){
     for(const lang of (theme === 'sunset' ? ['en', 'ru', 'ja'] : ['ko', 'en'])){
       const o = await open(theme, lang);

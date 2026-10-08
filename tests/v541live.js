@@ -154,7 +154,7 @@ const SHOT = process.env.SHOT || '';
   await ctx.close();
 
   // ══ 세 화면 × 네 언어 — 단추와 창이 뜨고 글자가 번역되며 오류가 없다 ══
-  const 말 = { ko:['+ 일정', '일정', '반복'], en:['+ Event', 'Event', 'Repeat'], ru:['+ Мероприятие', 'Мероприятие', 'Повтор'], ja:['+ イベント', 'イベント', '繰り返し'] };
+  const 말 = { ko:['+ 일정', '일정', '반복'], en:['+ Event', 'Event', 'Repeat'], ru:['+ Событие', 'Событие', 'Повтор'], ja:['+ イベント', 'イベント', '繰り返し'] };
   for(const theme of ['sunset', 'black', 'light']){
     for(const lang of (theme === 'sunset' ? ['en', 'ru', 'ja'] : ['ko', 'en'])){
       const o = await open(theme, lang);

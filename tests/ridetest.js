@@ -40,7 +40,7 @@ T('법 안내를 한 곳에서만 정한다',
   (src.match(/const RIDE_LAW =/g) || []).length === 1
   && /낚시어선업 신고나 마리나선박 대여업 등록/.test(src));
 T('법 안내가 글 쓰는 화면과 글 안에 모두 나온다',
-  /sub: RIDE_LAW/.test(edit) && /esc\(RIDE_LAW\)/.test(src));
+  /sub: rideLaw\(\)/.test(edit) && /esc\(rideLaw\(\)\)/.test(src));   // 5.45 — 문장마다 사전을 거치게 rideLaw()
 
 // ── 예정 항해
 // ★ 4.12x — 「+」 단추는 화면마다 fabActs() 가 짝을 지어 내놓는다.

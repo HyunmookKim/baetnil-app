@@ -45,7 +45,7 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + n); } else { fail+
 
 // ── 1. 커뮤니티 안에 자리를 잡는다
 {
-  T('커뮤니티 하위에 정박지가 있다', /spots\s*:\s*(t\()?'정박지'/.test(js));
+  T('커뮤니티 하위에 정박지가 있다', /spots\s*:\s*(t\()?'정박지(@@탭)?'/.test(js));
   T('정박지가 그릴 자리가 있다', /id="spotWrap"/.test(src));
   T('탭을 바꾸면 정박지가 나온다', /spotWrap[\s\S]{0,80}?comSub *=== *'spots'/.test(grab(js,'switchTab')||''));
   T('정박지를 그리는 곳이 있다', !!grab(js, 'renderSpots'));

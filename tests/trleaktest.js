@@ -34,9 +34,13 @@ function blockRange(name){
 // ★ 자료 표는 뺀다 — 사전이 아니라 **다른 길로** 보는 사람 말이 되는 것들이다.
 //   SPOT_SEED   정박지 이름은 nameFor(소리), 설명은 trWord(자동 번역) 를 지난다
 //   LANGS       말 이름은 제 나라 말로 적는다 (日本語·한국어·English·Русский)
+//   SPOT_NM·SPOT_NOTE  5.45 — 정박지 이름·설명 줄을 네 말로 사람이 적어 둔 표다. 이 표 자체가 사전이다
 //   LEGAL_DOCS  약관은 나라별 판(EN·JA·RU)이 따로 있다
 const SKIP = ['I18N', 'BAD_OK', 'BAD_WORDS', 'BAD_RU', 'BAD_EN', 'BAD_JA', 'SPOT_SEED', 'LANGS']
   .map(blockList).filter(Boolean)
+  .concat(['SPOT_NM', 'SPOT_NOTE'].map(blockRange).filter(Boolean))   // 이 둘은 {} 표다
+  //   KMA_*  5.46 — 기상청 특보 종류·구역 조각을 영·러·일로 적어 둔 표다(기상청 영어 누리집·気象庁·Росгидромет 말). 이 표 자체가 사전이다
+  .concat(['KMA_KIND', 'KMA_LEVEL', 'KMA_SEA', 'KMA_PART', 'KMA_SIDE', 'KMA_IO', 'KMA_WATER', 'KMA_LAND', 'NEWS_CAT_KEY'].map(blockRange).filter(Boolean))
   //   KANA_어두·KANA_어중 — 가나를 한글로 **읽는** 표다. 사전이 아니라 소리 대조표라
   //     옮길 것이 없다 (국립국어원 「가나와 한글 대조표」).
   //   CAL_DOW·CAL_MON — 요일·달 이름은 **사전으로 못 만든다.**

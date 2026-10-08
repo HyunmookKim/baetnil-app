@@ -1,6 +1,7 @@
 // 배 둘러보기 항해일지 · 편집↔보기 다시 그리기 · 정비 글 배 정보
 const fs = require('fs');
 const src = fs.readFileSync(process.argv[2] || 'work.html', 'utf8');
+require('./helpers546')(src);   // 5.46 단위 기호·특보 이름 도우미
 let ok=0, bad=0;
 const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.log('★ 실패: '+n+(w?' — '+w:''));} };
 const grab=(js,name)=>{ const i=js.indexOf('function '+name+'('); if(i<0) return '';
@@ -164,7 +165,7 @@ T('엔진이 들어간다', /sp\.engine/.test(bl));
 T('배 이름은 안 들어간다', !/b\.name/.test(bl));
 T('길이는 피트와 미터를 함께 쓴다',
   /function mToFt\(/.test(src) && /function loaText\(/.test(src)
-  && /ft \+ ' \(' \+ v \+ 'm\)'/.test(grab(src,'loaText')));
+  && /nU\(ft, 'ft'\) \+ ' \(' \+ nU\(v, 'm'\) \+ '\)'/.test(grab(src,'loaText')));   // 5.46 단위 기호(러시아어 фт·м)
 const rt = grab(src, 'talkRecordText');
 T('정비 글에 배 줄이 붙는다', (rt.match(/const bl = boatLine\(\); if\(bl\) L\.push\(bl\);/g)||[]).length === 2);
 

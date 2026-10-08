@@ -30,21 +30,27 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + n); } else { fail+
 
 // ── 1. ★ 표 하이라이트가 제자리에 — 실제로 계산해서 본다
 {
-  T('표 왼쪽 이름칸 폭이 한 곳에 정해져 있다', /const WLBL\s*=\s*\d+/.test(js));
+  // ★ 5.46 — 러시아어는 칸 이름이 길어 이름칸이 84px 다(WLBL_RU). 폭은 wlblW() 한 곳에서 꺼낸다.
+  T('표 왼쪽 이름칸 폭이 한 곳에 정해져 있다', /const WLBL0\s*=\s*\d+, WLBL_RU\s*=\s*\d+/.test(js) && /function wlblW\(\)/.test(js));
   const rs = grab(js, 'renderWxSel') || '';
   T('하이라이트를 옮기는 곳이 있다', /wxHl|hl\.style\.left/.test(rs));
   // ★ 이름칸 폭을 안 더하면 늘 왼쪽으로 밀린다. 실제로 그랬다.
-  T('하이라이트가 이름칸 폭을 더한다', /WLBL \+ col \* COLW|WLBL \+ col\*COLW/.test(rs));
+  T('하이라이트가 이름칸 폭을 더한다', /wlblW\(\) \+ col \* COLW/.test(rs));
   // 표 전체 폭도 같은 값을 써야 어긋나지 않는다
-  T('표 폭도 같은 값을 쓴다', /N \* COLW \+ WLBL|N\*COLW \+ WLBL/.test(js));
+  T('표 폭도 같은 값을 쓴다', /N \* COLW \+ wlblW\(\)/.test(js));
   T('62 를 코드 여기저기 박지 않는다', (js.match(/\+ ?62\b/g) || []).length === 0);
+  // CSS 폭과 숫자가 같아야 한다 (다르면 하이라이트가 칸 사이에 선다)
+  const w0 = +(js.match(/const WLBL0\s*=\s*(\d+)/)||[])[1], wr = +(js.match(/WLBL_RU\s*=\s*(\d+)/)||[])[1];
+  T('CSS 이름칸 폭 = WLBL0 (' + w0 + ')', new RegExp('\\.wlbl\\{[^}]*width:' + w0 + 'px').test(src));
+  T('CSS 러시아어 이름칸 폭 = WLBL_RU (' + wr + ')', new RegExp('html:lang\\(ru\\) \\.wlbl\\{width:' + wr + 'px').test(src));
   // 값으로 확인
-  let got = null, err = '';
+  let got = null, gotRu = null, err = '';
   try{
-    const m = js.match(/const WLBL\s*=\s*(\d+)/), c = js.match(/const COLW = (\d+)/);
+    const c = js.match(/const COLW = (\d+)/);
     const fn = new Function('WLBL','COLW','col', 'return WLBL + col * COLW;');
-    got = fn(+m[1], +c[1], 22);
+    got = fn(w0, +c[1], 22); gotRu = fn(wr, +c[1], 22);
   }catch(e){ err = e.message; }
+  T('러시아어 22번째 칸의 자리 (84 + 22×34 = 832) — 나온 값: ' + gotRu, gotRu === 832);
   T('22번째 칸의 자리가 맞는다 (62 + 22×34 = 810) — 나온 값: ' + got, got === 810);
 }
 
