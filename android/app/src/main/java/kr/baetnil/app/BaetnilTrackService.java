@@ -130,9 +130,9 @@ public class BaetnilTrackService extends Service implements LocationListener {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String title = (intent != null && intent.getStringExtra("title") != null)
-                     ? intent.getStringExtra("title") : "항해 기록 중";
+                     ? intent.getStringExtra("title") : getString(R.string.trk_noti_title);
         String text  = (intent != null && intent.getStringExtra("text") != null)
-                     ? intent.getStringExtra("text") : "항적을 기록하고 있습니다.";
+                     ? intent.getStringExtra("text") : getString(R.string.trk_noti_text);
         try { startForeground(NOTI_ID, buildNoti(title, text), typeFlag()); }
         catch (Exception e) {
             // ★ 전경으로 못 올라가면 서비스가 곧 죽는다. 조용히 죽지 않고 스스로 멈춘다.
@@ -160,7 +160,10 @@ public class BaetnilTrackService extends Service implements LocationListener {
     private Notification buildNoti(String title, String text) {
         NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= 26 && nm != null) {
-            NotificationChannel ch = new NotificationChannel(CH_ID, "항해 기록", NotificationManager.IMPORTANCE_LOW);
+            NotificationChannel ch = new NotificationChannel(CH_ID,
+                    // ★ 5.45 — 폰 설정 › 알림에 나오는 이름. 한국어로 박혀 있어 외국 폰에도 「항해 기록」 이 떴다
+                    getString(R.string.capacitor_background_geolocation_notification_channel_name),
+                    NotificationManager.IMPORTANCE_LOW);
             ch.setShowBadge(false);
             nm.createNotificationChannel(ch);
         }

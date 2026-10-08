@@ -90,8 +90,8 @@ public class BaetnilTrack extends Plugin {
         }
         try {
             Intent i = new Intent(getContext(), BaetnilTrackService.class);
-            i.putExtra("title", call.getString("title", "항해 기록 중"));
-            i.putExtra("text",  call.getString("text",  "항적을 기록하고 있습니다."));
+            i.putExtra("title", call.getString("title", getContext().getString(R.string.trk_noti_title)));
+            i.putExtra("text",  call.getString("text",  getContext().getString(R.string.trk_noti_text)));
             // ★ 5.40 — 기록 간격 (사람이 설정에서 정한다 · OsmAnd 「기록 간격」 값)
             i.putExtra("ms", (long) call.getInt("ms", 5000));
             if (Build.VERSION.SDK_INT >= 26) ContextCompat.startForegroundService(getContext(), i);
