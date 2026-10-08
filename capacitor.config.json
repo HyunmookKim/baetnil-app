@@ -14,7 +14,8 @@
       "@capacitor/haptics",
       "@capacitor/local-notifications",
       "@capacitor/share",
-      "@ebarooni/capacitor-calendar"
+      "@ebarooni/capacitor-calendar",
+      "@capacitor-community/in-app-review"
     ]
   },
   "ios": {
