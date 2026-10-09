@@ -178,9 +178,14 @@ jobs:
           set -e
           APK=$(ls android/app/build/outputs/apk/release/*.apk | head -1)
           echo "만든 파일: $APK ($(du -h "$APK" | cut -f1))"
-          jarsigner -verify "$APK" > /tmp/apkverify.txt 2>&1 || true
-          head -10 /tmp/apkverify.txt
-          grep -q 'jar verified' /tmp/apkverify.txt \
+          # ★ 5.48 — 최소 SDK 를 24 로 올리자 안드로이드 빌드 도구가 APK 의 옛 서명(v1, JAR)을 빼고
+          #   새 서명(v2·v3)만 붙인다(안드로이드 7.0 부터는 v2 만으로 된다). jarsigner 는 v1 만 보므로
+          #   「서명이 안 붙었다」 고 잘못 말했다. APK 는 안드로이드 공식 도구 apksigner 로 본다.
+          #   (AAB 는 여전히 JAR 서명이라 위의 jarsigner 확인 그대로)
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          "$BT/apksigner" verify --verbose "$APK" > /tmp/apkverify.txt 2>&1 || true
+          head -12 /tmp/apkverify.txt
+          grep -q '^Verifies' /tmp/apkverify.txt \
             || { echo "::error::APK 에 서명이 안 붙었습니다. 이대로는 지금 깔린 앱 위에 안 덮입니다."; exit 1; }
           VER=$(grep -o "const APP_VER = '[^']*'" www/index.html | head -1 | sed "s/.*'\(.*\)'/\1/")
           cp "$APK" "baetnil-$VER.apk"
