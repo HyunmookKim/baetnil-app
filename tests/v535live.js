@@ -132,7 +132,7 @@ async function run(br, lang){
   // 목록 이름
   await pg.evaluate(() => ckListMenu(ckLists()[0].id));
   await pg.waitForTimeout(300);
-  const lf = await pg.evaluate(() => ({ name: ckLists()[0].name, title: document.getElementById('lkFormTitle').textContent, v: [...document.querySelectorAll('#formOv input')].map(i => i.value), del: /목록 삭제|Delete the list/i.test(document.getElementById('formOv').innerText) }));
+  const lf = await pg.evaluate(() => ({ name: ckLists()[0].name, title: document.getElementById('lkFormTitle').textContent, v: [...document.querySelectorAll('#formOv input')].map(i => i.value), del: /목록 삭제|Delete list/i.test(document.getElementById('formOv').innerText) }));
   T(L + '「목록 수정」 이 바로 목록 화면 (이름 칸에 목록 이름 · 목록 삭제)', lf.v[0] === lf.name && lf.del, lf);
   await pg.evaluate(() => { try{ closeForm(); }catch(_){ const o = document.getElementById('formOv'); if(o) o.style.display = 'none'; } });
 

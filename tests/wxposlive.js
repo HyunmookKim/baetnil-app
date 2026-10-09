@@ -141,7 +141,7 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.lo
     mrOpenId = v.id; openMR('voyage', v.id);
     return document.getElementById('mrPanel').innerText;
   });
-  T('영어에서도 어디 예보인지 나온다', /forecast at this position/.test(en), en.slice(0,220));
+  T('영어에서도 어디 예보인지 나온다', /forecast for this position/.test(en), en.slice(0,220));
   T('영어 화면에 새 열쇠의 한국어가 새지 않는다', !/이 자리|예보/.test(en),
     (en.match(/(이 자리|예보)/g)||[]));
 

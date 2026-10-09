@@ -55,7 +55,7 @@ const leftover = txt => {
     return out;
   });
   T('로그인 오류 안내가 영어로 나온다',
-    login.한줄 === 'Please check the email format.', login.한줄);
+    login.한줄 === 'Enter a valid email address.', login.한줄);   // 5.45 현지말 대조(#176)에서 바꾼 영어 문구
   const badLogin = leftover(login.오류.join(' '));
   T('로그인 오류 13가지에 한국어가 안 남는다 — ' + badLogin.length + '개', badLogin.length===0, badLogin);
 

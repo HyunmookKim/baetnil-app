@@ -59,7 +59,7 @@ async function run(br, lang){
   await pg.evaluate(() => gearStatePick(window.__g));
   await pg.waitForTimeout(300);
   const pickTxt = await pg.evaluate(() => document.getElementById('formOv').innerText);
-  T(L + '상태 고르기에 「고장 → 수리목록에 추가됩니다」 가 보인다', /수리목록에 추가됩니다|Added to Repairs/.test(pickTxt), pickTxt.slice(0, 200));
+  T(L + '상태 고르기에 「고장 → 수리목록에 추가됩니다」 가 보인다', /수리목록에 추가됩니다|Will be added to the repair list/.test(pickTxt), pickTxt.slice(0, 200));
   await pg.evaluate(() => { formPick.s = 'bad'; formOk(); });
   await pg.waitForTimeout(400);
   const f1 = await pg.evaluate(() => ({ title: document.getElementById('lkFormTitle').textContent, open: getComputedStyle(document.getElementById('formOv')).display !== 'none', n: repair.length }));
@@ -73,7 +73,7 @@ async function run(br, lang){
   await pg.waitForTimeout(500);
   const f3 = await pg.evaluate(() => ({ n: repair.length, last: repair[repair.length - 1], screen: mrOpenType, snack: (document.getElementById('snack') || {}).innerText || '' }));
   T(L + '추가하면 내용·장비 연결된 수리 기록 하나', f3.n === r0 + 1 && f3.last.title === '물이 안 빠짐' && f3.last.gearId === String(await pg.evaluate(() => window.__g)), f3);
-  T(L + '장비 화면에 그대로 있고 「수리목록에 추가했습니다」 알림', f3.screen === 'gear' && /수리목록에 추가했습니다|Added to Repairs/.test(f3.snack), f3);
+  T(L + '장비 화면에 그대로 있고 「수리목록에 추가했습니다」 알림', f3.screen === 'gear' && /수리목록에 추가했습니다|Added to repair list/.test(f3.snack), f3);
   await shot('2-gear-fault-added');
 
   // ── ② 머리 단추: 왼쪽 취소 · 오른쪽 저장

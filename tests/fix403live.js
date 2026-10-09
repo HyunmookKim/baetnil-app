@@ -98,7 +98,7 @@ const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);}
     const d=document.createElement('div'); d.innerHTML = wxLine(w, '');
     return d.innerText; });
   T('★ 영어로 바꾸면 저장된 날씨 글도 영어가 된다',
-    !/[가-힣]/.test(wxEn) && /12kt/.test(wxEn), wxEn);
+    !/[가-힣]/.test(wxEn) && /12\skt\s\(gusts 18\)/.test(wxEn), wxEn);   // 5.45 단위 띄어쓰기 · 5.47 괄호 앞 띄어쓰기(영·러)
   T('숫자는 그대로다', /0\.8/.test(wxEn) && /130/.test(wxEn) && /24\u2103/.test(wxEn), wxEn);
   // 옛 기록(숫자 없이 글만)은 그대로 남는다
   const wxOld = await pg.evaluate(()=>{
