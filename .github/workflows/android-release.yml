@@ -33,7 +33,7 @@ on:
         description: '어느 줄에 올릴까요?'
         type: choice
         options: [internal, alpha, beta, production]
-        default: internal
+        default: production
       upload:
         description: '구글에 올릴까요? (아니요 = 만들어지는지만 확인)'
         type: boolean
