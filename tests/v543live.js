@@ -57,11 +57,11 @@ const SHOT = process.env.SHOT || '';
   }
   const goVoy = pg => pg.evaluate(() => { boatSubTab = 'voyage'; switchTab('boat'); });
   const 숫자 = pg => pg.evaluate(() => [...document.querySelectorAll('#voyageList .statrow .stat b')].map(b => b.textContent.trim()).join());
-  const 칩 = pg => pg.evaluate(() => [...document.querySelectorAll('#voyageList .perrow .tab')].map(b => b.textContent.trim() + (b.classList.contains('on') ? '*' : '')).join('|'));
+  const 칩 = pg => pg.evaluate(() => [...document.querySelectorAll('#voyageList .perseg > button')].map(b => b.textContent.trim() + (b.classList.contains('on') ? '*' : '')).join('|'));
   const 줄 = pg => pg.evaluate(() => { const n = document.querySelector('#voyageList .pernav'); if(!n) return null;
     const bs = [...n.querySelectorAll('.calnav')];
     return { title: (n.querySelector('.calym') || {}).textContent.trim(), prev: bs[0] ? !bs[0].disabled : null, next: bs[1] ? !bs[1].disabled : null, arrows: bs.length }; });
-  const 누름 = async (pg, name) => { await pg.locator('#voyageList .perrow .tab', { hasText: name }).first().click(); await sleep(350); };
+  const 누름 = async (pg, name) => { await pg.locator('#voyageList .perseg > button', { hasText: name }).first().click(); await sleep(350); };
   const 넘김 = async (pg, n) => { await pg.locator('#voyageList .pernav .calnav').nth(n < 0 ? 0 : 1).click(); await sleep(350); };
 
   // ══ ① 항해 기간 ══
@@ -97,7 +97,7 @@ const SHOT = process.env.SHOT || '';
   await 누름(pg, '전체');
   T('① 전체 — 넘기는 줄 없음, 예정 빼고 다 (6 · 210 · 21)', (await 줄(pg)) === null && (await 숫자(pg)) === '6,210,21', await 숫자(pg));
   // 다섯 칩이 한 줄에 다 들어간다 (5.42 는 「직접 입력」 이 잘렸다)
-  const 들어감 = await pg.evaluate(() => { const R = document.querySelector('#voyageList .perrow'); return { sw: R.scrollWidth, cw: R.clientWidth }; });
+  const 들어감 = await pg.evaluate(() => { const R = document.querySelector('#voyageList .perseg'); return { sw: R.scrollWidth, cw: R.clientWidth }; });
   T('① 다섯 칩이 폰(390) 한 줄에 다 들어간다', 들어감.sw <= 들어감.cw + 1, 들어감);
   // 직접 입력
   await 누름(pg, '직접 입력');
@@ -221,11 +221,12 @@ const SHOT = process.env.SHOT || '';
     for(const lang of ['ko', 'en', 'ru', 'ja']){
       const o = await open(theme, lang);
       await goVoy(o.pg); await sleep(500);
-      const r = await o.pg.evaluate(() => { const R = document.querySelector('#voyageList .perrow');
-        return { c: [...R.querySelectorAll('.tab')].map(b => b.textContent.trim()), sw: R.scrollWidth, cw: R.clientWidth,
+      const r = await o.pg.evaluate(() => { const R = document.querySelector('#voyageList .perseg');
+        return { c: [...R.querySelectorAll('button')].map(b => b.textContent.trim()), sw: R.scrollWidth, cw: R.clientWidth,
+                 cut: [...R.querySelectorAll('button')].filter(b => b.scrollWidth > b.clientWidth).map(b => b.textContent.trim()),   // 5.49 — 칸 안 글자가 잘리면(…) 안 된다
                  title: (document.querySelector('#voyageList .pernav .calym') || {}).textContent }; });
       if(SHOT) await o.pg.screenshot({ path: SHOT + '-' + theme + '-' + lang + '-voy.png', clip:{ x:0, y:0, width:390, height:420 } });
-      T('④ ' + theme + '·' + lang + ' — 칩 다섯이 번역되고 한 줄에 들어간다', r.c.length === 5 && !r.c.some(x => /[가-힣]/.test(x) && lang !== 'ko') && r.sw <= r.cw + 1, r);
+      T('④ ' + theme + '·' + lang + ' — 칩 다섯이 번역되고 한 줄에 들어간다', r.c.length === 5 && !r.c.some(x => /[가-힣]/.test(x) && lang !== 'ko') && r.sw <= r.cw + 1 && r.cut.length === 0, r);
       T('④ ' + theme + '·' + lang + ' — 넘기는 줄 제목(올해)', !!r.title && r.title.indexOf(String(new Date().getFullYear())) >= 0 && (lang === 'ko' || !/년/.test(r.title)), r.title);
       if(말[lang]) T('④ ' + lang + ' 칩 글', r.c.join('|') === 말[lang].join('|'), r.c);
       await o.pg.evaluate(() => { boatSubTab = 'maint'; mntSub = 'fuel'; switchTab('boat'); }); await sleep(500);

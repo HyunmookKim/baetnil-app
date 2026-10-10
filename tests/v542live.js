@@ -104,7 +104,7 @@ const SHOT = process.env.SHOT || '';
     for(const lang of (theme === 'sunset' ? ['en', 'ru', 'ja'] : ['ko', 'en'])){
       const o = await open(theme, lang);
       await o.pg.evaluate(() => { boatSubTab = 'voyage'; switchTab('boat'); }); await sleep(500);
-      const r = await o.pg.evaluate(() => [...document.querySelectorAll('#voyageList .perrow .tab')].map(b => b.textContent.trim()));
+      const r = await o.pg.evaluate(() => [...document.querySelectorAll('#voyageList .perseg > button')].map(b => b.textContent.trim()));
       if(SHOT) await o.pg.screenshot({ path: SHOT + '-' + theme + '-' + lang + '-voy.png' });
       await o.pg.evaluate(() => { boatSubTab = 'maint'; mntSub = 'fuel'; switchTab('boat'); }); await sleep(500);
       await o.pg.evaluate(() => ehFromPick()); await sleep(300);
