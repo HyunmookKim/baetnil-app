@@ -128,7 +128,7 @@ const T = (n, c, x) => { if(c){ ok++; console.log('통과: ' + n); }
       await look('openRanks');
       const 전 = await pg.evaluate(() => rankList(curBoat()).length);
       await pg.evaluate(() => { const b2 = [...document.querySelectorAll('#mrPanel button')]
-        .find(x => /등급 만들기/.test(x.innerText)); if(b2) b2.click(); });
+        .find(x => /등급 추가|등급 만들기/.test(x.innerText)); if(b2) b2.click(); });
       await pg.waitForTimeout(700);
       T('새 등급 창이 열린다', await pg.evaluate(() => {
         const o = document.getElementById('formOv'); return !!(o && o.offsetParent !== null); }));
