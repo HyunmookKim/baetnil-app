@@ -54,7 +54,7 @@ async function sweep(FILE){
         for(const el of document.querySelectorAll(sel)){
           const cs = getComputedStyle(el); if(cs.display === 'none' || cs.visibility === 'hidden') continue;
           const b = el.getBoundingClientRect(); if(b.width < 2 || b.height < 2) continue;
-          if(b.right > window.innerWidth + 1 || b.left < -1) { r.push('밖:' + el.textContent.trim().slice(0, 40)); continue; }
+          if(b.right > window.innerWidth + 1 || b.left < -1) { let a = el.parentElement, sc = false; while(a && a !== document.body){ const s2 = getComputedStyle(a); if(/auto|scroll/.test(s2.overflowX) && a.scrollWidth > a.clientWidth + 1){ sc = true; break; } a = a.parentElement; } if(!sc) r.push('밖:' + el.textContent.trim().slice(0, 40)); continue; }   // 옆으로 미는 줄 안이면 밀어서 보임 — 넘침 아님 (2026-10-10)
           if(el.scrollWidth > el.clientWidth + 2 && cs.overflow !== 'visible' && el.textContent.trim().length > 1) r.push('잘림:' + el.textContent.trim().slice(0, 40));
         }
         return r;
