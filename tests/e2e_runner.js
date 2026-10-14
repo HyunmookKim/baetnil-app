@@ -481,6 +481,37 @@
     await until(function(){ return v && v.trk && v.trk.length >= 2; }, 10000, '항해에 항적 저장');
     await shot('15-voyage-done');
   });
+  // ★★★ 5.50 — 예정 항해에서 「출항했습니다」 → 「출항 기록」 을 누르면 앱이 꺼졌다 (사장님, 2026-10-14)
+  //   지난 날짜의 예정 항해(사장님 화면: 10/7 17:30 예정을 10/14 에 기록)를 사람이 누르는 순서 그대로 누른다.
+  //   ① 기록 중인 항해가 없을 때 ② 다른 항해를 기록하는 중일 때 — 두 경우 다 본다.
+  async function planGo(tag){
+    unlock(); goVoyage(); await sleep(500);
+    var d = new Date(); d.setDate(d.getDate() - 7);
+    var p2 = function(n){ return String(n).padStart(2, '0'); };
+    var n = voyage.length; addPlan(d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()));
+    await until(function(){ return voyage.length > n; }, 5000);
+    var v = newest(voyage); v.timeOut = '17:30'; saveMR(); openMR('voyage', v.id); await sleep(600);
+    var b = [].slice.call(document.querySelectorAll('#mrPanel button')).find(function(x){ return /출항했습니다/.test(x.textContent); });
+    if(!b) throw new Error('「출항했습니다」 단추 없음');
+    log('INFO 출항했습니다 누름 (' + tag + ')');
+    b.click();
+    await until(function(){ return !isPlan(getMR('voyage', v.id)); }, 15000, '예정이 항해일지로 바뀜');
+    await until(function(){ return typeof trkNow !== 'undefined' && trkNow && String(trkNow.vid) === String(v.id); }, 30000, '항적 켜짐');
+    await sleep(8000);   // 안드로이드가 전경 서비스를 못 올리면 5~10초 안에 앱을 죽인다 — 그 뒤까지 살아 있는가
+    var st = null; try{ st = await window.Capacitor.Plugins.BaetnilTrack.status(); }catch(_){}
+    log('INFO 출항 뒤 기록 장치 ' + JSON.stringify(st));
+    return v;
+  }
+  step('항해 — 예정에서 출항했습니다 (기록 중인 항해 없음)', async function(){
+    var v = await planGo('기록 없음'); S.plan1 = String(v.id); keep(S);
+    await shot('15b-plan-start');
+  });
+  step('항해 — 예정에서 출항했습니다 (다른 항해 기록 중)', async function(){
+    var v = await planGo('기록 중');
+    openMR('voyage', v.id); await sleep(400);
+    arriveNow();
+    await until(function(){ return !(typeof trkNow !== 'undefined' && trkNow && trkNow.vid); }, 20000, '항적 멈춤');
+  });
   step('승선 이력 종이', async function(){
     crewCvExport();
     // ★ 5.15 — 승선 이력은 서버에서 항해를 찾아온 뒤에 뜬다. 에뮬레이터는 1.5초 안에 못 받는다 → 15초까지 기다린다.
