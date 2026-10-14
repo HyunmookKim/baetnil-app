@@ -1,0 +1,44 @@
+⚡️  Loading app at capacitor://localhost...
+[ FirebaseAuthentication ]  <CapacitorFirebaseAuthentication.RuntimeError: 0x103199e40>
+⚡️  To Native ->  App addListener 74824314
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-app
+⚡️  To Native ->  StatusBar setStyle 74824315
+⚡️  TO JS {}
+⚡️  WebView loaded
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-app
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-firestore
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-firestore
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-auth
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-auth
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-storage
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-storage
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-functions
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-functions
+⚡️  [log] - [baetnil-boot] 시작하기
+⚡️  [log] - [baetnil-boot] 자료방
+⚡️  [log] - [baetnil-boot] 로그인
+⚡️  [log] - [baetnil-boot] 사진창고
+⚡️  [log] - [baetnil-boot] 붙었습니다
+⚡️  To Native ->  BaetnilTrack status 74824316
+⚡️  TO JS {"bytes":0,"pauses":0,"still":false,"running":false,"relaunch":false}
+⚡️  To Native ->  StatusBar setStyle 74824317
+⚡️  TO JS {}
+⚡️  To Native ->  LocalNotifications createChannel 74824318
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","message":"not implemented","data":{},"errorMessage":"not implemented"}
+⚡️  To Native ->  LocalNotifications createChannel 74824319
+⚡️  [error] - {"code":"UNIMPLEMENTED","message":"not implemented","data":{},"errorMessage":"not implemented"}
+ERROR MESSAGE:  {"code":"UNIMPLEMENTED","data":{},"errorMessage":"not implemented","message":"not implemented"}
+⚡️  To Native ->  LocalNotifications getPending 74824320
+⚡️  [error] - {"code":"UNIMPLEMENTED","data":{},"errorMessage":"not implemented","message":"not implemented"}
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  To Native ->  StatusBar setStyle 74824321
+⚡️  TO JS {}
+⚡️  [log] - [baetnil-e2e] NATIVE google
+⚡️  To Native ->  FirebaseAuthentication signInWithGoogle 74824322
+⚡️  To Native ->  Filesystem appendFile 74824323
+⚡️  TO JS undefined
+[ FirebaseAuthentication ]  The user canceled the sign-in flow.
+ERROR MESSAGE:  {"message":"The user canceled the sign-in flow.","errorMessage":"The user canceled the sign-in flow."}
+⚡️  [error] - {"message":"The user canceled the sign-in flow.","errorMessage":"The user canceled the sign-in flow."}

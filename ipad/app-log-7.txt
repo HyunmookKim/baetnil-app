@@ -1,0 +1,40 @@
+⚡️  Loading app at capacitor://localhost...
+[ FirebaseAuthentication ]  <CapacitorFirebaseAuthentication.RuntimeError: 0x13544dc00>
+⚡️  To Native ->  App addListener 131341453
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-app
+⚡️  To Native ->  StatusBar setStyle 131341454
+⚡️  TO JS {}
+⚡️  WebView loaded
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-app
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-firestore
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-firestore
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-auth
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-auth
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-storage
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-storage
+⚡️  [log] - [baetnil-boot] 불러오는 중: firebase-functions
+⚡️  [log] - [baetnil-boot] 불러옴: firebase-functions
+⚡️  [log] - [baetnil-boot] 시작하기
+⚡️  [log] - [baetnil-boot] 자료방
+⚡️  [log] - [baetnil-boot] 로그인
+⚡️  [log] - [baetnil-boot] 사진창고
+⚡️  [log] - [baetnil-boot] 붙었습니다
+⚡️  To Native ->  BaetnilTrack status 131341455
+⚡️  TO JS {"still":false,"running":false,"relaunch":false,"bytes":0,"pauses":0}
+⚡️  To Native ->  StatusBar setStyle 131341456
+⚡️  TO JS {}
+⚡️  To Native ->  LocalNotifications createChannel 131341457
+ERROR MESSAGE:  {"errorMessage":"not implemented","message":"not implemented","code":"UNIMPLEMENTED","data":{}}
+⚡️  [error] - {"errorMessage":"not implemented","message":"not implemented","code":"UNIMPLEMENTED","data":{}}
+⚡️  To Native ->  LocalNotifications createChannel 131341458
+ERROR MESSAGE:  {"data":{},"errorMessage":"not implemented","code":"UNIMPLEMENTED","message":"not implemented"}
+⚡️  To Native ->  LocalNotifications getPending ⚡️  [error] - {"data":{},"errorMessage":"not implemented","code":"UNIMPLEMENTED","message":"not implemented"}
+131341459
+num of pending notifications 0
+[]
+⚡️  TO JS {"notifications":[]}
+⚡️  [log] - [baetnil-e2e] DONE 56/63 fail=0
+⚡️  To Native ->  Filesystem appendFile 131341460
+⚡️  TO JS undefined
+⚡️  To Native ->  StatusBar setStyle 131341461
+⚡️  TO JS {}
