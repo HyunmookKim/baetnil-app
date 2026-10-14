@@ -8,6 +8,7 @@ const pro = fs.readFileSync(path.join(root, 'android/app/proguard-rules.pro'), '
   .split('\n').filter(l => !/^\s*#/.test(l)).join('\n');
 const gradle = fs.readFileSync(path.join(root, 'android/app/build.gradle'), 'utf8');
 const r8 = /minifyEnabled\s+true/.test(gradle);
+T('★ 5.52 사장님 지시 — 코드 줄이기(R8)를 켜지 않는다 (「앞으론 절대 줄이지마」)', !r8);
 T('R8 을 쓰면 캐퍼시터 주석 틀을 지킨다 (-keep @interface com.getcapacitor.** { *; })',
   !r8 || /-keep\s+@interface\s+com\.getcapacitor\.\*\*\s*\{\s*\*;\s*\}/.test(pro));
 T('com.getcapacitor 전체를 지키는 넓은 규칙은 없다 (줄이기가 안 됨)', !/-keep\s+class\s+com\.getcapacitor\.\*\*/.test(pro));
