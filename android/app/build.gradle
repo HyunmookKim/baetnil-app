@@ -78,7 +78,10 @@ android {
             //   ★ 자원 줄이기(shrinkResources)는 켜지 않는다 — 알림 아이콘·소리를 이름으로 찾는 부품(local-notifications
             //     AssetUtil.getResourceID)이 있어, 쓰지 않는 듯 보이는 자원을 지우면 알림 아이콘이 사라질 수 있다.
             //   ★ R8 이 정리한 이름표(mapping)는 AAB 안에 들어가 플레이가 오류 보고를 원래 이름으로 풀어 준다.
-            minifyEnabled true
+            // ★★★★ 5.52 (2026-10-14) — 줄이기를 끈다. 사장님: 「아니 왜 코드를 줄이냐」·「앞으론 절대 줄이지마」.
+            //   5.33 에 플레이 경고(DEX 최적화·난독화)를 없앤다고 여쭙지 않고 켰다가, 5.48 플레이판에서
+            //   항적을 켜면 앱이 꺼졌다(R8 이 캐퍼시터 주석을 지움 · capacitor #8589). 다시 켜지 말 것.
+            minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             // ★ 열쇠가 있을 때만 붙인다. 없으면 서명 없이 지어진다(스토어에는 못 낸다).
