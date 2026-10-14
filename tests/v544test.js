@@ -4,7 +4,7 @@ const fs = require('fs'), path = require('path');
 const src = fs.readFileSync(process.argv[2] || path.join(__dirname, '..', 'www', 'index.html'), 'utf8');
 let ok = 0, bad = 0;
 const T = (n, c, w) => { if(c){ ok++; console.log('통과: ' + n); } else { bad++; console.log('★ 실패: ' + n + (w !== undefined ? ' — ' + JSON.stringify(w).slice(0, 300) : '')); } };
-T('판 5.44 이상', /const APP_VER = '5\.(4[4-9])';/.test(src));
+T('판 5.44 이상', /const APP_VER = '5\.(4[4-9]|[5-9]\d)';/.test(src));
 const a = src.indexOf('      async pull(base){'), z = src.indexOf('      async pullColl(name){', a);
 const body = a > 0 && z > a ? src.slice(a + '      async '.length, z).trim().replace(/,\s*$/, '') : '';
 T('pull 함수를 찾았다', !!body);

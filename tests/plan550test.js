@@ -1,0 +1,26 @@
+// 5.50 — 지난 예정 항해를 나중에 적을 때 날짜·시각을 「지금」 으로 덮지 않는다 (사장님, 2026-10-14)
+const fs = require('fs');
+const src = fs.readFileSync(process.argv[2] || 'work.html', 'utf8');
+let ok = 0, bad = 0;
+const T = (n, c, w) => { if(c){ ok++; console.log('통과: ' + n); } else { bad++; console.log('★ 실패: ' + n + (w ? ' — ' + w : '')); } };
+const grab = name => { const i = src.indexOf('function ' + name + '('); if(i < 0) return '';
+  let d = 0, st = src.indexOf('{', i); for(let j = st; j < src.length; j++){ if(src[j] === '{') d++; else if(src[j] === '}'){ d--; if(!d) return src.slice(i, j + 1); } } return ''; };
+const voyDay = v => /^\d{4}-\d{2}-\d{2}$/.test(String(v || '').trim()) ? String(v).trim() : '';
+const hm = v => { const m = String(v||'').trim().match(/^(\d{1,2})\s*[:시]?\s*(\d{1,2})$/); if(!m) return String(v||'');
+  return String(Math.min(23,+m[1])).padStart(2,'0') + ':' + String(Math.min(59,+m[2])).padStart(2,'0'); };
+const planPast = eval('(' + grab('planPast') + ')');
+const p = n => String(n).padStart(2, '0');
+const d0 = new Date(), ymd = d => d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate());
+const ago = new Date(d0); ago.setDate(ago.getDate() - 7);
+const fut = new Date(d0); fut.setDate(fut.getDate() + 3);
+T('일주일 전 17:30 예정은 지난 것', planPast({ date: ymd(ago), timeOut: '17:30' }));
+T('사흘 뒤 예정은 아직', !planPast({ date: ymd(fut), timeOut: '09:00' }));
+T('오늘 시각 없는 예정은 아직(오늘 끝까지)', !planPast({ date: ymd(d0), timeOut: '' }));
+T('날짜 없는 것은 지난 것으로 안 침', !planPast({ date: '', timeOut: '' }));
+const ps = grab('planStart'), pl = grab('planLate');
+T('지났으면 셋 중에서 고른다', /'now'/.test(ps) && /'plan'/.test(ps) && /'set'/.test(ps));
+T('지금 출항만 날짜·시각을 덮는다 — 늦은 기록은 planLate 로 빠진다', ps.indexOf("planLate(it, how)") > 0 && ps.indexOf("planLate(it, how)") < ps.indexOf('it.date = today()'));
+T('늦은 기록은 날짜·시각을 안 건드린다', pl && !/it\.date\s*=/.test(pl) && !/timeOut\s*=/.test(pl));
+T('늦은 기록은 위치·날씨·항적을 안 켠다', pl && !/posHere|wxCapture|trkStart/.test(pl));
+console.log('합계: ' + ok + '개 통과 / ' + bad + '개 실패');
+process.exit(bad ? 1 : 0);

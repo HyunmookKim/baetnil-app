@@ -512,6 +512,28 @@
     arriveNow();
     await until(function(){ return !(typeof trkNow !== 'undefined' && trkNow && trkNow.vid); }, 20000, '항적 멈춤');
   });
+  // ★ 5.50 — 지난 예정을 「예정 시각으로 기록」 하면 날짜·시각이 그대로 남고 항적은 안 켜진다
+  step('항해 — 지난 예정을 예정 시각으로 기록', async function(){
+    unlock(); goVoyage(); await sleep(500);
+    var d = new Date(); d.setDate(d.getDate() - 7);
+    var p2 = function(n){ return String(n).padStart(2, '0'); };
+    var day = d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate());
+    var n = voyage.length; addPlan(day);
+    await until(function(){ return voyage.length > n; }, 5000);
+    var v = newest(voyage); v.timeOut = '17:30'; saveMR(); openMR('voyage', v.id); await sleep(600);
+    autoYes = false;
+    try{
+      planStart();
+      await until(function(){ return typeof tellIsOpen === 'function' && tellIsOpen(); }, 5000, '고르는 창');
+      await shot('15c-plan-choice');
+      tellDone('plan');
+      await until(function(){ return !isPlan(getMR('voyage', v.id)); }, 5000, '항해일지로 바뀜');
+    } finally { autoYes = true; }
+    var w = getMR('voyage', v.id);
+    if(w.date !== day || w.timeOut !== '17:30') throw new Error('날짜·시각이 바뀜 ' + w.date + ' ' + w.timeOut);
+    await sleep(3000);
+    if(typeof trkNow !== 'undefined' && trkNow && String(trkNow.vid) === String(v.id)) throw new Error('항적이 켜짐');
+  });
   step('승선 이력 종이', async function(){
     crewCvExport();
     // ★ 5.15 — 승선 이력은 서버에서 항해를 찾아온 뒤에 뜬다. 에뮬레이터는 1.5초 안에 못 받는다 → 15초까지 기다린다.
