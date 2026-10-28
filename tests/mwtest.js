@@ -12,7 +12,7 @@ const server = http.createServer((rq,rs)=>{
 let ok=0,bad=0;
 const T=(n,c,w)=>{ if(c){ok++;console.log('통과: '+n);} else {bad++;console.log('★ 실패: '+n+(w!==undefined?' — '+JSON.stringify(w).slice(0,260):''));} };
 // 수집기의 파서로 만든 것과 같은 모양
-const COL = ['/home/claude/gh/scripts/collect_metarea.js', path.join(__dirname, '../../gh/scripts/collect_metarea.js')].find(f => fs.existsSync(f));
+const COL = ['/home/claude/gh/scripts/collect_metarea.js', '/home/claude/webout/scripts/collect_metarea.js', path.join(__dirname, '../../gh/scripts/collect_metarea.js')].find(f => fs.existsSync(f));
 const SAMPLE = `WWJP90 RJTD 221200
 WARNING AND SUMMARY 221200.
 WARNING VALID 231200.
@@ -35,7 +35,7 @@ T('★ 출처를 적는다', /출처 — WMO METAREA XI 먼바다 경보/.test(s
 (async ()=>{
   await new Promise(r=>server.listen(0,r));
   const url = 'http://127.0.0.1:'+server.address().port+'/';
-  const br = await chromium.launch({ executablePath:'/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+  const br = await chromium.launch({ executablePath: ['/opt/pw-browsers/chromium-1194/chrome-linux/chrome', '/opt/pw-browsers/chromium'].find(f => fs.existsSync(f)) });
   const ctx = await br.newContext({ locale:'ko-KR', timezoneId:'Asia/Seoul', viewport:{width:390,height:800} });
   const pg = await ctx.newPage();
   await pg.route('**/*.json*', r => /warn-metarea11/.test(r.request().url())
@@ -54,6 +54,13 @@ T('★ 출처를 적는다', /출처 — WMO METAREA XI 먼바다 경보/.test(s
     out.pk = mwFor(53.0, 158.6).length;
     wxCur = { id:'y', lat: 34.74, lon: 127.68 };                 // 여수 — 한국 해역은 이것을 안 쓴다
     out.kr = wxSpotFarSea(); out.krBox = mwAlertBox();
+    // ★ 5.54 — 수집기가 NOAA 사본으로 받은 날은 출처·원문도 그쪽을 가리킨다
+    wxCur = { id:'v', lat: 43.11, lon: 131.88 };
+    const keep = mwCache;
+    mwCache = Object.assign({}, keep, { via:'noaa', head:'WWJP27 RJTD 221200' });
+    out.noaaBox = mwAlertBox();
+    mwCache = keep;
+    out.wmoBox = mwAlertBox();
     return out;
   });
   T('★★ 블라디보스토크는 먼 바다 경보를 쓰는 자리다', r.far === true, r);
@@ -61,6 +68,9 @@ T('★ 출처를 적는다', /출처 — WMO METAREA XI 먼바다 경보/.test(s
   T('★★ 화면 상자가 「발효 중」 과 「강풍 경보」 를 적는다', /먼바다 해상경보 발효 중/.test(r.box) && /강풍 경보/.test(r.box), String(r.box).slice(0, 200));
   T('★★ 코르사코프는 오호츠크해 안개 경보에 걸린다', r.kors.length === 1 && r.kors[0] === 'WARNING', r.kors);
   T('★★ 한국 해역(여수)은 이것을 안 쓴다 (한국 기상청 특보를 쓴다)', r.kr === false && r.krBox === '', r);
+  T('★★★ NOAA 사본으로 받은 날은 출처가 NOAA·WWJP27 이다', /WWJP27/.test(r.noaaBox) && /NOAA/.test(r.noaaBox) && !/WWJP90/.test(r.noaaBox), String(r.noaaBox).slice(-400));
+  T('★★★ NOAA 사본으로 받은 날은 원문도 NOAA 를 건다', /tgftp\.nws\.noaa\.gov/.test(r.noaaBox) && !/wwmiws\.wmo\.int/.test(r.noaaBox));
+  T('★★ WMO 에서 받은 날은 예전 그대로 WMO·WWJP90', /WWJP90/.test(r.wmoBox) && /wwmiws\.wmo\.int/.test(r.wmoBox) && !/NOAA/.test(r.wmoBox));
   await br.close(); server.close();
   console.log('\n합계: ' + ok + '개 통과 / ' + bad + '개 실패');
   process.exit(bad ? 1 : 0);

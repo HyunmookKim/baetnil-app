@@ -34,9 +34,10 @@ T('★★ 못 읽었을 때는 없다고 하지 않는다 (503)', /}\), 503\);/.
 const voy = (id,title,lv) => { const f = { id:{stringValue:id}, date:{stringValue:'2026-08-13'},
   title:{stringValue:title}, from:{stringValue:'여수'}, to:{stringValue:'개도'} };
   if(lv) f.lv = {stringValue:lv}; return { mapValue:{ fields:f } }; };
-let DATA = null, FAIL = false;
+let DATA = null, FAIL = false, NAME = '배', HID = false;
 const doc = () => ({ name:'p/boatPublic/b1', fields:{
-  id:{stringValue:'b1'}, name:{stringValue:'배'}, voyage:{arrayValue:{values:DATA}} }});
+  id:{stringValue:'b1'}, name:{stringValue:NAME}, voyage:{arrayValue:{values:DATA}},
+  ...(HID ? { adminHidden:{booleanValue:true} } : {}) }});
 
 globalThis.fetch = async (u) => {
   if(FAIL) return new Response('', { status:500 });
@@ -98,6 +99,24 @@ DATA = [voy('v1','첫째','com')];
 T('★★★ 다시 올리면 그 다음 요청부터 바로 보인다', (await get('/v/b1/v1/')).status === 200);
 DATA = [];
 T('★★★ 기록을 지우면 바로 404', (await get('/v/b1/v1/')).status === 404);
+
+// ★★★ 2026-10-27 — 자동검사 배는 웹에 안 나간다 (「자동검사배2」 100척이 공개로 떠 있었다)
+DATA = [voy('v1','첫째','com')]; NAME = '자동검사배2';
+T('★★★ 자동검사 배의 공개 항해도 404 다', (await get('/v/b1/v1/')).status === 404);
+T('★★★ 자동검사 배는 일본어 주소도 404 다', (await get('/ja/v/b1/v1/')).status === 404);
+T('★★★ 자동검사 배는 목록에도 없다', !/첫째/.test(await (await get('/v/')).text()));
+NAME = '배'; HID = true;
+T('★★ 운영자가 가린 배는 목록에도 한 건에도 없다',
+  (await get('/v/b1/v1/')).status === 404 && !/첫째/.test(await (await get('/v/')).text()));
+HID = false;
+T('★ 보통 배는 그대로 보인다', (await get('/v/b1/v1/')).status === 200);
+{
+  const bw = fs.readFileSync('/home/claude/webout/scripts/build_web.js','utf8');
+  T('★★★ 사이트맵도 같은 문으로 자동검사 배를 뺀다',
+    /const E2E_NAME = \/자동검사\//.test(bw) && /!b\.adminHidden && !isE2E\(b\)/.test(bw));
+  T('★★★ 워커와 굽는 쪽이 같은 표를 쓴다',
+    /const E2E_NAME = \/자동검사\//.test(src) && /return gone/.test(src) && /isE2E\(b\)\) return gone/.test(src));
+}
 
 DATA = [voy('v1','첫째')]; FAIL = true;
 {
