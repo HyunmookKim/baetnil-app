@@ -118,6 +118,28 @@ T('★ 보통 배는 그대로 보인다', (await get('/v/b1/v1/')).status === 2
     /const E2E_NAME = \/자동검사\//.test(src) && /return gone/.test(src) && /isE2E\(b\)\) return gone/.test(src));
 }
 
+// ★★★ 2026-10-28 — 날씨가 「[object Object] → [object Object]」 로 나왔다
+{
+  const wxv = (out, inn) => { const f = voy('v1','날씨','com'); const m = f.mapValue.fields;
+    const enc = o => typeof o === 'string' ? { stringValue:o } : { mapValue:{ fields:
+      Object.fromEntries(Object.entries(o).map(([k,v]) => [k, typeof v === 'number' ? { doubleValue:v }
+        : typeof v === 'object' ? enc(v) : { stringValue:String(v) }])) } };
+    if(out) m.wxOut = enc(out); if(inn) m.wxIn = enc(inn); return f; };
+  DATA = [wxv({ text:'남 12kt', at:'10-19 13:00', dir:180, kt:12, gust:18, wave:0.6, tide:212, temp:19 },
+              { text:{ dir:45, kt:8, wave:0.4 } })];
+  const h = await (await get('/v/b1/v1/')).text();
+  T('★★★ 날씨가 [object Object] 로 안 나온다', !/object Object/.test(h), (h.match(/날씨[\s\S]{0,200}/) || [''])[0]);
+  T('★★★ 날씨를 앱과 같은 꼴로 찍는다 (방향·풍속·돌풍·파고·조위·기온)',
+    /남 12kt\(돌풍 18\) · 파고 0\.6m · 조위 212cm · 19℃/.test(h), (h.match(/<b>날씨<\/b><span>[^<]*/) || [''])[0]);
+  T('★★ 한 겹 더 싸인 옛 자료도 푼다', /→ 북동 8kt · 파고 0\.4m/.test(h));
+  const ru = await (await get('/ru/v/b1/v1/')).text();
+  T('★★ 러시아어는 방향·уз·쉼표 소수점', /Ю 12\u00a0уз \(порывы 18\) · Волна 0,6 м · Уровень воды 212 см/.test(ru), (ru.match(/Погода<\/b><span>[^<]*/) || [''])[0]);
+  const ja = await (await get('/ja/v/b1/v1/')).text();
+  T('★★ 일본어는 方位·波高', /南 12kt（突風 18） · 波高 0\.6m/.test(ja), (ja.match(/天気<\/b><span>[^<]*/) || [''])[0]);
+  DATA = [wxv('맑음, 남풍 약함', null)];
+  T('★ 옛 글자 날씨는 그대로', /맑음, 남풍 약함/.test(await (await get('/v/b1/v1/')).text()));
+}
+
 DATA = [voy('v1','첫째')]; FAIL = true;
 {
   const r = await get('/v/b1/v1/');
