@@ -34,9 +34,10 @@ T('★★ 못 읽었을 때는 없다고 하지 않는다 (503)', /}\), 503\);/.
 const voy = (id,title,lv) => { const f = { id:{stringValue:id}, date:{stringValue:'2026-08-13'},
   title:{stringValue:title}, from:{stringValue:'여수'}, to:{stringValue:'개도'} };
   if(lv) f.lv = {stringValue:lv}; return { mapValue:{ fields:f } }; };
-let DATA = null, FAIL = false, NAME = '배', HID = false;
+let DATA = null, FAIL = false, NAME = '배', HID = false, TYPE = '';
 const doc = () => ({ name:'p/boatPublic/b1', fields:{
   id:{stringValue:'b1'}, name:{stringValue:NAME}, voyage:{arrayValue:{values:DATA}},
+  ...(TYPE ? { typeName:{stringValue:TYPE} } : {}),
   ...(HID ? { adminHidden:{booleanValue:true} } : {}) }});
 
 globalThis.fetch = async (u) => {
@@ -138,6 +139,20 @@ T('★ 보통 배는 그대로 보인다', (await get('/v/b1/v1/')).status === 2
   T('★★ 일본어는 方位·波高', /南 12kt（突風 18） · 波高 0\.6m/.test(ja), (ja.match(/天気<\/b><span>[^<]*/) || [''])[0]);
   DATA = [wxv('맑음, 남풍 약함', null)];
   T('★ 옛 글자 날씨는 그대로', /맑음, 남풍 약함/.test(await (await get('/v/b1/v1/')).text()));
+}
+
+// ★★ 5.55 — 배 종류가 일본어·영어·러시아어 페이지에서 한국어로 나왔다 (「세일링 요트」)
+DATA = [voy('v1','첫째','com')]; TYPE = '어선';
+{
+  T('★★ 한국어 페이지는 배 종류 그대로', /<div class="meta">[^<]*어선/.test(await (await get('/v/b1/v1/')).text()));
+  const ja = await (await get('/ja/v/b1/v1/')).text();
+  T('★★ 일본어 페이지는 漁船', /<div class="meta">[^<]*漁船/.test(ja) && !/<div class="meta">[^<]*어선/.test(ja), (ja.match(/<div class="meta">[^<]*/) || [''])[0]);
+  TYPE = '세일링 요트';
+  const en = await (await get('/en/v/b1/v1/')).text();
+  T('★★ 영어 페이지는 Sailboat', /<div class="meta">[^<]*Sailboat/.test(en), (en.match(/<div class="meta">[^<]*/) || [''])[0]);
+  const ru = await (await get('/ru/v/b1/v1/')).text();
+  T('★★ 러시아어 페이지는 Парусная яхта', /<div class="meta">[^<]*Парусная яхта/.test(ru), (ru.match(/<div class="meta">[^<]*/) || [''])[0]);
+  TYPE = '';
 }
 
 DATA = [voy('v1','첫째')]; FAIL = true;
