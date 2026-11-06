@@ -45,6 +45,7 @@ if(missing.length){
 // 상태 그릇을 먼저 만든다 (원본은 const 라 떼어 오면 두 번 선언된다)
 globalThis.TR_NEWS = {};
 globalThis.trNewsOn = false;
+globalThis.newsTrSkip = false;   // 2026-11-03 — 「원문 보기」 를 누른 뒤 「번역 보기」 로 돌아오는 표 (let)
 // ★ 본체에서 값을 그대로 가져온다. 여기서 손으로 적으면 본체를 망가뜨려도 안 잡힌다.
 [['NEWS_TR_MAX', 40], ['TR_SEND_N', 60], ['TR_SEND_CHARS', 6000]].forEach(([k, d])=>{
   const m = src.match(new RegExp('const ' + k + '\\s*=\\s*(\\d+)'));
