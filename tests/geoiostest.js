@@ -82,13 +82,13 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + n); } else { fail+
     const make = new Function('S', `
       const WX_BG = {};
       const wxPtKey = (a, b) => (+a).toFixed(2) + ',' + (+b).toFixed(2);
-      const wxCachePut = () => {}, wxStamp = () => {};
+      const wxCachePut = () => {}, wxStamp = () => {}, wxCacheGet = async () => null, wxCacheUsable = () => false;   // ★ 5.58
       const wxFetch = (la, lo) => { S.calls.push(la + ',' + lo);
         if(S.calls.length === 1) return new Promise(r => { S.release = () => r({ w:'여수날씨' }); });
         return Promise.resolve({ w:'도쿄날씨' }); };
       let wxFailed = false;
       const renderHome = () => {}, renderWeather = () => {}, curScreen = () => '';
-      ${rf.replace(/wxCur/g, 'S.cur()').replace(/wxData = \{/g, 'S.set({').replace(/_at: Date\.now\(\) \};/g, '_at: Date.now() });')}
+      ${rf.replace(/wxCur/g, 'S.cur()').replace(/wxData = \{/g, 'S.set({').replace(/(_at: [^};]*?) \};/g, '$1 });')   /* ★ 5.58 — 담아 둔 예보로 되돌리는 자리(_at: c.at || 0)도 같은 꼴로 바꾼다 */}
       return { wxRefresh, wxPtKey };`);
     const S = { cur: () => wxCur, set: v => (wxData = v), calls };
     const R = make(S);

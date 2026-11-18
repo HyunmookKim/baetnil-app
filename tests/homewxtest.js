@@ -135,7 +135,8 @@ const T = (n, c) => { if(c){ pass++; console.log('통과: ' + n); } else { fail+
     /if\(wxEnsureP\) return wxEnsureP/.test(e) && /if\(WX_BG\[key\]\) return WX_BG\[key\]/.test(js));
   // ★ 5.0 — 한 시간 안이면 다시 안 부른다 (Open-Meteo 하루 한도)
   T('★ 담아 둔 것이 한 시간 안이면 안 부른다', /WX_FRESH_MS/.test(e) && /wxCacheGet\(key\)/.test(e));
-  T('★ 못 받으면 담아 둔 것이라도 쓴다', /WX_KEEP_MS/.test(e));
+  // ★ 5.58 — 반나절(WX_KEEP_MS)로 끊던 것을 「그 예보가 다룬 시각이 남아 있는 동안」(wxCacheUsable)으로 바꿨다 (날씨 서버가 들쭉날쭉 — 사장님 2026-11-18)
+  T('★ 못 받으면 담아 둔 것이라도 쓴다 (다룬 시각이 남아 있는 동안)', /wxCacheUsable\(c\)/.test(e) && /function wxCacheUsable\(c\)\{[\s\S]{0,400}H\.time\.length - 1\) \* 3600e3/.test(js));
   // ★ 예보 시작 시각(_t0)을 날씨 탭에서만 잡으면, 오늘 탭을 먼저 열 때 없다.
   //   잡는 곳을 한 군데(wxStamp)로 모으고, 받아온 뒤 반드시 부르는지 본다.
   const st = grab(js, 'wxStamp') || '';
