@@ -80,8 +80,13 @@ android {
             //   ★ R8 이 정리한 이름표(mapping)는 AAB 안에 들어가 플레이가 오류 보고를 원래 이름으로 풀어 준다.
             // ★★★★ 5.52 (2026-10-14) — 줄이기를 끈다. 사장님: 「아니 왜 코드를 줄이냐」·「앞으론 절대 줄이지마」.
             //   5.33 에 플레이 경고(DEX 최적화·난독화)를 없앤다고 여쭙지 않고 켰다가, 5.48 플레이판에서
-            //   항적을 켜면 앱이 꺼졌다(R8 이 캐퍼시터 주석을 지움 · capacitor #8589). 다시 켜지 말 것.
-            minifyEnabled false
+            //   항적을 켜면 앱이 꺼졌다(R8 이 캐퍼시터 주석을 지움 · capacitor #8589).
+            // ★★★★ 5.59 (2026-11-23) — 다시 켠다. 구글이 2027년 2월부터 DEX 10MB 넘는 앱에 최적화·난독화·축소 25% 이상을
+            //   요구한다(Play Console 기술 품질 요구사항 · 5.58 은 DEX 11.2MB · 난독화 3%). 사장님: 「켜는데 모든 문제가 없을때만 올려라」.
+            //   설정은 5.51 과 같다(주석 틀 지키기 규칙 proguard-rules.pro) — 5.51 은 플레이에서 난독화 45% · DEX 3.35MB.
+            //   ★ 올리기 전에 반드시 스토어용(release) 빌드로 에뮬레이터 전체 검사(android-e2e kind=release) 실패 0 · 꺼짐 0.
+            //   ★ 웹 화면 코드(index.html)는 여전히 줄이지 않는다(tools/ship.js 는 그대로 복사).
+            minifyEnabled true
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             // ★ 열쇠가 있을 때만 붙인다. 없으면 서명 없이 지어진다(스토어에는 못 낸다).
