@@ -8,7 +8,11 @@ const pro = fs.readFileSync(path.join(root, 'android/app/proguard-rules.pro'), '
   .split('\n').filter(l => !/^\s*#/.test(l)).join('\n');
 const gradle = fs.readFileSync(path.join(root, 'android/app/build.gradle'), 'utf8');
 const r8 = /minifyEnabled\s+true/.test(gradle);
-T('★ 5.52 사장님 지시 — 코드 줄이기(R8)를 켜지 않는다 (「앞으론 절대 줄이지마」)', !r8);
+// 5.59 (2026-11-23) — 구글 2027-02 DEX 25% 요구로 R8 다시 켬. 사장님: 「켜는데 모든 문제가 없을때만 올려라」.
+T('★ 5.59 — 스토어 빌드는 R8 을 켠다 (구글 DEX 최적화 25%)', r8);
+T('R8 은 release 에만 (debug 에 켜지 않는다)', !/debug\s*\{[^}]*minifyEnabled\s+true/.test(gradle));
+T('넓게 지켜 줄이기를 막는 규칙이 없다 (-keep class ** · -dontobfuscate · -dontoptimize · -dontshrink)',
+  !/-keep\s+class\s+\*\*\s*\{/.test(pro) && !/-dontobfuscate|-dontoptimize|-dontshrink/.test(pro));
 T('R8 을 쓰면 캐퍼시터 주석 틀을 지킨다 (-keep @interface com.getcapacitor.** { *; })',
   !r8 || /-keep\s+@interface\s+com\.getcapacitor\.\*\*\s*\{\s*\*;\s*\}/.test(pro));
 T('com.getcapacitor 전체를 지키는 넓은 규칙은 없다 (줄이기가 안 됨)', !/-keep\s+class\s+com\.getcapacitor\.\*\*/.test(pro));

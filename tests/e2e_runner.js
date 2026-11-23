@@ -693,6 +693,76 @@
     await sleep(4000);
     if(!items.some(function(x){ return x.name === '검사물품'; })) throw new Error('되살린 뒤 물품이 없음');
   });
+  // ★ 5.59 — R8(코드 줄이기)을 다시 켰다(구글 2027-02 DEX 25%). 사장님: 「켜는데 모든 문제가 없을때만 올려라」.
+  //   5.48 때 R8 이 캐퍼시터 주석을 지워 항적을 켜자마자 앱이 꺼졌다(권한을 묻는 자리 getPermissionState).
+  //   그래서 앱이 쓰는 네이티브 부품을 **하나도 빼지 않고** 실제로 한 번씩 부른다 — 권한 묻기·알림 걸고 지우기·파일 쓰고 읽기 등.
+  //   부품이 없거나, 10초 안에 답이 없거나, R8 탓으로 보이는 오류(NullPointer·ClassNotFound·NoSuchMethod …)가 나면 실패.
+  //   거절(권한 없음·지원 안 함 같은 보통 거절)은 통과 — 앱이 꺼지지 않고 답을 돌려줬다는 뜻이다.
+  //   앱이 꺼지면 이 단계에서 줄이 끊겨 바깥 손(e2e_emu_loop.py)이 멈춤으로 잡는다.
+  step('네이티브 부품 — 하나씩 불러 보기 (R8)', async function(){
+    var P = (window.Capacitor && window.Capacitor.Plugins) || {};
+    var BAD = /NullPointer|null object|ClassNotFound|NoSuchMethod|NoSuchField|AbstractMethod|IncompatibleClassChange|annotation|not implemented|UNIMPLEMENTED/i;
+    var probs = [], seen = [];
+    function wait(pr, ms){ return Promise.race([ Promise.resolve(pr).then(function(v){ return { ok:true, v:v }; }, function(e){ return { ok:false, e:e }; }),
+      new Promise(function(r){ setTimeout(function(){ r({ ok:false, timeout:true }); }, ms || 10000); }) ]); }
+    async function call(plug, fn, arg, mustResolve){
+      var name = plug + '.' + fn;
+      var p = P[plug];
+      if(!p || typeof p[fn] !== 'function'){ probs.push(name + ' 없음'); return null; }
+      var r = await wait(p[fn](arg));
+      if(r.timeout){ probs.push(name + ' 답 없음(10초)'); return null; }
+      if(!r.ok){
+        var m = String((r.e && (r.e.message || r.e.code)) || r.e).slice(0, 160);
+        if(BAD.test(m) || mustResolve) probs.push(name + ' — ' + m);
+        seen.push(name + ' 거절(' + m.slice(0, 60) + ')');
+        return null;
+      }
+      seen.push(name + ' OK');
+      return r.v;
+    }
+    var android = PLAT === 'android';
+    // 앱 정보
+    var inf = await call('App', 'getInfo', undefined, true);
+    if(inf && inf.id !== 'kr.baetnil.app') probs.push('App.getInfo id=' + inf.id);
+    // 파일 — 쓰고 읽고 지우기
+    await call('Filesystem', 'writeFile', { path:'r8probe.txt', directory:'CACHE', data:'뱃일 R8', encoding:'utf8' }, true);
+    var rd = await call('Filesystem', 'readFile', { path:'r8probe.txt', directory:'CACHE', encoding:'utf8' }, true);
+    if(rd && rd.data !== '뱃일 R8') probs.push('Filesystem.readFile 내용이 다름');
+    await call('Filesystem', 'deleteFile', { path:'r8probe.txt', directory:'CACHE' }, true);
+    await call('Filesystem', 'checkPermissions', undefined, true);
+    // 진동
+    await call('Haptics', 'impact', { style:'LIGHT' }, true);
+    // 폰이 거는 알림 — 권한 묻기 · 하루 뒤로 하나 걸고 · 걸렸는지 보고 · 지우기
+    await call('LocalNotifications', 'checkPermissions', undefined, true);
+    var NID = 990059;
+    await call('LocalNotifications', 'schedule', { notifications:[{ id:NID, title:'뱃일 자동검사', body:'R8', schedule:{ at:new Date(Date.now() + 864e5) }, extra:{ bt:'e2e' } }] }, true);
+    var pend = await call('LocalNotifications', 'getPending', undefined, true);
+    if(pend && !(pend.notifications || []).some(function(n){ return Number(n.id) === NID; })) probs.push('LocalNotifications — 건 알림이 목록에 없음');
+    await call('LocalNotifications', 'cancel', { notifications:[{ id:NID }] }, true);
+    // 서버 알림(FCM)
+    await call('FirebaseMessaging', 'checkPermissions', undefined, true);
+    await call('FirebaseMessaging', 'isSupported', undefined, true);
+    // 로그인 부품(네이티브)
+    await call('FirebaseAuthentication', 'getCurrentUser', undefined, true);
+    // 달력
+    await call('CapacitorCalendar', 'checkAllPermissions', undefined, false);
+    // 공유
+    await call('Share', 'canShare', undefined, true);
+    // 별점 요청 — 에뮬레이터에는 플레이 스토어가 없어 거절될 수 있다(보통 거절은 통과)
+    await call('InAppReview', 'requestReview', undefined, false);
+    // 위치 기록 부품 — 권한 묻는 자리(5.48 에 꺼진 곳)
+    if(P.BackgroundGeolocation && typeof P.BackgroundGeolocation.checkPermissions === 'function') await call('BackgroundGeolocation', 'checkPermissions', undefined, false);
+    if(android){
+      // 뱃일 자체 부품
+      await call('BaetnilWake', 'isHeld', undefined, true);
+      await call('BaetnilWake', 'batteryFree', undefined, true);
+      await call('BaetnilTrack', 'status', undefined, true);
+      await call('BaetnilBars', 'setStyle', { light:false, color:'#122A44' }, true);
+      try{ statusBar(); }catch(_){}
+    }
+    log('INFO 네이티브 부품: ' + seen.join(' · ').slice(0, 1500));
+    if(probs.length) throw new Error(probs.join(' / '));
+  });
   step('설정·약관·알림 화면', async function(){
     openSettings(); await sleep(500); await shot('28-settings');
     openLegal('terms'); await sleep(500); await shot('29-terms');

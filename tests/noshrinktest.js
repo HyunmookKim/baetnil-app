@@ -8,7 +8,9 @@ cp.execFileSync(process.execPath, [path.join(root, 'tools/ship.js'), src, out]);
 T('내보낸 화면 파일 = 원본 그대로 (설명 글·빈칸·사전을 빼지 않음)', fs.readFileSync(out).equals(fs.readFileSync(src)));
 T('tools/ship.js 가 esbuild(줄이기 도구)를 쓰지 않는다', !/require\(['"]esbuild['"]\)/.test(fs.readFileSync(path.join(root, 'tools/ship.js'), 'utf8')));
 const g = fs.readFileSync(path.join(root, 'android/app/build.gradle'), 'utf8');
-T('안드로이드 코드 줄이기(R8) 꺼짐', !/minifyEnabled\s+true/.test(g) && !/shrinkResources\s+true/.test(g));
+// 5.59 — 안드로이드 R8 은 사장님 「켜는데 모든 문제가 없을때만 올려라」 로 다시 켬(r8keeptest 가 지키기 규칙을 본다).
+//   자원 줄이기(shrinkResources)는 여전히 끔 — 알림 아이콘을 이름으로 찾는 부품이 있다.
+T('안드로이드 자원 줄이기(shrinkResources) 꺼짐', !/shrinkResources\s+true/.test(g));
 try{ fs.unlinkSync(out); }catch(_){}
 console.log('합계: ' + ok + '개 통과 / ' + bad + '개 실패');
 process.exit(bad ? 1 : 0);
