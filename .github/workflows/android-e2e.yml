@@ -13,9 +13,11 @@ on:
   workflow_dispatch:
     inputs:
       api:
-        description: '안드로이드 버전 (35=안드로이드 15 · 34=안드로이드 14)'
+        description: '안드로이드 버전 (35=안드로이드 15 · 34=안드로이드 14 · 33=안드로이드 13)'
         type: choice
-        options: ['35', '34']
+        # ★ 5.59 — 33(안드로이드 13) 추가. R8 을 다시 켜며, 13 이하에서만 타는 길(구글 로그인이 플레이 서비스 쪽 부품을
+        #   이름으로 찾아 부름 · androidx.credentials.playservices)도 스토어용 빌드로 확인한다.
+        options: ['35', '34', '33']
         default: '35'
       kind:
         description: '빌드 (debug=예전 그대로 · release=스토어와 같은 R8 줄인 빌드, 디버그 열쇠로 서명)'
